@@ -45,6 +45,7 @@ class EditorViewModel @Inject constructor(
                     charset = loaded.charset,
                     lineEnding = loaded.lineEnding,
                     dirty = false,
+                    isLoading = false,
                 )
             } catch (t: Throwable) {
                 _state.update { it.copy(isLoading = false, error = t.message) }
@@ -53,6 +54,8 @@ class EditorViewModel @Inject constructor(
     }
 
     fun save(ref: FileRef) {
+        // Snapshot text/charset/lineEnding on the caller thread so a concurrent edit
+        // can't change what gets written mid-save.
         val current = _state.value
         viewModelScope.launch {
             try {

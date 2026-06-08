@@ -7,6 +7,7 @@ import org.junit.Rule
 import org.junit.Test
 import tools.lunaris.texteditor.document.EncodingCodec
 import tools.lunaris.texteditor.file.FakeFileGateway
+import tools.lunaris.texteditor.file.FileGateway
 import tools.lunaris.texteditor.file.FileRef
 import tools.lunaris.texteditor.file.FileRepository
 import tools.lunaris.texteditor.util.MainDispatcherRule
@@ -63,5 +64,54 @@ class EditorViewModelTest {
         assertThat(vm.state.value.title).isEqualTo("untitled")
         assertThat(vm.state.value.fileRef).isNull()
         assertThat(vm.state.value.dirty).isFalse()
+    }
+
+    @Test
+    fun save_incrementsSavedSignal() = runTest {
+        val ref = FileRef("content://doc/11")
+        vm.onContentChanged("data")
+        vm.save(ref)
+        advanceUntilIdle()
+        assertThat(vm.state.value.savedSignal).isEqualTo(1)
+    }
+
+    @Test
+    fun load_failure_setsErrorAndClearsLoading() = runTest {
+        // No entry in gateway.store -> FakeFileGateway.readBytes throws.
+        vm.load(FileRef("content://missing"))
+        advanceUntilIdle()
+        assertThat(vm.state.value.error).isNotNull()
+        assertThat(vm.state.value.isLoading).isFalse()
+    }
+
+    @Test
+    fun save_failure_setsError() = runTest {
+        val throwingRepo = FileRepository(
+            object : FileGateway {
+                override suspend fun readBytes(ref: FileRef): ByteArray =
+                    throw java.io.IOException("read fail")
+                override suspend fun writeBytes(ref: FileRef, bytes: ByteArray): Unit =
+                    throw java.io.IOException("write fail")
+                override suspend fun displayName(ref: FileRef): String? = null
+            },
+            EncodingCodec(),
+        )
+        val throwingVm = EditorViewModel(throwingRepo)
+        throwingVm.onContentChanged("data")
+        throwingVm.save(FileRef("content://doc/12"))
+        advanceUntilIdle()
+        assertThat(throwingVm.state.value.error).isNotNull()
+    }
+
+    @Test
+    fun edit_afterSave_reMarksDirty() = runTest {
+        val ref = FileRef("content://doc/13")
+        vm.onContentChanged("data")
+        vm.save(ref)
+        advanceUntilIdle()
+        assertThat(vm.state.value.dirty).isFalse()
+
+        vm.onContentChanged("data changed")
+        assertThat(vm.state.value.dirty).isTrue()
     }
 }
