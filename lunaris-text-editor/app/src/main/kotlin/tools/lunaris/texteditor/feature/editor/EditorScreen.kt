@@ -15,11 +15,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.NoteAdd
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -45,6 +41,10 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import tools.lunaris.texteditor.R
 import tools.lunaris.texteditor.edit.Indenter
+import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfig
+import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarItem
+import tools.lunaris.texteditor.feature.editor.toolbar.icon
+import tools.lunaris.texteditor.feature.editor.toolbar.labelRes
 import tools.lunaris.texteditor.edit.SearchEngine
 import tools.lunaris.texteditor.edit.TimestampFormatter
 import tools.lunaris.texteditor.editor.CodeEditorController
@@ -149,15 +149,22 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
             }
         },
         bottomBar = {
-            EditorBottomBar(
-                onOpen = { openLauncher.launch(arrayOf("*/*")) },
-                onNew = { viewModel.newTab() },
-                onSave = {
-                    val ref = state.fileRef
-                    if (ref != null) viewModel.save(ref) else createLauncher.launch(state.title)
-                },
-                onClose = { viewModel.closeTab(state.activeTabId) },
-            )
+            EditorBottomBar(config = state.toolbar) { item ->
+                when (item) {
+                    ToolbarItem.OPEN -> openLauncher.launch(arrayOf("*/*"))
+                    ToolbarItem.PASTE -> editorController.paste()
+                    ToolbarItem.UNDO -> editorController.undo()
+                    ToolbarItem.REDO -> editorController.redo()
+                    ToolbarItem.SEARCH -> openDialog = EditorDialog.SEARCH
+                    ToolbarItem.CURSOR_LEFT -> editorController.moveCursor(-1)
+                    ToolbarItem.CURSOR_RIGHT -> editorController.moveCursor(1)
+                    ToolbarItem.SAVE -> {
+                        val ref = state.fileRef
+                        if (ref != null) viewModel.save(ref) else createLauncher.launch(state.title)
+                    }
+                    ToolbarItem.CLOSE -> viewModel.closeTab(state.activeTabId)
+                }
+            }
         },
     ) { padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
@@ -229,12 +236,7 @@ private fun EditorTopBar(
 }
 
 @Composable
-private fun EditorBottomBar(
-    onOpen: () -> Unit,
-    onNew: () -> Unit,
-    onSave: () -> Unit,
-    onClose: () -> Unit,
-) {
+private fun EditorBottomBar(config: ToolbarConfig, onItem: (ToolbarItem) -> Unit) {
     Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = BarElevation) {
         Row(
             modifier = Modifier
@@ -243,17 +245,10 @@ private fun EditorBottomBar(
                 .padding(vertical = 4.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
-            IconButton(onClick = onOpen) {
-                Icon(Icons.Filled.FolderOpen, contentDescription = stringResource(R.string.action_open))
-            }
-            IconButton(onClick = onNew) {
-                Icon(Icons.AutoMirrored.Filled.NoteAdd, contentDescription = stringResource(R.string.action_new))
-            }
-            IconButton(onClick = onSave) {
-                Icon(Icons.Filled.Save, contentDescription = stringResource(R.string.action_save))
-            }
-            IconButton(onClick = onClose) {
-                Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.action_close))
+            config.enabled.forEach { item ->
+                IconButton(onClick = { onItem(item) }) {
+                    Icon(item.icon(), contentDescription = stringResource(item.labelRes()))
+                }
             }
         }
     }
