@@ -78,6 +78,9 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
     var showSyntax by remember { mutableStateOf(false) }
     var showScheme by remember { mutableStateOf(false) }
     var showEncoding by remember { mutableStateOf(false) }
+    var showRecent by remember { mutableStateOf(false) }
+
+    val recents by viewModel.recents().collectAsStateWithLifecycle(initialValue = emptyList())
 
     val savedMsg = stringResource(R.string.saved)
     LaunchedEffect(state.savedSignal) {
@@ -98,6 +101,7 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
                 onSyntax = { showSyntax = true },
                 onScheme = { showScheme = true },
                 onEncoding = { showEncoding = true },
+                onRecent = { showRecent = true },
             )
         },
         bottomBar = {
@@ -155,6 +159,13 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
             onDismiss = { showEncoding = false },
         )
     }
+    if (showRecent) {
+        RecentFilesDialog(
+            recents = recents,
+            onOpen = { uri -> viewModel.openFile(FileRef(uri)) },
+            onDismiss = { showRecent = false },
+        )
+    }
 }
 
 @Composable
@@ -163,6 +174,7 @@ private fun EditorTopBar(
     onSyntax: () -> Unit,
     onScheme: () -> Unit,
     onEncoding: () -> Unit,
+    onRecent: () -> Unit,
 ) {
     Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = BarElevation) {
         Row(
@@ -196,6 +208,10 @@ private fun EditorTopBar(
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.menu_encoding)) },
                     onClick = { menuOpen = false; onEncoding() },
+                )
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.action_recent)) },
+                    onClick = { menuOpen = false; onRecent() },
                 )
             }
         }
