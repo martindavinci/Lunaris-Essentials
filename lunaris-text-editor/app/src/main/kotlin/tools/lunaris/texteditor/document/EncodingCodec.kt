@@ -2,6 +2,7 @@ package tools.lunaris.texteditor.document
 
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
+import javax.inject.Inject
 
 /** Result of decoding raw bytes into editor text (normalized to LF internally). */
 data class DecodedText(
@@ -15,7 +16,7 @@ data class DecodedText(
  * Internally the editor always holds LF-only text; the original line ending is
  * remembered so saving can reproduce it.
  */
-class EncodingCodec {
+class EncodingCodec @Inject constructor() {
 
     /**
      * Decodes raw [bytes] into editor text normalized to LF.
