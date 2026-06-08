@@ -119,7 +119,13 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
     Scaffold(
         snackbarHost = { SnackbarHost(snackbar) },
         topBar = {
-            EditorTopBar(title = state.title) { action ->
+            EditorTopBar(
+                title = state.title,
+                checked = buildSet {
+                    if (state.wordWrap) add(EditorMenuAction.WORD_WRAP)
+                    if (state.readOnly) add(EditorMenuAction.READ_ONLY)
+                },
+            ) { action ->
                 when (action) {
                     EditorMenuAction.SYNTAX -> openDialog = EditorDialog.SYNTAX
                     EditorMenuAction.DISPLAY_STYLE -> openDialog = EditorDialog.DISPLAY_STYLE
@@ -133,6 +139,12 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
                         editorController.insertAtCursor(TimestampFormatter.format(Instant.now(), ZoneId.systemDefault()))
                     EditorMenuAction.INDENT_INCREASE -> applyIndent(true)
                     EditorMenuAction.INDENT_DECREASE -> applyIndent(false)
+                    EditorMenuAction.UNDO -> editorController.undo()
+                    EditorMenuAction.REDO -> editorController.redo()
+                    EditorMenuAction.SELECT_ALL -> editorController.selectAll()
+                    EditorMenuAction.PASTE -> editorController.paste()
+                    EditorMenuAction.WORD_WRAP -> viewModel.toggleWordWrap()
+                    EditorMenuAction.READ_ONLY -> viewModel.toggleReadOnly()
                 }
             }
         },
@@ -163,7 +175,8 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
                 scopeName = state.scopeName,
                 themeId = state.colorSchemeId,
                 controller = editorController,
-                wordWrap = true,
+                wordWrap = state.wordWrap,
+                readOnly = state.readOnly,
                 modifier = Modifier.fillMaxWidth().weight(1f),
             )
         }
@@ -182,6 +195,7 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
 @Composable
 private fun EditorTopBar(
     title: String,
+    checked: Set<EditorMenuAction> = emptySet(),
     onMenuAction: (EditorMenuAction) -> Unit,
 ) {
     Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = BarElevation) {
@@ -208,6 +222,7 @@ private fun EditorTopBar(
                 expanded = menuOpen,
                 onDismiss = { menuOpen = false },
                 onAction = onMenuAction,
+                checked = checked,
             )
         }
     }

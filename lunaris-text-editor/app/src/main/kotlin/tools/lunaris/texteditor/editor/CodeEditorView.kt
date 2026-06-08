@@ -20,6 +20,7 @@ fun CodeEditorView(
     themeId: String,
     controller: CodeEditorController,
     wordWrap: Boolean,
+    readOnly: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val holder = remember { EditorBinding() }
@@ -44,6 +45,8 @@ fun CodeEditorView(
                 controller.bind(editor)
                 editor.setWordwrap(wordWrap)
                 holder.appliedWrap = wordWrap
+                editor.setEditable(!readOnly)
+                holder.appliedReadOnly = readOnly
             }
         },
         update = { editor ->
@@ -62,6 +65,10 @@ fun CodeEditorView(
             if (wordWrap != holder.appliedWrap) {
                 editor.setWordwrap(wordWrap)
                 holder.appliedWrap = wordWrap
+            }
+            if (readOnly != holder.appliedReadOnly) {
+                editor.setEditable(!readOnly)
+                holder.appliedReadOnly = readOnly
             }
         },
         onRelease = { editor ->
@@ -91,4 +98,5 @@ private class EditorBinding {
     var appliedScope: String? = null
     var appliedTheme: String? = null
     var appliedWrap: Boolean? = null
+    var appliedReadOnly: Boolean? = null
 }
