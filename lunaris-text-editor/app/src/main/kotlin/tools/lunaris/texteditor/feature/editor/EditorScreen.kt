@@ -46,6 +46,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import tools.lunaris.texteditor.R
+import tools.lunaris.texteditor.editor.CodeEditorController
 import tools.lunaris.texteditor.editor.CodeEditorView
 import tools.lunaris.texteditor.file.FileRef
 
@@ -58,6 +59,7 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val snackbar = remember { SnackbarHostState() }
+    val editorController = remember { CodeEditorController() }
 
     val openLauncher = rememberLauncherForActivityResult(
         remember { OpenDocumentReadWrite() }
@@ -143,6 +145,8 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
                 onTextChange = viewModel::onContentChanged,
                 scopeName = state.scopeName,
                 themeId = state.colorSchemeId,
+                controller = editorController,
+                wordWrap = true,
                 modifier = Modifier.fillMaxWidth().weight(1f),
             )
         }

@@ -18,6 +18,8 @@ fun CodeEditorView(
     onTextChange: (String) -> Unit,
     scopeName: String?,
     themeId: String,
+    controller: CodeEditorController,
+    wordWrap: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val holder = remember { EditorBinding() }
@@ -39,6 +41,9 @@ fun CodeEditorView(
                 applyLanguage(editor, scopeName)
                 holder.appliedScope = scopeName
                 holder.appliedTheme = themeId
+                controller.bind(editor)
+                editor.setWordwrap(wordWrap)
+                holder.appliedWrap = wordWrap
             }
         },
         update = { editor ->
@@ -54,8 +59,15 @@ fun CodeEditorView(
                 applyLanguage(editor, scopeName)
                 holder.appliedScope = scopeName
             }
+            if (wordWrap != holder.appliedWrap) {
+                editor.setWordwrap(wordWrap)
+                holder.appliedWrap = wordWrap
+            }
         },
-        onRelease = { editor -> editor.release() },
+        onRelease = { editor ->
+            controller.unbind()
+            editor.release()
+        },
     )
 }
 
@@ -78,4 +90,5 @@ private class EditorBinding {
     var lastKnownText: String = ""
     var appliedScope: String? = null
     var appliedTheme: String? = null
+    var appliedWrap: Boolean? = null
 }
