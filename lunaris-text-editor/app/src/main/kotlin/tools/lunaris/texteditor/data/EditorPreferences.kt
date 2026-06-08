@@ -17,12 +17,14 @@ class EditorPreferences @Inject constructor(
     @ApplicationContext private val context: Context,
 ) : ColorSchemeStore {
 
-    private val colorSchemeKey = stringPreferencesKey("color_scheme_id")
-
     override fun colorSchemeId(default: String): Flow<String> =
-        context.dataStore.data.map { it[colorSchemeKey] ?: default }
+        context.dataStore.data.map { it[COLOR_SCHEME_KEY] ?: default }
 
     override suspend fun setColorSchemeId(id: String) {
-        context.dataStore.edit { it[colorSchemeKey] = id }
+        context.dataStore.edit { it[COLOR_SCHEME_KEY] = id }
+    }
+
+    private companion object {
+        val COLOR_SCHEME_KEY = stringPreferencesKey("color_scheme_id")
     }
 }

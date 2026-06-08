@@ -1,5 +1,6 @@
 package tools.lunaris.texteditor.feature.editor
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -42,6 +43,9 @@ class EditorViewModel @Inject constructor(
     private var savedText: String = ""
     private var lastBytesRef: FileRef? = null
 
+    // Custom scope (not viewModelScope): the init read runs at construction time, which in unit
+    // tests is BEFORE MainDispatcherRule installs the test main dispatcher. Unconfined runs the
+    // one-shot read inline without requiring Dispatchers.Main. Cancelled in onCleared().
     private val initScope = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
 
     init {
@@ -113,7 +117,10 @@ class EditorViewModel @Inject constructor(
 
     fun setColorScheme(id: String) {
         _state.update { it.copy(colorSchemeId = id) }
-        viewModelScope.launch { colorSchemeStore.setColorSchemeId(id) }
+        viewModelScope.launch {
+            runCatching { colorSchemeStore.setColorSchemeId(id) }
+                .onFailure { Log.w("EditorViewModel", "Failed to persist color scheme '$id'", it) }
+        }
     }
 
     fun reopenWithEncoding(charset: Charset) {
