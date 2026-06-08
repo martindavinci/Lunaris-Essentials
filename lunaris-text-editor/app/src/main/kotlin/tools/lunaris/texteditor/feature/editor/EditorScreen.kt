@@ -50,6 +50,7 @@ import tools.lunaris.texteditor.file.FileRef
 
 private val TopBarHeight = 56.dp
 private val BarElevation = 3.dp
+private const val AUTOSAVE_INTERVAL_MS = 60_000L
 
 @Composable
 fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
@@ -81,6 +82,13 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
     var showRecent by remember { mutableStateOf(false) }
 
     val recents by viewModel.recents().collectAsStateWithLifecycle(initialValue = emptyList())
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            kotlinx.coroutines.delay(AUTOSAVE_INTERVAL_MS)
+            viewModel.autosave()
+        }
+    }
 
     val savedMsg = stringResource(R.string.saved)
     LaunchedEffect(state.savedSignal) {

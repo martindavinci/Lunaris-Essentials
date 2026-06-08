@@ -178,4 +178,25 @@ class EditorViewModelTest {
         assertThat(vm.state.value.error).isNotNull()
         assertThat(vm.state.value.isLoading).isFalse()
     }
+
+    @Test
+    fun autosave_savesDirtyFileBackedTabs_only() = runTest {
+        val vm = newVm()
+        val ref = FileRef("content://doc/a")
+        gateway.store[ref.uri] = "orig".toByteArray(StandardCharsets.UTF_8)
+        gateway.names[ref.uri] = "a.txt"
+        vm.openFile(ref)
+        advanceUntilIdle()
+        vm.onContentChanged("edited")  // active file tab now dirty
+        vm.newTab()
+        vm.onContentChanged("draft")   // untitled dirty tab (must NOT be saved)
+
+        vm.autosave()
+        advanceUntilIdle()
+
+        assertThat(String(gateway.store[ref.uri]!!, StandardCharsets.UTF_8)).isEqualTo("edited")
+        val fileTabId = vm.state.value.tabs.first { it.title == "a.txt" }.id
+        vm.switchTab(fileTabId)
+        assertThat(vm.state.value.dirty).isFalse()
+    }
 }

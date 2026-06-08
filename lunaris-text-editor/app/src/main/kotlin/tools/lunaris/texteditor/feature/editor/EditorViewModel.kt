@@ -145,6 +145,20 @@ class EditorViewModel @Inject constructor(
         }
     }
 
+    fun autosave() {
+        val targets = Autosaver.tabsToAutosave(docs.value)
+        if (targets.isEmpty()) return
+        viewModelScope.launch {
+            targets.forEach { tab ->
+                val ref = tab.fileRef ?: return@forEach
+                val written = tab.text
+                runCatching { repository.save(ref, written, tab.charset, tab.lineEnding) }
+                    .onSuccess { docs.value = docs.value.replace(tab.id) { it.copy(savedText = written) } }
+            }
+            publish()
+        }
+    }
+
     fun setSyntax(selection: SyntaxSelection) = mutate {
         it.updateActive { s -> s.copy(syntax = selection, scopeName = syntaxResolver.resolveScope(selection, s.title)) }
     }
