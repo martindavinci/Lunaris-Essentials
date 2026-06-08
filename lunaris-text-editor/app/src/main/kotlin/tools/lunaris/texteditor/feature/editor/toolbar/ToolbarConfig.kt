@@ -1,0 +1,43 @@
+package tools.lunaris.texteditor.feature.editor.toolbar
+
+import org.json.JSONArray
+import org.json.JSONObject
+
+/** Ordered toolbar items + which are disabled. */
+data class ToolbarConfig(val items: List<ToolbarItem>, val disabled: Set<ToolbarItem>) {
+    val enabled: List<ToolbarItem> get() = items.filter { it !in disabled }
+
+    fun toggled(item: ToolbarItem, on: Boolean): ToolbarConfig =
+        copy(disabled = if (on) disabled - item else disabled + item)
+
+    fun moved(from: Int, to: Int): ToolbarConfig {
+        val list = items.toMutableList()
+        val x = list.removeAt(from)
+        list.add(to, x)
+        return copy(items = list)
+    }
+
+    fun toJson(): String {
+        val items = JSONArray().also { a -> this.items.forEach { a.put(it.name) } }
+        val dis = JSONArray().also { a -> disabled.forEach { a.put(it.name) } }
+        return JSONObject().put("items", items).put("disabled", dis).toString()
+    }
+
+    companion object {
+        val DEFAULT = ToolbarConfig(ToolbarItem.entries.toList(), emptySet())
+
+        fun fromJson(json: String): ToolbarConfig {
+            if (json.isBlank()) return DEFAULT
+            val o = JSONObject(json)
+            val items = o.getJSONArray("items").let { a ->
+                (0 until a.length()).mapNotNull { runCatching { ToolbarItem.valueOf(a.getString(it)) }.getOrNull() }
+            }.ifEmpty { return DEFAULT }
+            val disabled = o.getJSONArray("disabled").let { a ->
+                (0 until a.length()).mapNotNull { runCatching { ToolbarItem.valueOf(a.getString(it)) }.getOrNull() }
+            }.toSet()
+            // Append any newly-added enum members so the toolbar never silently drops new actions.
+            val complete = items + ToolbarItem.entries.filter { it !in items }
+            return ToolbarConfig(complete, disabled)
+        }
+    }
+}
