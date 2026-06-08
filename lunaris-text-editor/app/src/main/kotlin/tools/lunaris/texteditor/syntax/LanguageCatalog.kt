@@ -2,8 +2,11 @@ package tools.lunaris.texteditor.syntax
 
 import org.json.JSONObject
 
-class LanguageCatalog(val languages: List<LanguageDefinition>) {
+class LanguageCatalog(languages: List<LanguageDefinition>) {
 
+    val languages: List<LanguageDefinition> = languages.toList()
+
+    // If two languages declare the same extension, the last one in the list wins.
     private val byExt: Map<String, LanguageDefinition> =
         buildMap {
             languages.forEach { def -> def.extensions.forEach { put(it.lowercase(), def) } }

@@ -35,4 +35,29 @@ class LanguageCatalogTest {
     fun plaintext_hasNullScope() {
         assertThat(catalog.findById("plaintext")?.scopeName).isNull()
     }
+
+    @Test
+    fun findById_unknown_returnsNull() {
+        assertThat(catalog.findById("ruby")).isNull()
+    }
+
+    @Test
+    fun findByExtension_emptyExtLanguage_neverMatches() {
+        val c = LanguageCatalog(
+            listOf(LanguageDefinition("none", "None", null, null, emptyList()))
+        )
+        assertThat(c.findByExtension("none")).isNull()
+        assertThat(c.findById("none")).isNotNull()
+    }
+
+    @Test
+    fun findByExtension_duplicateExtension_lastWins() {
+        val c = LanguageCatalog(
+            listOf(
+                LanguageDefinition("a", "A", "source.a", "grammars/a.json", listOf("x")),
+                LanguageDefinition("b", "B", "source.b", "grammars/b.json", listOf("x")),
+            )
+        )
+        assertThat(c.findByExtension("x")?.id).isEqualTo("b")
+    }
 }
