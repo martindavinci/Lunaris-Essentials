@@ -24,7 +24,7 @@
     { "id": "css", "display": "CSS", "ext": ["css"] },
     { "id": "dart", "display": "Dart", "ext": ["dart"] },
     { "id": "diff", "display": "Diff", "ext": ["diff", "patch"] },
-    { "id": "dockerfile", "display": "Dockerfile", "ext": ["dockerfile"] },
+    { "id": "docker", "display": "Dockerfile", "ext": ["dockerfile"] },
     { "id": "elixir", "display": "Elixir", "ext": ["ex", "exs"] },
     { "id": "erlang", "display": "Erlang", "ext": ["erl", "hrl"] },
     { "id": "fsharp", "display": "F#", "ext": ["fs", "fsx"] },
@@ -41,7 +41,7 @@
     { "id": "kotlin", "display": "Kotlin", "ext": ["kt", "kts"] },
     { "id": "latex", "display": "LaTeX", "ext": ["tex"] },
     { "id": "less", "display": "Less", "ext": ["less"] },
-    { "id": "lisp", "display": "Lisp", "ext": ["lisp", "lsp", "cl"] },
+    { "id": "common-lisp", "display": "Lisp", "ext": ["lisp", "lsp", "cl"] },
     { "id": "lua", "display": "Lua", "ext": ["lua"] },
     { "id": "make", "display": "Makefile", "ext": ["mk", "makefile"] },
     { "id": "markdown", "display": "Markdown", "ext": ["md", "markdown"] },
@@ -78,8 +78,7 @@
       "base16-default-light", "base16-solarized-dark", "base16-solarized-light"
     ],
     "classics": [
-      { "display": "Sunburst", "url": "https://raw.githubusercontent.com/textmate/themes.tmbundle/master/Themes/Sunburst.tmTheme" },
-      { "display": "Obsidian", "url": "https://raw.githubusercontent.com/ajmakan/Obsidian.tmTheme/master/Obsidian.tmTheme" }
+      { "display": "Sunburst", "url": "https://raw.githubusercontent.com/textmate/themes.tmbundle/master/Themes/Sunburst.tmTheme" }
     ],
     "default": "Sunburst"
   }

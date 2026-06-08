@@ -104,6 +104,13 @@
                                   ]
                       },
                       {
+                          "id":  "docker",
+                          "display":  "Dockerfile",
+                          "scopeName":  "source.dockerfile",
+                          "grammarAsset":  "grammars/docker.json",
+                          "ext":  "dockerfile"
+                      },
+                      {
                           "id":  "elixir",
                           "display":  "Elixir",
                           "scopeName":  "source.elixir",
@@ -252,6 +259,17 @@
                           "scopeName":  "source.css.less",
                           "grammarAsset":  "grammars/less.json",
                           "ext":  "less"
+                      },
+                      {
+                          "id":  "common-lisp",
+                          "display":  "Lisp",
+                          "scopeName":  "source.commonlisp",
+                          "grammarAsset":  "grammars/common-lisp.json",
+                          "ext":  [
+                                      "lisp",
+                                      "lsp",
+                                      "cl"
+                                  ]
                       },
                       {
                           "id":  "lua",
