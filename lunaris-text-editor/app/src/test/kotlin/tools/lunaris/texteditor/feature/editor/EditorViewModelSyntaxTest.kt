@@ -9,6 +9,8 @@ import tools.lunaris.texteditor.document.EncodingCodec
 import tools.lunaris.texteditor.file.FakeFileGateway
 import tools.lunaris.texteditor.file.FileRef
 import tools.lunaris.texteditor.file.FileRepository
+import tools.lunaris.texteditor.syntax.CharsetCatalog
+import tools.lunaris.texteditor.syntax.ColorSchemeCatalog
 import tools.lunaris.texteditor.syntax.LanguageCatalog
 import tools.lunaris.texteditor.syntax.LanguageDefinition
 import tools.lunaris.texteditor.syntax.SyntaxResolver
@@ -29,7 +31,7 @@ class EditorViewModelSyntaxTest {
         )
     )
     private val resolver = SyntaxResolver(catalog)
-    private val vm = EditorViewModel(repo, resolver, defaultColorSchemeId = "sunburst")
+    private val vm = EditorViewModel(repo, resolver, "sunburst", catalog, ColorSchemeCatalog(emptyList(), ""), CharsetCatalog())
 
     @Test
     fun load_autoDetectsScopeByExtension() = runTest {

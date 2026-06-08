@@ -10,6 +10,8 @@ import tools.lunaris.texteditor.file.FakeFileGateway
 import tools.lunaris.texteditor.file.FileGateway
 import tools.lunaris.texteditor.file.FileRef
 import tools.lunaris.texteditor.file.FileRepository
+import tools.lunaris.texteditor.syntax.CharsetCatalog
+import tools.lunaris.texteditor.syntax.ColorSchemeCatalog
 import tools.lunaris.texteditor.syntax.LanguageCatalog
 import tools.lunaris.texteditor.syntax.LanguageDefinition
 import tools.lunaris.texteditor.syntax.SyntaxResolver
@@ -23,10 +25,9 @@ class EditorViewModelTest {
 
     private val gateway = FakeFileGateway()
     private val repo = FileRepository(gateway, EncodingCodec())
-    private val resolver = SyntaxResolver(
-        LanguageCatalog(listOf(LanguageDefinition("plaintext", "Plain text", null, null, listOf("txt"))))
-    )
-    private val vm = EditorViewModel(repo, resolver, "sunburst")
+    private val langCatalog = LanguageCatalog(listOf(LanguageDefinition("plaintext", "Plain text", null, null, listOf("txt"))))
+    private val resolver = SyntaxResolver(langCatalog)
+    private val vm = EditorViewModel(repo, resolver, "sunburst", langCatalog, ColorSchemeCatalog(emptyList(), ""), CharsetCatalog())
 
     @Test
     fun contentChanged_marksDirty() {
@@ -102,7 +103,7 @@ class EditorViewModelTest {
             },
             EncodingCodec(),
         )
-        val throwingVm = EditorViewModel(throwingRepo, resolver, "sunburst")
+        val throwingVm = EditorViewModel(throwingRepo, resolver, "sunburst", langCatalog, ColorSchemeCatalog(emptyList(), ""), CharsetCatalog())
         throwingVm.onContentChanged("data")
         throwingVm.save(FileRef("content://doc/12"))
         advanceUntilIdle()

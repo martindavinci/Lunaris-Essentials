@@ -10,6 +10,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import tools.lunaris.texteditor.file.FileRef
 import tools.lunaris.texteditor.file.FileRepository
+import tools.lunaris.texteditor.syntax.CharsetCatalog
+import tools.lunaris.texteditor.syntax.ColorSchemeCatalog
+import tools.lunaris.texteditor.syntax.LanguageCatalog
 import tools.lunaris.texteditor.syntax.SyntaxResolver
 import tools.lunaris.texteditor.syntax.SyntaxSelection
 import java.nio.charset.Charset
@@ -21,6 +24,9 @@ class EditorViewModel @Inject constructor(
     private val repository: FileRepository,
     private val syntaxResolver: SyntaxResolver,
     @Named("defaultColorSchemeId") defaultColorSchemeId: String,
+    val languageCatalog: LanguageCatalog,
+    val colorSchemeCatalog: ColorSchemeCatalog,
+    val charsetCatalog: CharsetCatalog,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(EditorState(colorSchemeId = defaultColorSchemeId))

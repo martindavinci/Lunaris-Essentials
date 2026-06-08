@@ -16,7 +16,10 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.NoteAdd
 import androidx.compose.material.icons.filled.FolderOpen
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Save
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -28,7 +31,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -68,6 +73,10 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
         }
     }
 
+    var showSyntax by remember { mutableStateOf(false) }
+    var showScheme by remember { mutableStateOf(false) }
+    var showEncoding by remember { mutableStateOf(false) }
+
     val savedMsg = stringResource(R.string.saved)
     LaunchedEffect(state.savedSignal) {
         if (state.savedSignal > 0) snackbar.showSnackbar(savedMsg)
@@ -81,7 +90,14 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbar) },
-        topBar = { EditorTopBar(title = state.title) },
+        topBar = {
+            EditorTopBar(
+                title = state.title,
+                onSyntax = { showSyntax = true },
+                onScheme = { showScheme = true },
+                onEncoding = { showEncoding = true },
+            )
+        },
         bottomBar = {
             EditorBottomBar(
                 onOpen = { openLauncher.launch(arrayOf("*/*")) },
@@ -103,17 +119,47 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
                 .padding(padding),
         )
     }
+
+    if (showSyntax) {
+        SyntaxPickerDialog(
+            catalog = viewModel.languageCatalog,
+            current = state.syntax,
+            onSelected = viewModel::setSyntax,
+            onDismiss = { showSyntax = false },
+        )
+    }
+    if (showScheme) {
+        ColorSchemePickerDialog(
+            catalog = viewModel.colorSchemeCatalog,
+            currentId = state.colorSchemeId,
+            onSelected = viewModel::setColorScheme,
+            onDismiss = { showScheme = false },
+        )
+    }
+    if (showEncoding) {
+        EncodingPickerDialog(
+            catalog = viewModel.charsetCatalog,
+            current = state.charset,
+            onSelected = viewModel::reopenWithEncoding,
+            onDismiss = { showEncoding = false },
+        )
+    }
 }
 
 @Composable
-private fun EditorTopBar(title: String) {
+private fun EditorTopBar(
+    title: String,
+    onSyntax: () -> Unit,
+    onScheme: () -> Unit,
+    onEncoding: () -> Unit,
+) {
     Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = BarElevation) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .statusBarsPadding()
                 .height(TopBarHeight)
-                .padding(horizontal = 16.dp),
+                .padding(start = 16.dp, end = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
@@ -121,7 +167,26 @@ private fun EditorTopBar(title: String) {
                 style = MaterialTheme.typography.titleMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f),
             )
+            var menuOpen by remember { mutableStateOf(false) }
+            IconButton(onClick = { menuOpen = true }) {
+                Icon(Icons.Filled.MoreVert, contentDescription = stringResource(R.string.menu_more))
+            }
+            DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.menu_syntax)) },
+                    onClick = { menuOpen = false; onSyntax() },
+                )
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.menu_display_style)) },
+                    onClick = { menuOpen = false; onScheme() },
+                )
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.menu_encoding)) },
+                    onClick = { menuOpen = false; onEncoding() },
+                )
+            }
         }
     }
 }
