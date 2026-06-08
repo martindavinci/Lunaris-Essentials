@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.NoteAdd
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Save
@@ -106,18 +108,27 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
                     val ref = state.fileRef
                     if (ref != null) viewModel.save(ref) else createLauncher.launch(state.title)
                 },
+                onClose = { viewModel.closeTab(state.activeTabId) },
             )
         },
     ) { padding ->
-        CodeEditorView(
-            text = state.text,
-            onTextChange = viewModel::onContentChanged,
-            scopeName = state.scopeName,
-            themeId = state.colorSchemeId,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
-        )
+        Column(Modifier.fillMaxSize().padding(padding)) {
+            TabStrip(
+                tabs = state.tabs,
+                activeTabId = state.activeTabId,
+                onSelect = viewModel::switchTab,
+                onClose = viewModel::closeTab,
+                onNew = viewModel::newTab,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            CodeEditorView(
+                text = state.text,
+                onTextChange = viewModel::onContentChanged,
+                scopeName = state.scopeName,
+                themeId = state.colorSchemeId,
+                modifier = Modifier.fillMaxWidth().weight(1f),
+            )
+        }
     }
 
     if (showSyntax) {
@@ -196,6 +207,7 @@ private fun EditorBottomBar(
     onOpen: () -> Unit,
     onNew: () -> Unit,
     onSave: () -> Unit,
+    onClose: () -> Unit,
 ) {
     Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = BarElevation) {
         Row(
@@ -213,6 +225,9 @@ private fun EditorBottomBar(
             }
             IconButton(onClick = onSave) {
                 Icon(Icons.Filled.Save, contentDescription = stringResource(R.string.action_save))
+            }
+            IconButton(onClick = onClose) {
+                Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.action_close))
             }
         }
     }
