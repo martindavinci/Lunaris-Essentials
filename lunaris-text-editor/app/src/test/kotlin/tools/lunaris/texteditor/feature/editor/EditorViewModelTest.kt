@@ -10,6 +10,7 @@ import tools.lunaris.texteditor.data.FakeRecentsStore
 import tools.lunaris.texteditor.data.FakeSessionStore
 import tools.lunaris.texteditor.data.PersistedSession
 import tools.lunaris.texteditor.data.PersistedTab
+import tools.lunaris.texteditor.data.SessionManager
 import tools.lunaris.texteditor.document.EncodingCodec
 import tools.lunaris.texteditor.file.FakeFileGateway
 import tools.lunaris.texteditor.file.FileRef
@@ -48,7 +49,7 @@ class EditorViewModelTest {
         charsetCatalog = CharsetCatalog(),
         colorSchemeStore = FakeColorSchemeStore(),
         recentsStore = recents,
-        sessionStore = session,
+        sessionManager = SessionManager(session, resolver),
     )
 
     @Test
@@ -195,7 +196,7 @@ class EditorViewModelTest {
         val vm = EditorViewModel(
             repo, resolver, "sunburst", catalog,
             ColorSchemeCatalog(emptyList(), ""), CharsetCatalog(),
-            FakeColorSchemeStore(), recents, seeded,
+            FakeColorSchemeStore(), recents, SessionManager(seeded, resolver),
         )
         advanceUntilIdle()
         assertThat(vm.state.value.tabs.map { it.title }).containsExactly("a.kt", "draft.txt")

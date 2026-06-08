@@ -14,11 +14,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import tools.lunaris.texteditor.data.ColorSchemeStore
-import tools.lunaris.texteditor.data.PersistedSession
-import tools.lunaris.texteditor.data.PersistedTab
 import tools.lunaris.texteditor.data.RecentEntry
 import tools.lunaris.texteditor.data.RecentsStore
-import tools.lunaris.texteditor.data.SessionStore
+import tools.lunaris.texteditor.data.SessionManager
 import tools.lunaris.texteditor.document.DocumentSession
 import tools.lunaris.texteditor.document.LineEnding
 import tools.lunaris.texteditor.document.OpenDocuments
@@ -45,7 +43,7 @@ class EditorViewModel @Inject constructor(
     val charsetCatalog: CharsetCatalog,
     private val colorSchemeStore: ColorSchemeStore,
     private val recentsStore: RecentsStore,
-    private val sessionStore: SessionStore,
+    private val sessionManager: SessionManager,
 ) : ViewModel() {
 
     private var colorSchemeId = defaultColorSchemeId
@@ -193,43 +191,11 @@ class EditorViewModel @Inject constructor(
     fun consumeError() = _state.update { it.copy(error = null) }
 
     private suspend fun restoreSession() {
-        val persisted = sessionStore.session().first()
-        if (persisted.tabs.isEmpty()) return
-        val sessions = persisted.tabs.map { t ->
-            val syntax = t.syntaxId?.let { SyntaxSelection.Explicit(it) } ?: SyntaxSelection.Auto
-            DocumentSession(
-                id = t.id,
-                title = t.title,
-                fileRef = t.uri?.let { FileRef(it) },
-                text = t.text,
-                savedText = if (t.dirty) "" else t.text,
-                charset = runCatching { Charset.forName(t.charsetName) }.getOrDefault(StandardCharsets.UTF_8),
-                lineEnding = runCatching { LineEnding.valueOf(t.lineEnding) }.getOrDefault(LineEnding.LF),
-                syntax = syntax,
-                scopeName = syntaxResolver.resolveScope(syntax, t.title),
-            )
-        }
-        val activeId = if (sessions.any { it.id == persisted.activeId }) persisted.activeId else sessions.first().id
-        docs.value = OpenDocuments(sessions, activeId)
+        sessionManager.restore()?.let { docs.value = it }
     }
 
     fun snapshotSession() {
-        val snapshot = PersistedSession(
-            activeId = docs.value.activeId,
-            tabs = docs.value.sessions.map { s ->
-                PersistedTab(
-                    id = s.id,
-                    uri = s.fileRef?.uri,
-                    title = s.title,
-                    text = s.text,
-                    dirty = s.dirty,
-                    charsetName = s.charset.name(),
-                    lineEnding = s.lineEnding.name,
-                    syntaxId = (s.syntax as? SyntaxSelection.Explicit)?.languageId,
-                )
-            },
-        )
-        viewModelScope.launch { runCatching { sessionStore.save(snapshot) } }
+        viewModelScope.launch { runCatching { sessionManager.save(docs.value) } }
     }
 
     override fun onCleared() {
