@@ -125,11 +125,17 @@ class EditorViewModel @Inject constructor(
 
     fun save(ref: FileRef) {
         val active = docs.value.active ?: return
+        val savedText = active.text
+        val charset = active.charset
+        val lineEnding = active.lineEnding
+        val priorTitle = active.title
         viewModelScope.launch {
             try {
-                repository.save(ref, active.text, active.charset, active.lineEnding)
-                val name = repository.displayName(ref) ?: active.title
-                docs.value = docs.value.replace(active.id) { it.copy(fileRef = ref, title = name).markSaved() }
+                repository.save(ref, savedText, charset, lineEnding)
+                val name = repository.displayName(ref) ?: priorTitle
+                docs.value = docs.value.replace(active.id) {
+                    it.copy(fileRef = ref, title = name, savedText = savedText)
+                }
                 recentsStore.touch(RecentEntry(ref.uri, name))
                 publish()
                 _state.update { it.copy(savedSignal = it.savedSignal + 1) }

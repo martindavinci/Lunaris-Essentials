@@ -156,4 +156,26 @@ class EditorViewModelTest {
         assertThat(vm.state.value.charset).isEqualTo(StandardCharsets.ISO_8859_1)
         assertThat(vm.state.value.text).isEqualTo("ab")
     }
+
+    @Test
+    fun editDuringSave_keepsDirty() = runTest {
+        val vm = newVm()
+        vm.onContentChanged("A")
+        val ref = FileRef("content://doc/x")
+        vm.save(ref)              // captures "A"; coroutine body is queued, not yet run
+        vm.onContentChanged("AB") // user edits in-memory before save completes
+        advanceUntilIdle()        // save body runs: writes "A", baseline becomes "A"
+        assertThat(String(gateway.store[ref.uri]!!, StandardCharsets.UTF_8)).isEqualTo("A")
+        assertThat(vm.state.value.text).isEqualTo("AB")
+        assertThat(vm.state.value.dirty).isTrue()
+    }
+
+    @Test
+    fun openFile_failure_setsErrorAndClearsLoading() = runTest {
+        val vm = newVm()
+        vm.openFile(FileRef("content://missing")) // no bytes in fake gateway -> readBytes throws
+        advanceUntilIdle()
+        assertThat(vm.state.value.error).isNotNull()
+        assertThat(vm.state.value.isLoading).isFalse()
+    }
 }
