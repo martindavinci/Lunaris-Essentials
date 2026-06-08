@@ -94,6 +94,7 @@ class EditorViewModel @Inject constructor(
             try {
                 val loaded = repository.load(ref, forced = charset)
                 savedText = loaded.text
+                lastBytesRef = loaded.ref
                 _state.update { it.copy(text = loaded.text, charset = loaded.charset, lineEnding = loaded.lineEnding, dirty = false) }
             } catch (t: Throwable) {
                 _state.update { it.copy(error = t.message) }

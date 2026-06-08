@@ -1,5 +1,6 @@
 package tools.lunaris.texteditor.editor
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -61,6 +62,7 @@ fun CodeEditorView(
 private fun applyTheme(editor: CodeEditor, themeId: String) {
     val registry = ThemeRegistry.getInstance()
     runCatching { registry.setTheme(themeId) }
+        .onFailure { Log.w("CodeEditorView", "Failed to set theme '$themeId'", it) }
     editor.colorScheme = TextMateColorScheme.create(registry)
 }
 

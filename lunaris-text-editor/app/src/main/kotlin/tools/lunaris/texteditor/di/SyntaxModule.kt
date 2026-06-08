@@ -8,6 +8,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import tools.lunaris.texteditor.syntax.ColorSchemeCatalog
 import tools.lunaris.texteditor.syntax.LanguageCatalog
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -28,6 +29,6 @@ object SyntaxModule {
         ColorSchemeCatalog.fromJson(readAsset(context, "textmate/themes.json"))
 
     @Provides
-    @javax.inject.Named("defaultColorSchemeId")
+    @Named("defaultColorSchemeId")
     fun provideDefaultColorSchemeId(catalog: ColorSchemeCatalog): String = catalog.defaultId
 }

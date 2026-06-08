@@ -78,4 +78,20 @@ class EditorViewModelSyntaxTest {
         assertThat(vm.state.value.charset).isEqualTo(StandardCharsets.ISO_8859_1)
         assertThat(vm.state.value.text).isEqualTo("ab")
     }
+
+    @Test
+    fun newFile_resetsSyntaxAndScope() {
+        vm.setSyntax(SyntaxSelection.Explicit("python"))
+        vm.newFile()
+        assertThat(vm.state.value.syntax).isEqualTo(SyntaxSelection.Auto)
+        assertThat(vm.state.value.scopeName).isNull()
+    }
+
+    @Test
+    fun reopenWithEncoding_noFile_isNoOp() = runTest {
+        val before = vm.state.value
+        vm.reopenWithEncoding(StandardCharsets.UTF_16)
+        advanceUntilIdle()
+        assertThat(vm.state.value).isEqualTo(before)
+    }
 }
