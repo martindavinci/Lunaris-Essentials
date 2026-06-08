@@ -1,0 +1,477 @@
+{
+    "languages":  [
+                      {
+                          "id":  "asm",
+                          "display":  "Assembly",
+                          "scopeName":  "source.asm.x86_64",
+                          "grammarAsset":  "grammars/asm.json",
+                          "ext":  [
+                                      "asm",
+                                      "s"
+                                  ]
+                      },
+                      {
+                          "id":  "shellscript",
+                          "display":  "Bash",
+                          "scopeName":  "source.shell",
+                          "grammarAsset":  "grammars/shellscript.json",
+                          "ext":  [
+                                      "sh",
+                                      "bash",
+                                      "zsh"
+                                  ]
+                      },
+                      {
+                          "id":  "bat",
+                          "display":  "Batch",
+                          "scopeName":  "source.batchfile",
+                          "grammarAsset":  "grammars/bat.json",
+                          "ext":  [
+                                      "bat",
+                                      "cmd"
+                                  ]
+                      },
+                      {
+                          "id":  "c",
+                          "display":  "C",
+                          "scopeName":  "source.c",
+                          "grammarAsset":  "grammars/c.json",
+                          "ext":  [
+                                      "c",
+                                      "h"
+                                  ]
+                      },
+                      {
+                          "id":  "csharp",
+                          "display":  "C#",
+                          "scopeName":  "source.cs",
+                          "grammarAsset":  "grammars/csharp.json",
+                          "ext":  "cs"
+                      },
+                      {
+                          "id":  "cpp",
+                          "display":  "C++",
+                          "scopeName":  "source.cpp",
+                          "grammarAsset":  "grammars/cpp.json",
+                          "ext":  [
+                                      "cpp",
+                                      "cc",
+                                      "cxx",
+                                      "hpp",
+                                      "hh"
+                                  ]
+                      },
+                      {
+                          "id":  "clojure",
+                          "display":  "Clojure",
+                          "scopeName":  "source.clojure",
+                          "grammarAsset":  "grammars/clojure.json",
+                          "ext":  [
+                                      "clj",
+                                      "cljs",
+                                      "edn"
+                                  ]
+                      },
+                      {
+                          "id":  "coffee",
+                          "display":  "CoffeeScript",
+                          "scopeName":  "source.coffee",
+                          "grammarAsset":  "grammars/coffee.json",
+                          "ext":  "coffee"
+                      },
+                      {
+                          "id":  "css",
+                          "display":  "CSS",
+                          "scopeName":  "source.css",
+                          "grammarAsset":  "grammars/css.json",
+                          "ext":  "css"
+                      },
+                      {
+                          "id":  "dart",
+                          "display":  "Dart",
+                          "scopeName":  "source.dart",
+                          "grammarAsset":  "grammars/dart.json",
+                          "ext":  "dart"
+                      },
+                      {
+                          "id":  "diff",
+                          "display":  "Diff",
+                          "scopeName":  "source.diff",
+                          "grammarAsset":  "grammars/diff.json",
+                          "ext":  [
+                                      "diff",
+                                      "patch"
+                                  ]
+                      },
+                      {
+                          "id":  "elixir",
+                          "display":  "Elixir",
+                          "scopeName":  "source.elixir",
+                          "grammarAsset":  "grammars/elixir.json",
+                          "ext":  [
+                                      "ex",
+                                      "exs"
+                                  ]
+                      },
+                      {
+                          "id":  "erlang",
+                          "display":  "Erlang",
+                          "scopeName":  "source.erlang",
+                          "grammarAsset":  "grammars/erlang.json",
+                          "ext":  [
+                                      "erl",
+                                      "hrl"
+                                  ]
+                      },
+                      {
+                          "id":  "fsharp",
+                          "display":  "F#",
+                          "scopeName":  "source.fsharp",
+                          "grammarAsset":  "grammars/fsharp.json",
+                          "ext":  [
+                                      "fs",
+                                      "fsx"
+                                  ]
+                      },
+                      {
+                          "id":  "fortran-free-form",
+                          "display":  "Fortran",
+                          "scopeName":  "source.fortran.free",
+                          "grammarAsset":  "grammars/fortran-free-form.json",
+                          "ext":  [
+                                      "f90",
+                                      "f95",
+                                      "f03"
+                                  ]
+                      },
+                      {
+                          "id":  "go",
+                          "display":  "Go",
+                          "scopeName":  "source.go",
+                          "grammarAsset":  "grammars/go.json",
+                          "ext":  "go"
+                      },
+                      {
+                          "id":  "graphql",
+                          "display":  "GraphQL",
+                          "scopeName":  "source.graphql",
+                          "grammarAsset":  "grammars/graphql.json",
+                          "ext":  [
+                                      "graphql",
+                                      "gql"
+                                  ]
+                      },
+                      {
+                          "id":  "groovy",
+                          "display":  "Groovy",
+                          "scopeName":  "source.groovy",
+                          "grammarAsset":  "grammars/groovy.json",
+                          "ext":  [
+                                      "groovy",
+                                      "gradle"
+                                  ]
+                      },
+                      {
+                          "id":  "haskell",
+                          "display":  "Haskell",
+                          "scopeName":  "source.haskell",
+                          "grammarAsset":  "grammars/haskell.json",
+                          "ext":  "hs"
+                      },
+                      {
+                          "id":  "html",
+                          "display":  "HTML",
+                          "scopeName":  "text.html.basic",
+                          "grammarAsset":  "grammars/html.json",
+                          "ext":  [
+                                      "html",
+                                      "htm",
+                                      "xhtml"
+                                  ]
+                      },
+                      {
+                          "id":  "ini",
+                          "display":  "INI",
+                          "scopeName":  "source.ini",
+                          "grammarAsset":  "grammars/ini.json",
+                          "ext":  [
+                                      "ini",
+                                      "cfg",
+                                      "conf"
+                                  ]
+                      },
+                      {
+                          "id":  "java",
+                          "display":  "Java",
+                          "scopeName":  "source.java",
+                          "grammarAsset":  "grammars/java.json",
+                          "ext":  "java"
+                      },
+                      {
+                          "id":  "javascript",
+                          "display":  "JavaScript",
+                          "scopeName":  "source.js",
+                          "grammarAsset":  "grammars/javascript.json",
+                          "ext":  [
+                                      "js",
+                                      "mjs",
+                                      "cjs",
+                                      "jsx"
+                                  ]
+                      },
+                      {
+                          "id":  "json",
+                          "display":  "JSON",
+                          "scopeName":  "source.json",
+                          "grammarAsset":  "grammars/json.json",
+                          "ext":  [
+                                      "json",
+                                      "jsonc"
+                                  ]
+                      },
+                      {
+                          "id":  "kotlin",
+                          "display":  "Kotlin",
+                          "scopeName":  "source.kotlin",
+                          "grammarAsset":  "grammars/kotlin.json",
+                          "ext":  [
+                                      "kt",
+                                      "kts"
+                                  ]
+                      },
+                      {
+                          "id":  "latex",
+                          "display":  "LaTeX",
+                          "scopeName":  "text.tex.latex",
+                          "grammarAsset":  "grammars/latex.json",
+                          "ext":  "tex"
+                      },
+                      {
+                          "id":  "less",
+                          "display":  "Less",
+                          "scopeName":  "source.css.less",
+                          "grammarAsset":  "grammars/less.json",
+                          "ext":  "less"
+                      },
+                      {
+                          "id":  "lua",
+                          "display":  "Lua",
+                          "scopeName":  "source.lua",
+                          "grammarAsset":  "grammars/lua.json",
+                          "ext":  "lua"
+                      },
+                      {
+                          "id":  "make",
+                          "display":  "Makefile",
+                          "scopeName":  "source.makefile",
+                          "grammarAsset":  "grammars/make.json",
+                          "ext":  [
+                                      "mk",
+                                      "makefile"
+                                  ]
+                      },
+                      {
+                          "id":  "markdown",
+                          "display":  "Markdown",
+                          "scopeName":  "text.html.markdown",
+                          "grammarAsset":  "grammars/markdown.json",
+                          "ext":  [
+                                      "md",
+                                      "markdown"
+                                  ]
+                      },
+                      {
+                          "id":  "matlab",
+                          "display":  "Matlab",
+                          "scopeName":  "source.matlab",
+                          "grammarAsset":  "grammars/matlab.json",
+                          "ext":  "m"
+                      },
+                      {
+                          "id":  "objective-c",
+                          "display":  "Objective-C",
+                          "scopeName":  "source.objc",
+                          "grammarAsset":  "grammars/objective-c.json",
+                          "ext":  "mm"
+                      },
+                      {
+                          "id":  "ocaml",
+                          "display":  "OCaml",
+                          "scopeName":  "source.ocaml",
+                          "grammarAsset":  "grammars/ocaml.json",
+                          "ext":  [
+                                      "ml",
+                                      "mli"
+                                  ]
+                      },
+                      {
+                          "id":  "pascal",
+                          "display":  "Pascal",
+                          "scopeName":  "source.pascal",
+                          "grammarAsset":  "grammars/pascal.json",
+                          "ext":  [
+                                      "pas",
+                                      "pp"
+                                  ]
+                      },
+                      {
+                          "id":  "perl",
+                          "display":  "Perl",
+                          "scopeName":  "source.perl",
+                          "grammarAsset":  "grammars/perl.json",
+                          "ext":  [
+                                      "pl",
+                                      "pm"
+                                  ]
+                      },
+                      {
+                          "id":  "php",
+                          "display":  "PHP",
+                          "scopeName":  "source.php",
+                          "grammarAsset":  "grammars/php.json",
+                          "ext":  "php"
+                      },
+                      {
+                          "id":  "plaintext",
+                          "display":  "Plain text",
+                          "scopeName":  null,
+                          "grammarAsset":  null,
+                          "ext":  [
+                                      "txt",
+                                      "text",
+                                      "log"
+                                  ]
+                      },
+                      {
+                          "id":  "powershell",
+                          "display":  "PowerShell",
+                          "scopeName":  "source.powershell",
+                          "grammarAsset":  "grammars/powershell.json",
+                          "ext":  [
+                                      "ps1",
+                                      "psm1"
+                                  ]
+                      },
+                      {
+                          "id":  "prolog",
+                          "display":  "Prolog",
+                          "scopeName":  "source.prolog",
+                          "grammarAsset":  "grammars/prolog.json",
+                          "ext":  "pro"
+                      },
+                      {
+                          "id":  "proto",
+                          "display":  "Protocol Buffers",
+                          "scopeName":  "source.proto",
+                          "grammarAsset":  "grammars/proto.json",
+                          "ext":  "proto"
+                      },
+                      {
+                          "id":  "python",
+                          "display":  "Python",
+                          "scopeName":  "source.python",
+                          "grammarAsset":  "grammars/python.json",
+                          "ext":  [
+                                      "py",
+                                      "pyw"
+                                  ]
+                      },
+                      {
+                          "id":  "r",
+                          "display":  "R",
+                          "scopeName":  "source.r",
+                          "grammarAsset":  "grammars/r.json",
+                          "ext":  "r"
+                      },
+                      {
+                          "id":  "ruby",
+                          "display":  "Ruby",
+                          "scopeName":  "source.ruby",
+                          "grammarAsset":  "grammars/ruby.json",
+                          "ext":  "rb"
+                      },
+                      {
+                          "id":  "rust",
+                          "display":  "Rust",
+                          "scopeName":  "source.rust",
+                          "grammarAsset":  "grammars/rust.json",
+                          "ext":  "rs"
+                      },
+                      {
+                          "id":  "scala",
+                          "display":  "Scala",
+                          "scopeName":  "source.scala",
+                          "grammarAsset":  "grammars/scala.json",
+                          "ext":  [
+                                      "scala",
+                                      "sc"
+                                  ]
+                      },
+                      {
+                          "id":  "scss",
+                          "display":  "SCSS",
+                          "scopeName":  "source.css.scss",
+                          "grammarAsset":  "grammars/scss.json",
+                          "ext":  "scss"
+                      },
+                      {
+                          "id":  "sql",
+                          "display":  "SQL",
+                          "scopeName":  "source.sql",
+                          "grammarAsset":  "grammars/sql.json",
+                          "ext":  "sql"
+                      },
+                      {
+                          "id":  "swift",
+                          "display":  "Swift",
+                          "scopeName":  "source.swift",
+                          "grammarAsset":  "grammars/swift.json",
+                          "ext":  "swift"
+                      },
+                      {
+                          "id":  "toml",
+                          "display":  "TOML",
+                          "scopeName":  "source.toml",
+                          "grammarAsset":  "grammars/toml.json",
+                          "ext":  "toml"
+                      },
+                      {
+                          "id":  "typescript",
+                          "display":  "TypeScript",
+                          "scopeName":  "source.ts",
+                          "grammarAsset":  "grammars/typescript.json",
+                          "ext":  [
+                                      "ts",
+                                      "tsx"
+                                  ]
+                      },
+                      {
+                          "id":  "vb",
+                          "display":  "Visual Basic",
+                          "scopeName":  "source.asp.vb.net",
+                          "grammarAsset":  "grammars/vb.json",
+                          "ext":  "vb"
+                      },
+                      {
+                          "id":  "xml",
+                          "display":  "XML",
+                          "scopeName":  "text.xml",
+                          "grammarAsset":  "grammars/xml.json",
+                          "ext":  [
+                                      "xml",
+                                      "svg",
+                                      "xsd"
+                                  ]
+                      },
+                      {
+                          "id":  "yaml",
+                          "display":  "YAML",
+                          "scopeName":  "source.yaml",
+                          "grammarAsset":  "grammars/yaml.json",
+                          "ext":  [
+                                      "yaml",
+                                      "yml"
+                                  ]
+                      }
+                  ]
+}
