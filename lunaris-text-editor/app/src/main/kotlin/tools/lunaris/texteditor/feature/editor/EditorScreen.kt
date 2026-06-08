@@ -60,7 +60,7 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
     ) { uri ->
         if (uri != null) {
             persistReadWrite(context, uri)
-            viewModel.load(FileRef(uri.toString()))
+            viewModel.openFile(FileRef(uri.toString()))
         }
     }
 
@@ -101,7 +101,7 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
         bottomBar = {
             EditorBottomBar(
                 onOpen = { openLauncher.launch(arrayOf("*/*")) },
-                onNew = { viewModel.newFile() },
+                onNew = { viewModel.newTab() },
                 onSave = {
                     val ref = state.fileRef
                     if (ref != null) viewModel.save(ref) else createLauncher.launch(state.title)

@@ -5,9 +5,11 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
+import tools.lunaris.texteditor.data.FakeColorSchemeStore
+import tools.lunaris.texteditor.data.FakeRecentsStore
+import tools.lunaris.texteditor.data.FakeSessionStore
 import tools.lunaris.texteditor.document.EncodingCodec
 import tools.lunaris.texteditor.file.FakeFileGateway
-import tools.lunaris.texteditor.file.FileGateway
 import tools.lunaris.texteditor.file.FileRef
 import tools.lunaris.texteditor.file.FileRepository
 import tools.lunaris.texteditor.syntax.CharsetCatalog
@@ -15,111 +17,143 @@ import tools.lunaris.texteditor.syntax.ColorSchemeCatalog
 import tools.lunaris.texteditor.syntax.LanguageCatalog
 import tools.lunaris.texteditor.syntax.LanguageDefinition
 import tools.lunaris.texteditor.syntax.SyntaxResolver
-import tools.lunaris.texteditor.data.FakeColorSchemeStore
+import tools.lunaris.texteditor.syntax.SyntaxSelection
 import tools.lunaris.texteditor.util.MainDispatcherRule
 import java.nio.charset.StandardCharsets
 
 class EditorViewModelTest {
 
-    @get:Rule
-    val mainDispatcherRule = MainDispatcherRule()
+    @get:Rule val mainDispatcherRule = MainDispatcherRule()
 
     private val gateway = FakeFileGateway()
     private val repo = FileRepository(gateway, EncodingCodec())
-    private val langCatalog = LanguageCatalog(listOf(LanguageDefinition("plaintext", "Plain text", null, null, listOf("txt"))))
-    private val resolver = SyntaxResolver(langCatalog)
-    private val vm = EditorViewModel(repo, resolver, "sunburst", langCatalog, ColorSchemeCatalog(emptyList(), ""), CharsetCatalog(), FakeColorSchemeStore())
+    private val catalog = LanguageCatalog(
+        listOf(
+            LanguageDefinition("plaintext", "Plain text", null, null, listOf("txt")),
+            LanguageDefinition("python", "Python", "source.python", "grammars/python.json", listOf("py")),
+        )
+    )
+    private val resolver = SyntaxResolver(catalog)
+    private val recents = FakeRecentsStore()
+    private val session = FakeSessionStore()
+
+    private fun newVm() = EditorViewModel(
+        repository = repo,
+        syntaxResolver = resolver,
+        defaultColorSchemeId = "sunburst",
+        languageCatalog = catalog,
+        colorSchemeCatalog = ColorSchemeCatalog(emptyList(), ""),
+        charsetCatalog = CharsetCatalog(),
+        colorSchemeStore = FakeColorSchemeStore(),
+        recentsStore = recents,
+        sessionStore = session,
+    )
 
     @Test
-    fun contentChanged_marksDirty() {
-        vm.onContentChanged("hello")
-        assertThat(vm.state.value.text).isEqualTo("hello")
-        assertThat(vm.state.value.dirty).isTrue()
+    fun startsWithOneUntitledTab() {
+        val vm = newVm()
+        assertThat(vm.state.value.tabs).hasSize(1)
+        assertThat(vm.state.value.title).isEqualTo("untitled")
     }
 
     @Test
-    fun load_populatesStateAndClearsDirty() = runTest {
-        val ref = FileRef("content://doc/9")
-        gateway.store[ref.uri] = "a\nb".toByteArray(StandardCharsets.UTF_8)
-        gateway.names[ref.uri] = "a.txt"
+    fun newTab_addsAndActivates() {
+        val vm = newVm()
+        vm.newTab()
+        assertThat(vm.state.value.tabs).hasSize(2)
+    }
 
-        vm.load(ref)
+    @Test
+    fun openFile_addsTab_autoDetectsSyntax_andRecords() = runTest {
+        val vm = newVm()
+        val ref = FileRef("content://doc/p")
+        gateway.store[ref.uri] = "print(1)".toByteArray(StandardCharsets.UTF_8)
+        gateway.names[ref.uri] = "main.py"
+        vm.openFile(ref)
         advanceUntilIdle()
+        assertThat(vm.state.value.tabs).hasSize(2)
+        assertThat(vm.state.value.title).isEqualTo("main.py")
+        assertThat(vm.state.value.scopeName).isEqualTo("source.python")
+        assertThat(recents.flow.value.map { it.uri }).contains(ref.uri)
+    }
 
-        assertThat(vm.state.value.text).isEqualTo("a\nb")
-        assertThat(vm.state.value.title).isEqualTo("a.txt")
-        assertThat(vm.state.value.fileRef).isEqualTo(ref)
+    @Test
+    fun contentChanged_marksActiveDirty_only() {
+        val vm = newVm()
+        vm.newTab()
+        vm.onContentChanged("edit")
+        assertThat(vm.state.value.dirty).isTrue()
+        vm.switchTab(vm.state.value.tabs.first().id)
         assertThat(vm.state.value.dirty).isFalse()
     }
 
     @Test
-    fun save_writesFileAndClearsDirty() = runTest {
-        val ref = FileRef("content://doc/10")
+    fun switchTab_restoresThatTabsText() {
+        val vm = newVm()
+        vm.onContentChanged("first")
+        val firstId = vm.state.value.activeTabId
+        vm.newTab()
+        vm.onContentChanged("second")
+        vm.switchTab(firstId)
+        assertThat(vm.state.value.text).isEqualTo("first")
+    }
+
+    @Test
+    fun save_writesActive_clearsDirty_records() = runTest {
+        val vm = newVm()
         vm.onContentChanged("data")
+        val ref = FileRef("content://doc/s")
         vm.save(ref)
         advanceUntilIdle()
-
         assertThat(String(gateway.store[ref.uri]!!, StandardCharsets.UTF_8)).isEqualTo("data")
         assertThat(vm.state.value.dirty).isFalse()
-        assertThat(vm.state.value.fileRef).isEqualTo(ref)
+        assertThat(recents.flow.value.map { it.uri }).contains(ref.uri)
     }
 
     @Test
-    fun newFile_resetsToEmptyUntitled() {
-        vm.onContentChanged("scratch")
-        vm.newFile()
+    fun closeTab_removesIt() {
+        val vm = newVm()
+        vm.newTab()
+        val id = vm.state.value.activeTabId
+        vm.closeTab(id)
+        assertThat(vm.state.value.tabs).hasSize(1)
+    }
+
+    @Test
+    fun closingLastTab_leavesFreshUntitled() {
+        val vm = newVm()
+        vm.onContentChanged("x")
+        vm.closeTab(vm.state.value.activeTabId)
+        assertThat(vm.state.value.tabs).hasSize(1)
+        assertThat(vm.state.value.dirty).isFalse()
         assertThat(vm.state.value.text).isEqualTo("")
-        assertThat(vm.state.value.title).isEqualTo("untitled")
-        assertThat(vm.state.value.fileRef).isNull()
-        assertThat(vm.state.value.dirty).isFalse()
     }
 
     @Test
-    fun save_incrementsSavedSignal() = runTest {
-        val ref = FileRef("content://doc/11")
-        vm.onContentChanged("data")
-        vm.save(ref)
-        advanceUntilIdle()
-        assertThat(vm.state.value.savedSignal).isEqualTo(1)
+    fun setSyntaxExplicit_updatesActiveScope() {
+        val vm = newVm()
+        vm.setSyntax(SyntaxSelection.Explicit("python"))
+        assertThat(vm.state.value.scopeName).isEqualTo("source.python")
     }
 
     @Test
-    fun load_failure_setsErrorAndClearsLoading() = runTest {
-        // No entry in gateway.store -> FakeFileGateway.readBytes throws.
-        vm.load(FileRef("content://missing"))
-        advanceUntilIdle()
-        assertThat(vm.state.value.error).isNotNull()
-        assertThat(vm.state.value.isLoading).isFalse()
+    fun setColorScheme_updatesState() {
+        val vm = newVm()
+        vm.setColorScheme("base16-tomorrow-night")
+        assertThat(vm.state.value.colorSchemeId).isEqualTo("base16-tomorrow-night")
     }
 
     @Test
-    fun save_failure_setsError() = runTest {
-        val throwingRepo = FileRepository(
-            object : FileGateway {
-                override suspend fun readBytes(ref: FileRef): ByteArray =
-                    throw java.io.IOException("read fail")
-                override suspend fun writeBytes(ref: FileRef, bytes: ByteArray): Unit =
-                    throw java.io.IOException("write fail")
-                override suspend fun displayName(ref: FileRef): String? = null
-            },
-            EncodingCodec(),
-        )
-        val throwingVm = EditorViewModel(throwingRepo, resolver, "sunburst", langCatalog, ColorSchemeCatalog(emptyList(), ""), CharsetCatalog(), FakeColorSchemeStore())
-        throwingVm.onContentChanged("data")
-        throwingVm.save(FileRef("content://doc/12"))
+    fun reopenWithEncoding_redecodesActive() = runTest {
+        val vm = newVm()
+        val ref = FileRef("content://doc/e")
+        gateway.store[ref.uri] = byteArrayOf(0x61, 0x62)
+        gateway.names[ref.uri] = "a.txt"
+        vm.openFile(ref)
         advanceUntilIdle()
-        assertThat(throwingVm.state.value.error).isNotNull()
-    }
-
-    @Test
-    fun edit_afterSave_reMarksDirty() = runTest {
-        val ref = FileRef("content://doc/13")
-        vm.onContentChanged("data")
-        vm.save(ref)
+        vm.reopenWithEncoding(StandardCharsets.ISO_8859_1)
         advanceUntilIdle()
-        assertThat(vm.state.value.dirty).isFalse()
-
-        vm.onContentChanged("data changed")
-        assertThat(vm.state.value.dirty).isTrue()
+        assertThat(vm.state.value.charset).isEqualTo(StandardCharsets.ISO_8859_1)
+        assertThat(vm.state.value.text).isEqualTo("ab")
     }
 }

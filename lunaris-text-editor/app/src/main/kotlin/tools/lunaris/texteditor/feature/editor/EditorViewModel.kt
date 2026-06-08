@@ -1,6 +1,5 @@
 package tools.lunaris.texteditor.feature.editor
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,6 +14,12 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import tools.lunaris.texteditor.data.ColorSchemeStore
+import tools.lunaris.texteditor.data.RecentEntry
+import tools.lunaris.texteditor.data.RecentsStore
+import tools.lunaris.texteditor.data.SessionStore
+import tools.lunaris.texteditor.document.DocumentSession
+import tools.lunaris.texteditor.document.LineEnding
+import tools.lunaris.texteditor.document.OpenDocuments
 import tools.lunaris.texteditor.file.FileRef
 import tools.lunaris.texteditor.file.FileRepository
 import tools.lunaris.texteditor.syntax.CharsetCatalog
@@ -23,6 +28,8 @@ import tools.lunaris.texteditor.syntax.LanguageCatalog
 import tools.lunaris.texteditor.syntax.SyntaxResolver
 import tools.lunaris.texteditor.syntax.SyntaxSelection
 import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
+import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -35,13 +42,14 @@ class EditorViewModel @Inject constructor(
     val colorSchemeCatalog: ColorSchemeCatalog,
     val charsetCatalog: CharsetCatalog,
     private val colorSchemeStore: ColorSchemeStore,
+    private val recentsStore: RecentsStore,
+    private val sessionStore: SessionStore,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(EditorState(colorSchemeId = defaultColorSchemeId))
-    val state: StateFlow<EditorState> = _state.asStateFlow()
-
-    private var savedText: String = ""
-    private var lastBytesRef: FileRef? = null
+    private var colorSchemeId = defaultColorSchemeId
+    private val docs = MutableStateFlow(OpenDocuments.initial(newId()))
+    private val _state = MutableStateFlow(EditorUiState(colorSchemeId = colorSchemeId))
+    val state: StateFlow<EditorUiState> = _state.asStateFlow()
 
     // Custom scope (not viewModelScope): the init read runs at construction time, which in unit
     // tests is BEFORE MainDispatcherRule installs the test main dispatcher. Unconfined runs the
@@ -49,48 +57,66 @@ class EditorViewModel @Inject constructor(
     private val initScope = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
 
     init {
+        publish()
         initScope.launch {
-            val persisted = colorSchemeStore.colorSchemeId(_state.value.colorSchemeId).first()
-            _state.update { it.copy(colorSchemeId = persisted) }
+            colorSchemeId = colorSchemeStore.colorSchemeId(colorSchemeId).first()
+            publish()
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        initScope.cancel()
+    private fun newId(): String = UUID.randomUUID().toString()
+
+    private fun mutate(block: (OpenDocuments) -> OpenDocuments) {
+        docs.value = block(docs.value)
+        publish()
     }
 
-    fun onContentChanged(text: String) {
-        _state.update { it.copy(text = text, dirty = text != savedText) }
+    private fun publish() {
+        val d = docs.value
+        val a = d.active
+        _state.update { prev ->
+            prev.copy(
+                tabs = d.sessions.map { TabSummary(it.id, it.title, it.dirty) },
+                activeTabId = d.activeId,
+                title = a?.title ?: "untitled",
+                text = a?.text ?: "",
+                fileRef = a?.fileRef,
+                charset = a?.charset ?: StandardCharsets.UTF_8,
+                lineEnding = a?.lineEnding ?: LineEnding.LF,
+                syntax = a?.syntax ?: SyntaxSelection.Auto,
+                scopeName = a?.scopeName,
+                dirty = a?.dirty ?: false,
+                colorSchemeId = colorSchemeId,
+            )
+        }
     }
 
-    fun newFile() {
-        savedText = ""
-        lastBytesRef = null
-        _state.value = EditorState(colorSchemeId = _state.value.colorSchemeId)
-    }
+    fun onContentChanged(text: String) = mutate { it.updateActive { s -> s.copy(text = text) } }
+    fun newTab() = mutate { it.opened(DocumentSession(id = newId())) }
+    fun switchTab(id: String) = mutate { it.activated(id) }
+    fun closeTab(id: String) = mutate { it.closed(id, freshId = newId()) }
 
-    fun load(ref: FileRef) {
+    fun openFile(ref: FileRef) {
         _state.update { it.copy(isLoading = true, error = null) }
         viewModelScope.launch {
             try {
                 val loaded = repository.load(ref)
-                savedText = loaded.text
-                lastBytesRef = ref
                 val selection = SyntaxSelection.Auto
-                _state.update {
-                    it.copy(
-                        title = loaded.name ?: "untitled",
-                        text = loaded.text,
-                        fileRef = loaded.ref,
-                        charset = loaded.charset,
-                        lineEnding = loaded.lineEnding,
-                        dirty = false,
-                        isLoading = false,
-                        syntax = selection,
-                        scopeName = syntaxResolver.resolveScope(selection, loaded.name),
-                    )
-                }
+                val tab = DocumentSession(
+                    id = newId(),
+                    title = loaded.name ?: "untitled",
+                    fileRef = loaded.ref,
+                    text = loaded.text,
+                    savedText = loaded.text,
+                    charset = loaded.charset,
+                    lineEnding = loaded.lineEnding,
+                    syntax = selection,
+                    scopeName = syntaxResolver.resolveScope(selection, loaded.name),
+                )
+                docs.value = docs.value.opened(tab)
+                recentsStore.touch(RecentEntry(ref.uri, tab.title))
+                publish()
+                _state.update { it.copy(isLoading = false) }
             } catch (t: Throwable) {
                 _state.update { it.copy(isLoading = false, error = t.message) }
             }
@@ -98,44 +124,53 @@ class EditorViewModel @Inject constructor(
     }
 
     fun save(ref: FileRef) {
-        val current = _state.value
+        val active = docs.value.active ?: return
         viewModelScope.launch {
             try {
-                repository.save(ref, current.text, current.charset, current.lineEnding)
-                savedText = current.text
-                lastBytesRef = ref
-                _state.update { it.copy(fileRef = ref, dirty = false, savedSignal = it.savedSignal + 1, error = null) }
+                repository.save(ref, active.text, active.charset, active.lineEnding)
+                val name = repository.displayName(ref) ?: active.title
+                docs.value = docs.value.replace(active.id) { it.copy(fileRef = ref, title = name).markSaved() }
+                recentsStore.touch(RecentEntry(ref.uri, name))
+                publish()
+                _state.update { it.copy(savedSignal = it.savedSignal + 1) }
             } catch (t: Throwable) {
                 _state.update { it.copy(error = t.message) }
             }
         }
     }
 
-    fun setSyntax(selection: SyntaxSelection) {
-        _state.update { it.copy(syntax = selection, scopeName = syntaxResolver.resolveScope(selection, it.title)) }
+    fun setSyntax(selection: SyntaxSelection) = mutate {
+        it.updateActive { s -> s.copy(syntax = selection, scopeName = syntaxResolver.resolveScope(selection, s.title)) }
     }
 
     fun setColorScheme(id: String) {
-        _state.update { it.copy(colorSchemeId = id) }
-        viewModelScope.launch {
-            runCatching { colorSchemeStore.setColorSchemeId(id) }
-                .onFailure { Log.w("EditorViewModel", "Failed to persist color scheme '$id'", it) }
-        }
+        colorSchemeId = id
+        publish()
+        viewModelScope.launch { runCatching { colorSchemeStore.setColorSchemeId(id) } }
     }
 
     fun reopenWithEncoding(charset: Charset) {
-        val ref = lastBytesRef ?: return
+        val active = docs.value.active ?: return
+        val ref = active.fileRef ?: return
         viewModelScope.launch {
             try {
                 val loaded = repository.load(ref, forced = charset)
-                savedText = loaded.text
-                lastBytesRef = loaded.ref
-                _state.update { it.copy(text = loaded.text, charset = loaded.charset, lineEnding = loaded.lineEnding, dirty = false) }
+                docs.value = docs.value.replace(active.id) {
+                    it.copy(text = loaded.text, savedText = loaded.text, charset = loaded.charset, lineEnding = loaded.lineEnding)
+                }
+                publish()
             } catch (t: Throwable) {
                 _state.update { it.copy(error = t.message) }
             }
         }
     }
 
+    fun recents() = recentsStore.recents()
+
     fun consumeError() = _state.update { it.copy(error = null) }
+
+    override fun onCleared() {
+        initScope.cancel()
+        super.onCleared()
+    }
 }
