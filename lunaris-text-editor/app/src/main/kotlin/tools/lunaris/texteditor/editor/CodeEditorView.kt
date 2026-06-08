@@ -11,8 +11,9 @@ import io.github.rosemoe.sora.widget.schemes.SchemeDarcula
 /**
  * Embeds the Sora [CodeEditor] in Compose.
  *
- * @param text pushed into the editor only when it differs from the editor's current
- *        content (prevents cursor-reset feedback loops).
+ * @param text pushed into the editor only when it differs from the last text the editor
+ *        is known to hold (prevents cursor-reset feedback loops and avoids serializing
+ *        the whole document on every recomposition).
  * @param onTextChange called whenever the user edits, with the full new text.
  */
 @Composable
@@ -21,8 +22,8 @@ fun CodeEditorView(
     onTextChange: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val callbackHolder = remember { TextChangeHolder() }
-    callbackHolder.callback = onTextChange
+    val holder = remember { EditorBinding() }
+    holder.callback = onTextChange
 
     AndroidView(
         modifier = modifier,
@@ -31,13 +32,20 @@ fun CodeEditorView(
                 editor.colorScheme = SchemeDarcula()
                 editor.isLineNumberEnabled = true
                 editor.setText(text)
+                holder.lastKnownText = text
                 editor.subscribeEvent(ContentChangeEvent::class.java) { _, _ ->
-                    callbackHolder.callback?.invoke(editor.text.toString())
+                    val current = editor.text.toString()
+                    holder.lastKnownText = current
+                    holder.callback?.invoke(current)
                 }
             }
         },
         update = { editor ->
-            if (editor.text.toString() != text) {
+            // Compare against the cached String (not editor.text.toString()) so we don't
+            // serialize the whole document on every recomposition. Only external changes
+            // (load / new file) differ from lastKnownText and trigger a setText.
+            if (text != holder.lastKnownText) {
+                holder.lastKnownText = text
                 editor.setText(text)
             }
         },
@@ -45,7 +53,8 @@ fun CodeEditorView(
     )
 }
 
-/** Mutable holder so the latest callback is used without recreating the editor. */
-private class TextChangeHolder {
+/** Holds the live callback + last-known text so recomposition stays O(1). */
+private class EditorBinding {
     var callback: ((String) -> Unit)? = null
+    var lastKnownText: String = ""
 }

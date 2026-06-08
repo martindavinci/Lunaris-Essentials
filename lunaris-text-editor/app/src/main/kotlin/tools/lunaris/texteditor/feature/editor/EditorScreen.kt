@@ -1,6 +1,8 @@
 package tools.lunaris.texteditor.feature.editor
 
+import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -39,6 +41,9 @@ import tools.lunaris.texteditor.R
 import tools.lunaris.texteditor.editor.CodeEditorView
 import tools.lunaris.texteditor.file.FileRef
 
+private val TopBarHeight = 56.dp
+private val BarElevation = 3.dp
+
 @Composable
 fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -46,13 +51,10 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
     val snackbar = remember { SnackbarHostState() }
 
     val openLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.OpenDocument()
+        remember { OpenDocumentReadWrite() }
     ) { uri ->
         if (uri != null) {
-            context.contentResolver.takePersistableUriPermission(
-                uri,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
-            )
+            persistReadWrite(context, uri)
             viewModel.load(FileRef(uri.toString()))
         }
     }
@@ -61,10 +63,7 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
         ActivityResultContracts.CreateDocument("text/plain")
     ) { uri ->
         if (uri != null) {
-            context.contentResolver.takePersistableUriPermission(
-                uri,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
-            )
+            persistReadWrite(context, uri)
             viewModel.save(FileRef(uri.toString()))
         }
     }
@@ -106,12 +105,12 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
 
 @Composable
 private fun EditorTopBar(title: String) {
-    Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = 3.dp) {
+    Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = BarElevation) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .statusBarsPadding()
-                .height(56.dp)
+                .height(TopBarHeight)
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -131,7 +130,7 @@ private fun EditorBottomBar(
     onNew: () -> Unit,
     onSave: () -> Unit,
 ) {
-    Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = 3.dp) {
+    Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = BarElevation) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -148,6 +147,28 @@ private fun EditorBottomBar(
             IconButton(onClick = onSave) {
                 Icon(Icons.Filled.Save, contentDescription = stringResource(R.string.action_save))
             }
+        }
+    }
+}
+
+/** OpenDocument variant that also requests WRITE so opened files can be saved back. */
+private class OpenDocumentReadWrite : ActivityResultContracts.OpenDocument() {
+    override fun createIntent(context: Context, input: Array<String>): Intent =
+        super.createIntent(context, input).apply {
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+        }
+}
+
+/** Persists read+write access, degrading to read-only, never crashing. */
+private fun persistReadWrite(context: Context, uri: Uri) {
+    val readWrite = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+    try {
+        context.contentResolver.takePersistableUriPermission(uri, readWrite)
+    } catch (_: SecurityException) {
+        try {
+            context.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        } catch (_: SecurityException) {
+            // No persistable permission offered; URI remains valid for this task only.
         }
     }
 }
