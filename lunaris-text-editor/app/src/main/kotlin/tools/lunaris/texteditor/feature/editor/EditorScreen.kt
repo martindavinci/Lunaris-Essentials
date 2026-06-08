@@ -20,8 +20,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Save
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -111,13 +109,14 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
     Scaffold(
         snackbarHost = { SnackbarHost(snackbar) },
         topBar = {
-            EditorTopBar(
-                title = state.title,
-                onSyntax = { showSyntax = true },
-                onScheme = { showScheme = true },
-                onEncoding = { showEncoding = true },
-                onRecent = { showRecent = true },
-            )
+            EditorTopBar(title = state.title) { action ->
+                when (action) {
+                    EditorMenuAction.SYNTAX -> showSyntax = true
+                    EditorMenuAction.DISPLAY_STYLE -> showScheme = true
+                    EditorMenuAction.ENCODING -> showEncoding = true
+                    EditorMenuAction.RECENT_FILES -> showRecent = true
+                }
+            }
         },
         bottomBar = {
             EditorBottomBar(
@@ -188,10 +187,7 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
 @Composable
 private fun EditorTopBar(
     title: String,
-    onSyntax: () -> Unit,
-    onScheme: () -> Unit,
-    onEncoding: () -> Unit,
-    onRecent: () -> Unit,
+    onMenuAction: (EditorMenuAction) -> Unit,
 ) {
     Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = BarElevation) {
         Row(
@@ -213,24 +209,11 @@ private fun EditorTopBar(
             IconButton(onClick = { menuOpen = true }) {
                 Icon(Icons.Filled.MoreVert, contentDescription = stringResource(R.string.menu_more))
             }
-            DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.menu_syntax)) },
-                    onClick = { menuOpen = false; onSyntax() },
-                )
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.menu_display_style)) },
-                    onClick = { menuOpen = false; onScheme() },
-                )
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.menu_encoding)) },
-                    onClick = { menuOpen = false; onEncoding() },
-                )
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.action_recent)) },
-                    onClick = { menuOpen = false; onRecent() },
-                )
-            }
+            EditorOverflowMenu(
+                expanded = menuOpen,
+                onDismiss = { menuOpen = false },
+                onAction = onMenuAction,
+            )
         }
     }
 }
