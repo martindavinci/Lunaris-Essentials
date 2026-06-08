@@ -44,13 +44,19 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import tools.lunaris.texteditor.R
+import tools.lunaris.texteditor.edit.Indenter
+import tools.lunaris.texteditor.edit.SearchEngine
+import tools.lunaris.texteditor.edit.TimestampFormatter
 import tools.lunaris.texteditor.editor.CodeEditorController
 import tools.lunaris.texteditor.editor.CodeEditorView
 import tools.lunaris.texteditor.file.FileRef
+import java.time.Instant
+import java.time.ZoneId
 
 private val TopBarHeight = 56.dp
 private val BarElevation = 3.dp
 private const val AUTOSAVE_INTERVAL_MS = 60_000L
+private const val INDENT_UNIT = "    "
 
 @Composable
 fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
@@ -77,12 +83,8 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
         }
     }
 
-    var showSyntax by remember { mutableStateOf(false) }
-    var showScheme by remember { mutableStateOf(false) }
-    var showEncoding by remember { mutableStateOf(false) }
-    var showRecent by remember { mutableStateOf(false) }
-
-    val recents by viewModel.recents().collectAsStateWithLifecycle(initialValue = emptyList())
+    var openDialog by remember { mutableStateOf<EditorDialog?>(null) }
+    val searchEngine = remember { SearchEngine() }
 
     LifecycleEventEffect(androidx.lifecycle.Lifecycle.Event.ON_STOP) {
         viewModel.snapshotSession()
@@ -106,15 +108,31 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
         }
     }
 
+    val applyIndent: (Boolean) -> Unit = { increase ->
+        val sel = editorController.selection()
+        val t = state.text
+        val nt = if (increase) Indenter.increase(t, sel.first, sel.last, INDENT_UNIT)
+                 else Indenter.decrease(t, sel.first, sel.last, INDENT_UNIT)
+        if (nt != t) viewModel.onContentChanged(nt)
+    }
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackbar) },
         topBar = {
             EditorTopBar(title = state.title) { action ->
                 when (action) {
-                    EditorMenuAction.SYNTAX -> showSyntax = true
-                    EditorMenuAction.DISPLAY_STYLE -> showScheme = true
-                    EditorMenuAction.ENCODING -> showEncoding = true
-                    EditorMenuAction.RECENT_FILES -> showRecent = true
+                    EditorMenuAction.SYNTAX -> openDialog = EditorDialog.SYNTAX
+                    EditorMenuAction.DISPLAY_STYLE -> openDialog = EditorDialog.DISPLAY_STYLE
+                    EditorMenuAction.ENCODING -> openDialog = EditorDialog.ENCODING
+                    EditorMenuAction.RECENT_FILES -> openDialog = EditorDialog.RECENT
+                    EditorMenuAction.SEARCH -> openDialog = EditorDialog.SEARCH
+                    EditorMenuAction.GOTO_LINE -> openDialog = EditorDialog.GOTO
+                    EditorMenuAction.STATS -> openDialog = EditorDialog.STATS
+                    EditorMenuAction.INSERT_COLOR -> openDialog = EditorDialog.INSERT_COLOR
+                    EditorMenuAction.INSERT_TIMESTAMP ->
+                        editorController.insertAtCursor(TimestampFormatter.format(Instant.now(), ZoneId.systemDefault()))
+                    EditorMenuAction.INDENT_INCREASE -> applyIndent(true)
+                    EditorMenuAction.INDENT_DECREASE -> applyIndent(false)
                 }
             }
         },
@@ -151,37 +169,14 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
         }
     }
 
-    if (showSyntax) {
-        SyntaxPickerDialog(
-            catalog = viewModel.languageCatalog,
-            current = state.syntax,
-            onSelected = viewModel::setSyntax,
-            onDismiss = { showSyntax = false },
-        )
-    }
-    if (showScheme) {
-        ColorSchemePickerDialog(
-            catalog = viewModel.colorSchemeCatalog,
-            currentId = state.colorSchemeId,
-            onSelected = viewModel::setColorScheme,
-            onDismiss = { showScheme = false },
-        )
-    }
-    if (showEncoding) {
-        EncodingPickerDialog(
-            catalog = viewModel.charsetCatalog,
-            current = state.charset,
-            onSelected = viewModel::reopenWithEncoding,
-            onDismiss = { showEncoding = false },
-        )
-    }
-    if (showRecent) {
-        RecentFilesDialog(
-            recents = recents,
-            onOpen = { uri -> viewModel.openFile(FileRef(uri)) },
-            onDismiss = { showRecent = false },
-        )
-    }
+    EditorDialogs(
+        open = openDialog,
+        state = state,
+        viewModel = viewModel,
+        controller = editorController,
+        searchEngine = searchEngine,
+        onDismiss = { openDialog = null },
+    )
 }
 
 @Composable
