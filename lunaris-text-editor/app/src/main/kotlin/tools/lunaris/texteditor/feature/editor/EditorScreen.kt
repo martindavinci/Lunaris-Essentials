@@ -43,6 +43,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import tools.lunaris.texteditor.R
 import tools.lunaris.texteditor.editor.CodeEditorView
@@ -82,6 +83,10 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
     var showRecent by remember { mutableStateOf(false) }
 
     val recents by viewModel.recents().collectAsStateWithLifecycle(initialValue = emptyList())
+
+    LifecycleEventEffect(androidx.lifecycle.Lifecycle.Event.ON_STOP) {
+        viewModel.snapshotSession()
+    }
 
     LaunchedEffect(Unit) {
         while (true) {

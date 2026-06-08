@@ -8,6 +8,8 @@ import org.junit.Test
 import tools.lunaris.texteditor.data.FakeColorSchemeStore
 import tools.lunaris.texteditor.data.FakeRecentsStore
 import tools.lunaris.texteditor.data.FakeSessionStore
+import tools.lunaris.texteditor.data.PersistedSession
+import tools.lunaris.texteditor.data.PersistedTab
 import tools.lunaris.texteditor.document.EncodingCodec
 import tools.lunaris.texteditor.file.FakeFileGateway
 import tools.lunaris.texteditor.file.FileRef
@@ -177,6 +179,39 @@ class EditorViewModelTest {
         advanceUntilIdle()
         assertThat(vm.state.value.error).isNotNull()
         assertThat(vm.state.value.isLoading).isFalse()
+    }
+
+    @Test
+    fun restoresPersistedTabsOnInit() = runTest {
+        val seeded = FakeSessionStore(
+            PersistedSession(
+                activeId = "t2",
+                tabs = listOf(
+                    PersistedTab("t1", "content://1", "a.kt", "code", false, "UTF-8", "LF", null),
+                    PersistedTab("t2", null, "draft.txt", "hello", true, "UTF-8", "LF", null),
+                ),
+            )
+        )
+        val vm = EditorViewModel(
+            repo, resolver, "sunburst", catalog,
+            ColorSchemeCatalog(emptyList(), ""), CharsetCatalog(),
+            FakeColorSchemeStore(), recents, seeded,
+        )
+        advanceUntilIdle()
+        assertThat(vm.state.value.tabs.map { it.title }).containsExactly("a.kt", "draft.txt")
+        assertThat(vm.state.value.activeTabId).isEqualTo("t2")
+        assertThat(vm.state.value.dirty).isTrue()
+    }
+
+    @Test
+    fun snapshotSession_writesAllOpenTabs() = runTest {
+        val vm = newVm()
+        vm.onContentChanged("draft")
+        vm.newTab()
+        vm.snapshotSession()
+        advanceUntilIdle()
+        assertThat(session.saved).isNotNull()
+        assertThat(session.saved!!.tabs).hasSize(2)
     }
 
     @Test
