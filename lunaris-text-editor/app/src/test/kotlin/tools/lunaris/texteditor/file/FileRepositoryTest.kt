@@ -32,4 +32,28 @@ class FileRepositoryTest {
         repo.save(ref, "x\ny", StandardCharsets.UTF_8, LineEnding.CRLF)
         assertThat(String(gateway.store[ref.uri]!!, StandardCharsets.UTF_8)).isEqualTo("x\r\ny")
     }
+
+    @Test
+    fun load_returnsNullName_whenGatewayHasNoName() = runTest {
+        val ref = FileRef("content://doc/3")
+        gateway.store[ref.uri] = "hi".toByteArray(StandardCharsets.UTF_8)
+        // no entry in gateway.names
+
+        val loaded = repo.load(ref)
+
+        assertThat(loaded.name).isNull()
+        assertThat(loaded.text).isEqualTo("hi")
+    }
+
+    @Test
+    fun saveThenLoad_roundTripsTextCharsetAndLineEnding() = runTest {
+        val ref = FileRef("content://doc/4")
+        repo.save(ref, "alpha\nbeta", StandardCharsets.UTF_8, LineEnding.CRLF)
+
+        val loaded = repo.load(ref)
+
+        assertThat(loaded.text).isEqualTo("alpha\nbeta")
+        assertThat(loaded.lineEnding).isEqualTo(LineEnding.CRLF)
+        assertThat(loaded.charset).isEqualTo(StandardCharsets.UTF_8)
+    }
 }
