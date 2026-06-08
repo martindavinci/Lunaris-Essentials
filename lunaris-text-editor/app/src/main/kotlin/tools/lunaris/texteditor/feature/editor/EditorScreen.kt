@@ -84,6 +84,7 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
     }
 
     var openDialog by remember { mutableStateOf<EditorDialog?>(null) }
+    var showAccessory by remember { mutableStateOf(false) }
     val searchEngine = remember { SearchEngine() }
 
     LifecycleEventEffect(androidx.lifecycle.Lifecycle.Event.ON_STOP) {
@@ -124,6 +125,7 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
                 checked = buildSet {
                     if (state.wordWrap) add(EditorMenuAction.WORD_WRAP)
                     if (state.readOnly) add(EditorMenuAction.READ_ONLY)
+                    if (showAccessory) add(EditorMenuAction.ACCESSORY_BAR)
                 },
             ) { action ->
                 when (action) {
@@ -146,6 +148,14 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
                     EditorMenuAction.WORD_WRAP -> viewModel.toggleWordWrap()
                     EditorMenuAction.READ_ONLY -> viewModel.toggleReadOnly()
                     EditorMenuAction.TOOLBAR -> openDialog = EditorDialog.TOOLBAR
+                    EditorMenuAction.ACCESSORY_BAR -> showAccessory = !showAccessory
+                    EditorMenuAction.SHARE -> {
+                        val send = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_TEXT, state.text)
+                        }
+                        context.startActivity(Intent.createChooser(send, null))
+                    }
                 }
             }
         },
@@ -187,6 +197,14 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
                 readOnly = state.readOnly,
                 modifier = Modifier.fillMaxWidth().weight(1f),
             )
+            if (showAccessory) {
+                AccessoryBar(
+                    onKey = { editorController.insertAtCursor(it) },
+                    onCursorLeft = { editorController.moveCursor(-1) },
+                    onCursorRight = { editorController.moveCursor(1) },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
         }
     }
 

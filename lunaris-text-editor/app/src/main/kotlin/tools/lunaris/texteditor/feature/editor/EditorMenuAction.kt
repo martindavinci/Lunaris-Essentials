@@ -23,4 +23,6 @@ enum class EditorMenuAction(@StringRes val labelRes: Int) {
     WORD_WRAP(R.string.menu_word_wrap),
     READ_ONLY(R.string.menu_read_only),
     TOOLBAR(R.string.menu_toolbar),
+    ACCESSORY_BAR(R.string.menu_accessory),
+    SHARE(R.string.menu_share),
 }
