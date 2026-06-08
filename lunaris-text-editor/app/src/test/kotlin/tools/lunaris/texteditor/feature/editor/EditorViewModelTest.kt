@@ -8,6 +8,9 @@ import org.junit.Test
 import tools.lunaris.texteditor.data.FakeColorSchemeStore
 import tools.lunaris.texteditor.data.FakeRecentsStore
 import tools.lunaris.texteditor.data.FakeSessionStore
+import tools.lunaris.texteditor.data.FakeToolbarStore
+import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfig
+import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarItem
 import tools.lunaris.texteditor.data.PersistedSession
 import tools.lunaris.texteditor.data.PersistedTab
 import tools.lunaris.texteditor.data.SessionManager
@@ -39,6 +42,7 @@ class EditorViewModelTest {
     private val resolver = SyntaxResolver(catalog)
     private val recents = FakeRecentsStore()
     private val session = FakeSessionStore()
+    private val toolbar = FakeToolbarStore()
 
     private fun newVm() = EditorViewModel(
         repository = repo,
@@ -50,6 +54,7 @@ class EditorViewModelTest {
         colorSchemeStore = FakeColorSchemeStore(),
         recentsStore = recents,
         sessionManager = SessionManager(session, resolver),
+        toolbarStore = toolbar,
     )
 
     @Test
@@ -196,7 +201,7 @@ class EditorViewModelTest {
         val vm = EditorViewModel(
             repo, resolver, "sunburst", catalog,
             ColorSchemeCatalog(emptyList(), ""), CharsetCatalog(),
-            FakeColorSchemeStore(), recents, SessionManager(seeded, resolver),
+            FakeColorSchemeStore(), recents, SessionManager(seeded, resolver), toolbar,
         )
         advanceUntilIdle()
         assertThat(vm.state.value.tabs.map { it.title }).containsExactly("a.kt", "draft.txt")
@@ -234,5 +239,40 @@ class EditorViewModelTest {
         val fileTabId = vm.state.value.tabs.first { it.title == "a.txt" }.id
         vm.switchTab(fileTabId)
         assertThat(vm.state.value.dirty).isFalse()
+    }
+
+    @Test
+    fun toggleWordWrap_flips() {
+        val vm = newVm()
+        val before = vm.state.value.wordWrap
+        vm.toggleWordWrap()
+        assertThat(vm.state.value.wordWrap).isEqualTo(!before)
+    }
+
+    @Test
+    fun toggleReadOnly_setsActiveReadOnly() {
+        val vm = newVm()
+        assertThat(vm.state.value.readOnly).isFalse()
+        vm.toggleReadOnly()
+        assertThat(vm.state.value.readOnly).isTrue()
+    }
+
+    @Test
+    fun setToolbar_persistsAndUpdatesState() = runTest {
+        val vm = newVm()
+        val c = ToolbarConfig.DEFAULT.toggled(ToolbarItem.UNDO, false)
+        vm.setToolbar(c)
+        advanceUntilIdle()
+        assertThat(vm.state.value.toolbar).isEqualTo(c)
+        assertThat(toolbar.flow.value).isEqualTo(c)
+    }
+
+    @Test
+    fun toolbar_loadedOnInit() = runTest {
+        val c = ToolbarConfig.DEFAULT.toggled(ToolbarItem.PASTE, false)
+        toolbar.flow.value = c
+        val vm = newVm()
+        advanceUntilIdle()
+        assertThat(vm.state.value.toolbar).isEqualTo(c)
     }
 }

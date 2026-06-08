@@ -17,6 +17,8 @@ import tools.lunaris.texteditor.data.ColorSchemeStore
 import tools.lunaris.texteditor.data.RecentEntry
 import tools.lunaris.texteditor.data.RecentsStore
 import tools.lunaris.texteditor.data.SessionManager
+import tools.lunaris.texteditor.data.ToolbarStore
+import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfig
 import tools.lunaris.texteditor.document.DocumentSession
 import tools.lunaris.texteditor.document.LineEnding
 import tools.lunaris.texteditor.document.OpenDocuments
@@ -44,6 +46,7 @@ class EditorViewModel @Inject constructor(
     private val colorSchemeStore: ColorSchemeStore,
     private val recentsStore: RecentsStore,
     private val sessionManager: SessionManager,
+    private val toolbarStore: ToolbarStore,
 ) : ViewModel() {
 
     private var colorSchemeId = defaultColorSchemeId
@@ -61,6 +64,8 @@ class EditorViewModel @Inject constructor(
         initScope.launch {
             colorSchemeId = colorSchemeStore.colorSchemeId(colorSchemeId).first()
             restoreSession()
+            val tb = toolbarStore.toolbar().first()
+            _state.update { it.copy(toolbar = tb) }
             publish()
         }
     }
@@ -88,6 +93,7 @@ class EditorViewModel @Inject constructor(
                 scopeName = a?.scopeName,
                 dirty = a?.dirty ?: false,
                 colorSchemeId = colorSchemeId,
+                readOnly = a?.readOnly ?: false,
             )
         }
     }
@@ -192,6 +198,15 @@ class EditorViewModel @Inject constructor(
 
     private suspend fun restoreSession() {
         sessionManager.restore()?.let { docs.value = it }
+    }
+
+    fun toggleWordWrap() { _state.update { it.copy(wordWrap = !it.wordWrap) } }
+
+    fun toggleReadOnly() = mutate { it.updateActive { s -> s.copy(readOnly = !s.readOnly) } }
+
+    fun setToolbar(config: ToolbarConfig) {
+        _state.update { it.copy(toolbar = config) }
+        viewModelScope.launch { runCatching { toolbarStore.setToolbar(config) } }
     }
 
     fun snapshotSession() {
