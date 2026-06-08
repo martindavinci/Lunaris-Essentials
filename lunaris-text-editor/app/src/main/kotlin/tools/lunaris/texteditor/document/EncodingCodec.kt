@@ -17,6 +17,14 @@ data class DecodedText(
  */
 class EncodingCodec {
 
+    /**
+     * Decodes raw [bytes] into editor text normalized to LF.
+     *
+     * @param forced when non-null, this charset is used directly and a leading BOM is
+     *   NOT stripped — the caller must ensure [bytes] has no BOM. When null, the charset
+     *   is auto-detected from the BOM (UTF-8 / UTF-16), defaulting to UTF-8, and any
+     *   detected BOM is stripped.
+     */
     fun decode(bytes: ByteArray, forced: Charset?): DecodedText {
         val (charset, contentStart) = when {
             forced != null -> forced to 0
