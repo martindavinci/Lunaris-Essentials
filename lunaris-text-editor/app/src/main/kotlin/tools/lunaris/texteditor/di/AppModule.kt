@@ -6,6 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import tools.lunaris.texteditor.data.ColorSchemeStore
 import tools.lunaris.texteditor.data.EditorPreferences
+import tools.lunaris.texteditor.data.ToolbarStore
 import tools.lunaris.texteditor.file.FileGateway
 import tools.lunaris.texteditor.file.SafFileGateway
 import javax.inject.Singleton
@@ -29,4 +30,8 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun bindSessionStore(impl: EditorPreferences): tools.lunaris.texteditor.data.SessionStore
+
+    @Binds
+    @Singleton
+    abstract fun bindToolbarStore(impl: EditorPreferences): ToolbarStore
 }
