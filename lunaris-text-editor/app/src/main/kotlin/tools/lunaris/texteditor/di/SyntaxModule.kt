@@ -26,4 +26,8 @@ object SyntaxModule {
     @Singleton
     fun provideColorSchemeCatalog(@ApplicationContext context: Context): ColorSchemeCatalog =
         ColorSchemeCatalog.fromJson(readAsset(context, "textmate/themes.json"))
+
+    @Provides
+    @javax.inject.Named("defaultColorSchemeId")
+    fun provideDefaultColorSchemeId(catalog: ColorSchemeCatalog): String = catalog.defaultId
 }

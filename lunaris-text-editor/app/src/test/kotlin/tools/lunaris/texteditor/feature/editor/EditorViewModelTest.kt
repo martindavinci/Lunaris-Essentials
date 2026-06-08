@@ -10,6 +10,9 @@ import tools.lunaris.texteditor.file.FakeFileGateway
 import tools.lunaris.texteditor.file.FileGateway
 import tools.lunaris.texteditor.file.FileRef
 import tools.lunaris.texteditor.file.FileRepository
+import tools.lunaris.texteditor.syntax.LanguageCatalog
+import tools.lunaris.texteditor.syntax.LanguageDefinition
+import tools.lunaris.texteditor.syntax.SyntaxResolver
 import tools.lunaris.texteditor.util.MainDispatcherRule
 import java.nio.charset.StandardCharsets
 
@@ -20,7 +23,10 @@ class EditorViewModelTest {
 
     private val gateway = FakeFileGateway()
     private val repo = FileRepository(gateway, EncodingCodec())
-    private val vm = EditorViewModel(repo)
+    private val resolver = SyntaxResolver(
+        LanguageCatalog(listOf(LanguageDefinition("plaintext", "Plain text", null, null, listOf("txt"))))
+    )
+    private val vm = EditorViewModel(repo, resolver, "sunburst")
 
     @Test
     fun contentChanged_marksDirty() {
@@ -96,7 +102,7 @@ class EditorViewModelTest {
             },
             EncodingCodec(),
         )
-        val throwingVm = EditorViewModel(throwingRepo)
+        val throwingVm = EditorViewModel(throwingRepo, resolver, "sunburst")
         throwingVm.onContentChanged("data")
         throwingVm.save(FileRef("content://doc/12"))
         advanceUntilIdle()

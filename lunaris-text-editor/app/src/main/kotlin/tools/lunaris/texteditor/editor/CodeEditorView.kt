@@ -5,21 +5,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import io.github.rosemoe.sora.event.ContentChangeEvent
+import io.github.rosemoe.sora.lang.EmptyLanguage
+import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme
+import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
+import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import io.github.rosemoe.sora.widget.CodeEditor
-import io.github.rosemoe.sora.widget.schemes.SchemeDarcula
 
-/**
- * Embeds the Sora [CodeEditor] in Compose.
- *
- * @param text pushed into the editor only when it differs from the last text the editor
- *        is known to hold (prevents cursor-reset feedback loops and avoids serializing
- *        the whole document on every recomposition).
- * @param onTextChange called whenever the user edits, with the full new text.
- */
 @Composable
 fun CodeEditorView(
     text: String,
     onTextChange: (String) -> Unit,
+    scopeName: String?,
+    themeId: String,
     modifier: Modifier = Modifier,
 ) {
     val holder = remember { EditorBinding() }
@@ -29,7 +26,6 @@ fun CodeEditorView(
         modifier = modifier,
         factory = { context ->
             CodeEditor(context).also { editor ->
-                editor.colorScheme = SchemeDarcula()
                 editor.isLineNumberEnabled = true
                 editor.setText(text)
                 holder.lastKnownText = text
@@ -38,23 +34,46 @@ fun CodeEditorView(
                     holder.lastKnownText = current
                     holder.callback?.invoke(current)
                 }
+                applyTheme(editor, themeId)
+                applyLanguage(editor, scopeName)
+                holder.appliedScope = scopeName
+                holder.appliedTheme = themeId
             }
         },
         update = { editor ->
-            // Compare against the cached String (not editor.text.toString()) so we don't
-            // serialize the whole document on every recomposition. Only external changes
-            // (load / new file) differ from lastKnownText and trigger a setText.
             if (text != holder.lastKnownText) {
                 holder.lastKnownText = text
                 editor.setText(text)
+            }
+            if (themeId != holder.appliedTheme) {
+                applyTheme(editor, themeId)
+                holder.appliedTheme = themeId
+            }
+            if (scopeName != holder.appliedScope) {
+                applyLanguage(editor, scopeName)
+                holder.appliedScope = scopeName
             }
         },
         onRelease = { editor -> editor.release() },
     )
 }
 
-/** Holds the live callback + last-known text so recomposition stays O(1). */
+private fun applyTheme(editor: CodeEditor, themeId: String) {
+    val registry = ThemeRegistry.getInstance()
+    runCatching { registry.setTheme(themeId) }
+    editor.colorScheme = TextMateColorScheme.create(registry)
+}
+
+private fun applyLanguage(editor: CodeEditor, scopeName: String?) {
+    editor.setEditorLanguage(
+        if (scopeName == null) EmptyLanguage()
+        else TextMateLanguage.create(scopeName, true),
+    )
+}
+
 private class EditorBinding {
     var callback: ((String) -> Unit)? = null
     var lastKnownText: String = ""
+    var appliedScope: String? = null
+    var appliedTheme: String? = null
 }

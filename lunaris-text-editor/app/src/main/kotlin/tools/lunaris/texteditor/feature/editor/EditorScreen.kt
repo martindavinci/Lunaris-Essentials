@@ -96,6 +96,8 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
         CodeEditorView(
             text = state.text,
             onTextChange = viewModel::onContentChanged,
+            scopeName = state.scopeName,
+            themeId = state.colorSchemeId,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding),
