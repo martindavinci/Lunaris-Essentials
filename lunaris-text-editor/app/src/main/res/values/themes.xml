@@ -1,0 +1,3 @@
+<resources>
+    <style name="Theme.LunarisTextEditor" parent="android:Theme.Material.NoActionBar" />
+</resources>
