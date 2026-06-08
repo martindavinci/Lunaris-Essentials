@@ -1,0 +1,7 @@
+{
+  "languages": [
+    { "id": "plaintext", "display": "Plain text", "scopeName": null, "grammarAsset": null, "ext": ["txt"] },
+    { "id": "python", "display": "Python", "scopeName": "source.python", "grammarAsset": "grammars/python.json", "ext": ["py", "pyw"] },
+    { "id": "kotlin", "display": "Kotlin", "scopeName": "source.kotlin", "grammarAsset": "grammars/kotlin.json", "ext": ["kt", "kts"] }
+  ]
+}
