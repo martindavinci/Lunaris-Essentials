@@ -3,11 +3,17 @@ package tools.lunaris.texteditor.feature.editor
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import tools.lunaris.texteditor.data.ColorSchemeStore
 import tools.lunaris.texteditor.file.FileRef
 import tools.lunaris.texteditor.file.FileRepository
 import tools.lunaris.texteditor.syntax.CharsetCatalog
@@ -27,6 +33,7 @@ class EditorViewModel @Inject constructor(
     val languageCatalog: LanguageCatalog,
     val colorSchemeCatalog: ColorSchemeCatalog,
     val charsetCatalog: CharsetCatalog,
+    private val colorSchemeStore: ColorSchemeStore,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(EditorState(colorSchemeId = defaultColorSchemeId))
@@ -34,6 +41,20 @@ class EditorViewModel @Inject constructor(
 
     private var savedText: String = ""
     private var lastBytesRef: FileRef? = null
+
+    private val initScope = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
+
+    init {
+        initScope.launch {
+            val persisted = colorSchemeStore.colorSchemeId(_state.value.colorSchemeId).first()
+            _state.update { it.copy(colorSchemeId = persisted) }
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        initScope.cancel()
+    }
 
     fun onContentChanged(text: String) {
         _state.update { it.copy(text = text, dirty = text != savedText) }
@@ -92,6 +113,7 @@ class EditorViewModel @Inject constructor(
 
     fun setColorScheme(id: String) {
         _state.update { it.copy(colorSchemeId = id) }
+        viewModelScope.launch { colorSchemeStore.setColorSchemeId(id) }
     }
 
     fun reopenWithEncoding(charset: Charset) {

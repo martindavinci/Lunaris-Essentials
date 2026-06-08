@@ -15,6 +15,8 @@ import tools.lunaris.texteditor.syntax.LanguageCatalog
 import tools.lunaris.texteditor.syntax.LanguageDefinition
 import tools.lunaris.texteditor.syntax.SyntaxResolver
 import tools.lunaris.texteditor.syntax.SyntaxSelection
+import tools.lunaris.texteditor.data.ColorSchemeStore
+import tools.lunaris.texteditor.data.FakeColorSchemeStore
 import tools.lunaris.texteditor.util.MainDispatcherRule
 import java.nio.charset.StandardCharsets
 
@@ -31,7 +33,8 @@ class EditorViewModelSyntaxTest {
         )
     )
     private val resolver = SyntaxResolver(catalog)
-    private val vm = EditorViewModel(repo, resolver, "sunburst", catalog, ColorSchemeCatalog(emptyList(), ""), CharsetCatalog())
+    private val store = FakeColorSchemeStore()
+    private val vm = EditorViewModel(repo, resolver, "sunburst", catalog, ColorSchemeCatalog(emptyList(), ""), CharsetCatalog(), store)
 
     @Test
     fun load_autoDetectsScopeByExtension() = runTest {
@@ -95,5 +98,20 @@ class EditorViewModelSyntaxTest {
         vm.reopenWithEncoding(StandardCharsets.UTF_16)
         advanceUntilIdle()
         assertThat(vm.state.value).isEqualTo(before)
+    }
+
+    @Test
+    fun setColorScheme_persists() = runTest {
+        vm.setColorScheme("base16-tomorrow-night")
+        advanceUntilIdle()
+        assertThat(store.savedId).isEqualTo("base16-tomorrow-night")
+    }
+
+    @Test
+    fun init_appliesPersistedScheme() = runTest {
+        val seeded = FakeColorSchemeStore(initial = "base16-ocean")
+        val vm2 = EditorViewModel(repo, resolver, "sunburst", catalog, ColorSchemeCatalog(emptyList(), ""), CharsetCatalog(), seeded)
+        advanceUntilIdle()
+        assertThat(vm2.state.value.colorSchemeId).isEqualTo("base16-ocean")
     }
 }

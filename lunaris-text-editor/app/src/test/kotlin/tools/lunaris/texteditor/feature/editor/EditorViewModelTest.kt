@@ -15,6 +15,7 @@ import tools.lunaris.texteditor.syntax.ColorSchemeCatalog
 import tools.lunaris.texteditor.syntax.LanguageCatalog
 import tools.lunaris.texteditor.syntax.LanguageDefinition
 import tools.lunaris.texteditor.syntax.SyntaxResolver
+import tools.lunaris.texteditor.data.FakeColorSchemeStore
 import tools.lunaris.texteditor.util.MainDispatcherRule
 import java.nio.charset.StandardCharsets
 
@@ -27,7 +28,7 @@ class EditorViewModelTest {
     private val repo = FileRepository(gateway, EncodingCodec())
     private val langCatalog = LanguageCatalog(listOf(LanguageDefinition("plaintext", "Plain text", null, null, listOf("txt"))))
     private val resolver = SyntaxResolver(langCatalog)
-    private val vm = EditorViewModel(repo, resolver, "sunburst", langCatalog, ColorSchemeCatalog(emptyList(), ""), CharsetCatalog())
+    private val vm = EditorViewModel(repo, resolver, "sunburst", langCatalog, ColorSchemeCatalog(emptyList(), ""), CharsetCatalog(), FakeColorSchemeStore())
 
     @Test
     fun contentChanged_marksDirty() {
@@ -103,7 +104,7 @@ class EditorViewModelTest {
             },
             EncodingCodec(),
         )
-        val throwingVm = EditorViewModel(throwingRepo, resolver, "sunburst", langCatalog, ColorSchemeCatalog(emptyList(), ""), CharsetCatalog())
+        val throwingVm = EditorViewModel(throwingRepo, resolver, "sunburst", langCatalog, ColorSchemeCatalog(emptyList(), ""), CharsetCatalog(), FakeColorSchemeStore())
         throwingVm.onContentChanged("data")
         throwingVm.save(FileRef("content://doc/12"))
         advanceUntilIdle()
