@@ -1,0 +1,7 @@
+{
+  "default": "Sunburst",
+  "themes": [
+    { "id": "sunburst", "display": "Sunburst", "themeAsset": "themes/Sunburst.tmTheme", "dark": true },
+    { "id": "base16-tomorrow-night", "display": "Tomorrow Night", "themeAsset": "themes/base16-tomorrow-night.tmTheme", "dark": true }
+  ]
+}
