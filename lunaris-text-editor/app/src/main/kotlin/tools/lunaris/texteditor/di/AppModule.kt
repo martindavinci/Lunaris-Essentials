@@ -21,4 +21,12 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun bindColorSchemeStore(impl: EditorPreferences): ColorSchemeStore
+
+    @Binds
+    @Singleton
+    abstract fun bindRecentsStore(impl: EditorPreferences): tools.lunaris.texteditor.data.RecentsStore
+
+    @Binds
+    @Singleton
+    abstract fun bindSessionStore(impl: EditorPreferences): tools.lunaris.texteditor.data.SessionStore
 }
