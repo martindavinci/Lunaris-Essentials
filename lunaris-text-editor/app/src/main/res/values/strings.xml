@@ -20,4 +20,23 @@
     <string name="action_close">Close</string>
     <string name="action_recent">Recent files</string>
     <string name="recent_empty">No recent files</string>
+    <string name="menu_search">Search</string>
+    <string name="menu_goto">Go to line</string>
+    <string name="menu_stats">Statistics</string>
+    <string name="menu_insert_color">Insert color</string>
+    <string name="menu_insert_timestamp">Insert timestamp</string>
+    <string name="menu_indent_increase">Increase indent</string>
+    <string name="menu_indent_decrease">Decrease indent</string>
+    <string name="search_query_hint">Find</string>
+    <string name="search_replace_hint">Replace with</string>
+    <string name="search_case">Case sensitive</string>
+    <string name="search_regex">Regular expression</string>
+    <string name="search_wrap">Wrap around</string>
+    <string name="search_find">Find</string>
+    <string name="search_find_prev">Find previous</string>
+    <string name="search_replace">Replace</string>
+    <string name="search_replace_all">Replace all</string>
+    <string name="goto_hint">Line number (1..%1$d)</string>
+    <string name="stats_words">Words: %1$d</string>
+    <string name="stats_chars">Characters: %1$d</string>
 </resources>
