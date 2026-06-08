@@ -54,4 +54,8 @@
     <string name="toolbar_cursor_right">Cursor right</string>
     <string name="toolbar_save">Save</string>
     <string name="toolbar_close">Close</string>
+    <string name="menu_toolbar">Toolbar</string>
+    <string name="toolbar_default">Default</string>
+    <string name="toolbar_move_up">Move up</string>
+    <string name="toolbar_move_down">Move down</string>
 </resources>

@@ -22,4 +22,5 @@ enum class EditorMenuAction(@StringRes val labelRes: Int) {
     PASTE(R.string.menu_paste),
     WORD_WRAP(R.string.menu_word_wrap),
     READ_ONLY(R.string.menu_read_only),
+    TOOLBAR(R.string.menu_toolbar),
 }

@@ -7,10 +7,11 @@ import tools.lunaris.texteditor.edit.ColorLiteral
 import tools.lunaris.texteditor.edit.SearchEngine
 import tools.lunaris.texteditor.edit.TextStats
 import tools.lunaris.texteditor.editor.CodeEditorController
+import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfigDialog
 import tools.lunaris.texteditor.file.FileRef
 
 /** Which modal dialog (if any) is currently shown. */
-enum class EditorDialog { SYNTAX, DISPLAY_STYLE, ENCODING, RECENT, SEARCH, GOTO, STATS, INSERT_COLOR }
+enum class EditorDialog { SYNTAX, DISPLAY_STYLE, ENCODING, RECENT, SEARCH, GOTO, STATS, INSERT_COLOR, TOOLBAR }
 
 /** Single host that renders whichever editor dialog is open. */
 @Composable
@@ -58,5 +59,11 @@ fun EditorDialogs(
         }
         EditorDialog.INSERT_COLOR ->
             InsertColorDialog({ controller.insertAtCursor(ColorLiteral.hex(it)) }, onDismiss)
+        EditorDialog.TOOLBAR ->
+            ToolbarConfigDialog(
+                initial = state.toolbar,
+                onApply = { viewModel.setToolbar(it) },
+                onDismiss = onDismiss,
+            )
     }
 }

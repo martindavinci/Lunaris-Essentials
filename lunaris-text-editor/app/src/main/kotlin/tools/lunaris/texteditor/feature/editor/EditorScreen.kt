@@ -145,6 +145,7 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
                     EditorMenuAction.PASTE -> editorController.paste()
                     EditorMenuAction.WORD_WRAP -> viewModel.toggleWordWrap()
                     EditorMenuAction.READ_ONLY -> viewModel.toggleReadOnly()
+                    EditorMenuAction.TOOLBAR -> openDialog = EditorDialog.TOOLBAR
                 }
             }
         },
