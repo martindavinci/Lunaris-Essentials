@@ -11,6 +11,7 @@ hiltNavigationCompose = "1.2.0"
 datastore = "1.1.1"
 coroutines = "1.10.1"
 soraBom = "0.24.5"
+documentfile = "1.0.1"
 orgJson = "20240303"
 junit = "4.13.2"
 truth = "1.4.4"
@@ -38,6 +39,7 @@ kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 sora-bom = { group = "io.github.rosemoe", name = "editor-bom", version.ref = "soraBom" }
 sora-editor = { group = "io.github.rosemoe", name = "editor" }
 sora-language-textmate = { group = "io.github.rosemoe", name = "language-textmate" }
+androidx-documentfile = { group = "androidx.documentfile", name = "documentfile", version.ref = "documentfile" }
 org-json = { group = "org.json", name = "json", version.ref = "orgJson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
