@@ -60,4 +60,12 @@
     <string name="toolbar_default">Default</string>
     <string name="toolbar_move_up">Move up</string>
     <string name="toolbar_move_down">Move down</string>
+    <string name="nav_menu">Menu</string>
+    <string name="folder_up">Up</string>
+    <string name="folder_hide_unknown">Hide unknown types</string>
+    <string name="folder_pick">Pick a folder</string>
+    <string name="folder_enable_all_files">Enable all-files access</string>
+    <string name="folder_no_access">No folder access yet</string>
+    <string name="folder_is_directory">Folder</string>
+    <string name="folder_is_file">File</string>
 </resources>

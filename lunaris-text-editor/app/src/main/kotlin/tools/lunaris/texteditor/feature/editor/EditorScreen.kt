@@ -6,24 +6,23 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,14 +40,14 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import tools.lunaris.texteditor.R
 import tools.lunaris.texteditor.edit.Indenter
+import tools.lunaris.texteditor.edit.SearchEngine
+import tools.lunaris.texteditor.edit.TimestampFormatter
+import tools.lunaris.texteditor.editor.CodeEditorController
+import tools.lunaris.texteditor.feature.browser.FolderBrowserViewModel
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfig
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarItem
 import tools.lunaris.texteditor.feature.editor.toolbar.icon
 import tools.lunaris.texteditor.feature.editor.toolbar.labelRes
-import tools.lunaris.texteditor.edit.SearchEngine
-import tools.lunaris.texteditor.edit.TimestampFormatter
-import tools.lunaris.texteditor.editor.CodeEditorController
-import tools.lunaris.texteditor.editor.CodeEditorView
 import tools.lunaris.texteditor.file.FileRef
 import java.time.Instant
 import java.time.ZoneId
@@ -87,6 +86,15 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
     var showAccessory by remember { mutableStateOf(false) }
     val searchEngine = remember { SearchEngine() }
 
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val folderVm: FolderBrowserViewModel = hiltViewModel()
+    val treeLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
+        if (uri != null) folderVm.onTreePicked(uri)
+    }
+    LaunchedEffect(drawerState.currentValue) {
+        if (drawerState.currentValue == DrawerValue.Open) folderVm.start()
+    }
+
     LifecycleEventEffect(androidx.lifecycle.Lifecycle.Event.ON_STOP) {
         viewModel.snapshotSession()
     }
@@ -117,96 +125,64 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
         if (nt != t) viewModel.onContentChanged(nt)
     }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbar) },
-        topBar = {
-            EditorTopBar(
-                title = state.title,
-                checked = buildSet {
-                    if (state.wordWrap) add(EditorMenuAction.WORD_WRAP)
-                    if (state.readOnly) add(EditorMenuAction.READ_ONLY)
-                    if (showAccessory) add(EditorMenuAction.ACCESSORY_BAR)
-                },
-            ) { action ->
-                when (action) {
-                    EditorMenuAction.SYNTAX -> openDialog = EditorDialog.SYNTAX
-                    EditorMenuAction.DISPLAY_STYLE -> openDialog = EditorDialog.DISPLAY_STYLE
-                    EditorMenuAction.ENCODING -> openDialog = EditorDialog.ENCODING
-                    EditorMenuAction.RECENT_FILES -> openDialog = EditorDialog.RECENT
-                    EditorMenuAction.SEARCH -> openDialog = EditorDialog.SEARCH
-                    EditorMenuAction.GOTO_LINE -> openDialog = EditorDialog.GOTO
-                    EditorMenuAction.STATS -> openDialog = EditorDialog.STATS
-                    EditorMenuAction.INSERT_COLOR -> openDialog = EditorDialog.INSERT_COLOR
-                    EditorMenuAction.INSERT_TIMESTAMP ->
-                        editorController.insertAtCursor(TimestampFormatter.format(Instant.now(), ZoneId.systemDefault()))
-                    EditorMenuAction.INDENT_INCREASE -> applyIndent(true)
-                    EditorMenuAction.INDENT_DECREASE -> applyIndent(false)
-                    EditorMenuAction.UNDO -> editorController.undo()
-                    EditorMenuAction.REDO -> editorController.redo()
-                    EditorMenuAction.SELECT_ALL -> editorController.selectAll()
-                    EditorMenuAction.PASTE -> editorController.paste()
-                    EditorMenuAction.WORD_WRAP -> viewModel.toggleWordWrap()
-                    EditorMenuAction.READ_ONLY -> viewModel.toggleReadOnly()
-                    EditorMenuAction.TOOLBAR -> openDialog = EditorDialog.TOOLBAR
-                    EditorMenuAction.ACCESSORY_BAR -> showAccessory = !showAccessory
-                    EditorMenuAction.SHARE -> {
-                        val send = Intent(Intent.ACTION_SEND).apply {
-                            type = "text/plain"
-                            putExtra(Intent.EXTRA_TEXT, state.text)
-                        }
-                        context.startActivity(Intent.createChooser(send, null))
+    EditorScaffold(
+        state = state,
+        viewModel = viewModel,
+        folderVm = folderVm,
+        drawerState = drawerState,
+        snackbar = snackbar,
+        editorController = editorController,
+        showAccessory = showAccessory,
+        context = context,
+        onMenuAction = { action ->
+            when (action) {
+                EditorMenuAction.SYNTAX -> openDialog = EditorDialog.SYNTAX
+                EditorMenuAction.DISPLAY_STYLE -> openDialog = EditorDialog.DISPLAY_STYLE
+                EditorMenuAction.ENCODING -> openDialog = EditorDialog.ENCODING
+                EditorMenuAction.RECENT_FILES -> openDialog = EditorDialog.RECENT
+                EditorMenuAction.SEARCH -> openDialog = EditorDialog.SEARCH
+                EditorMenuAction.GOTO_LINE -> openDialog = EditorDialog.GOTO
+                EditorMenuAction.STATS -> openDialog = EditorDialog.STATS
+                EditorMenuAction.INSERT_COLOR -> openDialog = EditorDialog.INSERT_COLOR
+                EditorMenuAction.INSERT_TIMESTAMP ->
+                    editorController.insertAtCursor(TimestampFormatter.format(Instant.now(), ZoneId.systemDefault()))
+                EditorMenuAction.INDENT_INCREASE -> applyIndent(true)
+                EditorMenuAction.INDENT_DECREASE -> applyIndent(false)
+                EditorMenuAction.UNDO -> editorController.undo()
+                EditorMenuAction.REDO -> editorController.redo()
+                EditorMenuAction.SELECT_ALL -> editorController.selectAll()
+                EditorMenuAction.PASTE -> editorController.paste()
+                EditorMenuAction.WORD_WRAP -> viewModel.toggleWordWrap()
+                EditorMenuAction.READ_ONLY -> viewModel.toggleReadOnly()
+                EditorMenuAction.TOOLBAR -> openDialog = EditorDialog.TOOLBAR
+                EditorMenuAction.ACCESSORY_BAR -> showAccessory = !showAccessory
+                EditorMenuAction.SHARE -> {
+                    val send = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_TEXT, state.text)
                     }
+                    context.startActivity(Intent.createChooser(send, null))
                 }
             }
         },
-        bottomBar = {
-            EditorBottomBar(config = state.toolbar) { item ->
-                when (item) {
-                    ToolbarItem.OPEN -> openLauncher.launch(arrayOf("*/*"))
-                    ToolbarItem.PASTE -> editorController.paste()
-                    ToolbarItem.UNDO -> editorController.undo()
-                    ToolbarItem.REDO -> editorController.redo()
-                    ToolbarItem.SEARCH -> openDialog = EditorDialog.SEARCH
-                    ToolbarItem.CURSOR_LEFT -> editorController.moveCursor(-1)
-                    ToolbarItem.CURSOR_RIGHT -> editorController.moveCursor(1)
-                    ToolbarItem.SAVE -> {
-                        val ref = state.fileRef
-                        if (ref != null) viewModel.save(ref) else createLauncher.launch(state.title)
-                    }
-                    ToolbarItem.CLOSE -> viewModel.closeTab(state.activeTabId)
+        onToolbarItem = { item ->
+            when (item) {
+                ToolbarItem.OPEN -> openLauncher.launch(arrayOf("*/*"))
+                ToolbarItem.PASTE -> editorController.paste()
+                ToolbarItem.UNDO -> editorController.undo()
+                ToolbarItem.REDO -> editorController.redo()
+                ToolbarItem.SEARCH -> openDialog = EditorDialog.SEARCH
+                ToolbarItem.CURSOR_LEFT -> editorController.moveCursor(-1)
+                ToolbarItem.CURSOR_RIGHT -> editorController.moveCursor(1)
+                ToolbarItem.SAVE -> {
+                    val ref = state.fileRef
+                    if (ref != null) viewModel.save(ref) else createLauncher.launch(state.title)
                 }
+                ToolbarItem.CLOSE -> viewModel.closeTab(state.activeTabId)
             }
         },
-    ) { padding ->
-        Column(Modifier.fillMaxSize().padding(padding)) {
-            TabStrip(
-                tabs = state.tabs,
-                activeTabId = state.activeTabId,
-                onSelect = viewModel::switchTab,
-                onClose = viewModel::closeTab,
-                onNew = viewModel::newTab,
-                modifier = Modifier.fillMaxWidth(),
-            )
-            CodeEditorView(
-                text = state.text,
-                onTextChange = viewModel::onContentChanged,
-                scopeName = state.scopeName,
-                themeId = state.colorSchemeId,
-                controller = editorController,
-                wordWrap = state.wordWrap,
-                readOnly = state.readOnly,
-                modifier = Modifier.fillMaxWidth().weight(1f),
-            )
-            if (showAccessory) {
-                AccessoryBar(
-                    onKey = { editorController.insertAtCursor(it) },
-                    onCursorLeft = { editorController.moveCursor(-1) },
-                    onCursorRight = { editorController.moveCursor(1) },
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
-        }
-    }
+        onPickFolder = { treeLauncher.launch(null) },
+    )
 
     EditorDialogs(
         open = openDialog,
@@ -219,9 +195,10 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
 }
 
 @Composable
-private fun EditorTopBar(
+internal fun EditorTopBar(
     title: String,
     checked: Set<EditorMenuAction> = emptySet(),
+    onMenu: () -> Unit = {},
     onMenuAction: (EditorMenuAction) -> Unit,
 ) {
     Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = BarElevation) {
@@ -230,9 +207,12 @@ private fun EditorTopBar(
                 .fillMaxWidth()
                 .statusBarsPadding()
                 .height(TopBarHeight)
-                .padding(start = 16.dp, end = 4.dp),
+                .padding(start = 4.dp, end = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            IconButton(onClick = onMenu) {
+                Icon(Icons.Filled.Menu, contentDescription = stringResource(R.string.nav_menu))
+            }
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
@@ -255,7 +235,7 @@ private fun EditorTopBar(
 }
 
 @Composable
-private fun EditorBottomBar(config: ToolbarConfig, onItem: (ToolbarItem) -> Unit) {
+internal fun EditorBottomBar(config: ToolbarConfig, onItem: (ToolbarItem) -> Unit) {
     Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = BarElevation) {
         Row(
             modifier = Modifier
