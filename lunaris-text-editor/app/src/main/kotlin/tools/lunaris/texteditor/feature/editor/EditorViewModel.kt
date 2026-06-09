@@ -13,6 +13,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import tools.lunaris.texteditor.data.AssociationStore
+import tools.lunaris.texteditor.data.Associations
+import tools.lunaris.texteditor.data.Bookmark
+import tools.lunaris.texteditor.data.BookmarksStore
 import tools.lunaris.texteditor.data.ColorSchemeStore
 import tools.lunaris.texteditor.data.RecentEntry
 import tools.lunaris.texteditor.data.RecentsStore
@@ -47,9 +51,12 @@ class EditorViewModel @Inject constructor(
     private val recentsStore: RecentsStore,
     private val sessionManager: SessionManager,
     private val toolbarStore: ToolbarStore,
+    private val associationStore: AssociationStore,
+    private val bookmarksStore: BookmarksStore,
 ) : ViewModel() {
 
     private var colorSchemeId = defaultColorSchemeId
+    private var associations = Associations.empty()
     private val docs = MutableStateFlow(OpenDocuments.initial(newId()))
     private val _state = MutableStateFlow(EditorUiState(colorSchemeId = colorSchemeId))
     val state: StateFlow<EditorUiState> = _state.asStateFlow()
@@ -66,6 +73,7 @@ class EditorViewModel @Inject constructor(
             restoreSession()
             val tb = toolbarStore.toolbar().first()
             _state.update { it.copy(toolbar = tb) }
+            associations = associationStore.associations().first()
             publish()
         }
     }
@@ -118,7 +126,7 @@ class EditorViewModel @Inject constructor(
                     charset = loaded.charset,
                     lineEnding = loaded.lineEnding,
                     syntax = selection,
-                    scopeName = syntaxResolver.resolveScope(selection, loaded.name),
+                    scopeName = syntaxResolver.resolveScope(selection, loaded.name, associations.map),
                 )
                 docs.value = docs.value.opened(tab)
                 recentsStore.touch(RecentEntry(ref.uri, tab.title))
@@ -167,7 +175,7 @@ class EditorViewModel @Inject constructor(
     }
 
     fun setSyntax(selection: SyntaxSelection) = mutate {
-        it.updateActive { s -> s.copy(syntax = selection, scopeName = syntaxResolver.resolveScope(selection, s.title)) }
+        it.updateActive { s -> s.copy(syntax = selection, scopeName = syntaxResolver.resolveScope(selection, s.title, associations.map)) }
     }
 
     fun setColorScheme(id: String) {
@@ -211,6 +219,18 @@ class EditorViewModel @Inject constructor(
 
     fun snapshotSession() {
         viewModelScope.launch { runCatching { sessionManager.save(docs.value) } }
+    }
+
+    fun bookmarks() = bookmarksStore.bookmarks()
+
+    fun addBookmark(line: Int) {
+        val active = docs.value.active ?: return
+        val ref = active.fileRef ?: return
+        viewModelScope.launch { bookmarksStore.add(Bookmark(ref.uri, active.title, line)) }
+    }
+
+    fun removeBookmark(bookmark: Bookmark) {
+        viewModelScope.launch { bookmarksStore.remove(bookmark) }
     }
 
     override fun onCleared() {
