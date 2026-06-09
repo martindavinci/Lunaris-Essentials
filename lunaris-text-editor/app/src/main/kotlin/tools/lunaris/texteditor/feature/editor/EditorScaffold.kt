@@ -32,6 +32,7 @@ internal fun EditorScaffold(
     editorController: CodeEditorController,
     showAccessory: Boolean,
     context: Context,
+    onNavigate: (String) -> Unit,
     onMenuAction: (EditorMenuAction) -> Unit,
     onToolbarItem: (ToolbarItem) -> Unit,
     onPickFolder: () -> Unit,

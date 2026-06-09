@@ -68,4 +68,12 @@
     <string name="folder_no_access">No folder access yet</string>
     <string name="folder_is_directory">Folder</string>
     <string name="folder_is_file">File</string>
+    <string name="menu_file_associations">File associations</string>
+    <string name="assoc_title">File associations</string>
+    <string name="assoc_empty">Empty</string>
+    <string name="assoc_add">Add association</string>
+    <string name="assoc_extension">Extension</string>
+    <string name="assoc_language">Syntax</string>
+    <string name="assoc_delete">Delete</string>
+    <string name="action_back">Back</string>
 </resources>

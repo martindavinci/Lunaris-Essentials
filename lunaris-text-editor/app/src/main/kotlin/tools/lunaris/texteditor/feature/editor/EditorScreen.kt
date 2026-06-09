@@ -58,7 +58,10 @@ private const val AUTOSAVE_INTERVAL_MS = 60_000L
 private const val INDENT_UNIT = "    "
 
 @Composable
-fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
+fun EditorScreen(
+    onNavigate: (String) -> Unit = {},
+    viewModel: EditorViewModel = hiltViewModel(),
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val snackbar = remember { SnackbarHostState() }
@@ -134,6 +137,7 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
         editorController = editorController,
         showAccessory = showAccessory,
         context = context,
+        onNavigate = onNavigate,
         onMenuAction = { action ->
             when (action) {
                 EditorMenuAction.SYNTAX -> openDialog = EditorDialog.SYNTAX
@@ -163,6 +167,8 @@ fun EditorScreen(viewModel: EditorViewModel = hiltViewModel()) {
                     }
                     context.startActivity(Intent.createChooser(send, null))
                 }
+                EditorMenuAction.FILE_ASSOCIATIONS ->
+                    onNavigate(tools.lunaris.texteditor.feature.Routes.ASSOCIATIONS)
             }
         },
         onToolbarItem = { item ->

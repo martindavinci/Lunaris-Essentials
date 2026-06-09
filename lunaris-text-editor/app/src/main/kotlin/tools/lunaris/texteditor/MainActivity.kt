@@ -5,7 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import dagger.hilt.android.AndroidEntryPoint
-import tools.lunaris.texteditor.feature.editor.EditorScreen
+import tools.lunaris.texteditor.feature.AppNavHost
 import tools.lunaris.texteditor.ui.theme.LunarisEditorTheme
 
 @AndroidEntryPoint
@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             LunarisEditorTheme {
-                EditorScreen()
+                AppNavHost()
             }
         }
     }
