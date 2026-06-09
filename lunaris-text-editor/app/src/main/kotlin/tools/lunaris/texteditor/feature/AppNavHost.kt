@@ -10,6 +10,7 @@ import tools.lunaris.texteditor.feature.settings.FileAssociationScreen
 object Routes {
     const val EDITOR = "editor"
     const val ASSOCIATIONS = "associations"
+    const val STORAGE = "storage"
 }
 
 @Composable
@@ -21,6 +22,9 @@ fun AppNavHost() {
         }
         composable(Routes.ASSOCIATIONS) {
             FileAssociationScreen(onBack = { nav.popBackStack() })
+        }
+        composable(Routes.STORAGE) {
+            tools.lunaris.texteditor.feature.browser.StorageManagerScreen(onBack = { nav.popBackStack() })
         }
     }
 }

@@ -79,4 +79,12 @@
     <string name="menu_bookmarks">Bookmarks</string>
     <string name="menu_add_bookmark">Add bookmark</string>
     <string name="bookmarks_empty">No bookmarks</string>
+    <string name="menu_storage">Storage manager</string>
+    <string name="storage_title">Storage manager</string>
+    <string name="storage_all_files_on">All-files access: enabled</string>
+    <string name="storage_all_files_off">All-files access: disabled</string>
+    <string name="storage_enable">Enable all-files access</string>
+    <string name="storage_add_folder">Add folder</string>
+    <string name="storage_release">Release</string>
+    <string name="storage_no_trees">No granted folders</string>
 </resources>
