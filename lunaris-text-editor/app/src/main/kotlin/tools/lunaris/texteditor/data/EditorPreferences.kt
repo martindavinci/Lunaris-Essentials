@@ -1,6 +1,7 @@
 package tools.lunaris.texteditor.data
 
 import android.content.Context
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -16,7 +17,7 @@ private val Context.dataStore by preferencesDataStore(name = "editor_prefs")
 @Singleton
 class EditorPreferences @Inject constructor(
     @ApplicationContext private val context: Context,
-) : ColorSchemeStore, RecentsStore, SessionStore, ToolbarStore {
+) : ColorSchemeStore, RecentsStore, SessionStore, ToolbarStore, AssociationStore, BookmarksStore {
 
     override fun colorSchemeId(default: String): Flow<String> =
         context.dataStore.data.map { it[COLOR_SCHEME_KEY] ?: default }
@@ -35,9 +36,11 @@ class EditorPreferences @Inject constructor(
         }
     }
 
+    // remove(String) satisfies both RecentsStore (uri) and AssociationStore (extension)
     override suspend fun remove(uri: String) {
         context.dataStore.edit { prefs ->
             prefs[RECENTS_KEY] = RecentFiles.toJson(RecentFiles.remove(RecentFiles.fromJson(prefs[RECENTS_KEY] ?: ""), uri))
+            prefs[ASSOC_KEY] = Associations.fromJson(prefs[ASSOC_KEY] ?: "").remove(uri).toJson()
         }
     }
 
@@ -61,10 +64,38 @@ class EditorPreferences @Inject constructor(
         context.dataStore.edit { it[TOOLBAR_KEY] = config.toJson() }
     }
 
+    // AssociationStore
+    override fun associations(): Flow<Associations> =
+        context.dataStore.data.map { Associations.fromJson(it[ASSOC_KEY] ?: "") }
+
+    override suspend fun put(extension: String, languageId: String) {
+        context.dataStore.edit { it[ASSOC_KEY] = Associations.fromJson(it[ASSOC_KEY] ?: "").put(extension, languageId).toJson() }
+    }
+
+    // BookmarksStore
+    override fun bookmarks(): Flow<List<Bookmark>> =
+        context.dataStore.data.map { Bookmarks.fromJson(it[BOOKMARKS_KEY] ?: "") }
+
+    override suspend fun add(bookmark: Bookmark) {
+        context.dataStore.edit { it[BOOKMARKS_KEY] = Bookmarks.toJson(Bookmarks.add(Bookmarks.fromJson(it[BOOKMARKS_KEY] ?: ""), bookmark)) }
+    }
+
+    override suspend fun remove(bookmark: Bookmark) {
+        context.dataStore.edit { it[BOOKMARKS_KEY] = Bookmarks.toJson(Bookmarks.remove(Bookmarks.fromJson(it[BOOKMARKS_KEY] ?: ""), bookmark)) }
+    }
+
+    // File filter
+    fun fileFilter(): Flow<Boolean> = context.dataStore.data.map { it[FILE_FILTER_KEY] ?: true }
+
+    suspend fun setFileFilter(on: Boolean) { context.dataStore.edit { it[FILE_FILTER_KEY] = on } }
+
     private companion object {
         val COLOR_SCHEME_KEY = stringPreferencesKey("color_scheme_id")
         val RECENTS_KEY = stringPreferencesKey("recents_json")
         val SESSION_KEY = stringPreferencesKey("session_json")
         val TOOLBAR_KEY = stringPreferencesKey("toolbar_json")
+        val ASSOC_KEY = stringPreferencesKey("assoc_json")
+        val BOOKMARKS_KEY = stringPreferencesKey("bookmarks_json")
+        val FILE_FILTER_KEY = booleanPreferencesKey("file_filter")
     }
 }
