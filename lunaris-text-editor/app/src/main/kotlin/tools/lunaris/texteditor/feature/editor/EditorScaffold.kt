@@ -5,15 +5,25 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Storage
 import androidx.compose.material3.DrawerState
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.launch
 import tools.lunaris.texteditor.editor.CodeEditorController
 import tools.lunaris.texteditor.editor.CodeEditorView
@@ -43,6 +53,31 @@ internal fun EditorScaffold(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet {
+                NavigationDrawerItem(
+                    label = { Text(stringResource(EditorMenuAction.RECENT_FILES.labelRes)) },
+                    icon = { Icon(Icons.Filled.History, contentDescription = null) },
+                    selected = false,
+                    onClick = { scope.launch { drawerState.close() }; onMenuAction(EditorMenuAction.RECENT_FILES) },
+                )
+                NavigationDrawerItem(
+                    label = { Text(stringResource(EditorMenuAction.BOOKMARKS.labelRes)) },
+                    icon = { Icon(Icons.Filled.Bookmark, contentDescription = null) },
+                    selected = false,
+                    onClick = { scope.launch { drawerState.close() }; onMenuAction(EditorMenuAction.BOOKMARKS) },
+                )
+                NavigationDrawerItem(
+                    label = { Text(stringResource(EditorMenuAction.FILE_ASSOCIATIONS.labelRes)) },
+                    icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = null) },
+                    selected = false,
+                    onClick = { scope.launch { drawerState.close() }; onMenuAction(EditorMenuAction.FILE_ASSOCIATIONS) },
+                )
+                NavigationDrawerItem(
+                    label = { Text(stringResource(EditorMenuAction.STORAGE_MANAGER.labelRes)) },
+                    icon = { Icon(Icons.Filled.Storage, contentDescription = null) },
+                    selected = false,
+                    onClick = { scope.launch { drawerState.close() }; onMenuAction(EditorMenuAction.STORAGE_MANAGER) },
+                )
+                HorizontalDivider()
                 FolderDrawer(
                     onOpenFile = { ref ->
                         viewModel.openFile(FileRef(ref))
