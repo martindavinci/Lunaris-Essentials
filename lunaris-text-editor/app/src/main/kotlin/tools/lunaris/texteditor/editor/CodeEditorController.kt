@@ -35,6 +35,8 @@ class CodeEditorController {
         return l..r
     }
 
+    fun currentLine(): Int = (editor?.cursor?.leftLine ?: 0) + 1
+
     fun goToLine(line: Int) {
         val e = editor ?: return
         val target = (line - 1).coerceIn(0, (e.lineCount - 1).coerceAtLeast(0))

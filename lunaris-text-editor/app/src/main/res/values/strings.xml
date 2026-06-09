@@ -76,4 +76,7 @@
     <string name="assoc_language">Syntax</string>
     <string name="assoc_delete">Delete</string>
     <string name="action_back">Back</string>
+    <string name="menu_bookmarks">Bookmarks</string>
+    <string name="menu_add_bookmark">Add bookmark</string>
+    <string name="bookmarks_empty">No bookmarks</string>
 </resources>

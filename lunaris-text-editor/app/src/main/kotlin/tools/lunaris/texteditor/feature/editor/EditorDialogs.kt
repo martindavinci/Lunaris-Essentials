@@ -11,7 +11,7 @@ import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfigDialog
 import tools.lunaris.texteditor.file.FileRef
 
 /** Which modal dialog (if any) is currently shown. */
-enum class EditorDialog { SYNTAX, DISPLAY_STYLE, ENCODING, RECENT, SEARCH, GOTO, STATS, INSERT_COLOR, TOOLBAR }
+enum class EditorDialog { SYNTAX, DISPLAY_STYLE, ENCODING, RECENT, SEARCH, GOTO, STATS, INSERT_COLOR, TOOLBAR, BOOKMARKS }
 
 /** Single host that renders whichever editor dialog is open. */
 @Composable
@@ -65,5 +65,14 @@ fun EditorDialogs(
                 onApply = { viewModel.setToolbar(it) },
                 onDismiss = onDismiss,
             )
+        EditorDialog.BOOKMARKS -> {
+            val bms by viewModel.bookmarks().collectAsStateWithLifecycle(initialValue = emptyList())
+            BookmarksDialog(
+                bookmarks = bms,
+                onOpen = { b -> viewModel.openFile(FileRef(b.uri)); controller.goToLine(b.line); onDismiss() },
+                onRemove = { viewModel.removeBookmark(it) },
+                onDismiss = onDismiss,
+            )
+        }
     }
 }

@@ -26,4 +26,6 @@ enum class EditorMenuAction(@StringRes val labelRes: Int) {
     ACCESSORY_BAR(R.string.menu_accessory),
     SHARE(R.string.menu_share),
     FILE_ASSOCIATIONS(R.string.menu_file_associations),
+    BOOKMARKS(R.string.menu_bookmarks),
+    ADD_BOOKMARK(R.string.menu_add_bookmark),
 }
