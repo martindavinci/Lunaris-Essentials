@@ -7,5 +7,5 @@ class FakeAssociationStore(initial: Associations = Associations.empty()) : Assoc
     val flow = MutableStateFlow(initial)
     override fun associations(): Flow<Associations> = flow
     override suspend fun put(extension: String, languageId: String) { flow.value = flow.value.put(extension, languageId) }
-    override suspend fun remove(extension: String) { flow.value = flow.value.remove(extension) }
+    override suspend fun removeAssociation(extension: String) { flow.value = flow.value.remove(extension) }
 }

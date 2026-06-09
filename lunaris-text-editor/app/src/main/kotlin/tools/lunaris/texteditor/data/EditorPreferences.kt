@@ -36,12 +36,12 @@ class EditorPreferences @Inject constructor(
         }
     }
 
-    // remove(String) satisfies both RecentsStore (uri) and AssociationStore (extension)
     override suspend fun remove(uri: String) {
-        context.dataStore.edit { prefs ->
-            prefs[RECENTS_KEY] = RecentFiles.toJson(RecentFiles.remove(RecentFiles.fromJson(prefs[RECENTS_KEY] ?: ""), uri))
-            prefs[ASSOC_KEY] = Associations.fromJson(prefs[ASSOC_KEY] ?: "").remove(uri).toJson()
-        }
+        context.dataStore.edit { it[RECENTS_KEY] = RecentFiles.toJson(RecentFiles.remove(RecentFiles.fromJson(it[RECENTS_KEY] ?: ""), uri)) }
+    }
+
+    override suspend fun removeAssociation(extension: String) {
+        context.dataStore.edit { it[ASSOC_KEY] = Associations.fromJson(it[ASSOC_KEY] ?: "").remove(extension).toJson() }
     }
 
     // SessionStore
