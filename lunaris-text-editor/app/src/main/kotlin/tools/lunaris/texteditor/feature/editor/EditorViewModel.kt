@@ -18,7 +18,6 @@ import tools.lunaris.texteditor.data.Associations
 import tools.lunaris.texteditor.data.Bookmark
 import tools.lunaris.texteditor.data.BookmarksStore
 import tools.lunaris.texteditor.data.ColorSchemeStore
-import tools.lunaris.texteditor.data.RecentEntry
 import tools.lunaris.texteditor.data.RecentsStore
 import tools.lunaris.texteditor.data.SessionManager
 import tools.lunaris.texteditor.data.ToolbarStore
@@ -28,7 +27,6 @@ import tools.lunaris.texteditor.document.DocumentSession
 import tools.lunaris.texteditor.document.LineEnding
 import tools.lunaris.texteditor.document.OpenDocuments
 import tools.lunaris.texteditor.file.FileRef
-import tools.lunaris.texteditor.file.FileRepository
 import tools.lunaris.texteditor.syntax.CharsetCatalog
 import tools.lunaris.texteditor.syntax.ColorSchemeCatalog
 import tools.lunaris.texteditor.syntax.LanguageCatalog
@@ -42,7 +40,7 @@ import javax.inject.Named
 
 @HiltViewModel
 class EditorViewModel @Inject constructor(
-    private val repository: FileRepository,
+    private val documentIo: DocumentIo,
     private val syntaxResolver: SyntaxResolver,
     @Named("defaultColorSchemeId") defaultColorSchemeId: String,
     val languageCatalog: LanguageCatalog,
@@ -118,21 +116,8 @@ class EditorViewModel @Inject constructor(
         _state.update { it.copy(isLoading = true, error = null) }
         viewModelScope.launch {
             try {
-                val loaded = repository.load(ref)
-                val selection = SyntaxSelection.Auto
-                val tab = DocumentSession(
-                    id = newId(),
-                    title = loaded.name ?: "untitled",
-                    fileRef = loaded.ref,
-                    text = loaded.text,
-                    savedText = loaded.text,
-                    charset = loaded.charset,
-                    lineEnding = loaded.lineEnding,
-                    syntax = selection,
-                    scopeName = syntaxResolver.resolveScope(selection, loaded.name, associations.map),
-                )
+                val tab = documentIo.openTab(ref, newId(), associations.map)
                 docs.value = docs.value.opened(tab)
-                recentsStore.touch(RecentEntry(ref.uri, tab.title))
                 publish()
                 _state.update { it.copy(isLoading = false) }
             } catch (t: Throwable) {
@@ -143,20 +128,15 @@ class EditorViewModel @Inject constructor(
 
     fun save(ref: FileRef) {
         val active = docs.value.active ?: return
-        val savedText = active.text
-        val charset = active.charset
-        val lineEnding = active.lineEnding
-        val priorTitle = active.title
+        val written = active.text
         viewModelScope.launch {
             try {
-                repository.save(ref, savedText, charset, lineEnding)
-                val name = repository.displayName(ref) ?: priorTitle
+                val name = documentIo.persist(ref, written, active.charset, active.lineEnding, active.title)
                 docs.value = docs.value.replace(active.id) {
-                    it.copy(fileRef = ref, title = name, savedText = savedText)
+                    it.copy(fileRef = ref, title = name, savedText = written)
                 }
-                recentsStore.touch(RecentEntry(ref.uri, name))
                 publish()
-                _state.update { it.copy(savedSignal = it.savedSignal + 1) }
+                _state.update { it.copy(savedSignal = it.savedSignal + 1, error = null) }
             } catch (t: Throwable) {
                 _state.update { it.copy(error = t.message) }
             }
@@ -170,7 +150,7 @@ class EditorViewModel @Inject constructor(
             targets.forEach { tab ->
                 val ref = tab.fileRef ?: return@forEach
                 val written = tab.text
-                runCatching { repository.save(ref, written, tab.charset, tab.lineEnding) }
+                runCatching { documentIo.persist(ref, written, tab.charset, tab.lineEnding, tab.title) }
                     .onSuccess { docs.value = docs.value.replace(tab.id) { it.copy(savedText = written) } }
             }
             publish()
@@ -192,9 +172,9 @@ class EditorViewModel @Inject constructor(
         val ref = active.fileRef ?: return
         viewModelScope.launch {
             try {
-                val loaded = repository.load(ref, forced = charset)
+                val (text, cs, eol) = documentIo.reload(ref, charset)
                 docs.value = docs.value.replace(active.id) {
-                    it.copy(text = loaded.text, savedText = loaded.text, charset = loaded.charset, lineEnding = loaded.lineEnding)
+                    it.copy(text = text, savedText = text, charset = cs, lineEnding = eol)
                 }
                 publish()
             } catch (t: Throwable) {

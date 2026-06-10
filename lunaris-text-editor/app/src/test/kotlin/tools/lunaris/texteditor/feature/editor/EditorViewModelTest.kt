@@ -52,8 +52,10 @@ class EditorViewModelTest {
     private val bookmarks = FakeBookmarksStore()
     private val settings = FakeSettingsStore()
 
+    private val documentIo = DocumentIo(repo, recents, resolver)
+
     private fun newVm() = EditorViewModel(
-        repository = repo,
+        documentIo = documentIo,
         syntaxResolver = resolver,
         defaultColorSchemeId = "sunburst",
         languageCatalog = catalog,
@@ -212,7 +214,7 @@ class EditorViewModelTest {
         )
         settings.flow.value = EditorSettings(sessionRestore = true)
         val vm = EditorViewModel(
-            repo, resolver, "sunburst", catalog,
+            DocumentIo(repo, recents, resolver), resolver, "sunburst", catalog,
             ColorSchemeCatalog(emptyList(), ""), CharsetCatalog(),
             FakeColorSchemeStore(), recents, SessionManager(seeded, resolver), toolbar,
             assoc, bookmarks, settings, tools.lunaris.texteditor.preview.PreviewHolder(),
@@ -230,7 +232,7 @@ class EditorViewModelTest {
         )
         settings.flow.value = EditorSettings(sessionRestore = false)
         val vm = EditorViewModel(
-            repo, resolver, "sunburst", catalog,
+            DocumentIo(repo, recents, resolver), resolver, "sunburst", catalog,
             ColorSchemeCatalog(emptyList(), ""), CharsetCatalog(),
             FakeColorSchemeStore(), recents, SessionManager(seeded, resolver), toolbar,
             assoc, bookmarks, settings, tools.lunaris.texteditor.preview.PreviewHolder(),
