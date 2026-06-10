@@ -36,6 +36,7 @@ import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfig
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfigDialog
 import tools.lunaris.texteditor.settings.AppTheme
 import tools.lunaris.texteditor.settings.BackupCodec
+import tools.lunaris.texteditor.settings.EditorSettings
 import tools.lunaris.texteditor.settings.Suggestions
 
 internal enum class SettingChoice {
@@ -70,6 +71,39 @@ fun SettingsScreen(
 
     val s by viewModel.settings.collectAsStateWithLifecycle()
     val fileFilterOn by viewModel.fileFilter().collectAsStateWithLifecycle(initialValue = true)
+    val toolbarConfig by viewModel.toolbar().collectAsStateWithLifecycle(initialValue = ToolbarConfig.DEFAULT)
+
+    SettingsContent(
+        s = s,
+        fileFilterOn = fileFilterOn,
+        toolbarConfig = toolbarConfig,
+        onBack = onBack,
+        onUpdate = viewModel::update,
+        onSetFileFilter = viewModel::setFileFilter,
+        onSetToolbar = viewModel::setToolbar,
+        onOpenAssociations = onOpenAssociations,
+        onOpenLicenses = onOpenLicenses,
+        onBackup = { backupLauncher.launch(context.getString(R.string.backup_default_name)) },
+        onRestore = { restoreLauncher.launch(arrayOf("application/json")) },
+    )
+}
+
+/** Stateless Settings UI. Holds dialog/toolbar visibility locally so the screen
+ *  is fully renderable in a preview without a ViewModel. */
+@Composable
+internal fun SettingsContent(
+    s: EditorSettings,
+    fileFilterOn: Boolean,
+    toolbarConfig: ToolbarConfig,
+    onBack: () -> Unit,
+    onUpdate: ((EditorSettings) -> EditorSettings) -> Unit,
+    onSetFileFilter: (Boolean) -> Unit,
+    onSetToolbar: (ToolbarConfig) -> Unit,
+    onOpenAssociations: () -> Unit,
+    onOpenLicenses: () -> Unit,
+    onBackup: () -> Unit,
+    onRestore: () -> Unit,
+) {
     var openChoice by remember { mutableStateOf<SettingChoice?>(null) }
     var showToolbar by remember { mutableStateOf(false) }
 
@@ -104,8 +138,8 @@ fun SettingsScreen(
             GeneralSection(
                 s = s,
                 fileFilterOn = fileFilterOn,
-                onUpdate = viewModel::update,
-                onSetFileFilter = viewModel::setFileFilter,
+                onUpdate = onUpdate,
+                onSetFileFilter = onSetFileFilter,
                 onOpenAssociations = onOpenAssociations,
                 onShowToolbar = { showToolbar = true },
                 onEncodingClick = { openChoice = SettingChoice.ENCODING },
@@ -114,30 +148,30 @@ fun SettingsScreen(
             )
             InputSection(
                 s = s,
-                onUpdate = viewModel::update,
+                onUpdate = onUpdate,
                 onSuggestionsClick = { openChoice = SettingChoice.SUGGESTIONS },
             )
             DisplaySection(
                 s = s,
-                onUpdate = viewModel::update,
+                onUpdate = onUpdate,
                 onFontTypeClick = { openChoice = SettingChoice.FONT_TYPE },
                 onFontSizeClick = { openChoice = SettingChoice.FONT_SIZE },
                 onLineSpacingClick = { openChoice = SettingChoice.LINE_SPACING },
             )
             AutosaveSection(
                 s = s,
-                onUpdate = viewModel::update,
+                onUpdate = onUpdate,
                 onIntervalClick = { openChoice = SettingChoice.AUTOSAVE_INTERVAL },
             )
             AppearanceSection(
                 s = s,
-                onUpdate = viewModel::update,
+                onUpdate = onUpdate,
                 onThemeClick = { openChoice = SettingChoice.THEME },
             )
             AboutSection(
                 onOpenLicenses = onOpenLicenses,
-                onBackup = { backupLauncher.launch(context.getString(R.string.backup_default_name)) },
-                onRestore = { restoreLauncher.launch(arrayOf("application/json")) },
+                onBackup = onBackup,
+                onRestore = onRestore,
             )
         }
     }
@@ -145,15 +179,14 @@ fun SettingsScreen(
     SettingsChoiceDialogs(
         openChoice = openChoice,
         s = s,
-        onUpdate = viewModel::update,
+        onUpdate = onUpdate,
         onDismiss = { openChoice = null },
     )
 
     if (showToolbar) {
-        val toolbarConfig by viewModel.toolbar().collectAsStateWithLifecycle(initialValue = ToolbarConfig.DEFAULT)
         ToolbarConfigDialog(
             initial = toolbarConfig,
-            onApply = viewModel::setToolbar,
+            onApply = onSetToolbar,
             onDismiss = { showToolbar = false },
         )
     }

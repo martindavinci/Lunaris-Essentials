@@ -36,7 +36,30 @@ fun FolderDrawer(
     viewModel: FolderBrowserViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    FolderDrawerContent(
+        state = state,
+        onOpenFile = onOpenFile,
+        onPickFolder = onPickFolder,
+        onEnableAllFiles = onEnableAllFiles,
+        onNavigateTo = { viewModel.navigateTo(it) },
+        onUp = { viewModel.up() },
+        onToggleFilter = { viewModel.toggleFilter(it) },
+        modifier = modifier,
+    )
+}
 
+/** Stateless folder-browser UI. Hosts the [FolderDrawer] body so it can be previewed. */
+@Composable
+fun FolderDrawerContent(
+    state: FolderUiState,
+    onOpenFile: (String) -> Unit,
+    onPickFolder: () -> Unit,
+    onEnableAllFiles: () -> Unit,
+    onNavigateTo: (String) -> Unit,
+    onUp: () -> Unit,
+    onToggleFilter: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Column(modifier.fillMaxWidth().padding(8.dp)) {
         if (!state.accessGranted) {
             Text(stringResource(R.string.folder_no_access), Modifier.padding(8.dp))
@@ -49,20 +72,20 @@ fun FolderDrawer(
             return@Column
         }
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = { viewModel.up() }, enabled = state.canGoUp) {
+            IconButton(onClick = onUp, enabled = state.canGoUp) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.folder_up))
             }
             Text(state.location.orEmpty(), maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
         }
         Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(stringResource(R.string.folder_hide_unknown), Modifier.weight(1f))
-            Switch(checked = state.filterEnabled, onCheckedChange = { viewModel.toggleFilter(it) })
+            Switch(checked = state.filterEnabled, onCheckedChange = onToggleFilter)
         }
         LazyColumn(Modifier.fillMaxWidth()) {
             items(state.entries, key = { it.ref }) { entry ->
                 Row(
                     Modifier.fillMaxWidth()
-                        .clickable { if (entry.isDirectory) viewModel.navigateTo(entry.ref) else onOpenFile(entry.ref) }
+                        .clickable { if (entry.isDirectory) onNavigateTo(entry.ref) else onOpenFile(entry.ref) }
                         .padding(12.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {

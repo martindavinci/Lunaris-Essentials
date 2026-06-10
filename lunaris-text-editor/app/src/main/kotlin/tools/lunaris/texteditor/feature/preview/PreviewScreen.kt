@@ -39,35 +39,10 @@ fun PreviewScreen(
     val webRef = remember { mutableStateOf<WebView?>(null) }
     val displayTitle = viewModel.title.ifBlank { stringResource(R.string.preview_title) }
 
-    Scaffold(
-        topBar = {
-            Surface(tonalElevation = 3.dp) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.action_back),
-                        )
-                    }
-                    Text(
-                        text = displayTitle,
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(start = 8.dp),
-                    )
-                    IconButton(onClick = { printWebView(context, webRef.value, viewModel.title) }) {
-                        Icon(
-                            imageVector = Icons.Filled.Print,
-                            contentDescription = stringResource(R.string.preview_print),
-                        )
-                    }
-                }
-            }
-        },
+    PreviewChrome(
+        title = displayTitle,
+        onBack = onBack,
+        onPrint = { printWebView(context, webRef.value, viewModel.title) },
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -96,6 +71,48 @@ fun PreviewScreen(
             }
         }
     }
+}
+
+/** Stateless preview scaffold (top bar + body slot). The WebView lives in [PreviewScreen];
+ *  this chrome is what gets previewed. */
+@Composable
+internal fun PreviewChrome(
+    title: String,
+    onBack: () -> Unit,
+    onPrint: () -> Unit,
+    body: @Composable (androidx.compose.foundation.layout.PaddingValues) -> Unit,
+) {
+    Scaffold(
+        topBar = {
+            Surface(tonalElevation = 3.dp) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.action_back),
+                        )
+                    }
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(start = 8.dp),
+                    )
+                    IconButton(onClick = onPrint) {
+                        Icon(
+                            imageVector = Icons.Filled.Print,
+                            contentDescription = stringResource(R.string.preview_print),
+                        )
+                    }
+                }
+            }
+        },
+        content = body,
+    )
 }
 
 private fun printWebView(context: Context, web: WebView?, jobName: String) {

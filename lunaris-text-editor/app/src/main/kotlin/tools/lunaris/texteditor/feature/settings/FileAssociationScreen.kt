@@ -100,7 +100,7 @@ fun FileAssociationScreen(
 }
 
 @Composable
-private fun AssocTopBar(onBack: () -> Unit) {
+internal fun AssocTopBar(onBack: () -> Unit) {
     Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = BarElevation) {
         Row(
             modifier = Modifier
@@ -126,7 +126,7 @@ private fun AssocTopBar(onBack: () -> Unit) {
 }
 
 @Composable
-private fun AssocRow(
+internal fun AssocRow(
     extension: String,
     languageDisplay: String,
     onDelete: () -> Unit,

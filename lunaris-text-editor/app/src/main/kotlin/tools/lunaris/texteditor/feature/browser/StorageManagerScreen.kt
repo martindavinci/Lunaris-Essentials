@@ -129,7 +129,7 @@ fun StorageManagerScreen(
 }
 
 @Composable
-private fun StorageTopBar(onBack: () -> Unit) {
+internal fun StorageTopBar(onBack: () -> Unit) {
     Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = BarElevation) {
         Row(
             modifier = Modifier
