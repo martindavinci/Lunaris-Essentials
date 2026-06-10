@@ -44,6 +44,7 @@ internal fun EditorScaffold(
     showAccessory: Boolean,
     context: Context,
     onNavigate: (String) -> Unit,
+    folderDrawerEnabled: Boolean,
     onMenuAction: (EditorMenuAction) -> Unit,
     onToolbarItem: (ToolbarItem) -> Unit,
     onPickFolder: () -> Unit,
@@ -56,6 +57,7 @@ internal fun EditorScaffold(
 
     ModalNavigationDrawer(
         drawerState = drawerState,
+        gesturesEnabled = folderDrawerEnabled,
         drawerContent = {
             ModalDrawerSheet {
                 NavigationDrawerItem(
@@ -113,6 +115,7 @@ internal fun EditorScaffold(
                     },
                     onMenu = { scope.launch { drawerState.open() } },
                     onMenuAction = onMenuAction,
+                    showMenu = folderDrawerEnabled,
                 )
             },
             bottomBar = {

@@ -55,8 +55,6 @@ import java.time.ZoneId
 
 private val TopBarHeight = 56.dp
 private val BarElevation = 3.dp
-private const val AUTOSAVE_INTERVAL_MS = 60_000L
-private const val INDENT_UNIT = "    "
 
 @Composable
 fun EditorScreen(
@@ -90,6 +88,10 @@ fun EditorScreen(
 
     var openDialog by remember { mutableStateOf<EditorDialog?>(null) }
     var showAccessory by remember { mutableStateOf(false) }
+    var accessoryInitDone by remember { mutableStateOf(false) }
+    LaunchedEffect(viewSettings) {
+        if (!accessoryInitDone) { showAccessory = viewSettings.accessoryBarDefault; accessoryInitDone = true }
+    }
     val searchEngine = remember { SearchEngine() }
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -105,10 +107,13 @@ fun EditorScreen(
         viewModel.snapshotSession()
     }
 
-    LaunchedEffect(Unit) {
-        while (true) {
-            kotlinx.coroutines.delay(AUTOSAVE_INTERVAL_MS)
-            viewModel.autosave()
+    LaunchedEffect(viewSettings.autosave, viewSettings.autosaveIntervalMinutes) {
+        if (viewSettings.autosave) {
+            val intervalMs = viewSettings.autosaveIntervalMinutes.coerceAtLeast(1) * 60_000L
+            while (true) {
+                kotlinx.coroutines.delay(intervalMs)
+                viewModel.autosave()
+            }
         }
     }
 
@@ -126,8 +131,8 @@ fun EditorScreen(
     val applyIndent: (Boolean) -> Unit = { increase ->
         val sel = editorController.selection()
         val t = state.text
-        val nt = if (increase) Indenter.increase(t, sel.first, sel.last, INDENT_UNIT)
-                 else Indenter.decrease(t, sel.first, sel.last, INDENT_UNIT)
+        val nt = if (increase) Indenter.increase(t, sel.first, sel.last, viewSettings.indentUnit)
+                 else Indenter.decrease(t, sel.first, sel.last, viewSettings.indentUnit)
         if (nt != t) viewModel.onContentChanged(nt)
     }
 
@@ -141,6 +146,7 @@ fun EditorScreen(
         showAccessory = showAccessory,
         context = context,
         onNavigate = onNavigate,
+        folderDrawerEnabled = viewSettings.folderDrawerEnabled,
         lineNumbers = viewSettings.lineNumbers,
         fontSizeSp = viewSettings.fontSizeSp.toFloat(),
         lineSpacingExtra = viewSettings.lineSpacingExtra,
@@ -216,6 +222,7 @@ internal fun EditorTopBar(
     title: String,
     checked: Set<EditorMenuAction> = emptySet(),
     onMenu: () -> Unit = {},
+    showMenu: Boolean = true,
     onMenuAction: (EditorMenuAction) -> Unit,
 ) {
     Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = BarElevation) {
@@ -227,8 +234,10 @@ internal fun EditorTopBar(
                 .padding(start = 4.dp, end = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(onClick = onMenu) {
-                Icon(Icons.Filled.Menu, contentDescription = stringResource(R.string.nav_menu))
+            if (showMenu) {
+                IconButton(onClick = onMenu) {
+                    Icon(Icons.Filled.Menu, contentDescription = stringResource(R.string.nav_menu))
+                }
             }
             Text(
                 text = title,
