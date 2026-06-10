@@ -21,6 +21,7 @@ import tools.lunaris.texteditor.data.ColorSchemeStore
 import tools.lunaris.texteditor.data.RecentsStore
 import tools.lunaris.texteditor.data.SessionManager
 import tools.lunaris.texteditor.data.ToolbarStore
+import tools.lunaris.texteditor.settings.EditorSettings
 import tools.lunaris.texteditor.settings.SettingsStore
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfig
 import tools.lunaris.texteditor.document.DocumentSession
@@ -58,6 +59,7 @@ class EditorViewModel @Inject constructor(
 
     private var colorSchemeId = defaultColorSchemeId
     private var associations = Associations.empty()
+    private var currentSettings = EditorSettings()
     private val docs = MutableStateFlow(OpenDocuments.initial(newId()))
     private val _state = MutableStateFlow(EditorUiState(colorSchemeId = colorSchemeId))
     val state: StateFlow<EditorUiState> = _state.asStateFlow()
@@ -71,7 +73,9 @@ class EditorViewModel @Inject constructor(
         publish()
         initScope.launch {
             colorSchemeId = colorSchemeStore.colorSchemeId(colorSchemeId).first()
-            if (settingsStore.settings().first().sessionRestore) restoreSession()
+            val s = settingsStore.settings().first()
+            currentSettings = s
+            if (s.sessionRestore) restoreSession()
             val tb = toolbarStore.toolbar().first()
             _state.update { it.copy(toolbar = tb) }
             associations = associationStore.associations().first()
@@ -80,6 +84,12 @@ class EditorViewModel @Inject constructor(
     }
 
     private fun newId(): String = UUID.randomUUID().toString()
+
+    private fun parseLineEnding(value: String): LineEnding = when (value) {
+        "CRLF" -> LineEnding.CRLF
+        "CR" -> LineEnding.CR
+        else -> LineEnding.LF   // "LF" and "Auto" → LF
+    }
 
     private fun mutate(block: (OpenDocuments) -> OpenDocuments) {
         docs.value = block(docs.value)
@@ -108,7 +118,7 @@ class EditorViewModel @Inject constructor(
     }
 
     fun onContentChanged(text: String) = mutate { it.updateActive { s -> s.copy(text = text) } }
-    fun newTab() = mutate { it.opened(DocumentSession(id = newId())) }
+    fun newTab() = mutate { it.opened(DocumentSession(id = newId(), lineEnding = parseLineEnding(currentSettings.defaultLineEnding))) }
     fun switchTab(id: String) = mutate { it.activated(id) }
     fun closeTab(id: String) = mutate { it.closed(id, freshId = newId()) }
 
@@ -116,7 +126,10 @@ class EditorViewModel @Inject constructor(
         _state.update { it.copy(isLoading = true, error = null) }
         viewModelScope.launch {
             try {
-                val tab = documentIo.openTab(ref, newId(), associations.map)
+                val forced = currentSettings.defaultEncoding
+                    .takeIf { it != "Auto" }
+                    ?.let { runCatching { Charset.forName(it) }.getOrNull() }
+                val tab = documentIo.openTab(ref, newId(), associations.map, forced = forced)
                 docs.value = docs.value.opened(tab)
                 publish()
                 _state.update { it.copy(isLoading = false) }

@@ -340,4 +340,46 @@ class EditorViewModelTest {
         vm.addBookmark(1); advanceUntilIdle()
         assertThat(bookmarks.flow.value).isEmpty()
     }
+
+    @Test
+    fun newTab_usesDefaultLineEndingFromSettings() = runTest {
+        settings.flow.value = EditorSettings(defaultLineEnding = "CRLF")
+        val vm = newVm()
+        advanceUntilIdle()
+        vm.newTab()
+        assertThat(vm.state.value.lineEnding).isEqualTo(tools.lunaris.texteditor.document.LineEnding.CRLF)
+    }
+
+    @Test
+    fun newTab_usesCrLineEnding_whenSettingIsCr() = runTest {
+        settings.flow.value = EditorSettings(defaultLineEnding = "CR")
+        val vm = newVm()
+        advanceUntilIdle()
+        vm.newTab()
+        assertThat(vm.state.value.lineEnding).isEqualTo(tools.lunaris.texteditor.document.LineEnding.CR)
+    }
+
+    @Test
+    fun openFile_usesDefaultEncoding_whenNotAuto() = runTest {
+        settings.flow.value = EditorSettings(defaultEncoding = "ISO-8859-1")
+        val vm = newVm()
+        advanceUntilIdle()
+        val ref = FileRef("content://doc/enc2")
+        gateway.store[ref.uri] = byteArrayOf(0x61, 0x62)
+        gateway.names[ref.uri] = "a.txt"
+        vm.openFile(ref); advanceUntilIdle()
+        assertThat(vm.state.value.charset).isEqualTo(java.nio.charset.Charset.forName("ISO-8859-1"))
+    }
+
+    @Test
+    fun openFile_autoDetects_whenEncodingIsAuto() = runTest {
+        settings.flow.value = EditorSettings(defaultEncoding = "Auto")
+        val vm = newVm()
+        advanceUntilIdle()
+        val ref = FileRef("content://doc/utf8auto")
+        gateway.store[ref.uri] = "ciao".toByteArray(Charsets.UTF_8)
+        gateway.names[ref.uri] = "b.txt"
+        vm.openFile(ref); advanceUntilIdle()
+        assertThat(vm.state.value.charset).isEqualTo(Charsets.UTF_8)
+    }
 }
