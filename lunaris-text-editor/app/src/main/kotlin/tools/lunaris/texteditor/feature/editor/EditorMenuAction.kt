@@ -29,4 +29,5 @@ enum class EditorMenuAction(@StringRes val labelRes: Int) {
     BOOKMARKS(R.string.menu_bookmarks),
     ADD_BOOKMARK(R.string.menu_add_bookmark),
     STORAGE_MANAGER(R.string.menu_storage),
+    SETTINGS(R.string.menu_settings),
 }

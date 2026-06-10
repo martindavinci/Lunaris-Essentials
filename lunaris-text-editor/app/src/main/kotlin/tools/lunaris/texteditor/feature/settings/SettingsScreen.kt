@@ -1,5 +1,7 @@
 package tools.lunaris.texteditor.feature.settings
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,17 +21,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.launch
 import tools.lunaris.texteditor.R
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfig
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfigDialog
 import tools.lunaris.texteditor.settings.AppTheme
+import tools.lunaris.texteditor.settings.BackupCodec
 import tools.lunaris.texteditor.settings.Suggestions
 
 internal enum class SettingChoice {
@@ -41,10 +47,27 @@ fun SettingsScreen(
     onBack: () -> Unit,
     onOpenAssociations: () -> Unit,
     onOpenLicenses: () -> Unit,
-    onBackup: () -> Unit,
-    onRestore: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val backupLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/json")
+    ) { uri ->
+        if (uri != null) scope.launch {
+            val json = BackupCodec.toJson(viewModel.buildBackup())
+            context.contentResolver.openOutputStream(uri)?.use { it.write(json.toByteArray()) }
+        }
+    }
+    val restoreLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        if (uri != null) scope.launch {
+            val json = context.contentResolver.openInputStream(uri)?.use { it.readBytes().decodeToString() }
+            if (json != null) viewModel.applyBackup(BackupCodec.fromJson(json))
+        }
+    }
+
     val s by viewModel.settings.collectAsStateWithLifecycle()
     val fileFilterOn by viewModel.fileFilter().collectAsStateWithLifecycle(initialValue = true)
     var openChoice by remember { mutableStateOf<SettingChoice?>(null) }
@@ -113,8 +136,8 @@ fun SettingsScreen(
             )
             AboutSection(
                 onOpenLicenses = onOpenLicenses,
-                onBackup = onBackup,
-                onRestore = onRestore,
+                onBackup = { backupLauncher.launch(context.getString(R.string.backup_default_name)) },
+                onRestore = { restoreLauncher.launch(arrayOf("application/json")) },
             )
         }
     }

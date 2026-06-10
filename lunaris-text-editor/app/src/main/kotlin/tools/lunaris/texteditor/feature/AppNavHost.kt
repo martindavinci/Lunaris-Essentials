@@ -11,6 +11,8 @@ object Routes {
     const val EDITOR = "editor"
     const val ASSOCIATIONS = "associations"
     const val STORAGE = "storage"
+    const val SETTINGS = "settings"
+    const val LICENSES = "licenses"
 }
 
 @Composable
@@ -25,6 +27,16 @@ fun AppNavHost() {
         }
         composable(Routes.STORAGE) {
             tools.lunaris.texteditor.feature.browser.StorageManagerScreen(onBack = { nav.popBackStack() })
+        }
+        composable(Routes.SETTINGS) {
+            tools.lunaris.texteditor.feature.settings.SettingsScreen(
+                onBack = { nav.popBackStack() },
+                onOpenAssociations = { nav.navigate(Routes.ASSOCIATIONS) },
+                onOpenLicenses = { nav.navigate(Routes.LICENSES) },
+            )
+        }
+        composable(Routes.LICENSES) {
+            tools.lunaris.texteditor.feature.settings.LicensesScreen(onBack = { nav.popBackStack() })
         }
     }
 }

@@ -9,6 +9,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Storage
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.HorizontalDivider
@@ -80,6 +81,12 @@ internal fun EditorScaffold(
                     icon = { Icon(Icons.Filled.Storage, contentDescription = null) },
                     selected = false,
                     onClick = { scope.launch { drawerState.close() }; onMenuAction(EditorMenuAction.STORAGE_MANAGER) },
+                )
+                NavigationDrawerItem(
+                    label = { Text(stringResource(EditorMenuAction.SETTINGS.labelRes)) },
+                    icon = { Icon(Icons.Filled.Settings, contentDescription = null) },
+                    selected = false,
+                    onClick = { scope.launch { drawerState.close() }; onMenuAction(EditorMenuAction.SETTINGS) },
                 )
                 HorizontalDivider()
                 FolderDrawer(

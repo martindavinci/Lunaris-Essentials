@@ -179,6 +179,7 @@ fun EditorScreen(
                 EditorMenuAction.BOOKMARKS -> openDialog = EditorDialog.BOOKMARKS
                 EditorMenuAction.ADD_BOOKMARK -> viewModel.addBookmark(editorController.currentLine())
                 EditorMenuAction.STORAGE_MANAGER -> onNavigate(tools.lunaris.texteditor.feature.Routes.STORAGE)
+                EditorMenuAction.SETTINGS -> onNavigate(tools.lunaris.texteditor.feature.Routes.SETTINGS)
             }
         },
         onToolbarItem = { item ->
