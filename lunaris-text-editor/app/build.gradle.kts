@@ -68,6 +68,8 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.kotlinx.coroutines.android)
 
+    implementation(libs.commonmark)
+
     implementation(platform(libs.sora.bom))
     implementation(libs.sora.editor)
     implementation(libs.sora.language.textmate)
