@@ -40,4 +40,7 @@ abstract class AppModule {
 
     @dagger.Binds @javax.inject.Singleton
     abstract fun bindBookmarksStore(impl: tools.lunaris.texteditor.data.EditorPreferences): tools.lunaris.texteditor.data.BookmarksStore
+
+    @dagger.Binds @javax.inject.Singleton
+    abstract fun bindSettingsStore(impl: tools.lunaris.texteditor.data.EditorPreferences): tools.lunaris.texteditor.settings.SettingsStore
 }

@@ -9,6 +9,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfig
+import tools.lunaris.texteditor.settings.EditorSettings
+import tools.lunaris.texteditor.settings.SettingsStore
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -17,7 +19,7 @@ private val Context.dataStore by preferencesDataStore(name = "editor_prefs")
 @Singleton
 class EditorPreferences @Inject constructor(
     @ApplicationContext private val context: Context,
-) : ColorSchemeStore, RecentsStore, SessionStore, ToolbarStore, AssociationStore, BookmarksStore {
+) : ColorSchemeStore, RecentsStore, SessionStore, ToolbarStore, AssociationStore, BookmarksStore, SettingsStore {
 
     override fun colorSchemeId(default: String): Flow<String> =
         context.dataStore.data.map { it[COLOR_SCHEME_KEY] ?: default }
@@ -84,6 +86,14 @@ class EditorPreferences @Inject constructor(
         context.dataStore.edit { it[BOOKMARKS_KEY] = Bookmarks.toJson(Bookmarks.remove(Bookmarks.fromJson(it[BOOKMARKS_KEY] ?: ""), bookmark)) }
     }
 
+    // SettingsStore
+    override fun settings(): Flow<EditorSettings> =
+        context.dataStore.data.map { EditorSettings.fromJson(it[SETTINGS_KEY] ?: "") }
+
+    override suspend fun update(settings: EditorSettings) {
+        context.dataStore.edit { it[SETTINGS_KEY] = settings.toJson() }
+    }
+
     // File filter
     fun fileFilter(): Flow<Boolean> = context.dataStore.data.map { it[FILE_FILTER_KEY] ?: true }
 
@@ -97,5 +107,6 @@ class EditorPreferences @Inject constructor(
         val ASSOC_KEY = stringPreferencesKey("assoc_json")
         val BOOKMARKS_KEY = stringPreferencesKey("bookmarks_json")
         val FILE_FILTER_KEY = booleanPreferencesKey("file_filter")
+        val SETTINGS_KEY = stringPreferencesKey("settings_json")
     }
 }
