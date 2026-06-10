@@ -27,6 +27,8 @@ import tools.lunaris.texteditor.syntax.LanguageCatalog
 import tools.lunaris.texteditor.syntax.LanguageDefinition
 import tools.lunaris.texteditor.syntax.SyntaxResolver
 import tools.lunaris.texteditor.syntax.SyntaxSelection
+import tools.lunaris.texteditor.settings.EditorSettings
+import tools.lunaris.texteditor.settings.FakeSettingsStore
 import tools.lunaris.texteditor.util.MainDispatcherRule
 import java.nio.charset.StandardCharsets
 
@@ -48,6 +50,7 @@ class EditorViewModelTest {
     private val toolbar = FakeToolbarStore()
     private val assoc = FakeAssociationStore()
     private val bookmarks = FakeBookmarksStore()
+    private val settings = FakeSettingsStore()
 
     private fun newVm() = EditorViewModel(
         repository = repo,
@@ -62,6 +65,7 @@ class EditorViewModelTest {
         toolbarStore = toolbar,
         associationStore = assoc,
         bookmarksStore = bookmarks,
+        settingsStore = settings,
     )
 
     @Test
@@ -205,16 +209,35 @@ class EditorViewModelTest {
                 ),
             )
         )
+        settings.flow.value = EditorSettings(sessionRestore = true)
         val vm = EditorViewModel(
             repo, resolver, "sunburst", catalog,
             ColorSchemeCatalog(emptyList(), ""), CharsetCatalog(),
             FakeColorSchemeStore(), recents, SessionManager(seeded, resolver), toolbar,
-            assoc, bookmarks,
+            assoc, bookmarks, settings,
         )
         advanceUntilIdle()
         assertThat(vm.state.value.tabs.map { it.title }).containsExactly("a.kt", "draft.txt")
         assertThat(vm.state.value.activeTabId).isEqualTo("t2")
         assertThat(vm.state.value.dirty).isTrue()
+    }
+
+    @Test
+    fun doesNotRestore_whenSessionRestoreDisabled() = runTest {
+        val seeded = FakeSessionStore(
+            PersistedSession("t1", listOf(PersistedTab("t1", "content://1", "a.kt", "x", false, "UTF-8", "LF", null)))
+        )
+        settings.flow.value = EditorSettings(sessionRestore = false)
+        val vm = EditorViewModel(
+            repo, resolver, "sunburst", catalog,
+            ColorSchemeCatalog(emptyList(), ""), CharsetCatalog(),
+            FakeColorSchemeStore(), recents, SessionManager(seeded, resolver), toolbar,
+            assoc, bookmarks, settings,
+        )
+        advanceUntilIdle()
+        // restore is gated off -> the single fresh untitled tab remains
+        assertThat(vm.state.value.tabs).hasSize(1)
+        assertThat(vm.state.value.title).isEqualTo("untitled")
     }
 
     @Test

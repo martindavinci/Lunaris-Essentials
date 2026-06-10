@@ -22,6 +22,7 @@ import tools.lunaris.texteditor.data.RecentEntry
 import tools.lunaris.texteditor.data.RecentsStore
 import tools.lunaris.texteditor.data.SessionManager
 import tools.lunaris.texteditor.data.ToolbarStore
+import tools.lunaris.texteditor.settings.SettingsStore
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfig
 import tools.lunaris.texteditor.document.DocumentSession
 import tools.lunaris.texteditor.document.LineEnding
@@ -53,6 +54,7 @@ class EditorViewModel @Inject constructor(
     private val toolbarStore: ToolbarStore,
     private val associationStore: AssociationStore,
     private val bookmarksStore: BookmarksStore,
+    private val settingsStore: SettingsStore,
 ) : ViewModel() {
 
     private var colorSchemeId = defaultColorSchemeId
@@ -70,7 +72,7 @@ class EditorViewModel @Inject constructor(
         publish()
         initScope.launch {
             colorSchemeId = colorSchemeStore.colorSchemeId(colorSchemeId).first()
-            restoreSession()
+            if (settingsStore.settings().first().sessionRestore) restoreSession()
             val tb = toolbarStore.toolbar().first()
             _state.update { it.copy(toolbar = tb) }
             associations = associationStore.associations().first()
