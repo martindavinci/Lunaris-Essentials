@@ -12,8 +12,11 @@ import tools.lunaris.texteditor.data.AssociationStore
 import tools.lunaris.texteditor.data.Bookmark
 import tools.lunaris.texteditor.data.BookmarksStore
 import tools.lunaris.texteditor.data.ColorSchemeStore
+import tools.lunaris.texteditor.data.FileFilterStore
 import tools.lunaris.texteditor.data.RecentEntry
 import tools.lunaris.texteditor.data.RecentsStore
+import tools.lunaris.texteditor.data.ToolbarStore
+import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfig
 import tools.lunaris.texteditor.settings.Backup
 import tools.lunaris.texteditor.settings.EditorSettings
 import tools.lunaris.texteditor.settings.SettingsStore
@@ -26,6 +29,8 @@ class SettingsViewModel @Inject constructor(
     private val colorSchemeStore: ColorSchemeStore,
     private val recentsStore: RecentsStore,
     private val bookmarksStore: BookmarksStore,
+    private val fileFilterStore: FileFilterStore,
+    private val toolbarStore: ToolbarStore,
 ) : ViewModel() {
 
     val settings: StateFlow<EditorSettings> =
@@ -51,5 +56,12 @@ class SettingsViewModel @Inject constructor(
             backup.recents.forEach { recentsStore.touch(it) }
             backup.bookmarks.forEach { bookmarksStore.add(it) }
         }
+    }
+
+    fun fileFilter() = fileFilterStore.fileFilter()
+    fun setFileFilter(on: Boolean) { viewModelScope.launch { fileFilterStore.setFileFilter(on) } }
+    fun toolbar() = toolbarStore.toolbar()
+    fun setToolbar(config: ToolbarConfig) {
+        viewModelScope.launch { toolbarStore.setToolbar(config) }
     }
 }

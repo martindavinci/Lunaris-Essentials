@@ -9,7 +9,9 @@ import tools.lunaris.texteditor.data.Bookmark
 import tools.lunaris.texteditor.data.FakeAssociationStore
 import tools.lunaris.texteditor.data.FakeBookmarksStore
 import tools.lunaris.texteditor.data.FakeColorSchemeStore
+import tools.lunaris.texteditor.data.FakeFileFilterStore
 import tools.lunaris.texteditor.data.FakeRecentsStore
+import tools.lunaris.texteditor.data.FakeToolbarStore
 import tools.lunaris.texteditor.data.RecentEntry
 import tools.lunaris.texteditor.settings.AppTheme
 import tools.lunaris.texteditor.settings.Backup
@@ -25,8 +27,10 @@ class SettingsViewModelTest {
     private val colors = FakeColorSchemeStore()
     private val recents = FakeRecentsStore()
     private val bookmarks = FakeBookmarksStore()
+    private val fileFilter = FakeFileFilterStore()
+    private val toolbar = FakeToolbarStore()
 
-    private fun newVm() = SettingsViewModel(settingsStore, assoc, colors, recents, bookmarks)
+    private fun newVm() = SettingsViewModel(settingsStore, assoc, colors, recents, bookmarks, fileFilter, toolbar)
 
     @Test
     fun update_persistsTransform() = runTest {

@@ -19,7 +19,7 @@ private val Context.dataStore by preferencesDataStore(name = "editor_prefs")
 @Singleton
 class EditorPreferences @Inject constructor(
     @ApplicationContext private val context: Context,
-) : ColorSchemeStore, RecentsStore, SessionStore, ToolbarStore, AssociationStore, BookmarksStore, SettingsStore {
+) : ColorSchemeStore, RecentsStore, SessionStore, ToolbarStore, AssociationStore, BookmarksStore, SettingsStore, FileFilterStore {
 
     override fun colorSchemeId(default: String): Flow<String> =
         context.dataStore.data.map { it[COLOR_SCHEME_KEY] ?: default }
@@ -94,10 +94,10 @@ class EditorPreferences @Inject constructor(
         context.dataStore.edit { it[SETTINGS_KEY] = settings.toJson() }
     }
 
-    // File filter
-    fun fileFilter(): Flow<Boolean> = context.dataStore.data.map { it[FILE_FILTER_KEY] ?: true }
+    // FileFilterStore
+    override fun fileFilter(): Flow<Boolean> = context.dataStore.data.map { it[FILE_FILTER_KEY] ?: true }
 
-    suspend fun setFileFilter(on: Boolean) { context.dataStore.edit { it[FILE_FILTER_KEY] = on } }
+    override suspend fun setFileFilter(on: Boolean) { context.dataStore.edit { it[FILE_FILTER_KEY] = on } }
 
     private companion object {
         val COLOR_SCHEME_KEY = stringPreferencesKey("color_scheme_id")

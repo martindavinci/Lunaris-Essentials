@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import tools.lunaris.texteditor.data.EditorPreferences
+import tools.lunaris.texteditor.data.FileFilterStore
 import tools.lunaris.texteditor.files.AllFilesBrowser
 import tools.lunaris.texteditor.files.FileEntry
 import tools.lunaris.texteditor.files.FileFilter
@@ -34,7 +34,7 @@ class FolderBrowserViewModel @Inject constructor(
     private val safBrowser: SafTreeBrowser,
     private val allFilesBrowser: AllFilesBrowser,
     private val storageAccess: StorageAccess,
-    private val preferences: EditorPreferences,
+    private val fileFilterStore: FileFilterStore,
     languageCatalog: LanguageCatalog,
 ) : ViewModel() {
 
@@ -48,7 +48,7 @@ class FolderBrowserViewModel @Inject constructor(
     /** Initialize/refresh the browser when the drawer opens. */
     fun start() {
         viewModelScope.launch {
-            val filter = preferences.fileFilter().first()
+            val filter = fileFilterStore.fileFilter().first()
             val rootRef = when {
                 storageAccess.hasAllFiles() -> storageAccess.externalRoot()
                 storageAccess.grantedTrees().isNotEmpty() -> storageAccess.grantedTrees().first().toString()
@@ -70,7 +70,7 @@ class FolderBrowserViewModel @Inject constructor(
     }
 
     fun toggleFilter(on: Boolean) = viewModelScope.launch {
-        preferences.setFileFilter(on)
+        fileFilterStore.setFileFilter(on)
         _state.update { it.copy(filterEnabled = on, entries = FileFilter.apply(raw, knownExts, on)) }
     }
 
