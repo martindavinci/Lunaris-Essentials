@@ -1,9 +1,6 @@
 <resources>
     <string name="app_name">Lunaris Text Editor</string>
     <string name="untitled">untitled</string>
-    <string name="action_open">Open</string>
-    <string name="action_save">Save</string>
-    <string name="action_new">New</string>
     <string name="error_open_failed">Could not open file</string>
     <string name="error_save_failed">Could not save file</string>
     <string name="saved">Saved</string>
@@ -17,7 +14,6 @@
     <string name="cancel">Cancel</string>
     <string name="tab_new">New tab</string>
     <string name="tab_close">Close tab</string>
-    <string name="action_close">Close</string>
     <string name="action_recent">Recent files</string>
     <string name="recent_empty">No recent files</string>
     <string name="menu_search">Search</string>

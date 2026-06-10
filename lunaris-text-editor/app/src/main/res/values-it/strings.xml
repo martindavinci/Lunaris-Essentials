@@ -2,9 +2,6 @@
 <resources>
     <string name="app_name">Lunaris Text Editor</string>
     <string name="untitled">senza titolo</string>
-    <string name="action_open">Apri</string>
-    <string name="action_save">Salva</string>
-    <string name="action_new">Nuovo</string>
     <string name="error_open_failed">Impossibile aprire il file</string>
     <string name="error_save_failed">Impossibile salvare il file</string>
     <string name="saved">Salvato</string>
@@ -18,7 +15,6 @@
     <string name="cancel">Annulla</string>
     <string name="tab_new">Nuova scheda</string>
     <string name="tab_close">Chiudi scheda</string>
-    <string name="action_close">Chiudi</string>
     <string name="action_recent">File recenti</string>
     <string name="recent_empty">Nessun file recente</string>
     <string name="menu_search">Cerca</string>

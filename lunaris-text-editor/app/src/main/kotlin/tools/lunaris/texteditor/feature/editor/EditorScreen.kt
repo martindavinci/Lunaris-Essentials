@@ -39,6 +39,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import tools.lunaris.texteditor.R
+import tools.lunaris.texteditor.document.DocumentSession
 import tools.lunaris.texteditor.edit.Indenter
 import tools.lunaris.texteditor.edit.SearchEngine
 import tools.lunaris.texteditor.edit.TimestampFormatter
@@ -128,9 +129,16 @@ fun EditorScreen(
     LaunchedEffect(state.savedSignal) {
         if (state.savedSignal > 0) snackbar.showSnackbar(savedMsg)
     }
-    LaunchedEffect(state.error) {
-        state.error?.let {
-            snackbar.showSnackbar(it)
+    val openFailedMsg = stringResource(R.string.error_open_failed)
+    val saveFailedMsg = stringResource(R.string.error_save_failed)
+    LaunchedEffect(state.errorKind, state.error) {
+        val message = when (state.errorKind) {
+            EditorErrorKind.OPEN -> openFailedMsg
+            EditorErrorKind.SAVE -> saveFailedMsg
+            null -> state.error
+        }
+        if (message != null) {
+            snackbar.showSnackbar(message)
             viewModel.consumeError()
         }
     }
@@ -248,8 +256,9 @@ internal fun EditorTopBar(
                     Icon(Icons.Filled.Menu, contentDescription = stringResource(R.string.nav_menu))
                 }
             }
+            val shownTitle = if (title == DocumentSession.UNTITLED) stringResource(R.string.untitled) else title
             Text(
-                text = title,
+                text = shownTitle,
                 style = MaterialTheme.typography.titleMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,

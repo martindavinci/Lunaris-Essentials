@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets
 /** One open tab. [dirty] is derived from [text] vs [savedText]. */
 data class DocumentSession(
     val id: String,
-    val title: String = "untitled",
+    val title: String = UNTITLED,
     val fileRef: FileRef? = null,
     val text: String = "",
     val savedText: String = "",
@@ -21,4 +21,9 @@ data class DocumentSession(
     val dirty: Boolean get() = text != savedText
 
     fun markSaved(): DocumentSession = copy(savedText = text)
+
+    companion object {
+        /** Sentinel title for documents with no backing file. Localized only at display time. */
+        const val UNTITLED = "untitled"
+    }
 }

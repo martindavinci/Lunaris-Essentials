@@ -20,10 +20,10 @@ class DocumentIo @Inject constructor(
     suspend fun openTab(ref: FileRef, newId: String, associations: Map<String, String>, forced: Charset? = null): DocumentSession {
         val loaded = repository.load(ref, forced)
         val selection = SyntaxSelection.Auto
-        recentsStore.touch(RecentEntry(ref.uri, loaded.name ?: "untitled"))
+        recentsStore.touch(RecentEntry(ref.uri, loaded.name ?: DocumentSession.UNTITLED))
         return DocumentSession(
             id = newId,
-            title = loaded.name ?: "untitled",
+            title = loaded.name ?: DocumentSession.UNTITLED,
             fileRef = loaded.ref,
             text = loaded.text,
             savedText = loaded.text,

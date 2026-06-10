@@ -23,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import tools.lunaris.texteditor.R
+import tools.lunaris.texteditor.document.DocumentSession
 
 @Composable
 fun TabStrip(
@@ -44,8 +45,9 @@ fun TabStrip(
                     Modifier.height(40.dp).clickable { onSelect(tab.id) }.padding(start = 12.dp, end = 2.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
+                    val shown = if (tab.title == DocumentSession.UNTITLED) stringResource(R.string.untitled) else tab.title
                     Text(
-                        text = (if (tab.dirty) "• " else "") + tab.title,
+                        text = (if (tab.dirty) "• " else "") + shown,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         color = if (active) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,

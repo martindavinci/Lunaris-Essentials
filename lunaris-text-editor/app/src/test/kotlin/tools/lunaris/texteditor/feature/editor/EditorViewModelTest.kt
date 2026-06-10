@@ -202,6 +202,14 @@ class EditorViewModelTest {
     }
 
     @Test
+    fun openFile_failure_setsOpenErrorKind() = runTest {
+        val vm = newVm()
+        vm.openFile(FileRef("content://missing")) // no bytes in fake gateway -> readBytes throws
+        advanceUntilIdle()
+        assertThat(vm.state.value.errorKind).isEqualTo(EditorErrorKind.OPEN)
+    }
+
+    @Test
     fun restoresPersistedTabsOnInit() = runTest {
         val seeded = FakeSessionStore(
             PersistedSession(

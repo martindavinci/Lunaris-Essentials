@@ -1,5 +1,6 @@
 package tools.lunaris.texteditor.feature.editor
 
+import tools.lunaris.texteditor.document.DocumentSession
 import tools.lunaris.texteditor.document.LineEnding
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfig
 import tools.lunaris.texteditor.file.FileRef
@@ -7,10 +8,13 @@ import tools.lunaris.texteditor.syntax.SyntaxSelection
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 
+/** Categorizes a transient editor error so the UI can show a localized message. */
+enum class EditorErrorKind { OPEN, SAVE }
+
 data class EditorUiState(
     val tabs: List<TabSummary> = emptyList(),
     val activeTabId: String = "",
-    val title: String = "untitled",
+    val title: String = DocumentSession.UNTITLED,
     val text: String = "",
     val fileRef: FileRef? = null,
     val charset: Charset = StandardCharsets.UTF_8,
@@ -21,6 +25,7 @@ data class EditorUiState(
     val colorSchemeId: String = "",
     val isLoading: Boolean = false,
     val error: String? = null,
+    val errorKind: EditorErrorKind? = null,
     val savedSignal: Int = 0,
     val wordWrap: Boolean = true,
     val readOnly: Boolean = false,

@@ -103,7 +103,7 @@ class EditorViewModel @Inject constructor(
             prev.copy(
                 tabs = d.sessions.map { TabSummary(it.id, it.title, it.dirty) },
                 activeTabId = d.activeId,
-                title = a?.title ?: "untitled",
+                title = a?.title ?: DocumentSession.UNTITLED,
                 text = a?.text ?: "",
                 fileRef = a?.fileRef,
                 charset = a?.charset ?: StandardCharsets.UTF_8,
@@ -131,7 +131,7 @@ class EditorViewModel @Inject constructor(
             _state.update { it.copy(pendingGoToLine = gotoLine) }
             return
         }
-        _state.update { it.copy(isLoading = true, error = null) }
+        _state.update { it.copy(isLoading = true, error = null, errorKind = null) }
         viewModelScope.launch {
             try {
                 val forced = currentSettings.defaultEncoding
@@ -142,7 +142,7 @@ class EditorViewModel @Inject constructor(
                 publish()
                 _state.update { it.copy(pendingGoToLine = gotoLine, isLoading = false) }
             } catch (t: Throwable) {
-                _state.update { it.copy(isLoading = false, error = t.message) }
+                _state.update { it.copy(isLoading = false, error = t.message, errorKind = EditorErrorKind.OPEN) }
             }
         }
     }
@@ -159,9 +159,9 @@ class EditorViewModel @Inject constructor(
                     it.copy(fileRef = ref, title = name, savedText = written)
                 }
                 publish()
-                _state.update { it.copy(savedSignal = it.savedSignal + 1, error = null) }
+                _state.update { it.copy(savedSignal = it.savedSignal + 1, error = null, errorKind = null) }
             } catch (t: Throwable) {
-                _state.update { it.copy(error = t.message) }
+                _state.update { it.copy(error = t.message, errorKind = EditorErrorKind.SAVE) }
             }
         }
     }
@@ -200,15 +200,16 @@ class EditorViewModel @Inject constructor(
                     it.copy(text = text, savedText = text, charset = cs, lineEnding = eol)
                 }
                 publish()
+                _state.update { it.copy(error = null, errorKind = null) }
             } catch (t: Throwable) {
-                _state.update { it.copy(error = t.message) }
+                _state.update { it.copy(error = t.message, errorKind = EditorErrorKind.OPEN) }
             }
         }
     }
 
     fun recents() = recentsStore.recents()
 
-    fun consumeError() = _state.update { it.copy(error = null) }
+    fun consumeError() = _state.update { it.copy(error = null, errorKind = null) }
 
     private suspend fun restoreSession() {
         sessionManager.restore()?.let { docs.value = it }
