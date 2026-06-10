@@ -205,6 +205,7 @@ class EditorViewModel @Inject constructor(
     }
 
     fun toggleWordWrap() { _state.update { it.copy(wordWrap = !it.wordWrap) } }
+    fun setWordWrap(on: Boolean) = _state.update { it.copy(wordWrap = on) }
 
     fun toggleReadOnly() = mutate { it.updateActive { s -> s.copy(readOnly = !s.readOnly) } }
 

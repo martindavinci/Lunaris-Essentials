@@ -92,6 +92,13 @@ fun EditorScreen(
     LaunchedEffect(viewSettings) {
         if (!accessoryInitDone) { showAccessory = viewSettings.accessoryBarDefault; accessoryInitDone = true }
     }
+    var wrapInit by remember { mutableStateOf(false) }
+    LaunchedEffect(viewSettings) {
+        if (!wrapInit) {
+            viewModel.setWordWrap(viewSettings.wordWrap)
+            wrapInit = true
+        }
+    }
     val searchEngine = remember { SearchEngine() }
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)

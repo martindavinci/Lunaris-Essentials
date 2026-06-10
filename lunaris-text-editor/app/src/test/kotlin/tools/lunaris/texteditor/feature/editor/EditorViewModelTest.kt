@@ -284,6 +284,15 @@ class EditorViewModelTest {
     }
 
     @Test
+    fun setWordWrap_setsState() {
+        val vm = newVm()
+        vm.setWordWrap(false)
+        assertThat(vm.state.value.wordWrap).isFalse()
+        vm.setWordWrap(true)
+        assertThat(vm.state.value.wordWrap).isTrue()
+    }
+
+    @Test
     fun toggleReadOnly_setsActiveReadOnly() {
         val vm = newVm()
         assertThat(vm.state.value.readOnly).isFalse()
