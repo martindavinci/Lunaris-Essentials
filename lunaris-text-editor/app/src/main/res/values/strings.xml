@@ -142,4 +142,6 @@
     <string name="preview_title">Preview</string>
     <string name="preview_print">Print</string>
     <string name="preview_nothing">Nothing to preview</string>
+    <string name="menu_run">Run</string>
+    <string name="toolbar_run">Run</string>
 </resources>

@@ -55,6 +55,7 @@ class EditorViewModel @Inject constructor(
     private val associationStore: AssociationStore,
     private val bookmarksStore: BookmarksStore,
     private val settingsStore: SettingsStore,
+    private val previewHolder: tools.lunaris.texteditor.preview.PreviewHolder,
 ) : ViewModel() {
 
     private var colorSchemeId = defaultColorSchemeId
@@ -233,6 +234,11 @@ class EditorViewModel @Inject constructor(
 
     fun removeBookmark(bookmark: Bookmark) {
         viewModelScope.launch { bookmarksStore.remove(bookmark) }
+    }
+
+    fun previewActive() {
+        val a = docs.value.active ?: return
+        previewHolder.request = tools.lunaris.texteditor.preview.PreviewRequest(a.title, a.title, a.text)
     }
 
     override fun onCleared() {

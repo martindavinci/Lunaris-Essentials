@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.ContentPaste
 import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -25,6 +26,7 @@ fun ToolbarItem.labelRes(): Int = when (this) {
     ToolbarItem.CURSOR_RIGHT -> R.string.toolbar_cursor_right
     ToolbarItem.SAVE -> R.string.toolbar_save
     ToolbarItem.CLOSE -> R.string.toolbar_close
+    ToolbarItem.RUN -> R.string.toolbar_run
 }
 
 fun ToolbarItem.icon(): ImageVector = when (this) {
@@ -37,4 +39,5 @@ fun ToolbarItem.icon(): ImageVector = when (this) {
     ToolbarItem.CURSOR_RIGHT -> Icons.AutoMirrored.Filled.KeyboardArrowRight
     ToolbarItem.SAVE -> Icons.Filled.Save
     ToolbarItem.CLOSE -> Icons.Filled.Close
+    ToolbarItem.RUN -> Icons.Filled.PlayArrow
 }

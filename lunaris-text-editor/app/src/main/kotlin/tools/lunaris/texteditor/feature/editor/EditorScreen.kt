@@ -186,6 +186,7 @@ fun EditorScreen(
                 EditorMenuAction.ADD_BOOKMARK -> viewModel.addBookmark(editorController.currentLine())
                 EditorMenuAction.STORAGE_MANAGER -> onNavigate(tools.lunaris.texteditor.feature.Routes.STORAGE)
                 EditorMenuAction.SETTINGS -> onNavigate(tools.lunaris.texteditor.feature.Routes.SETTINGS)
+                EditorMenuAction.RUN -> { viewModel.previewActive(); onNavigate(tools.lunaris.texteditor.feature.Routes.PREVIEW) }
             }
         },
         onToolbarItem = { item ->
@@ -202,6 +203,7 @@ fun EditorScreen(
                     if (ref != null) viewModel.save(ref) else createLauncher.launch(state.title)
                 }
                 ToolbarItem.CLOSE -> viewModel.closeTab(state.activeTabId)
+                ToolbarItem.RUN -> { viewModel.previewActive(); onNavigate(tools.lunaris.texteditor.feature.Routes.PREVIEW) }
             }
         },
         onPickFolder = { treeLauncher.launch(null) },

@@ -66,6 +66,7 @@ class EditorViewModelTest {
         associationStore = assoc,
         bookmarksStore = bookmarks,
         settingsStore = settings,
+        previewHolder = tools.lunaris.texteditor.preview.PreviewHolder(),
     )
 
     @Test
@@ -214,7 +215,7 @@ class EditorViewModelTest {
             repo, resolver, "sunburst", catalog,
             ColorSchemeCatalog(emptyList(), ""), CharsetCatalog(),
             FakeColorSchemeStore(), recents, SessionManager(seeded, resolver), toolbar,
-            assoc, bookmarks, settings,
+            assoc, bookmarks, settings, tools.lunaris.texteditor.preview.PreviewHolder(),
         )
         advanceUntilIdle()
         assertThat(vm.state.value.tabs.map { it.title }).containsExactly("a.kt", "draft.txt")
@@ -232,7 +233,7 @@ class EditorViewModelTest {
             repo, resolver, "sunburst", catalog,
             ColorSchemeCatalog(emptyList(), ""), CharsetCatalog(),
             FakeColorSchemeStore(), recents, SessionManager(seeded, resolver), toolbar,
-            assoc, bookmarks, settings,
+            assoc, bookmarks, settings, tools.lunaris.texteditor.preview.PreviewHolder(),
         )
         advanceUntilIdle()
         // restore is gated off -> the single fresh untitled tab remains
