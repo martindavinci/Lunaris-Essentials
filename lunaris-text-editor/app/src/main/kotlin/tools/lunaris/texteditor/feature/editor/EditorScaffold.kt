@@ -144,6 +144,8 @@ internal fun EditorScaffold(
                     lineSpacingExtra = lineSpacingExtra,
                     monospace = monospace,
                     modifier = Modifier.fillMaxWidth().weight(1f),
+                    gotoLine = state.pendingGoToLine,
+                    onGotoConsumed = viewModel::consumeGoToLine,
                 )
                 if (showAccessory) {
                     AccessoryBar(

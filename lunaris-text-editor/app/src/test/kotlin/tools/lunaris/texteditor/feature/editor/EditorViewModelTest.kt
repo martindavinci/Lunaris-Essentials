@@ -381,6 +381,46 @@ class EditorViewModelTest {
     }
 
     @Test
+    fun openFile_withGoto_setsPendingGoToLine() = runTest {
+        val vm = newVm(); advanceUntilIdle()
+        val ref = FileRef("content://bm/1")
+        gateway.store[ref.uri] = "a\nb\nc".toByteArray(Charsets.UTF_8); gateway.names[ref.uri] = "f.txt"
+        vm.openFile(ref, gotoLine = 2); advanceUntilIdle()
+        assertThat(vm.state.value.pendingGoToLine).isEqualTo(2)
+    }
+
+    @Test
+    fun consumeGoToLine_clearsIt() = runTest {
+        val vm = newVm(); advanceUntilIdle()
+        val ref = FileRef("content://bm/2")
+        gateway.store[ref.uri] = "x".toByteArray(Charsets.UTF_8); gateway.names[ref.uri] = "g.txt"
+        vm.openFile(ref, gotoLine = 1); advanceUntilIdle()
+        vm.consumeGoToLine()
+        assertThat(vm.state.value.pendingGoToLine).isNull()
+    }
+
+    @Test
+    fun openFile_sameUriTwice_reusesTab_noDuplicate() = runTest {
+        val vm = newVm(); advanceUntilIdle()
+        val ref = FileRef("content://bm/3")
+        gateway.store[ref.uri] = "hello".toByteArray(Charsets.UTF_8); gateway.names[ref.uri] = "h.txt"
+        vm.openFile(ref); advanceUntilIdle()
+        val countAfterFirst = vm.state.value.tabs.size
+        vm.openFile(ref, gotoLine = 3); advanceUntilIdle()
+        assertThat(vm.state.value.tabs.size).isEqualTo(countAfterFirst) // no duplicate
+        assertThat(vm.state.value.pendingGoToLine).isEqualTo(3)
+    }
+
+    @Test
+    fun openFile_withoutGoto_leavesPendingNull() = runTest {
+        val vm = newVm(); advanceUntilIdle()
+        val ref = FileRef("content://bm/4")
+        gateway.store[ref.uri] = "y".toByteArray(Charsets.UTF_8); gateway.names[ref.uri] = "i.txt"
+        vm.openFile(ref); advanceUntilIdle()
+        assertThat(vm.state.value.pendingGoToLine).isNull()
+    }
+
+    @Test
     fun openFile_autoDetects_whenEncodingIsAuto() = runTest {
         settings.flow.value = EditorSettings(defaultEncoding = "Auto")
         val vm = newVm()

@@ -25,4 +25,5 @@ data class EditorUiState(
     val wordWrap: Boolean = true,
     val readOnly: Boolean = false,
     val toolbar: ToolbarConfig = ToolbarConfig.DEFAULT,
+    val pendingGoToLine: Int? = null,
 )

@@ -26,6 +26,8 @@ fun CodeEditorView(
     lineSpacingExtra: Int,
     monospace: Boolean,
     modifier: Modifier = Modifier,
+    gotoLine: Int? = null,
+    onGotoConsumed: () -> Unit = {},
 ) {
     val holder = remember { EditorBinding() }
     holder.callback = onTextChange
@@ -102,6 +104,14 @@ fun CodeEditorView(
                     if (monospace) android.graphics.Typeface.MONOSPACE else android.graphics.Typeface.DEFAULT,
                 )
                 holder.appliedMono = monospace
+            }
+            if (gotoLine != null) {
+                // Runs AFTER setText above, so the jump lands on the freshly loaded document.
+                // Mirrors CodeEditorController.goToLine: 1-based line, clamped to the line range.
+                val target = (gotoLine - 1).coerceIn(0, (editor.lineCount - 1).coerceAtLeast(0))
+                editor.setSelection(target, 0)
+                editor.ensureSelectionVisible()
+                onGotoConsumed()
             }
         },
         onRelease = { editor ->

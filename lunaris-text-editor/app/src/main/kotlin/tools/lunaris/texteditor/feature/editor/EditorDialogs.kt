@@ -69,7 +69,7 @@ fun EditorDialogs(
             val bms by viewModel.bookmarks().collectAsStateWithLifecycle(initialValue = emptyList())
             BookmarksDialog(
                 bookmarks = bms,
-                onOpen = { b -> viewModel.openFile(FileRef(b.uri)); controller.goToLine(b.line); onDismiss() },
+                onOpen = { b -> viewModel.openFile(FileRef(b.uri), gotoLine = b.line); onDismiss() },
                 onRemove = { viewModel.removeBookmark(it) },
                 onDismiss = onDismiss,
             )
