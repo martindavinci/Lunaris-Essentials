@@ -21,6 +21,10 @@ fun CodeEditorView(
     controller: CodeEditorController,
     wordWrap: Boolean,
     readOnly: Boolean,
+    lineNumbers: Boolean,
+    fontSizeSp: Float,
+    lineSpacingExtra: Int,
+    monospace: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val holder = remember { EditorBinding() }
@@ -30,7 +34,17 @@ fun CodeEditorView(
         modifier = modifier,
         factory = { context ->
             CodeEditor(context).also { editor ->
-                editor.isLineNumberEnabled = true
+                editor.isLineNumberEnabled = lineNumbers
+                holder.appliedLineNumbers = lineNumbers
+                editor.setTextSize(fontSizeSp)
+                holder.appliedFontSize = fontSizeSp
+                val densityPx = context.resources.displayMetrics.density
+                editor.setLineSpacingExtra(lineSpacingExtra * densityPx)
+                holder.appliedSpacing = lineSpacingExtra
+                editor.setTypefaceText(
+                    if (monospace) android.graphics.Typeface.MONOSPACE else android.graphics.Typeface.DEFAULT,
+                )
+                holder.appliedMono = monospace
                 editor.setText(text)
                 holder.lastKnownText = text
                 editor.subscribeEvent(ContentChangeEvent::class.java) { _, _ ->
@@ -70,6 +84,25 @@ fun CodeEditorView(
                 editor.setEditable(!readOnly)
                 holder.appliedReadOnly = readOnly
             }
+            if (lineNumbers != holder.appliedLineNumbers) {
+                editor.isLineNumberEnabled = lineNumbers
+                holder.appliedLineNumbers = lineNumbers
+            }
+            if (fontSizeSp != holder.appliedFontSize) {
+                editor.setTextSize(fontSizeSp)
+                holder.appliedFontSize = fontSizeSp
+            }
+            if (lineSpacingExtra != holder.appliedSpacing) {
+                val densityPx = editor.context.resources.displayMetrics.density
+                editor.setLineSpacingExtra(lineSpacingExtra * densityPx)
+                holder.appliedSpacing = lineSpacingExtra
+            }
+            if (monospace != holder.appliedMono) {
+                editor.setTypefaceText(
+                    if (monospace) android.graphics.Typeface.MONOSPACE else android.graphics.Typeface.DEFAULT,
+                )
+                holder.appliedMono = monospace
+            }
         },
         onRelease = { editor ->
             controller.unbind()
@@ -99,4 +132,8 @@ private class EditorBinding {
     var appliedTheme: String? = null
     var appliedWrap: Boolean? = null
     var appliedReadOnly: Boolean? = null
+    var appliedLineNumbers: Boolean? = null
+    var appliedFontSize: Float? = null
+    var appliedSpacing: Int? = null
+    var appliedMono: Boolean? = null
 }

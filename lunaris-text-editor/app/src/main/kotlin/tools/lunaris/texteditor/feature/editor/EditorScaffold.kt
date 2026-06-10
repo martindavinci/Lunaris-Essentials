@@ -46,6 +46,10 @@ internal fun EditorScaffold(
     onMenuAction: (EditorMenuAction) -> Unit,
     onToolbarItem: (ToolbarItem) -> Unit,
     onPickFolder: () -> Unit,
+    lineNumbers: Boolean,
+    fontSizeSp: Float,
+    lineSpacingExtra: Int,
+    monospace: Boolean,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -125,6 +129,10 @@ internal fun EditorScaffold(
                     controller = editorController,
                     wordWrap = state.wordWrap,
                     readOnly = state.readOnly,
+                    lineNumbers = lineNumbers,
+                    fontSizeSp = fontSizeSp,
+                    lineSpacingExtra = lineSpacingExtra,
+                    monospace = monospace,
                     modifier = Modifier.fillMaxWidth().weight(1f),
                 )
                 if (showAccessory) {

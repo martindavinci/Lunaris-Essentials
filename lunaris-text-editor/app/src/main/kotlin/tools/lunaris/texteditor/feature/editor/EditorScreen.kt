@@ -48,6 +48,7 @@ import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfig
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarItem
 import tools.lunaris.texteditor.feature.editor.toolbar.icon
 import tools.lunaris.texteditor.feature.editor.toolbar.labelRes
+import tools.lunaris.texteditor.feature.settings.SettingsViewModel
 import tools.lunaris.texteditor.file.FileRef
 import java.time.Instant
 import java.time.ZoneId
@@ -63,6 +64,8 @@ fun EditorScreen(
     viewModel: EditorViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val settingsVm: SettingsViewModel = hiltViewModel()
+    val viewSettings by settingsVm.settings.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val snackbar = remember { SnackbarHostState() }
     val editorController = remember { CodeEditorController() }
@@ -138,6 +141,10 @@ fun EditorScreen(
         showAccessory = showAccessory,
         context = context,
         onNavigate = onNavigate,
+        lineNumbers = viewSettings.lineNumbers,
+        fontSizeSp = viewSettings.fontSizeSp.toFloat(),
+        lineSpacingExtra = viewSettings.lineSpacingExtra,
+        monospace = viewSettings.monospace,
         onMenuAction = { action ->
             when (action) {
                 EditorMenuAction.SYNTAX -> openDialog = EditorDialog.SYNTAX
