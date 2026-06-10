@@ -139,4 +139,7 @@
     <string name="indent_2">2 spaces</string>
     <string name="indent_4">4 spaces</string>
     <string name="indent_8">8 spaces</string>
+    <string name="preview_title">Preview</string>
+    <string name="preview_print">Print</string>
+    <string name="preview_nothing">Nothing to preview</string>
 </resources>

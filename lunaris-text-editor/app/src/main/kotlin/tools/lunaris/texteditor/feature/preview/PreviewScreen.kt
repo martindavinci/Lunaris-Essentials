@@ -1,0 +1,107 @@
+package tools.lunaris.texteditor.feature.preview
+
+import android.content.Context
+import android.print.PrintAttributes
+import android.print.PrintManager
+import android.webkit.WebView
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Print
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
+import tools.lunaris.texteditor.R
+
+@Composable
+fun PreviewScreen(
+    onBack: () -> Unit,
+    viewModel: PreviewViewModel = hiltViewModel(),
+) {
+    val context = LocalContext.current
+    val webRef = remember { mutableStateOf<WebView?>(null) }
+    val displayTitle = viewModel.title.ifBlank { stringResource(R.string.preview_title) }
+
+    Scaffold(
+        topBar = {
+            Surface(tonalElevation = 3.dp) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    IconButton(onClick = onBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.action_back),
+                        )
+                    }
+                    Text(
+                        text = displayTitle,
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(start = 8.dp),
+                    )
+                    IconButton(onClick = { printWebView(context, webRef.value, viewModel.title) }) {
+                        Icon(
+                            imageVector = Icons.Filled.Print,
+                            contentDescription = stringResource(R.string.preview_print),
+                        )
+                    }
+                }
+            }
+        },
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+        ) {
+            if (viewModel.html == null) {
+                Text(
+                    text = stringResource(R.string.preview_nothing),
+                    modifier = Modifier.align(Alignment.Center),
+                )
+            } else {
+                AndroidView(
+                    factory = { ctx ->
+                        WebView(ctx).apply {
+                            settings.javaScriptEnabled = false
+                            settings.blockNetworkLoads = true
+                            @Suppress("DEPRECATION")
+                            settings.allowFileAccess = false
+                            webRef.value = this
+                        }
+                    },
+                    update = { it.loadDataWithBaseURL(null, viewModel.html!!, "text/html", "utf-8", null) },
+                    modifier = Modifier.fillMaxSize(),
+                )
+            }
+        }
+    }
+}
+
+private fun printWebView(context: Context, web: WebView?, jobName: String) {
+    val webView = web ?: return
+    val pm = context.getSystemService(Context.PRINT_SERVICE) as PrintManager
+    val name = jobName.ifBlank { "document" }
+    val adapter = webView.createPrintDocumentAdapter(name)
+    pm.print(name, adapter, PrintAttributes.Builder().build())
+}

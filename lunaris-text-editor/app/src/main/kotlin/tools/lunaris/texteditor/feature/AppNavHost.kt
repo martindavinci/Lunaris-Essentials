@@ -13,6 +13,7 @@ object Routes {
     const val STORAGE = "storage"
     const val SETTINGS = "settings"
     const val LICENSES = "licenses"
+    const val PREVIEW = "preview"
 }
 
 @Composable
@@ -37,6 +38,9 @@ fun AppNavHost() {
         }
         composable(Routes.LICENSES) {
             tools.lunaris.texteditor.feature.settings.LicensesScreen(onBack = { nav.popBackStack() })
+        }
+        composable(Routes.PREVIEW) {
+            tools.lunaris.texteditor.feature.preview.PreviewScreen(onBack = { nav.popBackStack() })
         }
     }
 }
