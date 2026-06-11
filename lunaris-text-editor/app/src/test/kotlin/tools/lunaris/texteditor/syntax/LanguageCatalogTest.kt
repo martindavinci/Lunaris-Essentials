@@ -2,6 +2,7 @@ package tools.lunaris.texteditor.syntax
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
+import java.io.File
 
 class LanguageCatalogTest {
 
@@ -48,6 +49,26 @@ class LanguageCatalogTest {
         )
         assertThat(c.findByExtension("none")).isNull()
         assertThat(c.findById("none")).isNotNull()
+    }
+
+    @Test
+    fun ext_acceptsSingleStringForm() {
+        val c = LanguageCatalog.fromJson(
+            """{"languages":[{"id":"csharp","display":"C#","scopeName":"source.cs",""" +
+                """"grammarAsset":"grammars/csharp.json","ext":"cs"}]}"""
+        )
+        assertThat(c.findByExtension("cs")?.id).isEqualTo("csharp")
+    }
+
+    // Guards the real shipped asset (not the small test fixture): single-string "ext"
+    // entries like csharp's "cs" must parse — this is the crash that slipped to device.
+    @Test
+    fun realShippedAsset_parsesWithoutThrowing_andResolvesStringExt() {
+        val asset = File("src/main/assets/textmate/languages.json")
+        assertThat(asset.exists()).isTrue()
+        val c = LanguageCatalog.fromJson(asset.readText())
+        assertThat(c.languages.size).isAtLeast(40)
+        assertThat(c.findByExtension("cs")?.id).isEqualTo("csharp")
     }
 
     @Test

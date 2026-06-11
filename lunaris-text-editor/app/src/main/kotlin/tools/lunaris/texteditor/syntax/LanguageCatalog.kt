@@ -1,5 +1,6 @@
 package tools.lunaris.texteditor.syntax
 
+import org.json.JSONArray
 import org.json.JSONObject
 
 class LanguageCatalog(languages: List<LanguageDefinition>) {
@@ -26,10 +27,16 @@ class LanguageCatalog(languages: List<LanguageDefinition>) {
                     display = o.getString("display"),
                     scopeName = if (o.isNull("scopeName")) null else o.getString("scopeName"),
                     grammarAsset = if (o.isNull("grammarAsset")) null else o.getString("grammarAsset"),
-                    extensions = o.getJSONArray("ext").let { e -> (0 until e.length()).map { e.getString(it) } },
+                    extensions = parseExtensions(o.get("ext")),
                 )
             }
             return LanguageCatalog(defs)
+        }
+
+        // "ext" may be a single string ("cs") or an array (["yml","yaml"]); accept both.
+        private fun parseExtensions(value: Any): List<String> = when (value) {
+            is JSONArray -> (0 until value.length()).map { value.getString(it) }
+            else -> listOf(value.toString())
         }
     }
 }
