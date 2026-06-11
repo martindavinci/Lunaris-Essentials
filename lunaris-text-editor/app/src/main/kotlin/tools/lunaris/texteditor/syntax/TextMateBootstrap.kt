@@ -32,7 +32,10 @@ object TextMateBootstrap {
                     val asset = def.grammarAsset ?: return@forEach
                     language(scope) {
                         grammar = "textmate/$asset"
-                        defaultScopeName()
+                        // Register the grammar's real scope verbatim. Do NOT use
+                        // defaultScopeName() — it prepends "source." and would double
+                        // an already-qualified scope (source.source.asm.x86_64).
+                        scopeName = scope
                     }
                 }
             }
