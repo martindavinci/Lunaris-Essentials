@@ -8,11 +8,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 
-/** Curated overflow menu: only [OVERFLOW_ITEMS], each with a leading icon. Toggle actions
- *  (word-wrap, read-only, accessory bar) show a trailing checkbox; [disabled] actions are
- *  greyed out (e.g. Share/Run with no content). */
+/** Generic dropdown rendering a list of [EditorMenuAction]s, each with a leading icon.
+ *  Actions in [OVERFLOW_TOGGLES] show a trailing checkbox; [disabled] actions are greyed. */
 @Composable
-fun EditorOverflowMenu(
+fun ActionDropdownMenu(
+    items: List<EditorMenuAction>,
     expanded: Boolean,
     onDismiss: () -> Unit,
     onAction: (EditorMenuAction) -> Unit,
@@ -20,7 +20,7 @@ fun EditorOverflowMenu(
     disabled: Set<EditorMenuAction> = emptySet(),
 ) {
     DropdownMenu(expanded = expanded, onDismissRequest = onDismiss) {
-        OVERFLOW_ITEMS.forEach { action ->
+        items.forEach { action ->
             DropdownMenuItem(
                 text = { Text(stringResource(action.labelRes)) },
                 leadingIcon = { Icon(action.icon(), contentDescription = null) },
@@ -33,3 +33,13 @@ fun EditorOverflowMenu(
         }
     }
 }
+
+/** The overflow (⋮) menu. */
+@Composable
+fun EditorOverflowMenu(
+    expanded: Boolean,
+    onDismiss: () -> Unit,
+    onAction: (EditorMenuAction) -> Unit,
+    checked: Set<EditorMenuAction> = emptySet(),
+    disabled: Set<EditorMenuAction> = emptySet(),
+) = ActionDropdownMenu(OVERFLOW_ITEMS, expanded, onDismiss, onAction, checked, disabled)

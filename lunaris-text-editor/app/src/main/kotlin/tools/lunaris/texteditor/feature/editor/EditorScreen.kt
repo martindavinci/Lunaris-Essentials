@@ -18,6 +18,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DrawerValue
@@ -260,6 +262,18 @@ fun EditorScreen(
                 EditorMenuAction.SETTINGS -> onNavigate(tools.lunaris.texteditor.feature.Routes.SETTINGS)
                 EditorMenuAction.RUN -> { viewModel.previewActive(); onNavigate(tools.lunaris.texteditor.feature.Routes.PREVIEW) }
                 EditorMenuAction.NEW_TAB -> viewModel.newTab()
+                EditorMenuAction.OPEN -> openLauncher.launch(arrayOf("*/*"))
+                EditorMenuAction.OPEN_TREE -> treeLauncher.launch(null)
+                EditorMenuAction.SAVE -> {
+                    val ref = state.fileRef
+                    if (ref != null) viewModel.save(ref) else createLauncher.launch(state.title)
+                }
+                EditorMenuAction.SAVE_AS -> createLauncher.launch(state.title)
+                EditorMenuAction.RELOAD -> if (state.fileRef != null) viewModel.reopenWithEncoding(state.charset)
+                EditorMenuAction.CLOSE -> requestClose(state.activeTabId)
+                EditorMenuAction.INPUT_METHOD ->
+                    context.getSystemService(android.view.inputmethod.InputMethodManager::class.java)
+                        ?.showInputMethodPicker()
             }
         },
         onToolbarItem = { item ->
@@ -342,9 +356,24 @@ internal fun EditorTopBar(
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1f),
             )
+            // File menu (folder button).
+            var fileOpen by remember { mutableStateOf(false) }
+            Box {
+                IconButton(onClick = { fileOpen = true }) {
+                    Icon(Icons.Filled.FolderOpen, contentDescription = stringResource(R.string.menu_file))
+                }
+                ActionDropdownMenu(FILE_ITEMS, fileOpen, { fileOpen = false }, onMenuAction, disabled = disabled)
+            }
+            // Edit menu (pencil button).
+            var editOpen by remember { mutableStateOf(false) }
+            Box {
+                IconButton(onClick = { editOpen = true }) {
+                    Icon(Icons.Filled.Edit, contentDescription = stringResource(R.string.menu_edit))
+                }
+                ActionDropdownMenu(EDIT_ITEMS, editOpen, { editOpen = false }, onMenuAction, disabled = disabled)
+            }
+            // Overflow menu (⋮). Box anchors the dropdown under the button (not the left edge).
             var menuOpen by remember { mutableStateOf(false) }
-            // Wrap the button + menu in a Box so the dropdown anchors to the ⋮ button
-            // (top-right) instead of drifting to the left edge.
             Box {
                 IconButton(onClick = { menuOpen = true }) {
                     Icon(Icons.Filled.MoreVert, contentDescription = stringResource(R.string.menu_more))

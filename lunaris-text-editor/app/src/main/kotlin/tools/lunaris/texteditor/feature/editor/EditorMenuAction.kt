@@ -32,4 +32,11 @@ enum class EditorMenuAction(@StringRes val labelRes: Int) {
     SETTINGS(R.string.menu_settings),
     RUN(R.string.menu_run),
     NEW_TAB(R.string.menu_new),
+    OPEN(R.string.menu_open),
+    OPEN_TREE(R.string.menu_open_saf),
+    SAVE(R.string.menu_save),
+    SAVE_AS(R.string.menu_save_as),
+    RELOAD(R.string.menu_reload),
+    CLOSE(R.string.menu_close),
+    INPUT_METHOD(R.string.menu_input_method),
 }

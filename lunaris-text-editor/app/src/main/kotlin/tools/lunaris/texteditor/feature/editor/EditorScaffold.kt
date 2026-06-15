@@ -137,7 +137,12 @@ internal fun EditorScaffold(
                         if (state.readOnly) add(EditorMenuAction.READ_ONLY)
                         if (showAccessory) add(EditorMenuAction.ACCESSORY_BAR)
                     },
-                    disabled = if (state.text.isBlank()) setOf(EditorMenuAction.SHARE) else emptySet(),
+                    disabled = buildSet {
+                        if (state.text.isBlank()) add(EditorMenuAction.SHARE)
+                        if (state.fileRef == null) add(EditorMenuAction.RELOAD)
+                        if (!canUndo) add(EditorMenuAction.UNDO)
+                        if (!canRedo) add(EditorMenuAction.REDO)
+                    },
                     onMenu = { scope.launch { drawerState.open() } },
                     onMenuAction = onMenuAction,
                     showMenu = folderDrawerEnabled,

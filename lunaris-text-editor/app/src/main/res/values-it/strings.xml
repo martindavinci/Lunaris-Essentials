@@ -32,6 +32,15 @@
     <string name="menu_redo">Ripeti</string>
     <string name="menu_select_all">Seleziona tutto</string>
     <string name="menu_paste">Incolla</string>
+    <string name="menu_open">Apri</string>
+    <string name="menu_open_saf">Apri (SAF)</string>
+    <string name="menu_save">Salva</string>
+    <string name="menu_save_as">Salva con nome</string>
+    <string name="menu_reload">Ricarica</string>
+    <string name="menu_close">Chiudi</string>
+    <string name="menu_input_method">Metodo di inserimento</string>
+    <string name="menu_file">File</string>
+    <string name="menu_edit">Modifica</string>
     <string name="menu_word_wrap">A capo automatico</string>
     <string name="menu_read_only">Sola lettura</string>
     <string name="search_query_hint">Trova</string>

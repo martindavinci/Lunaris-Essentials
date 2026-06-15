@@ -31,6 +31,15 @@
     <string name="menu_redo">Redo</string>
     <string name="menu_select_all">Select all</string>
     <string name="menu_paste">Paste</string>
+    <string name="menu_open">Open</string>
+    <string name="menu_open_saf">Open (SAF)</string>
+    <string name="menu_save">Save</string>
+    <string name="menu_save_as">Save as</string>
+    <string name="menu_reload">Reload</string>
+    <string name="menu_close">Close</string>
+    <string name="menu_input_method">Input method</string>
+    <string name="menu_file">File</string>
+    <string name="menu_edit">Edit</string>
     <string name="menu_word_wrap">Word wrap</string>
     <string name="menu_read_only">Read only</string>
     <string name="search_query_hint">Find</string>
