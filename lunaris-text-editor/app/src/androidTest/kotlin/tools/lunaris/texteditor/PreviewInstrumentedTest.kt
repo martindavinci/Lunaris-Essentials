@@ -1,10 +1,11 @@
 package tools.lunaris.texteditor
 
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Rule
 import org.junit.Test
@@ -19,9 +20,17 @@ class PreviewInstrumentedTest {
     @Test
     fun overflow_run_opensPreview_thenBack() {
         composeRule.onNodeWithContentDescription("More").performClick()
-        composeRule.onNodeWithText("Run").performClick()
-        composeRule.onNodeWithText("Preview").assertIsDisplayed()
+        // "Run" is near the bottom of the scrollable overflow menu — scroll it into view.
+        composeRule.onNodeWithText("Run").performScrollTo().performClick()
+        // Preview screen reached: its Print action is unique to it. waitUntil lets the nav
+        // transition settle; if Print never appears the test fails here.
+        composeRule.waitUntil(timeoutMillis = 5_000) {
+            composeRule.onAllNodesWithContentDescription("Print").fetchSemanticsNodes().isNotEmpty()
+        }
         composeRule.onNodeWithContentDescription("Back").performClick()
-        composeRule.onNodeWithText("untitled").assertIsDisplayed()
+        // Back on the editor: the Open toolbar action is unique to it.
+        composeRule.waitUntil(timeoutMillis = 5_000) {
+            composeRule.onAllNodesWithContentDescription("Open").fetchSemanticsNodes().isNotEmpty()
+        }
     }
 }
