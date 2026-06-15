@@ -11,7 +11,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Folder
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Switch
@@ -61,16 +60,9 @@ fun FolderDrawerContent(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier.fillMaxWidth().padding(8.dp)) {
-        if (!state.accessGranted) {
-            Text(stringResource(R.string.folder_no_access), Modifier.padding(8.dp))
-            Button(onClick = onPickFolder, modifier = Modifier.fillMaxWidth().padding(4.dp)) {
-                Text(stringResource(R.string.folder_pick))
-            }
-            Button(onClick = onEnableAllFiles, modifier = Modifier.fillMaxWidth().padding(4.dp)) {
-                Text(stringResource(R.string.folder_enable_all_files))
-            }
-            return@Column
-        }
+        // No granted folder → show nothing here. Folder access is granted from the File menu
+        // (Open (SAF)); once a tree is granted the browser populates below.
+        if (!state.accessGranted) return@Column
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = onUp, enabled = state.canGoUp) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.folder_up))

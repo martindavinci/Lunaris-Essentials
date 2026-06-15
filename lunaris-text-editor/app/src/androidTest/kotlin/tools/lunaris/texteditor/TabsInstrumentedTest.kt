@@ -21,8 +21,8 @@ class TabsInstrumentedTest {
     fun drawerNew_showsTabStrip_thenCloseHidesIt() {
         // Single open file: the tab strip (and its close buttons) is hidden.
         composeRule.onAllNodesWithContentDescription("Close tab").assertCountEquals(0)
-        // Create a second tab from the nav drawer; now the strip appears with two tabs.
-        composeRule.onNodeWithContentDescription("Menu").performClick()
+        // Create a second tab from the File menu; now the strip appears with two tabs.
+        composeRule.onNodeWithContentDescription("File").performClick()
         composeRule.onNodeWithText("New").performClick()
         composeRule.onAllNodesWithContentDescription("Close tab").assertCountEquals(2)
         // Close one tab → back to a single file → strip hidden again.

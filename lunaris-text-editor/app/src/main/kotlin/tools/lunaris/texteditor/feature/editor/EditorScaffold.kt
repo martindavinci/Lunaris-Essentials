@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Settings
@@ -71,12 +70,6 @@ internal fun EditorScaffold(
         gesturesEnabled = drawerState.isOpen,
         drawerContent = {
             ModalDrawerSheet {
-                NavigationDrawerItem(
-                    label = { Text(stringResource(EditorMenuAction.NEW_TAB.labelRes)) },
-                    icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-                    selected = false,
-                    onClick = { scope.launch { drawerState.close() }; onMenuAction(EditorMenuAction.NEW_TAB) },
-                )
                 NavigationDrawerItem(
                     label = { Text(stringResource(EditorMenuAction.RECENT_FILES.labelRes)) },
                     icon = { Icon(Icons.Filled.History, contentDescription = null) },
