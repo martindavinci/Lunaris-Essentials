@@ -135,8 +135,11 @@ fun EditorScreen(
     val noMatchTemplate = stringResource(R.string.search_no_match)
     val runFind: (Boolean) -> Unit = { forward ->
         searchSession?.let { s ->
-            val m = if (forward) searchEngine.findNext(state.text, s.query, editorController.cursorOffset(), s.opts)
-            else searchEngine.findPrevious(state.text, s.query, editorController.cursorOffset(), s.opts)
+            // Search forward from the END of the current selection (else findNext re-finds the
+            // current match); search backward from its START.
+            val sel = editorController.selection()
+            val m = if (forward) searchEngine.findNext(state.text, s.query, sel.last, s.opts)
+            else searchEngine.findPrevious(state.text, s.query, sel.first, s.opts)
             if (m != null) editorController.selectRange(m.start, m.end)
             else scope.launch { snackbar.showSnackbar(String.format(noMatchTemplate, s.query)) }
         }
