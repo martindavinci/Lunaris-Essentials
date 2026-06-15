@@ -52,6 +52,8 @@ internal fun EditorScaffold(
     fontSizeSp: Float,
     lineSpacingExtra: Int,
     monospace: Boolean,
+    canUndo: Boolean,
+    canRedo: Boolean,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -121,7 +123,17 @@ internal fun EditorScaffold(
                 )
             },
             bottomBar = {
-                EditorBottomBar(config = state.toolbar, onItem = onToolbarItem)
+                EditorBottomBar(
+                    config = state.toolbar,
+                    onItem = onToolbarItem,
+                    isEnabled = { item ->
+                        when (item) {
+                            ToolbarItem.UNDO -> canUndo
+                            ToolbarItem.REDO -> canRedo
+                            else -> true
+                        }
+                    },
+                )
             },
         ) { padding ->
             Column(Modifier.fillMaxSize().padding(padding)) {

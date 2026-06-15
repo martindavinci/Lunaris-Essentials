@@ -10,9 +10,12 @@ import javax.inject.Inject
 @HiltViewModel
 class PreviewViewModel @Inject constructor(
     holder: PreviewHolder,
-    renderer: MarkdownRenderer,
+    private val renderer: MarkdownRenderer,
 ) : ViewModel() {
     private val request = holder.request
     val title: String = request?.title ?: ""
-    val html: String? = request?.let { PreviewResolver.toHtmlDocument(it.fileName, it.text, renderer::toHtml) }
+
+    /** Renders the document HTML for the chosen [dark]/light theme (null if nothing to preview). */
+    fun html(dark: Boolean): String? =
+        request?.let { PreviewResolver.toHtmlDocument(it.fileName, it.text, renderer::toHtml, dark) }
 }

@@ -36,8 +36,16 @@ fun EditorDialogs(
             RecentFilesDialog(recents, { viewModel.openFile(FileRef(it)) }, onDismiss)
         }
         EditorDialog.SEARCH -> SearchDialog(
-            onFind = { q, o -> searchEngine.findNext(state.text, q, controller.cursorOffset(), o)?.let { controller.selectRange(it.start, it.end) } },
-            onFindPrev = { q, o -> searchEngine.findPrevious(state.text, q, controller.cursorOffset(), o)?.let { controller.selectRange(it.start, it.end) } },
+            onFind = { q, o ->
+                searchEngine.findNext(state.text, q, controller.cursorOffset(), o)?.let {
+                    controller.selectRange(it.start, it.end); onDismiss()
+                }
+            },
+            onFindPrev = { q, o ->
+                searchEngine.findPrevious(state.text, q, controller.cursorOffset(), o)?.let {
+                    controller.selectRange(it.start, it.end); onDismiss()
+                }
+            },
             onReplace = { q, r, o ->
                 val sel = controller.selection()
                 val m = searchEngine.findNext(state.text, q, sel.first, o)

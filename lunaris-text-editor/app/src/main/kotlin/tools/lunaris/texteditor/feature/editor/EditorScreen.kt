@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
@@ -102,6 +103,15 @@ fun EditorScreen(
     }
     val searchEngine = remember { SearchEngine() }
 
+    // Undo/redo availability, refreshed whenever the document text changes (typing, undo,
+    // redo, paste, load all flow through state.text). Drives the toolbar's enabled state.
+    var canUndo by remember { mutableStateOf(false) }
+    var canRedo by remember { mutableStateOf(false) }
+    LaunchedEffect(state.text) {
+        canUndo = editorController.canUndo()
+        canRedo = editorController.canRedo()
+    }
+
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val folderVm: FolderBrowserViewModel = hiltViewModel()
     val treeLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
@@ -166,6 +176,8 @@ fun EditorScreen(
         fontSizeSp = viewSettings.fontSizeSp.toFloat(),
         lineSpacingExtra = viewSettings.lineSpacingExtra,
         monospace = viewSettings.monospace,
+        canUndo = canUndo,
+        canRedo = canRedo,
         onMenuAction = { action ->
             when (action) {
                 EditorMenuAction.SYNTAX -> openDialog = EditorDialog.SYNTAX
@@ -279,7 +291,11 @@ internal fun EditorTopBar(
 }
 
 @Composable
-internal fun EditorBottomBar(config: ToolbarConfig, onItem: (ToolbarItem) -> Unit) {
+internal fun EditorBottomBar(
+    config: ToolbarConfig,
+    onItem: (ToolbarItem) -> Unit,
+    isEnabled: (ToolbarItem) -> Boolean = { true },
+) {
     Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = BarElevation) {
         Row(
             modifier = Modifier
@@ -289,8 +305,18 @@ internal fun EditorBottomBar(config: ToolbarConfig, onItem: (ToolbarItem) -> Uni
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
             config.enabled.forEach { item ->
-                IconButton(onClick = { onItem(item) }) {
-                    Icon(item.icon(), contentDescription = stringResource(item.labelRes()))
+                // Fixed 40dp slots so a full toolbar (9-10 items) fits the width without the
+                // last icon being squished. Icons render at a uniform 24dp.
+                IconButton(
+                    onClick = { onItem(item) },
+                    enabled = isEnabled(item),
+                    modifier = Modifier.size(40.dp),
+                ) {
+                    Icon(
+                        item.icon(),
+                        contentDescription = stringResource(item.labelRes()),
+                        modifier = Modifier.size(24.dp),
+                    )
                 }
             }
         }

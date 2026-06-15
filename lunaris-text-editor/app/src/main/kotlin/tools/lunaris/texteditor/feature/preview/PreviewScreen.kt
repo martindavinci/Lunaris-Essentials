@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Print
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,19 +40,24 @@ fun PreviewScreen(
 ) {
     val context = LocalContext.current
     val webRef = remember { mutableStateOf<WebView?>(null) }
+    val darkState = remember { mutableStateOf(true) }
+    val dark = darkState.value
     val displayTitle = viewModel.title.ifBlank { stringResource(R.string.preview_title) }
+    val html = viewModel.html(dark)
 
     PreviewChrome(
         title = displayTitle,
         onBack = onBack,
         onPrint = { printWebView(context, webRef.value, viewModel.title) },
+        isDark = dark,
+        onToggleTheme = { darkState.value = !darkState.value },
     ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
         ) {
-            if (viewModel.html == null) {
+            if (html == null) {
                 Text(
                     text = stringResource(R.string.preview_nothing),
                     modifier = Modifier.align(Alignment.Center),
@@ -66,7 +73,7 @@ fun PreviewScreen(
                             webRef.value = this
                         }
                     },
-                    update = { it.loadDataWithBaseURL(null, viewModel.html!!, "text/html", "utf-8", null) },
+                    update = { it.loadDataWithBaseURL(null, html, "text/html", "utf-8", null) },
                     modifier = Modifier.fillMaxSize(),
                 )
             }
@@ -81,6 +88,8 @@ internal fun PreviewChrome(
     title: String,
     onBack: () -> Unit,
     onPrint: () -> Unit,
+    isDark: Boolean = true,
+    onToggleTheme: () -> Unit = {},
     body: @Composable (androidx.compose.foundation.layout.PaddingValues) -> Unit,
 ) {
     Scaffold(
@@ -103,6 +112,12 @@ internal fun PreviewChrome(
                             .weight(1f)
                             .padding(start = 8.dp),
                     )
+                    IconButton(onClick = onToggleTheme) {
+                        Icon(
+                            imageVector = if (isDark) Icons.Filled.LightMode else Icons.Filled.DarkMode,
+                            contentDescription = stringResource(R.string.preview_toggle_theme),
+                        )
+                    }
                     IconButton(onClick = onPrint) {
                         Icon(
                             imageVector = Icons.Filled.Print,

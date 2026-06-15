@@ -51,6 +51,9 @@ class CodeEditorController {
         e.setSelection(pos.line, pos.column)
     }
 
+    fun canUndo(): Boolean = editor?.canUndo() ?: false
+    fun canRedo(): Boolean = editor?.canRedo() ?: false
+
     fun insertAtCursor(text: String) { editor?.insertText(text, text.length) }
     fun undo() { editor?.undo() }
     fun redo() { editor?.redo() }
