@@ -54,6 +54,7 @@ internal fun EditorScaffold(
     monospace: Boolean,
     canUndo: Boolean,
     canRedo: Boolean,
+    onRequestClose: (String) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -141,7 +142,7 @@ internal fun EditorScaffold(
                     tabs = state.tabs,
                     activeTabId = state.activeTabId,
                     onSelect = viewModel::switchTab,
-                    onClose = viewModel::closeTab,
+                    onClose = onRequestClose,
                     onNew = viewModel::newTab,
                     modifier = Modifier.fillMaxWidth(),
                 )

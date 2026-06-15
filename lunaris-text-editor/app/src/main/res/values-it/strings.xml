@@ -15,6 +15,9 @@
     <string name="cancel">Annulla</string>
     <string name="tab_new">Nuova scheda</string>
     <string name="tab_close">Chiudi scheda</string>
+    <string name="close_confirm_title">Chiudere la scheda?</string>
+    <string name="close_confirm_message">Questa scheda ha modifiche non salvate.</string>
+    <string name="close_confirm_discard">Chiudi comunque</string>
     <string name="action_recent">File recenti</string>
     <string name="recent_empty">Nessun file recente</string>
     <string name="menu_search">Cerca</string>

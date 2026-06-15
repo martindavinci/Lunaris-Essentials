@@ -22,7 +22,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -112,6 +114,13 @@ fun EditorScreen(
         canRedo = editorController.canRedo()
     }
 
+    // Closing a tab with unsaved changes asks for confirmation first; clean tabs close directly.
+    var closeConfirmId by remember { mutableStateOf<String?>(null) }
+    val requestClose: (String) -> Unit = { id ->
+        if (state.tabs.firstOrNull { it.id == id }?.dirty == true) closeConfirmId = id
+        else viewModel.closeTab(id)
+    }
+
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val folderVm: FolderBrowserViewModel = hiltViewModel()
     val treeLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
@@ -178,6 +187,7 @@ fun EditorScreen(
         monospace = viewSettings.monospace,
         canUndo = canUndo,
         canRedo = canRedo,
+        onRequestClose = requestClose,
         onMenuAction = { action ->
             when (action) {
                 EditorMenuAction.SYNTAX -> openDialog = EditorDialog.SYNTAX
@@ -229,7 +239,7 @@ fun EditorScreen(
                     val ref = state.fileRef
                     if (ref != null) viewModel.save(ref) else createLauncher.launch(state.title)
                 }
-                ToolbarItem.CLOSE -> viewModel.closeTab(state.activeTabId)
+                ToolbarItem.CLOSE -> requestClose(state.activeTabId)
                 ToolbarItem.RUN -> { viewModel.previewActive(); onNavigate(tools.lunaris.texteditor.feature.Routes.PREVIEW) }
             }
         },
@@ -244,6 +254,24 @@ fun EditorScreen(
         searchEngine = searchEngine,
         onDismiss = { openDialog = null },
     )
+
+    closeConfirmId?.let { id ->
+        AlertDialog(
+            onDismissRequest = { closeConfirmId = null },
+            confirmButton = {
+                TextButton(onClick = { viewModel.closeTab(id); closeConfirmId = null }) {
+                    Text(stringResource(R.string.close_confirm_discard))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { closeConfirmId = null }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+            title = { Text(stringResource(R.string.close_confirm_title)) },
+            text = { Text(stringResource(R.string.close_confirm_message)) },
+        )
+    }
 }
 
 @Composable

@@ -14,6 +14,9 @@
     <string name="cancel">Cancel</string>
     <string name="tab_new">New tab</string>
     <string name="tab_close">Close tab</string>
+    <string name="close_confirm_title">Close tab?</string>
+    <string name="close_confirm_message">This tab has unsaved changes.</string>
+    <string name="close_confirm_discard">Close anyway</string>
     <string name="action_recent">Recent files</string>
     <string name="recent_empty">No recent files</string>
     <string name="menu_search">Search</string>
