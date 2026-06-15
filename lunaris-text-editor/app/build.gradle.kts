@@ -69,6 +69,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
     implementation(libs.commonmark)
+    implementation(libs.commonmark.ext.gfm.tables)
+    implementation(libs.commonmark.ext.task.list.items)
 
     implementation(platform(libs.sora.bom))
     implementation(libs.sora.editor)

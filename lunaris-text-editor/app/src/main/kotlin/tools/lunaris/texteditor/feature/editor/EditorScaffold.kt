@@ -57,7 +57,9 @@ internal fun EditorScaffold(
 
     ModalNavigationDrawer(
         drawerState = drawerState,
-        gesturesEnabled = folderDrawerEnabled,
+        // Drawer opens only via the hamburger icon, never via edge-swipe (which fought
+        // horizontal scrolling in the document).
+        gesturesEnabled = false,
         drawerContent = {
             ModalDrawerSheet {
                 NavigationDrawerItem(

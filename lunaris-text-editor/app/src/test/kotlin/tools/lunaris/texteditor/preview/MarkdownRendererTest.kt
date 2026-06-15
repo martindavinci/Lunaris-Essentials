@@ -14,4 +14,18 @@ class MarkdownRendererTest {
         assertThat(html).contains("<li>a</li>")
     }
     @Test fun empty_isEmpty() { assertThat(renderer.toHtml("")).isEmpty() }
+
+    @Test fun gfmTable_rendersTable() {
+        val md = "| A | B |\n| - | - |\n| 1 | 2 |"
+        val html = renderer.toHtml(md)
+        assertThat(html).contains("<table>")
+        assertThat(html).contains("<th>A</th>")
+        assertThat(html).contains("<td>1</td>")
+    }
+
+    @Test fun taskList_rendersCheckboxes() {
+        val html = renderer.toHtml("- [ ] todo\n- [x] done")
+        assertThat(html).contains("type=\"checkbox\"")
+        assertThat(html).contains("checked")
+    }
 }
