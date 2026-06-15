@@ -278,6 +278,7 @@ fun EditorScreen(
 internal fun EditorTopBar(
     title: String,
     checked: Set<EditorMenuAction> = emptySet(),
+    disabled: Set<EditorMenuAction> = emptySet(),
     onMenu: () -> Unit = {},
     showMenu: Boolean = true,
     onMenuAction: (EditorMenuAction) -> Unit,
@@ -313,6 +314,7 @@ internal fun EditorTopBar(
                 onDismiss = { menuOpen = false },
                 onAction = onMenuAction,
                 checked = checked,
+                disabled = disabled,
             )
         }
     }

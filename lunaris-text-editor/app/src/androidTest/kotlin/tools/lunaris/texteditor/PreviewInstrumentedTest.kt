@@ -5,7 +5,6 @@ import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Rule
 import org.junit.Test
@@ -20,8 +19,8 @@ class PreviewInstrumentedTest {
     @Test
     fun overflow_run_opensPreview_thenBack() {
         composeRule.onNodeWithContentDescription("More").performClick()
-        // "Run" is near the bottom of the scrollable overflow menu — scroll it into view.
-        composeRule.onNodeWithText("Run").performScrollTo().performClick()
+        // "Run" sits in the curated overflow menu (short, fully visible).
+        composeRule.onNodeWithText("Run").performClick()
         // Preview screen reached: its Print action is unique to it. waitUntil lets the nav
         // transition settle; if Print never appears the test fails here.
         composeRule.waitUntil(timeoutMillis = 5_000) {
