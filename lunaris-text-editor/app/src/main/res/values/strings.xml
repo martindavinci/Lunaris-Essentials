@@ -129,7 +129,7 @@
     <string name="suggestions_off_aggressive">Off (aggressive)</string>
     <string name="menu_settings">Settings</string>
     <string name="licenses_title">Open-source licenses</string>
-    <string name="backup_default_name">lunaris-backup.json</string>
+    <string name="backup_default_name">lunaris-text-editor.json</string>
     <string name="linebreak_auto">Automatic</string>
     <string name="indent_tab">Tab</string>
     <string name="indent_2">2 spaces</string>
