@@ -2,6 +2,7 @@ package tools.lunaris.texteditor.files
 
 import android.content.Context
 import android.net.Uri
+import android.provider.DocumentsContract
 import androidx.documentfile.provider.DocumentFile
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +15,9 @@ class SafTreeBrowser @Inject constructor(
 
     private fun docFor(ref: String): DocumentFile? {
         val uri = Uri.parse(ref)
-        // A tree root uri resolves via fromTreeUri; a child dir uri also works through it.
+        // A tree root uri resolves via fromTreeUri; a child dir uri (tree+document) also
+        // works. Reject non-tree (single-document) uris — fromTreeUri throws on them.
+        if (!DocumentsContract.isTreeUri(uri)) return null
         return DocumentFile.fromTreeUri(context, uri)
     }
 

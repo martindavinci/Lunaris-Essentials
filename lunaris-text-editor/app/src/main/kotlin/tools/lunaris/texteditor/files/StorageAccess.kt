@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.provider.DocumentsContract
 import android.provider.Settings
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -29,10 +30,14 @@ class StorageAccess @Inject constructor(
     /** Default browsing root for All-files mode. */
     fun externalRoot(): String = Environment.getExternalStorageDirectory().absolutePath
 
-    /** SAF tree uris this app holds a persisted read grant for. */
+    /**
+     * SAF *tree* uris this app holds a persisted read grant for. Single-file document
+     * grants (persisted when opening a file so recents survive restarts) are excluded —
+     * they are not browsable folders and would crash DocumentFile.fromTreeUri.
+     */
     fun grantedTrees(): List<Uri> =
         context.contentResolver.persistedUriPermissions
-            .filter { it.isReadPermission }
+            .filter { it.isReadPermission && DocumentsContract.isTreeUri(it.uri) }
             .map { it.uri }
 
     /** Persist read+write access to a SAF tree picked by the user; never crashes. */
