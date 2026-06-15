@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
@@ -306,16 +307,20 @@ internal fun EditorTopBar(
                 modifier = Modifier.weight(1f),
             )
             var menuOpen by remember { mutableStateOf(false) }
-            IconButton(onClick = { menuOpen = true }) {
-                Icon(Icons.Filled.MoreVert, contentDescription = stringResource(R.string.menu_more))
+            // Wrap the button + menu in a Box so the dropdown anchors to the ⋮ button
+            // (top-right) instead of drifting to the left edge.
+            Box {
+                IconButton(onClick = { menuOpen = true }) {
+                    Icon(Icons.Filled.MoreVert, contentDescription = stringResource(R.string.menu_more))
+                }
+                EditorOverflowMenu(
+                    expanded = menuOpen,
+                    onDismiss = { menuOpen = false },
+                    onAction = onMenuAction,
+                    checked = checked,
+                    disabled = disabled,
+                )
             }
-            EditorOverflowMenu(
-                expanded = menuOpen,
-                onDismiss = { menuOpen = false },
-                onAction = onMenuAction,
-                checked = checked,
-                disabled = disabled,
-            )
         }
     }
 }
