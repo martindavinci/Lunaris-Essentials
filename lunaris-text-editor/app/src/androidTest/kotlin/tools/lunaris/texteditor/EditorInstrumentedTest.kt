@@ -18,10 +18,9 @@ class EditorInstrumentedTest {
 
     @Test
     fun editorScaffold_showsTitleAndToolbarActions() {
-        // "untitled" appears twice (tab label + title bar) — assert at least one is shown.
+        // With a single open file the tab strip is hidden, so "untitled" shows once (title bar).
         composeRule.onAllNodesWithText("untitled").onFirst().assertIsDisplayed()
         composeRule.onNodeWithContentDescription("Open").assertIsDisplayed()
         composeRule.onNodeWithContentDescription("Save").assertIsDisplayed()
-        composeRule.onNodeWithContentDescription("New tab").assertIsDisplayed()
     }
 }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Settings
@@ -70,6 +71,12 @@ internal fun EditorScaffold(
         gesturesEnabled = drawerState.isOpen,
         drawerContent = {
             ModalDrawerSheet {
+                NavigationDrawerItem(
+                    label = { Text(stringResource(EditorMenuAction.NEW_TAB.labelRes)) },
+                    icon = { Icon(Icons.Filled.Add, contentDescription = null) },
+                    selected = false,
+                    onClick = { scope.launch { drawerState.close() }; onMenuAction(EditorMenuAction.NEW_TAB) },
+                )
                 NavigationDrawerItem(
                     label = { Text(stringResource(EditorMenuAction.RECENT_FILES.labelRes)) },
                     icon = { Icon(Icons.Filled.History, contentDescription = null) },
@@ -151,14 +158,18 @@ internal fun EditorScaffold(
             },
         ) { padding ->
             Column(Modifier.fillMaxSize().padding(padding)) {
-                TabStrip(
-                    tabs = state.tabs,
-                    activeTabId = state.activeTabId,
-                    onSelect = viewModel::switchTab,
-                    onClose = onRequestClose,
-                    onNew = viewModel::newTab,
-                    modifier = Modifier.fillMaxWidth(),
-                )
+                // The tab strip only appears with 2+ open files; a single file gets the full
+                // height. "New" stays reachable from the nav drawer.
+                if (state.tabs.size > 1) {
+                    TabStrip(
+                        tabs = state.tabs,
+                        activeTabId = state.activeTabId,
+                        onSelect = viewModel::switchTab,
+                        onClose = onRequestClose,
+                        onNew = viewModel::newTab,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
                 CodeEditorView(
                     text = state.text,
                     onTextChange = viewModel::onContentChanged,

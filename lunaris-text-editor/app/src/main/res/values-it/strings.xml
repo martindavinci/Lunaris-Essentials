@@ -21,6 +21,7 @@
     <string name="action_recent">File recenti</string>
     <string name="recent_empty">Nessun file recente</string>
     <string name="menu_search">Cerca</string>
+    <string name="menu_new">Nuovo</string>
     <string name="menu_goto">Vai alla riga</string>
     <string name="menu_stats">Statistiche</string>
     <string name="menu_insert_color">Inserisci colore</string>

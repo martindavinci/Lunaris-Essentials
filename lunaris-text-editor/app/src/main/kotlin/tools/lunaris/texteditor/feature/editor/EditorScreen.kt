@@ -259,6 +259,7 @@ fun EditorScreen(
                 EditorMenuAction.STORAGE_MANAGER -> onNavigate(tools.lunaris.texteditor.feature.Routes.STORAGE)
                 EditorMenuAction.SETTINGS -> onNavigate(tools.lunaris.texteditor.feature.Routes.SETTINGS)
                 EditorMenuAction.RUN -> { viewModel.previewActive(); onNavigate(tools.lunaris.texteditor.feature.Routes.PREVIEW) }
+                EditorMenuAction.NEW_TAB -> viewModel.newTab()
             }
         },
         onToolbarItem = { item ->

@@ -20,6 +20,7 @@
     <string name="action_recent">Recent files</string>
     <string name="recent_empty">No recent files</string>
     <string name="menu_search">Search</string>
+    <string name="menu_new">New</string>
     <string name="menu_goto">Go to line</string>
     <string name="menu_stats">Statistics</string>
     <string name="menu_insert_color">Insert color</string>
