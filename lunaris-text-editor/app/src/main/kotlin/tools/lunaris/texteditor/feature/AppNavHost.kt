@@ -17,11 +17,11 @@ object Routes {
 }
 
 @Composable
-fun AppNavHost() {
+fun AppNavHost(openUri: String? = null) {
     val nav = rememberNavController()
     NavHost(navController = nav, startDestination = Routes.EDITOR) {
         composable(Routes.EDITOR) {
-            EditorScreen(onNavigate = { route -> nav.navigate(route) })
+            EditorScreen(onNavigate = { route -> nav.navigate(route) }, openUri = openUri)
         }
         composable(Routes.ASSOCIATIONS) {
             FileAssociationScreen(onBack = { nav.popBackStack() })
