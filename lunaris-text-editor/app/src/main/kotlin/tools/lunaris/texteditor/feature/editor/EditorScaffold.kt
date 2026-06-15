@@ -55,6 +55,11 @@ internal fun EditorScaffold(
     canUndo: Boolean,
     canRedo: Boolean,
     onRequestClose: (String) -> Unit,
+    searchActive: Boolean,
+    searchQuery: String,
+    onSearchBack: () -> Unit,
+    onSearchPrev: () -> Unit,
+    onSearchNext: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -111,7 +116,14 @@ internal fun EditorScaffold(
         Scaffold(
             snackbarHost = { SnackbarHost(snackbar) },
             topBar = {
-                EditorTopBar(
+                if (searchActive) {
+                    SearchTopBar(
+                        query = searchQuery,
+                        onBack = onSearchBack,
+                        onPrev = onSearchPrev,
+                        onNext = onSearchNext,
+                    )
+                } else EditorTopBar(
                     title = state.title,
                     checked = buildSet {
                         if (state.wordWrap) add(EditorMenuAction.WORD_WRAP)

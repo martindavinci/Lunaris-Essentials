@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import tools.lunaris.texteditor.edit.ColorLiteral
 import tools.lunaris.texteditor.edit.SearchEngine
+import tools.lunaris.texteditor.edit.SearchOptions
 import tools.lunaris.texteditor.edit.TextStats
 import tools.lunaris.texteditor.editor.CodeEditorController
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfigDialog
@@ -21,6 +22,7 @@ fun EditorDialogs(
     viewModel: EditorViewModel,
     controller: CodeEditorController,
     searchEngine: SearchEngine,
+    onStartSearch: (String, SearchOptions, Boolean) -> Unit,
     onDismiss: () -> Unit,
 ) {
     when (open) {
@@ -36,16 +38,8 @@ fun EditorDialogs(
             RecentFilesDialog(recents, { viewModel.openFile(FileRef(it)) }, onDismiss)
         }
         EditorDialog.SEARCH -> SearchDialog(
-            onFind = { q, o ->
-                searchEngine.findNext(state.text, q, controller.cursorOffset(), o)?.let {
-                    controller.selectRange(it.start, it.end); onDismiss()
-                }
-            },
-            onFindPrev = { q, o ->
-                searchEngine.findPrevious(state.text, q, controller.cursorOffset(), o)?.let {
-                    controller.selectRange(it.start, it.end); onDismiss()
-                }
-            },
+            onFind = { q, o -> onStartSearch(q, o, true); onDismiss() },
+            onFindPrev = { q, o -> onStartSearch(q, o, false); onDismiss() },
             onReplace = { q, r, o ->
                 val sel = controller.selection()
                 val m = searchEngine.findNext(state.text, q, sel.first, o)

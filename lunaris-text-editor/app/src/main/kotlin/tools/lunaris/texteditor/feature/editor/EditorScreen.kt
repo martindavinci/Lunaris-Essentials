@@ -15,6 +15,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DrawerValue
@@ -32,6 +35,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,8 +48,10 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import tools.lunaris.texteditor.R
 import tools.lunaris.texteditor.document.DocumentSession
+import kotlinx.coroutines.launch
 import tools.lunaris.texteditor.edit.Indenter
 import tools.lunaris.texteditor.edit.SearchEngine
+import tools.lunaris.texteditor.edit.SearchOptions
 import tools.lunaris.texteditor.edit.TimestampFormatter
 import tools.lunaris.texteditor.editor.CodeEditorController
 import tools.lunaris.texteditor.feature.browser.FolderBrowserViewModel
@@ -122,6 +128,26 @@ fun EditorScreen(
         else viewModel.closeTab(id)
     }
 
+    // Search mode: a persistent top bar (back + prev/next) replaces the normal one while a
+    // query is active. A no-match find shows a quick snackbar.
+    val scope = rememberCoroutineScope()
+    var searchSession by remember { mutableStateOf<SearchSession?>(null) }
+    val noMatchTemplate = stringResource(R.string.search_no_match)
+    val runFind: (Boolean) -> Unit = { forward ->
+        searchSession?.let { s ->
+            val m = if (forward) searchEngine.findNext(state.text, s.query, editorController.cursorOffset(), s.opts)
+            else searchEngine.findPrevious(state.text, s.query, editorController.cursorOffset(), s.opts)
+            if (m != null) editorController.selectRange(m.start, m.end)
+            else scope.launch { snackbar.showSnackbar(String.format(noMatchTemplate, s.query)) }
+        }
+    }
+    val startSearch: (String, SearchOptions, Boolean) -> Unit = { q, o, forward ->
+        if (q.isNotEmpty()) {
+            searchSession = SearchSession(q, o)
+            runFind(forward)
+        }
+    }
+
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val folderVm: FolderBrowserViewModel = hiltViewModel()
     val treeLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
@@ -189,6 +215,11 @@ fun EditorScreen(
         canUndo = canUndo,
         canRedo = canRedo,
         onRequestClose = requestClose,
+        searchActive = searchSession != null,
+        searchQuery = searchSession?.query ?: "",
+        onSearchBack = { searchSession = null },
+        onSearchPrev = { runFind(false) },
+        onSearchNext = { runFind(true) },
         onMenuAction = { action ->
             when (action) {
                 EditorMenuAction.SYNTAX -> openDialog = EditorDialog.SYNTAX
@@ -253,6 +284,7 @@ fun EditorScreen(
         viewModel = viewModel,
         controller = editorController,
         searchEngine = searchEngine,
+        onStartSearch = startSearch,
         onDismiss = { openDialog = null },
     )
 
@@ -320,6 +352,46 @@ internal fun EditorTopBar(
                     checked = checked,
                     disabled = disabled,
                 )
+            }
+        }
+    }
+}
+
+/** Active search query + options driving the editor's search mode. */
+data class SearchSession(val query: String, val opts: SearchOptions)
+
+/** Top bar shown while search mode is active: exit + query + previous/next match. */
+@Composable
+internal fun SearchTopBar(
+    query: String,
+    onBack: () -> Unit,
+    onPrev: () -> Unit,
+    onNext: () -> Unit,
+) {
+    Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = BarElevation) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding()
+                .height(TopBarHeight)
+                .padding(start = 4.dp, end = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            IconButton(onClick = onBack) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
+            }
+            Text(
+                text = stringResource(R.string.search_active_title, query),
+                style = MaterialTheme.typography.titleMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f),
+            )
+            IconButton(onClick = onPrev) {
+                Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = stringResource(R.string.search_find_prev))
+            }
+            IconButton(onClick = onNext) {
+                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = stringResource(R.string.search_find_next))
             }
         }
     }

@@ -40,6 +40,9 @@
     <string name="search_wrap">Riparti dall\'inizio</string>
     <string name="search_find">Trova</string>
     <string name="search_find_prev">Trova precedente</string>
+    <string name="search_find_next">Trova successivo</string>
+    <string name="search_active_title">Ricerca \"%1$s\"</string>
+    <string name="search_no_match">Nessuna corrispondenza di \"%1$s\" trovata.</string>
     <string name="search_replace">Sostituisci</string>
     <string name="search_replace_all">Sostituisci tutto</string>
     <string name="goto_hint">Numero di riga (1..%1$d)</string>
