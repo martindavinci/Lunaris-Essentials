@@ -157,6 +157,6 @@
     <string name="preview_print">Stampa</string>
     <string name="preview_toggle_theme">Tema chiaro/scuro</string>
     <string name="preview_nothing">Niente da visualizzare in anteprima</string>
-    <string name="menu_run">Esegui</string>
-    <string name="toolbar_run">Esegui</string>
+    <string name="menu_run">Anteprima</string>
+    <string name="toolbar_run">Anteprima</string>
 </resources>
