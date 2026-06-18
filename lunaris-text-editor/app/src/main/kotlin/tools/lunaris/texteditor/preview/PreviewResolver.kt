@@ -14,9 +14,18 @@ object PreviewResolver {
         return when (ext) {
             "md", "markdown" -> wrap(renderMarkdown(text), dark, highlightCss, highlightJs)
             "html", "htm", "xhtml" -> text
-            else -> wrap("<pre>" + escapeHtml(text) + "</pre>", dark, highlightCss, highlightJs)
+            in PLAIN_EXTS -> wrap("<pre>" + escapeHtml(text) + "</pre>", dark, highlightCss, highlightJs)
+            // Code files: tag with the extension so highlight.js colorizes them (unknown languages
+            // degrade gracefully to plain text).
+            else -> wrap(
+                "<pre><code class=\"language-$ext\">" + escapeHtml(text) + "</code></pre>",
+                dark, highlightCss, highlightJs,
+            )
         }
     }
+
+    // Extensions (and the no-extension case) treated as prose, never syntax-highlighted.
+    private val PLAIN_EXTS = setOf("", "txt", "text", "log")
 
     private fun wrap(body: String, dark: Boolean, highlightCss: String?, highlightJs: String?): String {
         val theme = if (dark) "body{background:#121212;color:#e6e6e6;}a{color:#8ab4f8;}"

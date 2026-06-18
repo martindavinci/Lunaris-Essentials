@@ -37,6 +37,23 @@ class PreviewResolverTest {
         assertThat(doc).contains("JSDATA")
     }
 
+    @Test fun codeFile_taggedWithLanguageClass_andHighlighted() {
+        val doc = PreviewResolver.toHtmlDocument(
+            "main.py", "x = 1", renderMd, dark = true, highlightCss = "CSSDATA", highlightJs = "JSDATA",
+        )
+        assertThat(doc).contains("<code class=\"language-py\">x = 1</code>")
+        assertThat(doc).contains("hljs.highlightAll()")
+        assertThat(doc).doesNotContain("<h1>MD</h1>")
+    }
+
+    @Test fun plainTxt_notHighlighted_evenWithAssets() {
+        val doc = PreviewResolver.toHtmlDocument(
+            "a.txt", "x", renderMd, dark = true, highlightCss = "CSSDATA", highlightJs = "JSDATA",
+        )
+        assertThat(doc).contains("<pre>x</pre>")
+        assertThat(doc).doesNotContain("hljs.highlightAll()")
+    }
+
     @Test fun highlight_notInjectedWithoutCodeBlock() {
         val doc = PreviewResolver.toHtmlDocument(
             "a.md", "# x", renderMd, dark = true, highlightCss = "CSSDATA", highlightJs = "JSDATA",
