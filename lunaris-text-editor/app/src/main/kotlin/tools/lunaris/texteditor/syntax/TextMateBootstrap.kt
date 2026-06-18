@@ -12,6 +12,8 @@ import org.eclipse.tm4e.core.registry.IThemeSource
 object TextMateBootstrap {
 
     @Volatile private var done = false
+    private var schemeCatalog: ColorSchemeCatalog? = null
+    private val loadedThemes = mutableSetOf<String>()
 
     fun ensureRegistered(context: Context, languages: LanguageCatalog, schemes: ColorSchemeCatalog) {
         if (done) return
@@ -19,8 +21,21 @@ object TextMateBootstrap {
             if (done) return
             FileProviderRegistry.getInstance().addFileProvider(AssetsFileResolver(context.assets))
             registerGrammars(languages)
-            registerThemes(schemes)
+            // Themes are loaded lazily (see ensureTheme): parsing all ~25 .tmTheme assets up front
+            // slowed cold start; only the theme actually shown needs to be registered.
+            schemeCatalog = schemes
             done = true
+        }
+    }
+
+    /** Registers a single theme by id on first use, parsing its asset only then. */
+    fun ensureTheme(id: String) {
+        if (id in loadedThemes) return
+        synchronized(this) {
+            if (id in loadedThemes) return
+            val scheme = schemeCatalog?.schemes?.firstOrNull { it.id == id } ?: return
+            loadTheme(scheme)
+            loadedThemes.add(id)
         }
     }
 
@@ -42,18 +57,15 @@ object TextMateBootstrap {
         )
     }
 
-    private fun registerThemes(catalog: ColorSchemeCatalog) {
-        val registry = ThemeRegistry.getInstance()
-        catalog.schemes.forEach { scheme ->
-            val path = "textmate/${scheme.themeAsset}"
-            val source = IThemeSource.fromInputStream(
-                FileProviderRegistry.getInstance().tryGetInputStream(path), path, null,
-            )
-            try {
-                registry.loadTheme(ThemeModel(source, scheme.id))
-            } catch (e: Exception) {
-                android.util.Log.e("TextMateBootstrap", "Failed to load theme ${scheme.id}", e)
-            }
+    private fun loadTheme(scheme: ColorSchemeDefinition) {
+        val path = "textmate/${scheme.themeAsset}"
+        val source = IThemeSource.fromInputStream(
+            FileProviderRegistry.getInstance().tryGetInputStream(path), path, null,
+        )
+        try {
+            ThemeRegistry.getInstance().loadTheme(ThemeModel(source, scheme.id))
+        } catch (e: Exception) {
+            android.util.Log.e("TextMateBootstrap", "Failed to load theme ${scheme.id}", e)
         }
     }
 }

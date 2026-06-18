@@ -132,6 +132,8 @@ fun CodeEditorView(
 }
 
 private fun applyTheme(editor: CodeEditor, themeId: String) {
+    // Themes are registered lazily; make sure this one is loaded before selecting it.
+    tools.lunaris.texteditor.syntax.TextMateBootstrap.ensureTheme(themeId)
     val registry = ThemeRegistry.getInstance()
     runCatching { registry.setTheme(themeId) }
         .onFailure { Log.w("CodeEditorView", "Failed to set theme '$themeId'", it) }
