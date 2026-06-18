@@ -6,6 +6,7 @@ import tools.lunaris.texteditor.document.DocumentSession
 import tools.lunaris.texteditor.document.LineEnding
 import tools.lunaris.texteditor.file.FileRef
 import tools.lunaris.texteditor.file.FileRepository
+import tools.lunaris.texteditor.file.LoadedDocument
 import tools.lunaris.texteditor.syntax.SyntaxResolver
 import tools.lunaris.texteditor.syntax.SyntaxSelection
 import java.nio.charset.Charset
@@ -36,20 +37,26 @@ class DocumentIo @Inject constructor(
             lineEnding = loaded.lineEnding,
             syntax = selection,
             scopeName = syntaxResolver.resolveScope(selection, loaded.name, associations),
+            hasBom = loaded.hasBom,
         )
     }
 
-    suspend fun persist(ref: FileRef, text: String, charset: Charset, lineEnding: LineEnding, fallbackName: String): String {
-        repository.save(ref, text, charset, lineEnding)
+    suspend fun persist(
+        ref: FileRef,
+        text: String,
+        charset: Charset,
+        lineEnding: LineEnding,
+        fallbackName: String,
+        hasBom: Boolean = false,
+    ): String {
+        repository.save(ref, text, charset, lineEnding, hasBom)
         val name = repository.displayName(ref) ?: fallbackName
         recentsStore.touch(RecentEntry(ref.uri, name))
         return name
     }
 
-    suspend fun reload(ref: FileRef, charset: Charset): Triple<String, Charset, LineEnding> {
-        val loaded = repository.load(ref, forced = charset)
-        return Triple(loaded.text, loaded.charset, loaded.lineEnding)
-    }
+    suspend fun reload(ref: FileRef, charset: Charset): LoadedDocument =
+        repository.load(ref, forced = charset)
 
     companion object {
         /** Hard cap on openable file size. The whole document is held in memory as a String,

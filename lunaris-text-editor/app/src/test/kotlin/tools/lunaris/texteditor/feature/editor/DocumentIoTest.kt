@@ -70,8 +70,8 @@ class DocumentIoTest {
     @Test fun reload_redecodesWithForcedCharset() = runTest {
         val ref = FileRef("content://3")
         gateway.store[ref.uri] = byteArrayOf(0x61, 0x62)
-        val (text, cs, _) = io.reload(ref, StandardCharsets.ISO_8859_1)
-        assertThat(text).isEqualTo("ab")
-        assertThat(cs).isEqualTo(StandardCharsets.ISO_8859_1)
+        val loaded = io.reload(ref, StandardCharsets.ISO_8859_1)
+        assertThat(loaded.text).isEqualTo("ab")
+        assertThat(loaded.charset).isEqualTo(StandardCharsets.ISO_8859_1)
     }
 }

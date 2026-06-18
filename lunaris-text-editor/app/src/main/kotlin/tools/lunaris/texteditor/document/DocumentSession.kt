@@ -17,6 +17,8 @@ data class DocumentSession(
     val syntax: SyntaxSelection = SyntaxSelection.Auto,
     val scopeName: String? = null,
     val readOnly: Boolean = false,
+    /** True if the backing file began with a BOM, so saving re-emits it. */
+    val hasBom: Boolean = false,
 ) {
     val dirty: Boolean get() = text != savedText
 

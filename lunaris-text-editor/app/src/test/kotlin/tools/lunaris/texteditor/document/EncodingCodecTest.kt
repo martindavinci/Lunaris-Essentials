@@ -74,6 +74,53 @@ class EncodingCodecTest {
     }
 
     @Test
+    fun decode_invalidUtf8_fallsBackToLatin1_lossless() {
+        // 0xE9 is "é" in ISO-8859-1 but an invalid standalone UTF-8 byte.
+        val bytes = byteArrayOf(0x63, 0x61, 0x66, 0xE9.toByte()) // "café" in Latin-1
+        val decoded = codec.decode(bytes, forced = null)
+        assertThat(decoded.charset).isEqualTo(StandardCharsets.ISO_8859_1)
+        assertThat(decoded.text).isEqualTo("café")
+        assertThat(decoded.hasBom).isFalse()
+    }
+
+    @Test
+    fun decode_validUtf8_staysUtf8_noBom() {
+        val decoded = codec.decode("ciào".toByteArray(StandardCharsets.UTF_8), forced = null)
+        assertThat(decoded.charset).isEqualTo(StandardCharsets.UTF_8)
+        assertThat(decoded.text).isEqualTo("ciào")
+        assertThat(decoded.hasBom).isFalse()
+    }
+
+    @Test
+    fun decode_utf8Bom_setsHasBom() {
+        val bom = byteArrayOf(0xEF.toByte(), 0xBB.toByte(), 0xBF.toByte())
+        val decoded = codec.decode(bom + "abc".toByteArray(StandardCharsets.UTF_8), forced = null)
+        assertThat(decoded.hasBom).isTrue()
+    }
+
+    @Test
+    fun encode_withBom_prependsUtf8Bom_andRoundTrips() {
+        val bytes = codec.encode("abc", StandardCharsets.UTF_8, LineEnding.LF, hasBom = true)
+        assertThat(bytes.copyOfRange(0, 3)).isEqualTo(byteArrayOf(0xEF.toByte(), 0xBB.toByte(), 0xBF.toByte()))
+        // Decoding the result strips the BOM back out and flags it.
+        val decoded = codec.decode(bytes, forced = null)
+        assertThat(decoded.text).isEqualTo("abc")
+        assertThat(decoded.hasBom).isTrue()
+    }
+
+    @Test
+    fun encode_withBom_utf16le_prependsBom() {
+        val bytes = codec.encode("hi", StandardCharsets.UTF_16LE, LineEnding.LF, hasBom = true)
+        assertThat(bytes.copyOfRange(0, 2)).isEqualTo(byteArrayOf(0xFF.toByte(), 0xFE.toByte()))
+    }
+
+    @Test
+    fun encode_withoutBom_hasNoBom() {
+        val bytes = codec.encode("abc", StandardCharsets.UTF_8, LineEnding.LF, hasBom = false)
+        assertThat(bytes[0]).isNotEqualTo(0xEF.toByte())
+    }
+
+    @Test
     fun decode_detectsCr_andNormalizesToLf() {
         val bytes = "a\rb".toByteArray(StandardCharsets.UTF_8)
         val decoded = codec.decode(bytes, forced = null)

@@ -18,11 +18,12 @@ class FileRepository @Inject constructor(
             text = decoded.text,
             charset = decoded.charset,
             lineEnding = decoded.lineEnding,
+            hasBom = decoded.hasBom,
         )
     }
 
-    suspend fun save(ref: FileRef, text: String, charset: Charset, lineEnding: LineEnding) {
-        gateway.writeBytes(ref, codec.encode(text, charset, lineEnding))
+    suspend fun save(ref: FileRef, text: String, charset: Charset, lineEnding: LineEnding, hasBom: Boolean = false) {
+        gateway.writeBytes(ref, codec.encode(text, charset, lineEnding, hasBom))
     }
 
     suspend fun displayName(ref: FileRef): String? = gateway.displayName(ref)

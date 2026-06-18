@@ -156,7 +156,7 @@ class EditorViewModel @Inject constructor(
         val written = active.text
         viewModelScope.launch {
             try {
-                val name = documentIo.persist(ref, written, active.charset, active.lineEnding, active.title)
+                val name = documentIo.persist(ref, written, active.charset, active.lineEnding, active.title, active.hasBom)
                 docs.value = docs.value.replace(active.id) {
                     it.copy(fileRef = ref, title = name, savedText = written)
                 }
@@ -175,7 +175,7 @@ class EditorViewModel @Inject constructor(
             targets.forEach { tab ->
                 val ref = tab.fileRef ?: return@forEach
                 val written = tab.text
-                runCatching { documentIo.persist(ref, written, tab.charset, tab.lineEnding, tab.title) }
+                runCatching { documentIo.persist(ref, written, tab.charset, tab.lineEnding, tab.title, tab.hasBom) }
                     .onSuccess { docs.value = docs.value.replace(tab.id) { it.copy(savedText = written) } }
             }
             publish()
@@ -197,9 +197,15 @@ class EditorViewModel @Inject constructor(
         val ref = active.fileRef ?: return
         viewModelScope.launch {
             try {
-                val (text, cs, eol) = documentIo.reload(ref, charset)
+                val loaded = documentIo.reload(ref, charset)
                 docs.value = docs.value.replace(active.id) {
-                    it.copy(text = text, savedText = text, charset = cs, lineEnding = eol)
+                    it.copy(
+                        text = loaded.text,
+                        savedText = loaded.text,
+                        charset = loaded.charset,
+                        lineEnding = loaded.lineEnding,
+                        hasBom = loaded.hasBom,
+                    )
                 }
                 publish()
                 _state.update { it.copy(error = null, errorKind = null) }
