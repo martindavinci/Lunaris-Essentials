@@ -1,14 +1,12 @@
 {
     "default": "base16-tomorrow-night",
     "themes": [
-        { "id": "base16-default-dark", "display": "Default Dark", "themeAsset": "themes/base16-default-dark.tmTheme", "dark": true },
-        { "id": "base16-default-light", "display": "Default Light", "themeAsset": "themes/base16-default-light.tmTheme", "dark": false },
         { "id": "base16-eighties", "display": "Eighties", "themeAsset": "themes/base16-eighties.tmTheme", "dark": true },
         { "id": "base16-mocha", "display": "Mocha", "themeAsset": "themes/base16-mocha.tmTheme", "dark": true },
         { "id": "base16-ocean", "display": "Ocean", "themeAsset": "themes/base16-ocean.tmTheme", "dark": true },
         { "id": "base16-solarized-dark", "display": "Solarized Dark", "themeAsset": "themes/base16-solarized-dark.tmTheme", "dark": true },
         { "id": "base16-solarized-light", "display": "Solarized Light", "themeAsset": "themes/base16-solarized-light.tmTheme", "dark": false },
-        { "id": "base16-tomorrow", "display": "Tomorrow", "themeAsset": "themes/base16-tomorrow.tmTheme", "dark": true },
+        { "id": "base16-tomorrow", "display": "Tomorrow", "themeAsset": "themes/base16-tomorrow.tmTheme", "dark": false },
         { "id": "base16-tomorrow-night", "display": "Tomorrow Night", "themeAsset": "themes/base16-tomorrow-night.tmTheme", "dark": true }
     ]
 }
