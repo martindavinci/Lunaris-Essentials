@@ -44,6 +44,9 @@ fun PreviewScreen(
     val dark = darkState.value
     val displayTitle = viewModel.title.ifBlank { stringResource(R.string.preview_title) }
     val html = viewModel.html(dark)
+    // JS is needed only by our generated docs (which run the bundled highlight.js and have their
+    // content sanitized). Raw-HTML previews render an untrusted page as-is, so keep JS off there.
+    val enableJs = !viewModel.isRawHtmlPreview
 
     PreviewChrome(
         title = displayTitle,
@@ -66,16 +69,18 @@ fun PreviewScreen(
                 AndroidView(
                     factory = { ctx ->
                         WebView(ctx).apply {
-                            // JS runs the bundled (inlined) highlight.js. Kept sandboxed: no network
-                            // and no file access, and Markdown raw HTML is escaped before render.
-                            settings.javaScriptEnabled = true
+                            // Sandbox: no network, no file access. JS is toggled per-load below —
+                            // on only for our sanitized docs (highlight.js), off for raw HTML.
                             settings.blockNetworkLoads = true
                             @Suppress("DEPRECATION")
                             settings.allowFileAccess = false
                             webRef.value = this
                         }
                     },
-                    update = { it.loadDataWithBaseURL(null, html, "text/html", "utf-8", null) },
+                    update = {
+                        it.settings.javaScriptEnabled = enableJs
+                        it.loadDataWithBaseURL(null, html, "text/html", "utf-8", null)
+                    },
                     modifier = Modifier.fillMaxSize(),
                 )
             }

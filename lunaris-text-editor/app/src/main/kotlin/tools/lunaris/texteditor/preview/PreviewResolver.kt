@@ -13,7 +13,7 @@ object PreviewResolver {
         val ext = fileName?.substringAfterLast('.', "")?.lowercase().orEmpty()
         return when (ext) {
             "md", "markdown" -> wrap(renderMarkdown(text), dark, highlightCss, highlightJs)
-            "html", "htm", "xhtml" -> text
+            in RAW_HTML_EXTS -> text
             in PLAIN_EXTS -> wrap("<pre>" + escapeHtml(text) + "</pre>", dark, highlightCss, highlightJs)
             // Code files: tag with the extension so highlight.js colorizes them (unknown languages
             // degrade gracefully to plain text).
@@ -26,6 +26,14 @@ object PreviewResolver {
 
     // Extensions (and the no-extension case) treated as prose, never syntax-highlighted.
     private val PLAIN_EXTS = setOf("", "txt", "text", "log")
+
+    // Rendered as-is (the user's own web page); these are the only docs that need JS kept OFF,
+    // since we don't sanitize their contents. Our generated docs run the bundled highlight.js.
+    private val RAW_HTML_EXTS = setOf("html", "htm", "xhtml")
+
+    /** True if [fileName] is rendered as raw HTML passthrough (so the WebView must disable JS). */
+    fun isRawHtml(fileName: String?): Boolean =
+        fileName?.substringAfterLast('.', "")?.lowercase() in RAW_HTML_EXTS
 
     private fun wrap(body: String, dark: Boolean, highlightCss: String?, highlightJs: String?): String {
         val theme = if (dark) "body{background:#121212;color:#e6e6e6;}a{color:#8ab4f8;}"

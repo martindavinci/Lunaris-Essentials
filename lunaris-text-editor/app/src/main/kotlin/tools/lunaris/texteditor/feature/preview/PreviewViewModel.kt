@@ -17,6 +17,9 @@ class PreviewViewModel @Inject constructor(
     private val request = holder.request
     val title: String = request?.title ?: ""
 
+    /** Raw-HTML previews render the user's own page unsanitized, so JS must stay disabled for them. */
+    val isRawHtmlPreview: Boolean = PreviewResolver.isRawHtml(request?.fileName)
+
     /** Renders the document HTML for the chosen [dark]/light theme (null if nothing to preview). */
     fun html(dark: Boolean): String? =
         request?.let {
