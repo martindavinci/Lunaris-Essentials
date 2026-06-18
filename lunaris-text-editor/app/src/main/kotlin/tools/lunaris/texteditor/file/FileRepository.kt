@@ -26,4 +26,6 @@ class FileRepository @Inject constructor(
     }
 
     suspend fun displayName(ref: FileRef): String? = gateway.displayName(ref)
+
+    suspend fun size(ref: FileRef): Long? = gateway.size(ref)
 }

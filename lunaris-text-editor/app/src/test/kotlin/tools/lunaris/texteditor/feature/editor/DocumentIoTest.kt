@@ -34,6 +34,30 @@ class DocumentIoTest {
         assertThat(recents.flow.value.map { it.uri }).contains(ref.uri)
     }
 
+    @Test fun openTab_throwsFileTooLarge_whenOverLimit() = runTest {
+        val ref = FileRef("content://big")
+        gateway.store[ref.uri] = "x".toByteArray(StandardCharsets.UTF_8)
+        gateway.sizes[ref.uri] = DocumentIo.MAX_OPEN_BYTES + 1
+        gateway.names[ref.uri] = "huge.txt"
+        try {
+            io.openTab(ref, "id", emptyMap())
+            throw AssertionError("expected FileTooLargeException")
+        } catch (e: FileTooLargeException) {
+            assertThat(e.limitBytes).isEqualTo(DocumentIo.MAX_OPEN_BYTES)
+        }
+        // Over-limit files are never recorded as recents.
+        assertThat(recents.flow.value.map { it.uri }).doesNotContain(ref.uri)
+    }
+
+    @Test fun openTab_opensFile_atExactlyLimit() = runTest {
+        val ref = FileRef("content://atlimit")
+        gateway.store[ref.uri] = "ok".toByteArray(StandardCharsets.UTF_8)
+        gateway.sizes[ref.uri] = DocumentIo.MAX_OPEN_BYTES
+        gateway.names[ref.uri] = "edge.txt"
+        val tab = io.openTab(ref, "id", emptyMap())
+        assertThat(tab.title).isEqualTo("edge.txt")
+    }
+
     @Test fun persist_writesBytes_returnsName_records() = runTest {
         val ref = FileRef("content://2")
         gateway.names[ref.uri] = "b.txt"

@@ -11,6 +11,10 @@ import tools.lunaris.texteditor.syntax.SyntaxSelection
 import java.nio.charset.Charset
 import javax.inject.Inject
 
+/** Thrown when a file is too big to load fully into memory; the whole text is held as a String. */
+class FileTooLargeException(val limitBytes: Long) :
+    Exception("File exceeds the $limitBytes-byte open limit")
+
 /** File IO + tab construction for the editor. Returns values; the ViewModel applies state. */
 class DocumentIo @Inject constructor(
     private val repository: FileRepository,
@@ -18,6 +22,7 @@ class DocumentIo @Inject constructor(
     private val syntaxResolver: SyntaxResolver,
 ) {
     suspend fun openTab(ref: FileRef, newId: String, associations: Map<String, String>, forced: Charset? = null): DocumentSession {
+        repository.size(ref)?.let { if (it > MAX_OPEN_BYTES) throw FileTooLargeException(MAX_OPEN_BYTES) }
         val loaded = repository.load(ref, forced)
         val selection = SyntaxSelection.Auto
         recentsStore.touch(RecentEntry(ref.uri, loaded.name ?: DocumentSession.UNTITLED))
@@ -44,5 +49,11 @@ class DocumentIo @Inject constructor(
     suspend fun reload(ref: FileRef, charset: Charset): Triple<String, Charset, LineEnding> {
         val loaded = repository.load(ref, forced = charset)
         return Triple(loaded.text, loaded.charset, loaded.lineEnding)
+    }
+
+    companion object {
+        /** Hard cap on openable file size. The whole document is held in memory as a String,
+         *  so anything larger risks OOM. ~12 MB covers normal text/code files comfortably. */
+        const val MAX_OPEN_BYTES = 12L * 1024 * 1024
     }
 }

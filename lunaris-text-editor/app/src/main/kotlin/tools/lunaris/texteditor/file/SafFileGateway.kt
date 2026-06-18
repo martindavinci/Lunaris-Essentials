@@ -37,6 +37,15 @@ class SafFileGateway @Inject constructor(
             }
     }
 
+    override suspend fun size(ref: FileRef): Long? = withContext(Dispatchers.IO) {
+        fileOrNull(ref)?.let { return@withContext it.length().takeIf { len -> len > 0 } }
+        val uri = Uri.parse(ref.uri)
+        context.contentResolver.query(uri, arrayOf(OpenableColumns.SIZE), null, null, null)
+            ?.use { cursor ->
+                if (cursor.moveToFirst() && !cursor.isNull(0)) cursor.getLong(0) else null
+            }
+    }
+
     /**
      * Refs from the all-files browser are raw filesystem paths (or file:// URIs), not content
      * URIs — the [android.content.ContentResolver] can't open those. Returns a [File] for those,

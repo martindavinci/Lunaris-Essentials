@@ -189,10 +189,15 @@ fun EditorScreen(
     }
     val openFailedMsg = stringResource(R.string.error_open_failed)
     val saveFailedMsg = stringResource(R.string.error_save_failed)
+    val tooLargeMsg = stringResource(
+        R.string.error_file_too_large,
+        (DocumentIo.MAX_OPEN_BYTES / (1024 * 1024)).toInt(),
+    )
     LaunchedEffect(state.errorKind, state.error) {
         val message = when (state.errorKind) {
             EditorErrorKind.OPEN -> openFailedMsg
             EditorErrorKind.SAVE -> saveFailedMsg
+            EditorErrorKind.TOO_LARGE -> tooLargeMsg
             null -> state.error
         }
         if (message != null) {

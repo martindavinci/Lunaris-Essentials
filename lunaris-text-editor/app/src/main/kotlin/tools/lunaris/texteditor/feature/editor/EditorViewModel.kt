@@ -141,6 +141,8 @@ class EditorViewModel @Inject constructor(
                 docs.value = docs.value.openedReplacingScratch(tab)
                 publish()
                 _state.update { it.copy(pendingGoToLine = gotoLine, isLoading = false) }
+            } catch (t: FileTooLargeException) {
+                _state.update { it.copy(isLoading = false, error = null, errorKind = EditorErrorKind.TOO_LARGE) }
             } catch (t: Throwable) {
                 _state.update { it.copy(isLoading = false, error = t.message, errorKind = EditorErrorKind.OPEN) }
             }
