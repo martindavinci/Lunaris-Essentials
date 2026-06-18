@@ -10,6 +10,16 @@ data class OpenDocuments(
     fun opened(session: DocumentSession): OpenDocuments =
         copy(sessions = sessions + session, activeId = session.id)
 
+    /**
+     * Opens [session], discarding any pristine blank untitled tabs (e.g. the launch scratch tab)
+     * so opening a file doesn't leave a stray empty tab beside it. If [session] would be the only
+     * remaining tab, all blank scratch tabs drop out.
+     */
+    fun openedReplacingScratch(session: DocumentSession): OpenDocuments {
+        val kept = sessions.filterNot { it.isBlankScratch }
+        return copy(sessions = kept + session, activeId = session.id)
+    }
+
     fun activated(id: String): OpenDocuments =
         if (sessions.any { it.id == id }) copy(activeId = id) else this
 

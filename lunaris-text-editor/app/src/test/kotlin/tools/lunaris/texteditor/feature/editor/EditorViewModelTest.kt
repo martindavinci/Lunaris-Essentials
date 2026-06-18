@@ -93,7 +93,8 @@ class EditorViewModelTest {
         gateway.names[ref.uri] = "main.py"
         vm.openFile(ref)
         advanceUntilIdle()
-        assertThat(vm.state.value.tabs).hasSize(2)
+        // Opening a file from the launch scratch tab replaces it — no stray empty tab beside it.
+        assertThat(vm.state.value.tabs).hasSize(1)
         assertThat(vm.state.value.title).isEqualTo("main.py")
         assertThat(vm.state.value.scopeName).isEqualTo("source.python")
         assertThat(recents.flow.value.map { it.uri }).contains(ref.uri)

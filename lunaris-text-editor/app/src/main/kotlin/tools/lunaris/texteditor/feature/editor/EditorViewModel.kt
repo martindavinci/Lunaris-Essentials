@@ -138,7 +138,7 @@ class EditorViewModel @Inject constructor(
                     .takeIf { it != "Auto" }
                     ?.let { runCatching { Charset.forName(it) }.getOrNull() }
                 val tab = documentIo.openTab(ref, newId(), associations.map, forced = forced)
-                docs.value = docs.value.opened(tab)
+                docs.value = docs.value.openedReplacingScratch(tab)
                 publish()
                 _state.update { it.copy(pendingGoToLine = gotoLine, isLoading = false) }
             } catch (t: Throwable) {

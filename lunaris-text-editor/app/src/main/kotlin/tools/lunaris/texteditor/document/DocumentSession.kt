@@ -20,6 +20,9 @@ data class DocumentSession(
 ) {
     val dirty: Boolean get() = text != savedText
 
+    /** A pristine, never-edited new tab with no backing file — safe to discard on open. */
+    val isBlankScratch: Boolean get() = fileRef == null && text.isEmpty() && savedText.isEmpty()
+
     fun markSaved(): DocumentSession = copy(savedText = text)
 
     companion object {

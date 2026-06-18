@@ -24,6 +24,26 @@ class OpenDocumentsTest {
     }
 
     @Test
+    fun openedReplacingScratch_dropsBlankLaunchTab() {
+        val opened = OpenDocuments.initial("scratch")
+            .openedReplacingScratch(untitled("file").copy(title = "a.kt", fileRef = tools.lunaris.texteditor.file.FileRef("content://a.kt")))
+        assertThat(opened.sessions.map { it.id }).containsExactly("file")
+        assertThat(opened.activeId).isEqualTo("file")
+    }
+
+    @Test
+    fun openedReplacingScratch_keepsEditedAndFileTabs() {
+        val edited = untitled("edited").copy(text = "wip")
+        val file = untitled("file1").copy(title = "a.kt", fileRef = tools.lunaris.texteditor.file.FileRef("content://a.kt"))
+        val docs = OpenDocuments(listOf(untitled("scratch"), edited, file), "scratch")
+        val opened = docs.openedReplacingScratch(
+            untitled("file2").copy(title = "b.kt", fileRef = tools.lunaris.texteditor.file.FileRef("content://b.kt"))
+        )
+        assertThat(opened.sessions.map { it.id }).containsExactly("edited", "file1", "file2")
+        assertThat(opened.activeId).isEqualTo("file2")
+    }
+
+    @Test
     fun activated_switchesActive() {
         val docs = OpenDocuments.initial("a").opened(untitled("b")).activated("a")
         assertThat(docs.activeId).isEqualTo("a")
