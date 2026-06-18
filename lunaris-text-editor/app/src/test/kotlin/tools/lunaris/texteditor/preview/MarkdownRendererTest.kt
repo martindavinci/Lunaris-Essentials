@@ -23,6 +23,21 @@ class MarkdownRendererTest {
         assertThat(html).contains("<td>1</td>")
     }
 
+    @Test fun gfmTable_withoutPrecedingBlankLine_stillRenders() {
+        val md = "**Header paragraph**\n| A | B |\n| - | - |\n| 1 | 2 |"
+        val html = renderer.toHtml(md)
+        assertThat(html).contains("<table>")
+        assertThat(html).contains("<th>A</th>")
+        assertThat(html).contains("<td>1</td>")
+    }
+
+    @Test fun setextHeading_dashes_notTreatedAsTable() {
+        // "text\n---" is a setext H2, not a table — must stay an <h2>, no blank-line injection.
+        val html = renderer.toHtml("Title\n---")
+        assertThat(html).contains("<h2>Title</h2>")
+        assertThat(html).doesNotContain("<table>")
+    }
+
     @Test fun taskList_rendersCheckboxes() {
         val html = renderer.toHtml("- [ ] todo\n- [x] done")
         assertThat(html).contains("type=\"checkbox\"")
