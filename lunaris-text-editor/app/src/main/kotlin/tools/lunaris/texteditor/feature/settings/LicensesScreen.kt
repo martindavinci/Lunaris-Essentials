@@ -27,6 +27,8 @@ private val ATTRIBUTIONS = listOf(
     "Sora Editor — LGPL-2.1 — github.com/Rosemoe/sora-editor",
     "shiki textmate-grammars-themes — MIT — github.com/shikijs/textmate-grammars-themes",
     "base16-textmate — MIT — github.com/chriskempson/base16-textmate",
+    "highlight.js — BSD-3-Clause — github.com/highlightjs/highlight.js",
+    "commonmark-java — BSD-2-Clause — github.com/commonmark/commonmark-java",
     "AndroidX / Jetpack Compose — Apache-2.0 — developer.android.com",
     "Dagger Hilt — Apache-2.0 — github.com/google/dagger",
 )

@@ -14,7 +14,10 @@ class MarkdownRenderer @Inject constructor() {
         TaskListItemsExtension.create(),
     )
     private val parser: Parser = Parser.builder().extensions(extensions).build()
-    private val renderer: HtmlRenderer = HtmlRenderer.builder().extensions(extensions).build()
+    // escapeHtml: the preview WebView runs JS (for highlight.js), so neutralize any raw HTML
+    // (e.g. <script>) embedded in the Markdown source instead of passing it through.
+    private val renderer: HtmlRenderer =
+        HtmlRenderer.builder().extensions(extensions).escapeHtml(true).build()
 
     fun toHtml(markdown: String): String =
         if (markdown.isBlank()) "" else renderer.render(parser.parse(markdown)).trim()

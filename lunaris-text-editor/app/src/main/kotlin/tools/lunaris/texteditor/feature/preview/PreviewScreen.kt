@@ -66,7 +66,9 @@ fun PreviewScreen(
                 AndroidView(
                     factory = { ctx ->
                         WebView(ctx).apply {
-                            settings.javaScriptEnabled = false
+                            // JS runs the bundled (inlined) highlight.js. Kept sandboxed: no network
+                            // and no file access, and Markdown raw HTML is escaped before render.
+                            settings.javaScriptEnabled = true
                             settings.blockNetworkLoads = true
                             @Suppress("DEPRECATION")
                             settings.allowFileAccess = false

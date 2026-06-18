@@ -7,22 +7,28 @@ object PreviewResolver {
         text: String,
         renderMarkdown: (String) -> String,
         dark: Boolean = false,
+        highlightCss: String? = null,
+        highlightJs: String? = null,
     ): String {
         val ext = fileName?.substringAfterLast('.', "")?.lowercase().orEmpty()
         return when (ext) {
-            "md", "markdown" -> wrap(renderMarkdown(text), dark)
+            "md", "markdown" -> wrap(renderMarkdown(text), dark, highlightCss, highlightJs)
             "html", "htm", "xhtml" -> text
-            else -> wrap("<pre>" + escapeHtml(text) + "</pre>", dark)
+            else -> wrap("<pre>" + escapeHtml(text) + "</pre>", dark, highlightCss, highlightJs)
         }
     }
 
-    private fun wrap(body: String, dark: Boolean): String {
+    private fun wrap(body: String, dark: Boolean, highlightCss: String?, highlightJs: String?): String {
         val theme = if (dark) "body{background:#121212;color:#e6e6e6;}a{color:#8ab4f8;}"
         else "body{background:#ffffff;color:#1a1a1a;}a{color:#1a56db;}"
+        // Inject highlight.js only when there's a code block to colorize (keeps prose docs light).
+        val highlight = highlightJs != null && highlightCss != null && body.contains("<code")
+        val hlStyle = if (highlight) "<style>$highlightCss</style>" else ""
+        val hlScript = if (highlight) "<script>$highlightJs</script><script>hljs.highlightAll();</script>" else ""
         return "<!DOCTYPE html><html><head><meta charset=\"utf-8\">" +
             "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">" +
-            "<style>$STYLE$theme</style></head><body>" +
-            body + "</body></html>"
+            "<style>$STYLE$theme</style>$hlStyle</head><body>" +
+            body + hlScript + "</body></html>"
     }
 
     // Minimal stylesheet: readable body, bordered GFM tables, and visible task-list checkboxes.

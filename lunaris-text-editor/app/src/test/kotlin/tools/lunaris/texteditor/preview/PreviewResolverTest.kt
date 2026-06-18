@@ -26,4 +26,22 @@ class PreviewResolverTest {
     @Test fun extensionCaseInsensitive() {
         assertThat(PreviewResolver.toHtmlDocument("R.MD", "# x", renderMd)).contains("<h1>MD</h1>")
     }
+
+    @Test fun highlight_injectedWhenCodeBlockPresent() {
+        val withCode: (String) -> String = { "<pre><code class=\"language-py\">x=1</code></pre>" }
+        val doc = PreviewResolver.toHtmlDocument(
+            "a.md", "```py", withCode, dark = true, highlightCss = "CSSDATA", highlightJs = "JSDATA",
+        )
+        assertThat(doc).contains("hljs.highlightAll()")
+        assertThat(doc).contains("CSSDATA")
+        assertThat(doc).contains("JSDATA")
+    }
+
+    @Test fun highlight_notInjectedWithoutCodeBlock() {
+        val doc = PreviewResolver.toHtmlDocument(
+            "a.md", "# x", renderMd, dark = true, highlightCss = "CSSDATA", highlightJs = "JSDATA",
+        )
+        assertThat(doc).doesNotContain("hljs.highlightAll()")
+        assertThat(doc).doesNotContain("JSDATA")
+    }
 }
