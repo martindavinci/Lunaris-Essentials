@@ -11,6 +11,7 @@ data class PersistedTab(
     val charsetName: String,
     val lineEnding: String,
     val syntaxId: String?,
+    val hasBom: Boolean = false,
 )
 
 data class PersistedSession(val activeId: String, val tabs: List<PersistedTab>)

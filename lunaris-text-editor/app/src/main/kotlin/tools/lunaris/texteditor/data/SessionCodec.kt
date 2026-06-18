@@ -17,7 +17,8 @@ object SessionCodec {
                     .put("dirty", t.dirty)
                     .put("charset", t.charsetName)
                     .put("eol", t.lineEnding)
-                    .put("syntax", t.syntaxId ?: JSONObject.NULL),
+                    .put("syntax", t.syntaxId ?: JSONObject.NULL)
+                    .put("bom", t.hasBom),
             )
         }
         return JSONObject().put("active", session.activeId).put("tabs", tabs).toString()
@@ -38,6 +39,7 @@ object SessionCodec {
                 charsetName = o.getString("charset"),
                 lineEnding = o.getString("eol"),
                 syntaxId = if (o.isNull("syntax")) null else o.getString("syntax"),
+                hasBom = o.optBoolean("bom", false),
             )
         }
         return PersistedSession(root.optString("active", ""), tabs)
