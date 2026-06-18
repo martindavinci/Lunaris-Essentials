@@ -12,6 +12,13 @@ import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import io.github.rosemoe.sora.widget.CodeEditor
 
+/**
+ * Above this many characters, TextMate highlighting is dropped (plain text). Grammar tokenizing a
+ * very large buffer stalls the UI; the editor stays responsive without colors. ~500k chars covers
+ * normal source files with plenty of headroom.
+ */
+private const val LARGE_FILE_CHARS = 500_000
+
 @Composable
 fun CodeEditorView(
     text: String,
@@ -31,6 +38,9 @@ fun CodeEditorView(
 ) {
     val holder = remember { EditorBinding() }
     holder.callback = onTextChange
+
+    // Disable syntax highlighting for very large buffers (keeps the editor responsive).
+    val effectiveScope = scopeName?.takeIf { text.length <= LARGE_FILE_CHARS }
 
     AndroidView(
         modifier = modifier,
@@ -55,8 +65,8 @@ fun CodeEditorView(
                     holder.callback?.invoke(current)
                 }
                 applyTheme(editor, themeId)
-                applyLanguage(editor, scopeName)
-                holder.appliedScope = scopeName
+                applyLanguage(editor, effectiveScope)
+                holder.appliedScope = effectiveScope
                 holder.appliedTheme = themeId
                 controller.bind(editor)
                 editor.setWordwrap(wordWrap)
@@ -74,9 +84,9 @@ fun CodeEditorView(
                 applyTheme(editor, themeId)
                 holder.appliedTheme = themeId
             }
-            if (scopeName != holder.appliedScope) {
-                applyLanguage(editor, scopeName)
-                holder.appliedScope = scopeName
+            if (effectiveScope != holder.appliedScope) {
+                applyLanguage(editor, effectiveScope)
+                holder.appliedScope = effectiveScope
             }
             if (wordWrap != holder.appliedWrap) {
                 editor.setWordwrap(wordWrap)
