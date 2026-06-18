@@ -299,9 +299,9 @@ fun EditorScreen(
                 EditorMenuAction.OPEN_TREE -> treeLauncher.launch(null)
                 EditorMenuAction.SAVE -> {
                     val ref = state.fileRef
-                    if (ref != null) viewModel.save(ref) else createLauncher.launch(state.title)
+                    if (ref != null) viewModel.save(ref) else createLauncher.launch(suggestedSaveName(state, viewModel.languageCatalog))
                 }
-                EditorMenuAction.SAVE_AS -> createLauncher.launch(state.title)
+                EditorMenuAction.SAVE_AS -> createLauncher.launch(suggestedSaveName(state, viewModel.languageCatalog))
                 EditorMenuAction.RELOAD -> if (state.fileRef != null) viewModel.reopenWithEncoding(state.charset)
                 EditorMenuAction.CLOSE -> requestClose(state.activeTabId)
                 EditorMenuAction.INPUT_METHOD ->
@@ -320,7 +320,7 @@ fun EditorScreen(
                 ToolbarItem.CURSOR_RIGHT -> editorController.moveCursor(1)
                 ToolbarItem.SAVE -> {
                     val ref = state.fileRef
-                    if (ref != null) viewModel.save(ref) else createLauncher.launch(state.title)
+                    if (ref != null) viewModel.save(ref) else createLauncher.launch(suggestedSaveName(state, viewModel.languageCatalog))
                 }
                 ToolbarItem.CLOSE -> requestClose(state.activeTabId)
                 ToolbarItem.RUN -> { viewModel.previewActive(); onNavigate(tools.lunaris.texteditor.feature.Routes.PREVIEW) }
