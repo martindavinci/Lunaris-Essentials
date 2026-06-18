@@ -108,7 +108,9 @@ fun EditorScreen(
     }
 
     val createLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.CreateDocument("text/plain")
+        // "*/*" (not "text/plain") so the system keeps the name's extension as typed instead of
+        // forcing ".txt" — e.g. "name.md" stays "name.md", not "name.md.txt".
+        ActivityResultContracts.CreateDocument("*/*")
     ) { uri ->
         if (uri != null) {
             persistReadWrite(context, uri)
