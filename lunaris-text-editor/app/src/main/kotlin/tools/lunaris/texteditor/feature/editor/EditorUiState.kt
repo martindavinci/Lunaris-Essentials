@@ -26,6 +26,8 @@ data class EditorUiState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val errorKind: EditorErrorKind? = null,
+    /** A uri whose access has expired — the UI offers to re-pick it to restore the grant. */
+    val reauthorizeUri: String? = null,
     val savedSignal: Int = 0,
     val wordWrap: Boolean = true,
     val readOnly: Boolean = false,

@@ -1,9 +1,13 @@
 package tools.lunaris.texteditor.feature.editor
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
+import android.provider.DocumentsContract
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -109,6 +113,18 @@ fun EditorScreen(
         if (uri != null) {
             persistReadWrite(context, uri)
             viewModel.save(FileRef(uri.toString()))
+        }
+    }
+
+    // Re-pick a file whose grant expired (the picker opens near the original location); selecting
+    // it again yields a fresh persisted permission so the file — and its recents entry — reopen.
+    val reauthorizeLauncher = rememberLauncherForActivityResult(
+        remember { OpenDocumentAtLocation() }
+    ) { uri ->
+        viewModel.consumeReauthorize()
+        if (uri != null) {
+            persistReadWrite(context, uri)
+            viewModel.openFile(FileRef(uri.toString()))
         }
     }
 
@@ -338,6 +354,24 @@ fun EditorScreen(
             text = { Text(stringResource(R.string.close_confirm_message)) },
         )
     }
+
+    state.reauthorizeUri?.let { uri ->
+        AlertDialog(
+            onDismissRequest = { viewModel.consumeReauthorize() },
+            confirmButton = {
+                TextButton(onClick = { reauthorizeLauncher.launch(Uri.parse(uri)) }) {
+                    Text(stringResource(R.string.reopen_reselect))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.consumeReauthorize() }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+            title = { Text(stringResource(R.string.reopen_title)) },
+            text = { Text(stringResource(R.string.reopen_message)) },
+        )
+    }
 }
 
 @Composable
@@ -497,6 +531,25 @@ private class OpenDocumentReadWrite : ActivityResultContracts.OpenDocument() {
         super.createIntent(context, input).apply {
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
         }
+}
+
+/**
+ * Open-document picker that takes the (expired) uri as input and hints the system picker to start
+ * near it via EXTRA_INITIAL_URI, so the user re-selects the same file with minimal navigation.
+ */
+private class OpenDocumentAtLocation : ActivityResultContract<Uri, Uri?>() {
+    override fun createIntent(context: Context, input: Uri): Intent =
+        Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "*/*"
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                putExtra(DocumentsContract.EXTRA_INITIAL_URI, input)
+            }
+        }
+
+    override fun parseResult(resultCode: Int, intent: Intent?): Uri? =
+        if (resultCode == Activity.RESULT_OK) intent?.data else null
 }
 
 /** Persists read+write access, degrading to read-only, never crashing. */

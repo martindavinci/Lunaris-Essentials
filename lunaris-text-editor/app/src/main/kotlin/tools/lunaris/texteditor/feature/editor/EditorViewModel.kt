@@ -147,6 +147,10 @@ class EditorViewModel @Inject constructor(
                 _state.update { it.copy(pendingGoToLine = gotoLine, isLoading = false) }
             } catch (t: FileTooLargeException) {
                 _state.update { it.copy(isLoading = false, error = null, errorKind = EditorErrorKind.TOO_LARGE) }
+            } catch (t: SecurityException) {
+                // No persisted grant for this uri (e.g. an open-with file from a past session):
+                // prompt the user to re-pick it so a fresh permission can be taken.
+                _state.update { it.copy(isLoading = false, error = null, errorKind = null, reauthorizeUri = ref.uri) }
             } catch (t: Throwable) {
                 _state.update { it.copy(isLoading = false, error = t.message, errorKind = EditorErrorKind.OPEN) }
             }
@@ -222,6 +226,8 @@ class EditorViewModel @Inject constructor(
     fun recents() = recentsStore.recents()
 
     fun consumeError() = _state.update { it.copy(error = null, errorKind = null) }
+
+    fun consumeReauthorize() = _state.update { it.copy(reauthorizeUri = null) }
 
     private suspend fun restoreSession() {
         sessionManager.restore()?.let { docs.value = it }

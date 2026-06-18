@@ -208,6 +208,20 @@ class EditorViewModelTest {
     }
 
     @Test
+    fun openFile_securityException_setsReauthorizeUri_notError() = runTest {
+        val vm = newVm()
+        val ref = FileRef("content://expired")
+        gateway.denied.add(ref.uri)
+        vm.openFile(ref)
+        advanceUntilIdle()
+        assertThat(vm.state.value.reauthorizeUri).isEqualTo(ref.uri)
+        assertThat(vm.state.value.errorKind).isNull()
+        assertThat(vm.state.value.isLoading).isFalse()
+        vm.consumeReauthorize()
+        assertThat(vm.state.value.reauthorizeUri).isNull()
+    }
+
+    @Test
     fun restoresPersistedTabsOnInit() = runTest {
         val seeded = FakeSessionStore(
             PersistedSession(

@@ -5,9 +5,13 @@ class FakeFileGateway : FileGateway {
     val names = mutableMapOf<String, String>()
     /** Optional reported size override (so tests can fake huge files without allocating them). */
     val sizes = mutableMapOf<String, Long>()
+    /** Uris that simulate an expired/missing SAF grant (readBytes throws SecurityException). */
+    val denied = mutableSetOf<String>()
 
-    override suspend fun readBytes(ref: FileRef): ByteArray =
-        store[ref.uri] ?: error("no file at ${ref.uri}")
+    override suspend fun readBytes(ref: FileRef): ByteArray {
+        if (ref.uri in denied) throw SecurityException("no grant for ${ref.uri}")
+        return store[ref.uri] ?: error("no file at ${ref.uri}")
+    }
 
     override suspend fun writeBytes(ref: FileRef, bytes: ByteArray) {
         store[ref.uri] = bytes

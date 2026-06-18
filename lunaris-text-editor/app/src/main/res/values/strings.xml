@@ -18,6 +18,9 @@
     <string name="close_confirm_title">Close tab?</string>
     <string name="close_confirm_message">This tab has unsaved changes.</string>
     <string name="close_confirm_discard">Close anyway</string>
+    <string name="reopen_title">Permission expired</string>
+    <string name="reopen_message">Access to this file was lost. Re-select it to open it again.</string>
+    <string name="reopen_reselect">Re-select</string>
     <string name="action_recent">Recent files</string>
     <string name="recent_empty">No recent files</string>
     <string name="menu_search">Search</string>

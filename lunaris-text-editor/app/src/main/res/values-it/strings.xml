@@ -19,6 +19,9 @@
     <string name="close_confirm_title">Chiudere la scheda?</string>
     <string name="close_confirm_message">Questa scheda ha modifiche non salvate.</string>
     <string name="close_confirm_discard">Chiudi comunque</string>
+    <string name="reopen_title">Permesso scaduto</string>
+    <string name="reopen_message">L\'accesso a questo file è stato perso. Riselezionalo per riaprirlo.</string>
+    <string name="reopen_reselect">Riseleziona</string>
     <string name="action_recent">File recenti</string>
     <string name="recent_empty">Nessun file recente</string>
     <string name="menu_search">Cerca</string>
