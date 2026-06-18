@@ -27,6 +27,7 @@ private fun FolderDrawerContentPreview() {
             onPickFolder = {},
             onNavigateTo = {},
             onUp = {},
+            onCloseFolder = {},
             onToggleFilter = {},
         )
     }
@@ -42,6 +43,7 @@ private fun FolderDrawerNoAccessPreview() {
             onPickFolder = {},
             onNavigateTo = {},
             onUp = {},
+            onCloseFolder = {},
             onToggleFilter = {},
         )
     }

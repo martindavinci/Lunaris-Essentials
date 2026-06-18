@@ -36,6 +36,8 @@ class FolderBrowserViewModel @Inject constructor(
 
     private val knownExts = languageCatalog.languages.flatMap { it.extensions }.toSet()
     private var raw: List<FileEntry> = emptyList()
+    // The user explicitly closed the folder this session; stay collapsed until they pick one again.
+    private var closed = false
     private val _state = MutableStateFlow(FolderUiState())
     val state: StateFlow<FolderUiState> = _state.asStateFlow()
 
@@ -44,7 +46,7 @@ class FolderBrowserViewModel @Inject constructor(
         viewModelScope.launch {
             val filter = fileFilterStore.fileFilter().first()
             val rootRef = storageAccess.grantedTrees().firstOrNull()?.toString()
-            if (rootRef == null) {
+            if (closed || rootRef == null) {
                 _state.value = FolderUiState(accessGranted = false, filterEnabled = filter)
             } else {
                 loadInto(rootRef, filter)
@@ -52,7 +54,13 @@ class FolderBrowserViewModel @Inject constructor(
         }
     }
 
-    fun navigateTo(ref: String) = viewModelScope.launch { loadInto(ref, _state.value.filterEnabled) }
+    /** Collapse the browser back to the empty state (the back arrow at the root folder). */
+    fun closeFolder() {
+        closed = true
+        _state.value = FolderUiState(accessGranted = false, filterEnabled = _state.value.filterEnabled)
+    }
+
+    fun navigateTo(ref: String) = viewModelScope.launch { closed = false; loadInto(ref, _state.value.filterEnabled) }
 
     fun up() = viewModelScope.launch {
         val loc = _state.value.location ?: return@launch

@@ -82,6 +82,8 @@
     <string name="folder_up">Su</string>
     <string name="folder_hide_unknown">Nascondi tipi sconosciuti</string>
     <string name="folder_pick">Scegli una cartella</string>
+    <string name="folder_close_title">Chiudere questa cartella?</string>
+    <string name="folder_close">Chiudi</string>
     <string name="folder_no_access">Nessun accesso alla cartella</string>
     <string name="folder_is_directory">Cartella</string>
     <string name="folder_is_file">File</string>

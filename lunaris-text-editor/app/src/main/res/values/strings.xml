@@ -81,6 +81,8 @@
     <string name="folder_up">Up</string>
     <string name="folder_hide_unknown">Hide unknown types</string>
     <string name="folder_pick">Pick a folder</string>
+    <string name="folder_close_title">Close this folder?</string>
+    <string name="folder_close">Close</string>
     <string name="folder_no_access">No folder access yet</string>
     <string name="folder_is_directory">Folder</string>
     <string name="folder_is_file">File</string>
