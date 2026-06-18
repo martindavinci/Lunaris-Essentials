@@ -30,7 +30,6 @@ import tools.lunaris.texteditor.R
 fun FolderDrawer(
     onOpenFile: (String) -> Unit,
     onPickFolder: () -> Unit,
-    onEnableAllFiles: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: FolderBrowserViewModel = hiltViewModel(),
 ) {
@@ -39,7 +38,6 @@ fun FolderDrawer(
         state = state,
         onOpenFile = onOpenFile,
         onPickFolder = onPickFolder,
-        onEnableAllFiles = onEnableAllFiles,
         onNavigateTo = { viewModel.navigateTo(it) },
         onUp = { viewModel.up() },
         onToggleFilter = { viewModel.toggleFilter(it) },
@@ -53,7 +51,6 @@ fun FolderDrawerContent(
     state: FolderUiState,
     onOpenFile: (String) -> Unit,
     onPickFolder: () -> Unit,
-    onEnableAllFiles: () -> Unit,
     onNavigateTo: (String) -> Unit,
     onUp: () -> Unit,
     onToggleFilter: (Boolean) -> Unit,

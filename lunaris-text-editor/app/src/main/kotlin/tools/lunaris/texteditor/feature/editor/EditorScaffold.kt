@@ -1,6 +1,5 @@
 package tools.lunaris.texteditor.feature.editor
 
-import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,7 +40,6 @@ internal fun EditorScaffold(
     snackbar: SnackbarHostState,
     editorController: CodeEditorController,
     showAccessory: Boolean,
-    context: Context,
     onNavigate: (String) -> Unit,
     folderDrawerEnabled: Boolean,
     onMenuAction: (EditorMenuAction) -> Unit,
@@ -100,7 +98,6 @@ internal fun EditorScaffold(
                         scope.launch { drawerState.close() }
                     },
                     onPickFolder = onPickFolder,
-                    onEnableAllFiles = { context.startActivity(folderVm.allFilesIntent()) },
                     viewModel = folderVm,
                 )
             }

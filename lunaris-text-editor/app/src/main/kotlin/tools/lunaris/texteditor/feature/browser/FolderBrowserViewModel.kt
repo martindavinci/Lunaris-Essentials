@@ -1,6 +1,5 @@
 package tools.lunaris.texteditor.feature.browser
 
-import android.content.Intent
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,10 +11,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import tools.lunaris.texteditor.data.FileFilterStore
-import tools.lunaris.texteditor.files.AllFilesBrowser
 import tools.lunaris.texteditor.files.FileEntry
 import tools.lunaris.texteditor.files.FileFilter
-import tools.lunaris.texteditor.files.FolderBrowser
 import tools.lunaris.texteditor.files.SafTreeBrowser
 import tools.lunaris.texteditor.files.StorageAccess
 import tools.lunaris.texteditor.syntax.LanguageCatalog
@@ -32,7 +29,6 @@ data class FolderUiState(
 @HiltViewModel
 class FolderBrowserViewModel @Inject constructor(
     private val safBrowser: SafTreeBrowser,
-    private val allFilesBrowser: AllFilesBrowser,
     private val storageAccess: StorageAccess,
     private val fileFilterStore: FileFilterStore,
     languageCatalog: LanguageCatalog,
@@ -43,17 +39,11 @@ class FolderBrowserViewModel @Inject constructor(
     private val _state = MutableStateFlow(FolderUiState())
     val state: StateFlow<FolderUiState> = _state.asStateFlow()
 
-    private fun browser(): FolderBrowser = if (storageAccess.hasAllFiles()) allFilesBrowser else safBrowser
-
     /** Initialize/refresh the browser when the drawer opens. */
     fun start() {
         viewModelScope.launch {
             val filter = fileFilterStore.fileFilter().first()
-            val rootRef = when {
-                storageAccess.hasAllFiles() -> storageAccess.externalRoot()
-                storageAccess.grantedTrees().isNotEmpty() -> storageAccess.grantedTrees().first().toString()
-                else -> null
-            }
+            val rootRef = storageAccess.grantedTrees().firstOrNull()?.toString()
             if (rootRef == null) {
                 _state.value = FolderUiState(accessGranted = false, filterEnabled = filter)
             } else {
@@ -66,7 +56,7 @@ class FolderBrowserViewModel @Inject constructor(
 
     fun up() = viewModelScope.launch {
         val loc = _state.value.location ?: return@launch
-        browser().parent(loc)?.let { loadInto(it, _state.value.filterEnabled) }
+        safBrowser.parent(loc)?.let { loadInto(it, _state.value.filterEnabled) }
     }
 
     fun toggleFilter(on: Boolean) = viewModelScope.launch {
@@ -79,16 +69,13 @@ class FolderBrowserViewModel @Inject constructor(
         navigateTo(uri.toString())
     }
 
-    fun allFilesIntent(): Intent = storageAccess.allFilesSettingsIntent()
-
     private suspend fun loadInto(ref: String, filter: Boolean) {
-        val b = browser()
-        raw = b.list(ref)
+        raw = safBrowser.list(ref)
         _state.value = FolderUiState(
             accessGranted = true,
             location = ref,
             entries = FileFilter.apply(raw, knownExts, filter),
-            canGoUp = b.parent(ref) != null,
+            canGoUp = safBrowser.parent(ref) != null,
             filterEnabled = filter,
         )
     }

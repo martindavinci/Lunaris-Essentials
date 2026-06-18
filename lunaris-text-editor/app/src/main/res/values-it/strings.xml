@@ -78,7 +78,6 @@
     <string name="folder_up">Su</string>
     <string name="folder_hide_unknown">Nascondi tipi sconosciuti</string>
     <string name="folder_pick">Scegli una cartella</string>
-    <string name="folder_enable_all_files">Abilita accesso a tutti i file</string>
     <string name="folder_no_access">Nessun accesso alla cartella</string>
     <string name="folder_is_directory">Cartella</string>
     <string name="folder_is_file">File</string>
@@ -92,9 +91,6 @@
     <string name="action_back">Indietro</string>
     <string name="menu_storage">Gestione archiviazione</string>
     <string name="storage_title">Gestione archiviazione</string>
-    <string name="storage_all_files_on">Accesso a tutti i file: abilitato</string>
-    <string name="storage_all_files_off">Accesso a tutti i file: disabilitato</string>
-    <string name="storage_enable">Abilita accesso a tutti i file</string>
     <string name="storage_add_folder">Aggiungi cartella</string>
     <string name="storage_release">Rilascia</string>
     <string name="storage_no_trees">Nessuna cartella autorizzata</string>

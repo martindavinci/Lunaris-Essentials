@@ -228,7 +228,6 @@ fun EditorScreen(
         snackbar = snackbar,
         editorController = editorController,
         showAccessory = showAccessory,
-        context = context,
         onNavigate = onNavigate,
         folderDrawerEnabled = viewSettings.folderDrawerEnabled,
         lineNumbers = viewSettings.lineNumbers,

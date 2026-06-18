@@ -3,10 +3,7 @@ package tools.lunaris.texteditor.files
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
-import android.os.Environment
 import android.provider.DocumentsContract
-import android.provider.Settings
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,20 +13,6 @@ import javax.inject.Singleton
 class StorageAccess @Inject constructor(
     @ApplicationContext private val context: Context,
 ) {
-    /** True if the app holds MANAGE_EXTERNAL_STORAGE (All-files). */
-    fun hasAllFiles(): Boolean =
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && Environment.isExternalStorageManager()
-
-    /** Intent that opens the system "All files access" settings page for this app. */
-    fun allFilesSettingsIntent(): Intent =
-        Intent(
-            Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
-            Uri.parse("package:" + context.packageName),
-        )
-
-    /** Default browsing root for All-files mode. */
-    fun externalRoot(): String = Environment.getExternalStorageDirectory().absolutePath
-
     /**
      * SAF *tree* uris this app holds a persisted read grant for. Single-file document
      * grants (persisted when opening a file so recents survive restarts) are excluded —

@@ -1,6 +1,5 @@
 package tools.lunaris.texteditor.feature.browser
 
-import android.content.Intent
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -10,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import tools.lunaris.texteditor.files.StorageAccess
 import javax.inject.Inject
 
-data class StorageUiState(val hasAllFiles: Boolean = false, val trees: List<String> = emptyList())
+data class StorageUiState(val trees: List<String> = emptyList())
 
 @HiltViewModel
 class StorageManagerViewModel @Inject constructor(
@@ -20,9 +19,8 @@ class StorageManagerViewModel @Inject constructor(
     val state: StateFlow<StorageUiState> = _state.asStateFlow()
 
     fun refresh() {
-        _state.value = StorageUiState(storageAccess.hasAllFiles(), storageAccess.grantedTrees().map { it.toString() })
+        _state.value = StorageUiState(storageAccess.grantedTrees().map { it.toString() })
     }
     fun addTree(uri: Uri) { storageAccess.persistTree(uri); refresh() }
     fun release(ref: String) { storageAccess.releaseTree(Uri.parse(ref)); refresh() }
-    fun allFilesIntent(): Intent = storageAccess.allFilesSettingsIntent()
 }

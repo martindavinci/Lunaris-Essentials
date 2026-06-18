@@ -26,7 +26,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,7 +41,6 @@ fun StorageManagerScreen(
     viewModel: StorageManagerViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val context = LocalContext.current
 
     val treeLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocumentTree()
@@ -63,24 +61,6 @@ fun StorageManagerScreen(
                 .padding(padding)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
         ) {
-            item {
-                Text(
-                    text = if (state.hasAllFiles) stringResource(R.string.storage_all_files_on)
-                           else stringResource(R.string.storage_all_files_off),
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(vertical = 4.dp),
-                )
-            }
-            item {
-                Button(
-                    onClick = { context.startActivity(viewModel.allFilesIntent()) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp),
-                ) {
-                    Text(stringResource(R.string.storage_enable))
-                }
-            }
             item {
                 Button(
                     onClick = { treeLauncher.launch(null) },

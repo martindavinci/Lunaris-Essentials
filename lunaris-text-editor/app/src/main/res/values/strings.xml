@@ -77,7 +77,6 @@
     <string name="folder_up">Up</string>
     <string name="folder_hide_unknown">Hide unknown types</string>
     <string name="folder_pick">Pick a folder</string>
-    <string name="folder_enable_all_files">Enable all-files access</string>
     <string name="folder_no_access">No folder access yet</string>
     <string name="folder_is_directory">Folder</string>
     <string name="folder_is_file">File</string>
@@ -91,9 +90,6 @@
     <string name="action_back">Back</string>
     <string name="menu_storage">Storage manager</string>
     <string name="storage_title">Storage manager</string>
-    <string name="storage_all_files_on">All-files access: enabled</string>
-    <string name="storage_all_files_off">All-files access: disabled</string>
-    <string name="storage_enable">Enable all-files access</string>
     <string name="storage_add_folder">Add folder</string>
     <string name="storage_release">Release</string>
     <string name="storage_no_trees">No granted folders</string>
