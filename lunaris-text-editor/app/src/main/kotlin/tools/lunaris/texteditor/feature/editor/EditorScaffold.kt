@@ -125,6 +125,7 @@ internal fun EditorScaffold(
                     )
                 } else EditorTopBar(
                     title = state.title,
+                    subtitle = state.fileRef?.uri?.let { fileLocationHint(it) },
                     checked = buildSet {
                         if (state.wordWrap) add(EditorMenuAction.WORD_WRAP)
                         if (state.readOnly) add(EditorMenuAction.READ_ONLY)

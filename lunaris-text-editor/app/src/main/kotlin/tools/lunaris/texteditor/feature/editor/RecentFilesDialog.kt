@@ -65,7 +65,7 @@ private fun RecentRow(entry: RecentEntry, onClick: () -> Unit) {
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
-            location(entry.uri)?.let {
+            fileLocationHint(entry.uri)?.let {
                 Text(
                     text = it,
                     style = MaterialTheme.typography.bodySmall,
@@ -78,8 +78,8 @@ private fun RecentRow(entry: RecentEntry, onClick: () -> Unit) {
     }
 }
 
-/** A short, human-readable hint of where the file lives (decoded last path segment). */
-private fun location(uri: String): String? {
+/** A short, human-readable hint of where the file lives (decoded parent folder path). */
+internal fun fileLocationHint(uri: String): String? {
     val decoded = runCatching { java.net.URLDecoder.decode(uri, "UTF-8") }.getOrDefault(uri)
     val tail = decoded.substringAfterLast(':').substringBeforeLast('/', "").trim('/')
     return tail.ifBlank { null }

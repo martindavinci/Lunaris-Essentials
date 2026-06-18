@@ -6,14 +6,19 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
@@ -340,6 +345,7 @@ fun EditorScreen(
 @Composable
 internal fun EditorTopBar(
     title: String,
+    subtitle: String? = null,
     checked: Set<EditorMenuAction> = emptySet(),
     disabled: Set<EditorMenuAction> = emptySet(),
     onMenu: () -> Unit = {},
@@ -361,13 +367,23 @@ internal fun EditorTopBar(
                 }
             }
             val shownTitle = if (title == DocumentSession.UNTITLED) stringResource(R.string.untitled) else title
-            Text(
-                text = shownTitle,
-                style = MaterialTheme.typography.titleMedium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f),
-            )
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = shownTitle,
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                if (!subtitle.isNullOrBlank()) {
+                    Text(
+                        text = subtitle,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            }
             // File menu (folder button).
             var fileOpen by remember { mutableStateOf(false) }
             Box {
@@ -452,7 +468,9 @@ internal fun EditorBottomBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .navigationBarsPadding()
+                // Float above the IME when the keyboard is up; fall back to the nav bar otherwise
+                // (union picks the larger inset, so the toolbar is never hidden behind the keyboard).
+                .windowInsetsPadding(WindowInsets.ime.union(WindowInsets.navigationBars))
                 .padding(vertical = 4.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
