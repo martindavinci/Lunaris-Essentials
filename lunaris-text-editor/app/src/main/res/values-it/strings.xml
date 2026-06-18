@@ -37,7 +37,7 @@
     <string name="menu_select_all">Seleziona tutto</string>
     <string name="menu_paste">Incolla</string>
     <string name="menu_open">Apri</string>
-    <string name="menu_open_saf">Apri (SAF)</string>
+    <string name="menu_open_saf">Apri cartella</string>
     <string name="menu_save">Salva</string>
     <string name="menu_save_as">Salva con nome</string>
     <string name="menu_reload">Ricarica</string>
