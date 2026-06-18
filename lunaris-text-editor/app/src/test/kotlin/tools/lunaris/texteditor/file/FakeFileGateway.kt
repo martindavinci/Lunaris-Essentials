@@ -7,9 +7,12 @@ class FakeFileGateway : FileGateway {
     val sizes = mutableMapOf<String, Long>()
     /** Uris that simulate an expired/missing SAF grant (readBytes throws SecurityException). */
     val denied = mutableSetOf<String>()
+    /** Uris that simulate a deleted/moved file (readBytes throws FileNotFoundException). */
+    val gone = mutableSetOf<String>()
 
     override suspend fun readBytes(ref: FileRef): ByteArray {
         if (ref.uri in denied) throw SecurityException("no grant for ${ref.uri}")
+        if (ref.uri in gone) throw java.io.FileNotFoundException("missing ${ref.uri}")
         return store[ref.uri] ?: error("no file at ${ref.uri}")
     }
 

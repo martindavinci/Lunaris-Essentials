@@ -5,6 +5,7 @@
     <string name="error_open_failed">Impossibile aprire il file</string>
     <string name="error_save_failed">Impossibile salvare il file</string>
     <string name="error_file_too_large">File troppo grande da aprire (max %1$d MB)</string>
+    <string name="error_file_not_found">File non trovato — rimosso dai recenti</string>
     <string name="saved">Salvato</string>
     <string name="menu_syntax">Sintassi</string>
     <string name="menu_display_style">Stile di visualizzazione</string>

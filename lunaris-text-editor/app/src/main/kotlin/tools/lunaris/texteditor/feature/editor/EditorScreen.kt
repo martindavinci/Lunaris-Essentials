@@ -217,11 +217,13 @@ fun EditorScreen(
         R.string.error_file_too_large,
         (DocumentIo.MAX_OPEN_BYTES / (1024 * 1024)).toInt(),
     )
+    val notFoundMsg = stringResource(R.string.error_file_not_found)
     LaunchedEffect(state.errorKind, state.error) {
         val message = when (state.errorKind) {
             EditorErrorKind.OPEN -> openFailedMsg
             EditorErrorKind.SAVE -> saveFailedMsg
             EditorErrorKind.TOO_LARGE -> tooLargeMsg
+            EditorErrorKind.NOT_FOUND -> notFoundMsg
             null -> state.error
         }
         if (message != null) {

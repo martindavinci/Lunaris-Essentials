@@ -222,6 +222,19 @@ class EditorViewModelTest {
     }
 
     @Test
+    fun openFile_fileNotFound_removesFromRecents_andFlagsNotFound() = runTest {
+        val vm = newVm()
+        val ref = FileRef("content://gone")
+        recents.flow.value = listOf(tools.lunaris.texteditor.data.RecentEntry(ref.uri, "gone.txt"))
+        gateway.gone.add(ref.uri)
+        vm.openFile(ref)
+        advanceUntilIdle()
+        assertThat(vm.state.value.errorKind).isEqualTo(EditorErrorKind.NOT_FOUND)
+        assertThat(recents.flow.value.map { it.uri }).doesNotContain(ref.uri)
+        assertThat(vm.state.value.reauthorizeUri).isNull()
+    }
+
+    @Test
     fun restoresPersistedTabsOnInit() = runTest {
         val seeded = FakeSessionStore(
             PersistedSession(

@@ -151,6 +151,11 @@ class EditorViewModel @Inject constructor(
                 // No persisted grant for this uri (e.g. an open-with file from a past session):
                 // prompt the user to re-pick it so a fresh permission can be taken.
                 _state.update { it.copy(isLoading = false, error = null, errorKind = null, reauthorizeUri = ref.uri) }
+            } catch (t: java.io.FileNotFoundException) {
+                // The file is gone (moved/deleted) and can't be recovered — drop it from recents
+                // so the dead entry stops showing.
+                recentsStore.remove(ref.uri)
+                _state.update { it.copy(isLoading = false, error = null, errorKind = EditorErrorKind.NOT_FOUND) }
             } catch (t: Throwable) {
                 _state.update { it.copy(isLoading = false, error = t.message, errorKind = EditorErrorKind.OPEN) }
             }

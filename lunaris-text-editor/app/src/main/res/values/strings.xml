@@ -4,6 +4,7 @@
     <string name="error_open_failed">Could not open file</string>
     <string name="error_save_failed">Could not save file</string>
     <string name="error_file_too_large">File too large to open (max %1$d MB)</string>
+    <string name="error_file_not_found">File not found — removed from recents</string>
     <string name="saved">Saved</string>
     <string name="menu_syntax">Syntax</string>
     <string name="menu_display_style">Display style</string>

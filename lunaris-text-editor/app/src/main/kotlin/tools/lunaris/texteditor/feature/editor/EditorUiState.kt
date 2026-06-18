@@ -9,7 +9,7 @@ import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 
 /** Categorizes a transient editor error so the UI can show a localized message. */
-enum class EditorErrorKind { OPEN, SAVE, TOO_LARGE }
+enum class EditorErrorKind { OPEN, SAVE, TOO_LARGE, NOT_FOUND }
 
 data class EditorUiState(
     val tabs: List<TabSummary> = emptyList(),
