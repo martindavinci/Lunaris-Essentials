@@ -76,7 +76,10 @@ class EditorViewModel @Inject constructor(
     init {
         publish()
         initScope.launch {
-            colorSchemeId = colorSchemeStore.colorSchemeId(colorSchemeId).first()
+            val storedScheme = colorSchemeStore.colorSchemeId(colorSchemeId).first()
+            // A persisted id may no longer exist (e.g. a theme was removed) — fall back to default.
+            colorSchemeId = if (colorSchemeCatalog.findById(storedScheme) != null) storedScheme
+                else colorSchemeCatalog.defaultId
             val s = settingsStore.settings().first()
             currentSettings = s
             if (s.sessionRestore) restoreSession()
