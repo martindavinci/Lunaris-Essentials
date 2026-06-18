@@ -7,7 +7,6 @@ import org.junit.Rule
 import org.junit.Test
 import tools.lunaris.texteditor.data.Associations
 import tools.lunaris.texteditor.data.FakeAssociationStore
-import tools.lunaris.texteditor.data.FakeBookmarksStore
 import tools.lunaris.texteditor.data.FakeColorSchemeStore
 import tools.lunaris.texteditor.data.FakeRecentsStore
 import tools.lunaris.texteditor.data.FakeSessionStore
@@ -49,7 +48,6 @@ class EditorViewModelTest {
     private val session = FakeSessionStore()
     private val toolbar = FakeToolbarStore()
     private val assoc = FakeAssociationStore()
-    private val bookmarks = FakeBookmarksStore()
     private val settings = FakeSettingsStore()
 
     private val documentIo = DocumentIo(repo, recents, resolver)
@@ -66,7 +64,6 @@ class EditorViewModelTest {
         sessionManager = SessionManager(session, resolver, repo),
         toolbarStore = toolbar,
         associationStore = assoc,
-        bookmarksStore = bookmarks,
         settingsStore = settings,
         previewHolder = tools.lunaris.texteditor.preview.PreviewHolder(),
     )
@@ -226,7 +223,7 @@ class EditorViewModelTest {
             DocumentIo(repo, recents, resolver), resolver, "sunburst", catalog,
             ColorSchemeCatalog(emptyList(), ""), CharsetCatalog(),
             FakeColorSchemeStore(), recents, SessionManager(seeded, resolver, repo), toolbar,
-            assoc, bookmarks, settings, tools.lunaris.texteditor.preview.PreviewHolder(),
+            assoc, settings, tools.lunaris.texteditor.preview.PreviewHolder(),
         )
         advanceUntilIdle()
         assertThat(vm.state.value.tabs.map { it.title }).containsExactly("a.kt", "draft.txt")
@@ -244,7 +241,7 @@ class EditorViewModelTest {
             DocumentIo(repo, recents, resolver), resolver, "sunburst", catalog,
             ColorSchemeCatalog(emptyList(), ""), CharsetCatalog(),
             FakeColorSchemeStore(), recents, SessionManager(seeded, resolver, repo), toolbar,
-            assoc, bookmarks, settings, tools.lunaris.texteditor.preview.PreviewHolder(),
+            assoc, settings, tools.lunaris.texteditor.preview.PreviewHolder(),
         )
         advanceUntilIdle()
         // restore is gated off -> the single fresh untitled tab remains
@@ -339,24 +336,6 @@ class EditorViewModelTest {
         vm.openFile(ref)
         advanceUntilIdle()
         assertThat(vm.state.value.scopeName).isEqualTo("source.python")
-    }
-
-    @Test
-    fun addBookmark_recordsForFileBackedActive() = runTest {
-        val vm = newVm()
-        val ref = FileRef("content://doc/b")
-        gateway.store[ref.uri] = "x".toByteArray(StandardCharsets.UTF_8)
-        gateway.names[ref.uri] = "b.txt"
-        vm.openFile(ref); advanceUntilIdle()
-        vm.addBookmark(5); advanceUntilIdle()
-        assertThat(bookmarks.flow.value.map { it.uri to it.line }).contains(ref.uri to 5)
-    }
-
-    @Test
-    fun addBookmark_untitled_isNoOp() = runTest {
-        val vm = newVm()
-        vm.addBookmark(1); advanceUntilIdle()
-        assertThat(bookmarks.flow.value).isEmpty()
     }
 
     @Test

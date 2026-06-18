@@ -9,8 +9,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import tools.lunaris.texteditor.data.AssociationStore
-import tools.lunaris.texteditor.data.Bookmark
-import tools.lunaris.texteditor.data.BookmarksStore
 import tools.lunaris.texteditor.data.ColorSchemeStore
 import tools.lunaris.texteditor.data.FileFilterStore
 import tools.lunaris.texteditor.data.RecentEntry
@@ -28,7 +26,6 @@ class SettingsViewModel @Inject constructor(
     private val associationStore: AssociationStore,
     private val colorSchemeStore: ColorSchemeStore,
     private val recentsStore: RecentsStore,
-    private val bookmarksStore: BookmarksStore,
     private val fileFilterStore: FileFilterStore,
     private val toolbarStore: ToolbarStore,
 ) : ViewModel() {
@@ -45,7 +42,6 @@ class SettingsViewModel @Inject constructor(
         associations = associationStore.associations().first().map,
         colorSchemeId = colorSchemeStore.colorSchemeId("").first(),
         recents = recentsStore.recents().first(),
-        bookmarks = bookmarksStore.bookmarks().first(),
     )
 
     fun applyBackup(backup: Backup) {
@@ -54,7 +50,6 @@ class SettingsViewModel @Inject constructor(
             if (backup.colorSchemeId.isNotBlank()) colorSchemeStore.setColorSchemeId(backup.colorSchemeId)
             backup.associations.forEach { (ext, langId) -> associationStore.put(ext, langId) }
             backup.recents.forEach { recentsStore.touch(it) }
-            backup.bookmarks.forEach { bookmarksStore.add(it) }
         }
     }
 

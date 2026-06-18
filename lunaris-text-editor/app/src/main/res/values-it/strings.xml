@@ -90,9 +90,6 @@
     <string name="assoc_language">Sintassi</string>
     <string name="assoc_delete">Elimina</string>
     <string name="action_back">Indietro</string>
-    <string name="menu_bookmarks">Segnalibri</string>
-    <string name="menu_add_bookmark">Aggiungi segnalibro</string>
-    <string name="bookmarks_empty">Nessun segnalibro</string>
     <string name="menu_storage">Gestione archiviazione</string>
     <string name="storage_title">Gestione archiviazione</string>
     <string name="storage_all_files_on">Accesso a tutti i file: abilitato</string>

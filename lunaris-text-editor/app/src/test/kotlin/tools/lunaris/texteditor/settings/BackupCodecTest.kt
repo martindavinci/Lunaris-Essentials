@@ -2,7 +2,6 @@ package tools.lunaris.texteditor.settings
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
-import tools.lunaris.texteditor.data.Bookmark
 import tools.lunaris.texteditor.data.RecentEntry
 
 class BackupCodecTest {
@@ -12,7 +11,6 @@ class BackupCodecTest {
             associations = mapOf("kt" to "kotlin"),
             colorSchemeId = "base16-ocean",
             recents = listOf(RecentEntry("content://1", "a.kt")),
-            bookmarks = listOf(Bookmark("content://1", "a.kt", 4)),
         )
         assertThat(BackupCodec.fromJson(BackupCodec.toJson(backup))).isEqualTo(backup)
     }
@@ -21,7 +19,6 @@ class BackupCodecTest {
         assertThat(b.settings).isEqualTo(EditorSettings())
         assertThat(b.associations).isEmpty()
         assertThat(b.recents).isEmpty()
-        assertThat(b.bookmarks).isEmpty()
         assertThat(b.colorSchemeId).isEmpty()
     }
 }

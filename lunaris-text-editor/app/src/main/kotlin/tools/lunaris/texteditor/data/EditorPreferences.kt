@@ -19,7 +19,7 @@ private val Context.dataStore by preferencesDataStore(name = "editor_prefs")
 @Singleton
 class EditorPreferences @Inject constructor(
     @ApplicationContext private val context: Context,
-) : ColorSchemeStore, RecentsStore, SessionStore, ToolbarStore, AssociationStore, BookmarksStore, SettingsStore, FileFilterStore {
+) : ColorSchemeStore, RecentsStore, SessionStore, ToolbarStore, AssociationStore, SettingsStore, FileFilterStore {
 
     override fun colorSchemeId(default: String): Flow<String> =
         context.dataStore.data.map { it[COLOR_SCHEME_KEY] ?: default }
@@ -74,18 +74,6 @@ class EditorPreferences @Inject constructor(
         context.dataStore.edit { it[ASSOC_KEY] = Associations.fromJson(it[ASSOC_KEY] ?: "").put(extension, languageId).toJson() }
     }
 
-    // BookmarksStore
-    override fun bookmarks(): Flow<List<Bookmark>> =
-        context.dataStore.data.map { Bookmarks.fromJson(it[BOOKMARKS_KEY] ?: "") }
-
-    override suspend fun add(bookmark: Bookmark) {
-        context.dataStore.edit { it[BOOKMARKS_KEY] = Bookmarks.toJson(Bookmarks.add(Bookmarks.fromJson(it[BOOKMARKS_KEY] ?: ""), bookmark)) }
-    }
-
-    override suspend fun remove(bookmark: Bookmark) {
-        context.dataStore.edit { it[BOOKMARKS_KEY] = Bookmarks.toJson(Bookmarks.remove(Bookmarks.fromJson(it[BOOKMARKS_KEY] ?: ""), bookmark)) }
-    }
-
     // SettingsStore
     override fun settings(): Flow<EditorSettings> =
         context.dataStore.data.map { EditorSettings.fromJson(it[SETTINGS_KEY] ?: "") }
@@ -105,7 +93,6 @@ class EditorPreferences @Inject constructor(
         val SESSION_KEY = stringPreferencesKey("session_json")
         val TOOLBAR_KEY = stringPreferencesKey("toolbar_json")
         val ASSOC_KEY = stringPreferencesKey("assoc_json")
-        val BOOKMARKS_KEY = stringPreferencesKey("bookmarks_json")
         val FILE_FILTER_KEY = booleanPreferencesKey("file_filter")
         val SETTINGS_KEY = stringPreferencesKey("settings_json")
     }

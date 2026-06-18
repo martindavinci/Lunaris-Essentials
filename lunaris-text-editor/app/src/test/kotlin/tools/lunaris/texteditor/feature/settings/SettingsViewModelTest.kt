@@ -5,9 +5,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
 import org.junit.Test
-import tools.lunaris.texteditor.data.Bookmark
 import tools.lunaris.texteditor.data.FakeAssociationStore
-import tools.lunaris.texteditor.data.FakeBookmarksStore
 import tools.lunaris.texteditor.data.FakeColorSchemeStore
 import tools.lunaris.texteditor.data.FakeFileFilterStore
 import tools.lunaris.texteditor.data.FakeRecentsStore
@@ -26,11 +24,10 @@ class SettingsViewModelTest {
     private val assoc = FakeAssociationStore()
     private val colors = FakeColorSchemeStore()
     private val recents = FakeRecentsStore()
-    private val bookmarks = FakeBookmarksStore()
     private val fileFilter = FakeFileFilterStore()
     private val toolbar = FakeToolbarStore()
 
-    private fun newVm() = SettingsViewModel(settingsStore, assoc, colors, recents, bookmarks, fileFilter, toolbar)
+    private fun newVm() = SettingsViewModel(settingsStore, assoc, colors, recents, fileFilter, toolbar)
 
     @Test
     fun update_persistsTransform() = runTest {
@@ -49,7 +46,6 @@ class SettingsViewModelTest {
                 associations = mapOf("kt" to "kotlin"),
                 colorSchemeId = "base16-ocean",
                 recents = listOf(RecentEntry("content://1", "a.kt")),
-                bookmarks = listOf(Bookmark("content://1", "a.kt", 3)),
             )
         )
         advanceUntilIdle()
@@ -57,7 +53,6 @@ class SettingsViewModelTest {
         assertThat(colors.savedId).isEqualTo("base16-ocean")
         assertThat(assoc.flow.value.map["kt"]).isEqualTo("kotlin")
         assertThat(recents.flow.value.map { it.uri }).contains("content://1")
-        assertThat(bookmarks.flow.value.map { it.line }).contains(3)
     }
 
     @Test

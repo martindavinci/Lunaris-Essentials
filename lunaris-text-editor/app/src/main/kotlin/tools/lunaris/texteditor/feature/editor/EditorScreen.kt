@@ -274,8 +274,6 @@ fun EditorScreen(
                 }
                 EditorMenuAction.FILE_ASSOCIATIONS ->
                     onNavigate(tools.lunaris.texteditor.feature.Routes.ASSOCIATIONS)
-                EditorMenuAction.BOOKMARKS -> openDialog = EditorDialog.BOOKMARKS
-                EditorMenuAction.ADD_BOOKMARK -> viewModel.addBookmark(editorController.currentLine())
                 EditorMenuAction.STORAGE_MANAGER -> onNavigate(tools.lunaris.texteditor.feature.Routes.STORAGE)
                 EditorMenuAction.SETTINGS -> onNavigate(tools.lunaris.texteditor.feature.Routes.SETTINGS)
                 EditorMenuAction.RUN -> { viewModel.previewActive(); onNavigate(tools.lunaris.texteditor.feature.Routes.PREVIEW) }

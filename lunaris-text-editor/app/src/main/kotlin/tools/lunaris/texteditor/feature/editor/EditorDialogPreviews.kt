@@ -2,7 +2,6 @@ package tools.lunaris.texteditor.feature.editor
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import tools.lunaris.texteditor.data.Bookmark
 import tools.lunaris.texteditor.data.RecentEntry
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfig
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfigDialog
@@ -105,22 +104,6 @@ private fun StatsDialogPreview() {
 private fun InsertColorDialogPreview() {
     LunarisEditorTheme {
         InsertColorDialog(onPick = {}, onDismiss = {})
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun BookmarksDialogPreview() {
-    LunarisEditorTheme {
-        BookmarksDialog(
-            bookmarks = listOf(
-                Bookmark(uri = "content://doc/1", name = "TODO", line = 42),
-                Bookmark(uri = "content://doc/2", name = "Bugfix", line = 108),
-            ),
-            onOpen = {},
-            onRemove = {},
-            onDismiss = {},
-        )
     }
 }
 

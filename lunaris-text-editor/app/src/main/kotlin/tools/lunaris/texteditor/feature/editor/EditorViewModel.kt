@@ -15,8 +15,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import tools.lunaris.texteditor.data.AssociationStore
 import tools.lunaris.texteditor.data.Associations
-import tools.lunaris.texteditor.data.Bookmark
-import tools.lunaris.texteditor.data.BookmarksStore
 import tools.lunaris.texteditor.data.ColorSchemeStore
 import tools.lunaris.texteditor.data.RecentsStore
 import tools.lunaris.texteditor.data.SessionManager
@@ -52,7 +50,6 @@ class EditorViewModel @Inject constructor(
     private val sessionManager: SessionManager,
     private val toolbarStore: ToolbarStore,
     private val associationStore: AssociationStore,
-    private val bookmarksStore: BookmarksStore,
     private val settingsStore: SettingsStore,
     private val previewHolder: tools.lunaris.texteditor.preview.PreviewHolder,
 ) : ViewModel() {
@@ -242,18 +239,6 @@ class EditorViewModel @Inject constructor(
 
     fun snapshotSession() {
         viewModelScope.launch { runCatching { sessionManager.save(docs.value) } }
-    }
-
-    fun bookmarks() = bookmarksStore.bookmarks()
-
-    fun addBookmark(line: Int) {
-        val active = docs.value.active ?: return
-        val ref = active.fileRef ?: return
-        viewModelScope.launch { bookmarksStore.add(Bookmark(ref.uri, active.title, line)) }
-    }
-
-    fun removeBookmark(bookmark: Bookmark) {
-        viewModelScope.launch { bookmarksStore.remove(bookmark) }
     }
 
     fun previewActive() {

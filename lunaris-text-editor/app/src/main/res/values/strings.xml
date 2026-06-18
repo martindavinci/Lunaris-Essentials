@@ -89,9 +89,6 @@
     <string name="assoc_language">Syntax</string>
     <string name="assoc_delete">Delete</string>
     <string name="action_back">Back</string>
-    <string name="menu_bookmarks">Bookmarks</string>
-    <string name="menu_add_bookmark">Add bookmark</string>
-    <string name="bookmarks_empty">No bookmarks</string>
     <string name="menu_storage">Storage manager</string>
     <string name="storage_title">Storage manager</string>
     <string name="storage_all_files_on">All-files access: enabled</string>

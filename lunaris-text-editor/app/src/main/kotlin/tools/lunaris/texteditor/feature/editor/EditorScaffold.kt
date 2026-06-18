@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Storage
@@ -75,12 +74,6 @@ internal fun EditorScaffold(
                     icon = { Icon(Icons.Filled.History, contentDescription = null) },
                     selected = false,
                     onClick = { scope.launch { drawerState.close() }; onMenuAction(EditorMenuAction.RECENT_FILES) },
-                )
-                NavigationDrawerItem(
-                    label = { Text(stringResource(EditorMenuAction.BOOKMARKS.labelRes)) },
-                    icon = { Icon(Icons.Filled.Bookmark, contentDescription = null) },
-                    selected = false,
-                    onClick = { scope.launch { drawerState.close() }; onMenuAction(EditorMenuAction.BOOKMARKS) },
                 )
                 NavigationDrawerItem(
                     label = { Text(stringResource(EditorMenuAction.FILE_ASSOCIATIONS.labelRes)) },
