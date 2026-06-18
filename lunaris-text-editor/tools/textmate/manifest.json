@@ -71,7 +71,9 @@
   "themes": {
     "base16": [
       "base16-tomorrow-night", "base16-tomorrow", "base16-ocean", "base16-eighties",
-      "base16-mocha", "base16-solarized-dark", "base16-solarized-light"
+      "base16-mocha", "base16-solarized-dark", "base16-solarized-light",
+      "base16-dracula", "base16-nord", "base16-gruvbox-dark-medium",
+      "base16-gruvbox-light-medium", "base16-onedark"
     ],
     "default": "base16-tomorrow-night"
   }
