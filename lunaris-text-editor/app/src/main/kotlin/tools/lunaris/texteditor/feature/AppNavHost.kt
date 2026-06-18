@@ -16,12 +16,15 @@ object Routes {
     const val PREVIEW = "preview"
 }
 
+/** A file the app was asked to open via a VIEW/EDIT intent. [readOnly] when no write grant. */
+data class OpenRequest(val uri: String, val readOnly: Boolean = false)
+
 @Composable
-fun AppNavHost(openUri: String? = null) {
+fun AppNavHost(openRequest: OpenRequest? = null) {
     val nav = rememberNavController()
     NavHost(navController = nav, startDestination = Routes.EDITOR) {
         composable(Routes.EDITOR) {
-            EditorScreen(onNavigate = { route -> nav.navigate(route) }, openUri = openUri)
+            EditorScreen(onNavigate = { route -> nav.navigate(route) }, openRequest = openRequest)
         }
         composable(Routes.ASSOCIATIONS) {
             FileAssociationScreen(onBack = { nav.popBackStack() })

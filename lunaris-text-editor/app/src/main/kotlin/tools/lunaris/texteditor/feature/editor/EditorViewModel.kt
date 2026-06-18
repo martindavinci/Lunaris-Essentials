@@ -66,7 +66,11 @@ class EditorViewModel @Inject constructor(
 
     // Custom scope (not viewModelScope): the init read runs at construction time, which in unit
     // tests is BEFORE MainDispatcherRule installs the test main dispatcher. Unconfined runs the
-    // one-shot read inline without requiring Dispatchers.Main. Cancelled in onCleared().
+    // one-shot read inline without requiring Dispatchers.Main, and — importantly — completes the
+    // hydration synchronously at construction so it can't later clobber an early action (e.g. an
+    // open-with intent's openFile, or a toolbar edit) that lands before an async load would finish.
+    // DataStore reads + JSON parsing already happen on DataStore's own IO dispatcher.
+    // Cancelled in onCleared().
     private val initScope = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
 
     init {
@@ -123,7 +127,7 @@ class EditorViewModel @Inject constructor(
     fun switchTab(id: String) = mutate { it.activated(id) }
     fun closeTab(id: String) = mutate { it.closed(id, freshId = newId()) }
 
-    fun openFile(ref: FileRef, gotoLine: Int? = null) {
+    fun openFile(ref: FileRef, gotoLine: Int? = null, readOnly: Boolean = false) {
         val existing = docs.value.sessions.firstOrNull { it.fileRef?.uri == ref.uri }
         if (existing != null) {
             docs.value = docs.value.activated(existing.id)
@@ -138,7 +142,7 @@ class EditorViewModel @Inject constructor(
                     .takeIf { it != "Auto" }
                     ?.let { runCatching { Charset.forName(it) }.getOrNull() }
                 val tab = documentIo.openTab(ref, newId(), associations.map, forced = forced)
-                docs.value = docs.value.openedReplacingScratch(tab)
+                docs.value = docs.value.openedReplacingScratch(tab.copy(readOnly = readOnly))
                 publish()
                 _state.update { it.copy(pendingGoToLine = gotoLine, isLoading = false) }
             } catch (t: FileTooLargeException) {

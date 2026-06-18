@@ -77,7 +77,7 @@ private val BarElevation = 3.dp
 @Composable
 fun EditorScreen(
     onNavigate: (String) -> Unit = {},
-    openUri: String? = null,
+    openRequest: tools.lunaris.texteditor.feature.OpenRequest? = null,
     viewModel: EditorViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -88,9 +88,10 @@ fun EditorScreen(
     val editorController = remember { CodeEditorController() }
 
     // Open a file the app was launched/asked to handle (VIEW/EDIT intent). openFile reuses an
-    // already-open tab for the same uri, so re-firing on config change is harmless.
-    LaunchedEffect(openUri) {
-        openUri?.let { viewModel.openFile(FileRef(it)) }
+    // already-open tab for the same uri, so re-firing on config change is harmless. VIEW intents
+    // with no write grant open read-only.
+    LaunchedEffect(openRequest) {
+        openRequest?.let { viewModel.openFile(FileRef(it.uri), readOnly = it.readOnly) }
     }
 
     val openLauncher = rememberLauncherForActivityResult(
