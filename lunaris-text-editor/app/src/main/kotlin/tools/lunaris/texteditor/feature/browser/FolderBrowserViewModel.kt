@@ -39,8 +39,6 @@ class FolderBrowserViewModel @Inject constructor(
 
     private val knownExts = languageCatalog.languages.flatMap { it.extensions }.toSet()
     private var raw: List<FileEntry> = emptyList()
-    // The user explicitly closed the folder this session; stay collapsed until they pick one again.
-    private var closed = false
     private var roots: List<String> = emptyList()
     private var activeRoot: String? = null
     private val _state = MutableStateFlow(FolderUiState())
@@ -51,7 +49,7 @@ class FolderBrowserViewModel @Inject constructor(
         viewModelScope.launch {
             val filter = fileFilterStore.fileFilter().first()
             roots = storageAccess.grantedTrees().map { it.toString() }
-            if (closed || roots.isEmpty()) {
+            if (roots.isEmpty()) {
                 activeRoot = null
                 _state.value = FolderUiState(accessGranted = false, filterEnabled = filter, roots = roots)
             } else {
@@ -63,19 +61,30 @@ class FolderBrowserViewModel @Inject constructor(
 
     /** Switch the browser root to another granted tree. */
     fun switchRoot(uri: String) = viewModelScope.launch {
-        closed = false
         activeRoot = uri
         loadInto(uri, _state.value.filterEnabled)
     }
 
-    /** Collapse the browser back to the empty state (the back arrow at the root folder). */
-    fun closeFolder() {
-        closed = true
-        activeRoot = null
-        _state.value = FolderUiState(accessGranted = false, filterEnabled = _state.value.filterEnabled, roots = roots)
+    /**
+     * Removes the current folder (back arrow at the root): releases its SAF grant so it leaves the
+     * switcher, then shows another granted folder, or the empty state if none remain.
+     */
+    fun closeFolder() = viewModelScope.launch {
+        val toRelease = activeRoot ?: return@launch
+        storageAccess.releaseTree(Uri.parse(toRelease))
+        roots = storageAccess.grantedTrees().map { it.toString() }
+        val filter = _state.value.filterEnabled
+        val next = roots.firstOrNull()
+        if (next == null) {
+            activeRoot = null
+            _state.value = FolderUiState(accessGranted = false, filterEnabled = filter, roots = roots)
+        } else {
+            activeRoot = next
+            loadInto(next, filter)
+        }
     }
 
-    fun navigateTo(ref: String) = viewModelScope.launch { closed = false; loadInto(ref, _state.value.filterEnabled) }
+    fun navigateTo(ref: String) = viewModelScope.launch { loadInto(ref, _state.value.filterEnabled) }
 
     fun up() = viewModelScope.launch {
         val loc = _state.value.location ?: return@launch
@@ -91,7 +100,6 @@ class FolderBrowserViewModel @Inject constructor(
         storageAccess.persistTree(uri)
         viewModelScope.launch {
             roots = storageAccess.grantedTrees().map { it.toString() }
-            closed = false
             activeRoot = uri.toString()
             loadInto(uri.toString(), _state.value.filterEnabled)
         }
