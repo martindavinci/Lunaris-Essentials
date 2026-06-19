@@ -8,4 +8,6 @@ interface RecentsStore {
     fun recents(): Flow<List<RecentEntry>>
     suspend fun touch(entry: RecentEntry)
     suspend fun remove(uri: String)
+    /** Keeps only the recents for which [keep] returns true (drops unreachable/deleted ones). */
+    suspend fun prune(keep: (String) -> Boolean)
 }

@@ -8,4 +8,5 @@ class FakeRecentsStore : RecentsStore {
     override fun recents(): Flow<List<RecentEntry>> = flow
     override suspend fun touch(entry: RecentEntry) { flow.value = RecentFiles.touch(flow.value, entry) }
     override suspend fun remove(uri: String) { flow.value = RecentFiles.remove(flow.value, uri) }
+    override suspend fun prune(keep: (String) -> Boolean) { flow.value = flow.value.filter { keep(it.uri) } }
 }

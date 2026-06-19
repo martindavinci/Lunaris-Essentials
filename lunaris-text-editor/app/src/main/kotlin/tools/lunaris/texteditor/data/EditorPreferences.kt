@@ -42,6 +42,14 @@ class EditorPreferences @Inject constructor(
         context.dataStore.edit { it[RECENTS_KEY] = RecentFiles.toJson(RecentFiles.remove(RecentFiles.fromJson(it[RECENTS_KEY] ?: ""), uri)) }
     }
 
+    override suspend fun prune(keep: (String) -> Boolean) {
+        context.dataStore.edit { prefs ->
+            val list = RecentFiles.fromJson(prefs[RECENTS_KEY] ?: "")
+            val survivors = list.filter { keep(it.uri) }
+            if (survivors.size != list.size) prefs[RECENTS_KEY] = RecentFiles.toJson(survivors)
+        }
+    }
+
     override suspend fun removeAssociation(extension: String) {
         context.dataStore.edit { it[ASSOC_KEY] = Associations.fromJson(it[ASSOC_KEY] ?: "").remove(extension).toJson() }
     }
