@@ -15,6 +15,13 @@ class PreviewResolverTest {
         val raw = "<html><body><p>hi</p></body></html>"
         assertThat(PreviewResolver.toHtmlDocument("page.html", raw, renderMd)).isEqualTo(raw)
     }
+    @Test fun html_darkMode_invertsColorsButKeepsRaw() {
+        val raw = "<html><body><p>hi</p></body></html>"
+        val doc = PreviewResolver.toHtmlDocument("page.html", raw, renderMd, dark = true)
+        assertThat(doc).contains("invert(1)")
+        assertThat(doc).contains(raw)
+    }
+
     @Test fun plainText_isEscapedInPre() {
         val doc = PreviewResolver.toHtmlDocument("a.txt", "1 < 2 & 3", renderMd)
         assertThat(doc).contains("<pre>1 &lt; 2 &amp; 3</pre>")

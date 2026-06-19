@@ -13,7 +13,8 @@ object PreviewResolver {
         val ext = fileName?.substringAfterLast('.', "")?.lowercase().orEmpty()
         return when (ext) {
             "md", "markdown" -> wrap(renderMarkdown(text), dark, highlightCss, highlightJs)
-            in RAW_HTML_EXTS -> text
+            // Raw HTML is shown as-is; in dark mode try a CSS-only color flip (images re-inverted).
+            in RAW_HTML_EXTS -> if (dark) invertedHtml(text) else text
             in PLAIN_EXTS -> wrapCodeDocument("<pre>" + escapeHtml(text) + "</pre>", dark, highlightCss, highlightJs)
             // Code files: tag with the extension so highlight.js colorizes them (unknown languages
             // degrade gracefully to plain text).
@@ -34,6 +35,11 @@ object PreviewResolver {
     /** True if [fileName] is rendered as raw HTML passthrough (so the WebView must disable JS). */
     fun isRawHtml(fileName: String?): Boolean =
         fileName?.substringAfterLast('.', "")?.lowercase() in RAW_HTML_EXTS
+
+    /** Best-effort dark mode for a raw HTML page: invert the document, undo it on media. */
+    private fun invertedHtml(text: String): String =
+        "<style>html{filter:invert(1) hue-rotate(180deg);background:#ffffff;}" +
+            "img,picture,video,canvas,svg,iframe{filter:invert(1) hue-rotate(180deg);}</style>\n" + text
 
     private fun wrap(body: String, dark: Boolean, highlightCss: String?, highlightJs: String?): String {
         val theme = if (dark) "body{background:#121212;color:#e6e6e6;}a{color:#8ab4f8;}"
@@ -60,12 +66,15 @@ object PreviewResolver {
         val hlStyle = if (highlight) "<style>$highlightCss</style>" else ""
         val hlScript = if (highlight) "<script>$highlightJs</script><script>hljs.highlightAll();</script>" else ""
         // Our rules come AFTER the highlight.js theme so the solid background wins over its card bg.
-        val style = "html,body{margin:0;padding:0;background:$bg;color:$fg;}" +
+        val style = "html,body{margin:0;padding:0;background:$bg;color:$fg;" +
+            "-webkit-print-color-adjust:exact;print-color-adjust:exact;}" +
             "pre{margin:0;padding:16px;white-space:pre-wrap;word-wrap:break-word;" +
             "font-family:monospace;font-size:13px;line-height:1.4;}" +
             "pre,code,.hljs,pre code.hljs,code.hljs{background:$bg !important;}" +
             "pre code.hljs{padding:0 !important;}" +
-            "@media print{@page{size:A4;margin:1.5cm;}}"
+            // Fill the whole A4 page with the chosen background (no white margin frame); the inset
+            // becomes the pre padding instead of a page margin.
+            "@media print{@page{size:A4;margin:0;}pre{padding:1.5cm;}}"
         return "<!DOCTYPE html><html><head><meta charset=\"utf-8\">" +
             "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">" +
             "$hlStyle<style>$style</style></head><body>" +
