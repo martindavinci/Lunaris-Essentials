@@ -78,6 +78,10 @@ fun PreviewScreen(
                         }
                     },
                     update = {
+                        // Paint any area the document doesn't cover (e.g. below short inverted HTML,
+                        // where the CSS filter stops the root background reaching the canvas) so no
+                        // white strip shows under a dark page.
+                        it.setBackgroundColor(if (dark) android.graphics.Color.BLACK else android.graphics.Color.WHITE)
                         it.settings.javaScriptEnabled = enableJs
                         it.loadDataWithBaseURL(null, html, "text/html", "utf-8", null)
                     },
