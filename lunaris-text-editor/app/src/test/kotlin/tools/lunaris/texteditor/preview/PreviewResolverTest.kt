@@ -46,6 +46,21 @@ class PreviewResolverTest {
         assertThat(doc).doesNotContain("<h1>MD</h1>")
     }
 
+    @Test fun codeDocument_darkMonochrome_andA4Print() {
+        val doc = PreviewResolver.toHtmlDocument(
+            "a.cpp", "x", renderMd, dark = true, highlightCss = "C", highlightJs = "J",
+        )
+        assertThat(doc).contains("background:#1e1e1e")
+        assertThat(doc).contains("@page{size:A4")
+        assertThat(doc).contains("hljs.highlightAll()")
+    }
+
+    @Test fun codeDocument_light_usesWhiteBackground() {
+        val doc = PreviewResolver.toHtmlDocument("a.cpp", "x", renderMd, dark = false)
+        assertThat(doc).contains("background:#ffffff")
+        assertThat(doc).contains("@page{size:A4")
+    }
+
     @Test fun plainTxt_notHighlighted_evenWithAssets() {
         val doc = PreviewResolver.toHtmlDocument(
             "a.txt", "x", renderMd, dark = true, highlightCss = "CSSDATA", highlightJs = "JSDATA",

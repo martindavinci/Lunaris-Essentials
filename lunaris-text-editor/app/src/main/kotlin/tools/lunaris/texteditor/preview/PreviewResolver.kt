@@ -14,10 +14,10 @@ object PreviewResolver {
         return when (ext) {
             "md", "markdown" -> wrap(renderMarkdown(text), dark, highlightCss, highlightJs)
             in RAW_HTML_EXTS -> text
-            in PLAIN_EXTS -> wrap("<pre>" + escapeHtml(text) + "</pre>", dark, highlightCss, highlightJs)
+            in PLAIN_EXTS -> wrapCodeDocument("<pre>" + escapeHtml(text) + "</pre>", dark, highlightCss, highlightJs)
             // Code files: tag with the extension so highlight.js colorizes them (unknown languages
             // degrade gracefully to plain text).
-            else -> wrap(
+            else -> wrapCodeDocument(
                 "<pre><code class=\"language-$ext\">" + escapeHtml(text) + "</code></pre>",
                 dark, highlightCss, highlightJs,
             )
@@ -45,6 +45,30 @@ object PreviewResolver {
         return "<!DOCTYPE html><html><head><meta charset=\"utf-8\">" +
             "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">" +
             "<style>$STYLE$theme</style>$hlStyle</head><body>" +
+            body + hlScript + "</body></html>"
+    }
+
+    /**
+     * Full-page, single-background layout for code/plain previews (no card). One solid background
+     * (dark or pure white per the theme toggle) so it stays clean on screen and when printed /
+     * exported to PDF; the syntax colors are foreground only. Page is sized A4 for print.
+     */
+    private fun wrapCodeDocument(body: String, dark: Boolean, highlightCss: String?, highlightJs: String?): String {
+        val bg = if (dark) "#1e1e1e" else "#ffffff"
+        val fg = if (dark) "#e6e6e6" else "#1a1a1a"
+        val highlight = highlightJs != null && highlightCss != null && body.contains("<code")
+        val hlStyle = if (highlight) "<style>$highlightCss</style>" else ""
+        val hlScript = if (highlight) "<script>$highlightJs</script><script>hljs.highlightAll();</script>" else ""
+        // Our rules come AFTER the highlight.js theme so the solid background wins over its card bg.
+        val style = "html,body{margin:0;padding:0;background:$bg;color:$fg;}" +
+            "pre{margin:0;padding:16px;white-space:pre-wrap;word-wrap:break-word;" +
+            "font-family:monospace;font-size:13px;line-height:1.4;}" +
+            "pre,code,.hljs,pre code.hljs,code.hljs{background:$bg !important;}" +
+            "pre code.hljs{padding:0 !important;}" +
+            "@media print{@page{size:A4;margin:1.5cm;}}"
+        return "<!DOCTYPE html><html><head><meta charset=\"utf-8\">" +
+            "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">" +
+            "$hlStyle<style>$style</style></head><body>" +
             body + hlScript + "</body></html>"
     }
 
