@@ -44,7 +44,10 @@ object PreviewResolver {
     private fun invertedHtml(text: String): String {
         val flip = "-webkit-filter:invert(1) hue-rotate(180deg);filter:invert(1) hue-rotate(180deg);"
         return text + "<style>" +
-            "html,body{background:#ffffff !important;}" +
+            // White base that fills the whole viewport so inverting paints solid dark edge-to-edge
+            // (no white margin/strip below short content).
+            "html,body{background:#ffffff !important;margin:0 !important;min-height:100vh;}" +
+            "body{box-sizing:border-box;padding:12px;}" +
             "html{$flip}" +
             "img,picture,video,canvas,svg,iframe,[style*=\"background-image\"]{$flip}" +
             "</style>"
