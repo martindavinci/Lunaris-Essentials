@@ -36,10 +36,19 @@ object PreviewResolver {
     fun isRawHtml(fileName: String?): Boolean =
         fileName?.substringAfterLast('.', "")?.lowercase() in RAW_HTML_EXTS
 
-    /** Best-effort dark mode for a raw HTML page: invert the document, undo it on media. */
-    private fun invertedHtml(text: String): String =
-        "<style>html{filter:invert(1) hue-rotate(180deg);background:#ffffff;}" +
-            "img,picture,video,canvas,svg,iframe{filter:invert(1) hue-rotate(180deg);}</style>\n" + text
+    /**
+     * Best-effort dark mode for a raw HTML page. Forces an opaque white base (so inverting yields a
+     * solid black background, not a see-through one), inverts the whole document, then re-inverts
+     * media so images/video look normal. Appended last so it wins the cascade.
+     */
+    private fun invertedHtml(text: String): String {
+        val flip = "-webkit-filter:invert(1) hue-rotate(180deg);filter:invert(1) hue-rotate(180deg);"
+        return text + "<style>" +
+            "html,body{background:#ffffff !important;}" +
+            "html{$flip}" +
+            "img,picture,video,canvas,svg,iframe,[style*=\"background-image\"]{$flip}" +
+            "</style>"
+    }
 
     private fun wrap(body: String, dark: Boolean, highlightCss: String?, highlightJs: String?): String {
         val theme = if (dark) "body{background:#121212;color:#e6e6e6;}a{color:#8ab4f8;}"
