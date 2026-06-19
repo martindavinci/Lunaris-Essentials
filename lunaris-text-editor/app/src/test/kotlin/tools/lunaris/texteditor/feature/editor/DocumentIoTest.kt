@@ -8,6 +8,7 @@ import tools.lunaris.texteditor.document.EncodingCodec
 import tools.lunaris.texteditor.file.FakeFileGateway
 import tools.lunaris.texteditor.file.FileRef
 import tools.lunaris.texteditor.file.FileRepository
+import tools.lunaris.texteditor.file.FileTooLargeException
 import tools.lunaris.texteditor.syntax.LanguageCatalog
 import tools.lunaris.texteditor.syntax.LanguageDefinition
 import tools.lunaris.texteditor.syntax.SyntaxResolver
@@ -56,6 +57,18 @@ class DocumentIoTest {
         gateway.names[ref.uri] = "edge.txt"
         val tab = io.openTab(ref, "id", emptyMap())
         assertThat(tab.title).isEqualTo("edge.txt")
+    }
+
+    @Test fun load_boundedRead_throwsWhenStreamExceedsMax() = runTest {
+        // Provider reports no size, but the bounded read still caps memory.
+        val ref = FileRef("content://unsized")
+        gateway.store[ref.uri] = ByteArray(100)
+        try {
+            repo.load(ref, maxBytes = 10)
+            throw AssertionError("expected FileTooLargeException")
+        } catch (e: FileTooLargeException) {
+            assertThat(e.limitBytes).isEqualTo(10)
+        }
     }
 
     @Test fun persist_writesBytes_returnsName_records() = runTest {

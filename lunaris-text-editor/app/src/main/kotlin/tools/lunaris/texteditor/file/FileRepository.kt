@@ -9,8 +9,8 @@ class FileRepository @Inject constructor(
     private val gateway: FileGateway,
     private val codec: EncodingCodec,
 ) {
-    suspend fun load(ref: FileRef, forced: Charset? = null): LoadedDocument {
-        val bytes = gateway.readBytes(ref)
+    suspend fun load(ref: FileRef, forced: Charset? = null, maxBytes: Long = Long.MAX_VALUE): LoadedDocument {
+        val bytes = gateway.readBytes(ref, maxBytes)
         val decoded = codec.decode(bytes, forced)
         return LoadedDocument(
             ref = ref,

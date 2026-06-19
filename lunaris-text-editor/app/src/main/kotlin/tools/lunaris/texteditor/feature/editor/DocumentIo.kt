@@ -6,15 +6,12 @@ import tools.lunaris.texteditor.document.DocumentSession
 import tools.lunaris.texteditor.document.LineEnding
 import tools.lunaris.texteditor.file.FileRef
 import tools.lunaris.texteditor.file.FileRepository
+import tools.lunaris.texteditor.file.FileTooLargeException
 import tools.lunaris.texteditor.file.LoadedDocument
 import tools.lunaris.texteditor.syntax.SyntaxResolver
 import tools.lunaris.texteditor.syntax.SyntaxSelection
 import java.nio.charset.Charset
 import javax.inject.Inject
-
-/** Thrown when a file is too big to load fully into memory; the whole text is held as a String. */
-class FileTooLargeException(val limitBytes: Long) :
-    Exception("File exceeds the $limitBytes-byte open limit")
 
 /** File IO + tab construction for the editor. Returns values; the ViewModel applies state. */
 class DocumentIo @Inject constructor(
@@ -24,7 +21,9 @@ class DocumentIo @Inject constructor(
 ) {
     suspend fun openTab(ref: FileRef, newId: String, associations: Map<String, String>, forced: Charset? = null): DocumentSession {
         repository.size(ref)?.let { if (it > MAX_OPEN_BYTES) throw FileTooLargeException(MAX_OPEN_BYTES) }
-        val loaded = repository.load(ref, forced)
+        // Also bound the read itself: providers that don't report a size can't slip a huge file past
+        // the up-front check and OOM us.
+        val loaded = repository.load(ref, forced, maxBytes = MAX_OPEN_BYTES)
         val selection = SyntaxSelection.Auto
         recentsStore.touch(RecentEntry(ref.uri, loaded.name ?: DocumentSession.UNTITLED))
         return DocumentSession(
@@ -56,7 +55,7 @@ class DocumentIo @Inject constructor(
     }
 
     suspend fun reload(ref: FileRef, charset: Charset): LoadedDocument =
-        repository.load(ref, forced = charset)
+        repository.load(ref, forced = charset, maxBytes = MAX_OPEN_BYTES)
 
     companion object {
         /** Hard cap on openable file size. The whole document is held in memory as a String,

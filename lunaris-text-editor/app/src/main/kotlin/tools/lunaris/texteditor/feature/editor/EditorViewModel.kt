@@ -26,6 +26,7 @@ import tools.lunaris.texteditor.document.DocumentSession
 import tools.lunaris.texteditor.document.LineEnding
 import tools.lunaris.texteditor.document.OpenDocuments
 import tools.lunaris.texteditor.file.FileRef
+import tools.lunaris.texteditor.file.FileTooLargeException
 import tools.lunaris.texteditor.syntax.CharsetCatalog
 import tools.lunaris.texteditor.syntax.ColorSchemeCatalog
 import tools.lunaris.texteditor.syntax.LanguageCatalog

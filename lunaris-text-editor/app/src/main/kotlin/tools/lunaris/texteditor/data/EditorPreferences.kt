@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfig
 import tools.lunaris.texteditor.settings.EditorSettings
@@ -43,10 +44,12 @@ class EditorPreferences @Inject constructor(
     }
 
     override suspend fun prune(keep: (String) -> Boolean) {
-        context.dataStore.edit { prefs ->
-            val list = RecentFiles.fromJson(prefs[RECENTS_KEY] ?: "")
-            val survivors = list.filter { keep(it.uri) }
-            if (survivors.size != list.size) prefs[RECENTS_KEY] = RecentFiles.toJson(survivors)
+        // Evaluate keep() (which does provider I/O) OUTSIDE dataStore.edit so a slow/dead provider
+        // can't stall the preferences lock; only take the edit lock to write the result.
+        val current = recents().first()
+        val survivors = current.filter { keep(it.uri) }
+        if (survivors.size != current.size) {
+            context.dataStore.edit { it[RECENTS_KEY] = RecentFiles.toJson(survivors) }
         }
     }
 

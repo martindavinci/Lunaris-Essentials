@@ -6,26 +6,56 @@ import android.provider.OpenableColumns
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.InputStream
 import javax.inject.Inject
 
 class SafFileGateway @Inject constructor(
     @ApplicationContext private val context: Context,
 ) : FileGateway {
 
-    override suspend fun readBytes(ref: FileRef): ByteArray = withContext(Dispatchers.IO) {
-        fileOrNull(ref)?.let { return@withContext it.readBytes() }
+    override suspend fun readBytes(ref: FileRef, maxBytes: Long): ByteArray = withContext(Dispatchers.IO) {
+        fileOrNull(ref)?.let { return@withContext it.inputStream().use { s -> s.readBounded(maxBytes) } }
         val uri = Uri.parse(ref.uri)
-        context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+        context.contentResolver.openInputStream(uri)?.use { it.readBounded(maxBytes) }
             ?: throw java.io.IOException("Cannot open input stream for $uri")
     }
 
     override suspend fun writeBytes(ref: FileRef, bytes: ByteArray) = withContext(Dispatchers.IO) {
-        fileOrNull(ref)?.let { it.writeBytes(bytes); return@withContext }
+        val file = fileOrNull(ref)
+        if (file != null) {
+            // Local file: write to a temp sibling then rename over the target, so a failed write
+            // can't leave the original truncated. Falls back to a direct write if rename can't run.
+            val tmp = file.parentFile?.let { File(it, file.name + ".lt-tmp") }
+            if (tmp != null && runCatching { tmp.writeBytes(bytes); tmp.renameTo(file) }.getOrDefault(false)) {
+                return@withContext
+            }
+            tmp?.delete()
+            file.writeBytes(bytes)
+            return@withContext
+        }
+        // content:// (incl. cloud providers like Drive/OneDrive): "wt" truncates then writes. SAF
+        // gives no portable atomic-replace here, so write the full buffer in one shot and flush.
         val uri = Uri.parse(ref.uri)
-        // "wt" truncates existing content before writing.
-        context.contentResolver.openOutputStream(uri, "wt")?.use { it.write(bytes) }
+        context.contentResolver.openOutputStream(uri, "wt")?.use { it.write(bytes); it.flush() }
             ?: throw java.io.IOException("Cannot open output stream for $uri")
+    }
+
+    /** Reads up to [maxBytes]; throws [FileTooLargeException] if the stream is larger. */
+    private fun InputStream.readBounded(maxBytes: Long): ByteArray {
+        if (maxBytes >= Long.MAX_VALUE) return readBytes()
+        val out = ByteArrayOutputStream()
+        val chunk = ByteArray(64 * 1024)
+        var total = 0L
+        while (true) {
+            val n = read(chunk)
+            if (n < 0) break
+            total += n
+            if (total > maxBytes) throw FileTooLargeException(maxBytes)
+            out.write(chunk, 0, n)
+        }
+        return out.toByteArray()
     }
 
     override suspend fun displayName(ref: FileRef): String? = withContext(Dispatchers.IO) {
