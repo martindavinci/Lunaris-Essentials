@@ -15,6 +15,8 @@ private val sampleFolderState = FolderUiState(
     ),
     canGoUp = true,
     filterEnabled = true,
+    roots = listOf("/storage/emulated/0/Documents", "/storage/emulated/0/Download"),
+    activeRoot = "/storage/emulated/0/Documents",
 )
 
 @Preview(showBackground = true)
@@ -28,6 +30,7 @@ private fun FolderDrawerContentPreview() {
             onNavigateTo = {},
             onUp = {},
             onCloseFolder = {},
+            onSwitchRoot = {},
             onToggleFilter = {},
         )
     }
@@ -44,6 +47,7 @@ private fun FolderDrawerNoAccessPreview() {
             onNavigateTo = {},
             onUp = {},
             onCloseFolder = {},
+            onSwitchRoot = {},
             onToggleFilter = {},
         )
     }

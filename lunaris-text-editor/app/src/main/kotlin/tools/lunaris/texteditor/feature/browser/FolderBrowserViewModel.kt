@@ -24,6 +24,9 @@ data class FolderUiState(
     val entries: List<FileEntry> = emptyList(),
     val canGoUp: Boolean = false,
     val filterEnabled: Boolean = true,
+    /** All granted folder trees (uri strings) and which one is the current root. */
+    val roots: List<String> = emptyList(),
+    val activeRoot: String? = null,
 )
 
 @HiltViewModel
@@ -38,6 +41,8 @@ class FolderBrowserViewModel @Inject constructor(
     private var raw: List<FileEntry> = emptyList()
     // The user explicitly closed the folder this session; stay collapsed until they pick one again.
     private var closed = false
+    private var roots: List<String> = emptyList()
+    private var activeRoot: String? = null
     private val _state = MutableStateFlow(FolderUiState())
     val state: StateFlow<FolderUiState> = _state.asStateFlow()
 
@@ -45,19 +50,29 @@ class FolderBrowserViewModel @Inject constructor(
     fun start() {
         viewModelScope.launch {
             val filter = fileFilterStore.fileFilter().first()
-            val rootRef = storageAccess.grantedTrees().firstOrNull()?.toString()
-            if (closed || rootRef == null) {
-                _state.value = FolderUiState(accessGranted = false, filterEnabled = filter)
+            roots = storageAccess.grantedTrees().map { it.toString() }
+            if (closed || roots.isEmpty()) {
+                activeRoot = null
+                _state.value = FolderUiState(accessGranted = false, filterEnabled = filter, roots = roots)
             } else {
-                loadInto(rootRef, filter)
+                activeRoot = activeRoot?.takeIf { it in roots } ?: roots.first()
+                loadInto(activeRoot!!, filter)
             }
         }
+    }
+
+    /** Switch the browser root to another granted tree. */
+    fun switchRoot(uri: String) = viewModelScope.launch {
+        closed = false
+        activeRoot = uri
+        loadInto(uri, _state.value.filterEnabled)
     }
 
     /** Collapse the browser back to the empty state (the back arrow at the root folder). */
     fun closeFolder() {
         closed = true
-        _state.value = FolderUiState(accessGranted = false, filterEnabled = _state.value.filterEnabled)
+        activeRoot = null
+        _state.value = FolderUiState(accessGranted = false, filterEnabled = _state.value.filterEnabled, roots = roots)
     }
 
     fun navigateTo(ref: String) = viewModelScope.launch { closed = false; loadInto(ref, _state.value.filterEnabled) }
@@ -74,7 +89,12 @@ class FolderBrowserViewModel @Inject constructor(
 
     fun onTreePicked(uri: Uri) {
         storageAccess.persistTree(uri)
-        navigateTo(uri.toString())
+        viewModelScope.launch {
+            roots = storageAccess.grantedTrees().map { it.toString() }
+            closed = false
+            activeRoot = uri.toString()
+            loadInto(uri.toString(), _state.value.filterEnabled)
+        }
     }
 
     private suspend fun loadInto(ref: String, filter: Boolean) {
@@ -85,6 +105,8 @@ class FolderBrowserViewModel @Inject constructor(
             entries = FileFilter.apply(raw, knownExts, filter),
             canGoUp = safBrowser.parent(ref) != null,
             filterEnabled = filter,
+            roots = roots,
+            activeRoot = activeRoot,
         )
     }
 }

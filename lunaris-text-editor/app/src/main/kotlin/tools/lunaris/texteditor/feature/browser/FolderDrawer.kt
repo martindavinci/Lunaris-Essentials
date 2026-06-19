@@ -1,17 +1,20 @@
 package tools.lunaris.texteditor.feature.browser
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
@@ -47,6 +50,7 @@ fun FolderDrawer(
         onNavigateTo = { viewModel.navigateTo(it) },
         onUp = { viewModel.up() },
         onCloseFolder = { viewModel.closeFolder() },
+        onSwitchRoot = { viewModel.switchRoot(it) },
         onToggleFilter = { viewModel.toggleFilter(it) },
         modifier = modifier,
     )
@@ -61,6 +65,7 @@ fun FolderDrawerContent(
     onNavigateTo: (String) -> Unit,
     onUp: () -> Unit,
     onCloseFolder: () -> Unit,
+    onSwitchRoot: (String) -> Unit,
     onToggleFilter: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -72,6 +77,23 @@ fun FolderDrawerContent(
                 Text(stringResource(R.string.folder_pick), Modifier.padding(start = 8.dp))
             }
             return@Column
+        }
+
+        // Switch between granted folders (only shown when more than one is granted).
+        if (state.roots.size > 1) {
+            Row(
+                Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(bottom = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                state.roots.forEach { root ->
+                    FilterChip(
+                        selected = root == state.activeRoot,
+                        onClick = { onSwitchRoot(root) },
+                        label = { Text(prettyLocation(root), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                        modifier = Modifier.padding(end = 6.dp),
+                    )
+                }
+            }
         }
 
         var confirmClose by remember { mutableStateOf(false) }
