@@ -1,19 +1,23 @@
 package tools.lunaris.texteditor.feature.browser
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,6 +38,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import tools.lunaris.texteditor.R
+
+/** Above this many granted folders, switch from a chip row to a dropdown. */
+private const val MAX_CHIP_ROOTS = 6
 
 @Composable
 fun FolderDrawer(
@@ -79,19 +86,43 @@ fun FolderDrawerContent(
             return@Column
         }
 
-        // Switch between granted folders (only shown when more than one is granted).
+        // Switch between granted folders. A few → lazy chip row; many → a compact dropdown.
         if (state.roots.size > 1) {
-            Row(
-                Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(bottom = 4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                state.roots.forEach { root ->
-                    FilterChip(
-                        selected = root == state.activeRoot,
-                        onClick = { onSwitchRoot(root) },
-                        label = { Text(prettyLocation(root), maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                        modifier = Modifier.padding(end = 6.dp),
-                    )
+            if (state.roots.size <= MAX_CHIP_ROOTS) {
+                LazyRow(Modifier.fillMaxWidth().padding(bottom = 4.dp)) {
+                    items(state.roots) { root ->
+                        FilterChip(
+                            selected = root == state.activeRoot,
+                            onClick = { onSwitchRoot(root) },
+                            label = { Text(prettyLocation(root), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                            modifier = Modifier.padding(end = 6.dp),
+                        )
+                    }
+                }
+            } else {
+                var menuOpen by remember { mutableStateOf(false) }
+                Box(Modifier.fillMaxWidth().padding(bottom = 4.dp)) {
+                    OutlinedButton(onClick = { menuOpen = true }, modifier = Modifier.fillMaxWidth()) {
+                        Icon(Icons.Filled.Folder, contentDescription = null)
+                        Text(
+                            state.activeRoot?.let { prettyLocation(it) }.orEmpty(),
+                            modifier = Modifier.weight(1f).padding(start = 8.dp),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                        Icon(Icons.Filled.ArrowDropDown, contentDescription = null)
+                    }
+                    DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
+                        state.roots.forEach { root ->
+                            DropdownMenuItem(
+                                text = { Text(prettyLocation(root), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                                onClick = { menuOpen = false; onSwitchRoot(root) },
+                                leadingIcon = if (root == state.activeRoot) {
+                                    { Icon(Icons.Filled.Check, contentDescription = null) }
+                                } else null,
+                            )
+                        }
+                    }
                 }
             }
         }
