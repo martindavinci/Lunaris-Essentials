@@ -12,10 +12,12 @@ import androidx.compose.material.icons.filled.Storage
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -104,7 +106,15 @@ internal fun EditorScaffold(
         },
     ) {
         Scaffold(
-            snackbarHost = { SnackbarHost(snackbar) },
+            // Slightly translucent snackbar so it sits more gently over the document.
+            snackbarHost = {
+                SnackbarHost(snackbar) { data ->
+                    Snackbar(
+                        snackbarData = data,
+                        containerColor = MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.82f),
+                    )
+                }
+            },
             topBar = {
                 if (searchActive) {
                     SearchTopBar(
@@ -126,6 +136,7 @@ internal fun EditorScaffold(
                         if (state.fileRef == null) add(EditorMenuAction.RELOAD)
                         if (!canUndo) add(EditorMenuAction.UNDO)
                         if (!canRedo) add(EditorMenuAction.REDO)
+                        if (!state.dirty) add(EditorMenuAction.SAVE)
                     },
                     onMenu = { scope.launch { drawerState.open() } },
                     onMenuAction = onMenuAction,
@@ -140,6 +151,7 @@ internal fun EditorScaffold(
                         when (item) {
                             ToolbarItem.UNDO -> canUndo
                             ToolbarItem.REDO -> canRedo
+                            ToolbarItem.SAVE -> state.dirty
                             else -> true
                         }
                     },
