@@ -1,5 +1,6 @@
 package tools.lunaris.texteditor.feature.editor
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -109,8 +110,10 @@ internal fun EditorScaffold(
             // Slightly translucent snackbar so it sits more gently over the document.
             snackbarHost = {
                 SnackbarHost(snackbar) { data ->
+                    // Tap anywhere on it to dismiss immediately.
                     Snackbar(
                         snackbarData = data,
+                        modifier = Modifier.clickable { data.dismiss() },
                         containerColor = MaterialTheme.colorScheme.inverseSurface.copy(alpha = 0.82f),
                     )
                 }
