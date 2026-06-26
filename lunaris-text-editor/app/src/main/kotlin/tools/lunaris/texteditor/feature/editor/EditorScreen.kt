@@ -183,6 +183,9 @@ fun EditorScreen(
             runFind(forward)
         }
     }
+    // Search is per-document: dropping it when the active tab changes turns it off on close,
+    // switch, new, and open. Matches in one doc make no sense carried into another.
+    LaunchedEffect(state.activeTabId) { searchSession = null }
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val folderVm: FolderBrowserViewModel = hiltViewModel()
