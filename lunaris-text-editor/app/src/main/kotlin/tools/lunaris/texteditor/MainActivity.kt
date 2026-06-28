@@ -21,6 +21,10 @@ class MainActivity : ComponentActivity() {
     // The file the app was asked to open (VIEW/EDIT intent), or null for a normal launch.
     private val openRequest = mutableStateOf<OpenRequest?>(null)
 
+    // Bumped per VIEW/EDIT intent so re-opening the same file (open-with, app already running)
+    // produces a distinct OpenRequest and re-triggers the editor's open effect.
+    private var intentNonce = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -62,6 +66,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         // No write grant → open read-only so the user isn't surprised by a failing save.
-        return OpenRequest(uri.toString(), readOnly = !canWrite)
+        return OpenRequest(uri.toString(), readOnly = !canWrite, nonce = ++intentNonce)
     }
 }

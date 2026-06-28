@@ -98,6 +98,26 @@ class EditorViewModelTest {
     }
 
     @Test
+    fun reopenSameFile_afterClose_showsItAgain() = runTest {
+        val vm = newVm()
+        val ref = FileRef("content://doc/p")
+        gateway.store[ref.uri] = "print(1)".toByteArray(StandardCharsets.UTF_8)
+        gateway.names[ref.uri] = "main.py"
+        vm.openFile(ref)
+        advanceUntilIdle()
+        assertThat(vm.state.value.title).isEqualTo("main.py")
+        // Close it (single tab → fresh untitled scratch).
+        vm.closeTab(vm.state.value.activeTabId)
+        assertThat(vm.state.value.title).isEqualTo("untitled")
+        // Reopen the SAME file.
+        vm.openFile(ref)
+        advanceUntilIdle()
+        assertThat(vm.state.value.title).isEqualTo("main.py")
+        assertThat(vm.state.value.text).isEqualTo("print(1)")
+        assertThat(vm.state.value.tabs).hasSize(1)
+    }
+
+    @Test
     fun contentChanged_marksActiveDirty_only() {
         val vm = newVm()
         vm.newTab()

@@ -16,8 +16,13 @@ object Routes {
     const val PREVIEW = "preview"
 }
 
-/** A file the app was asked to open via a VIEW/EDIT intent. [readOnly] when no write grant. */
-data class OpenRequest(val uri: String, val readOnly: Boolean = false)
+/**
+ * A file the app was asked to open via a VIEW/EDIT intent. [readOnly] when no write grant.
+ * [nonce] is bumped per intent delivery so re-opening the SAME uri (e.g. tapping the same file
+ * in "open with" while the app is already running) still changes this value — otherwise an equal
+ * OpenRequest leaves the editor's LaunchedEffect key unchanged and the file never opens.
+ */
+data class OpenRequest(val uri: String, val readOnly: Boolean = false, val nonce: Int = 0)
 
 @Composable
 fun AppNavHost(openRequest: OpenRequest? = null) {
