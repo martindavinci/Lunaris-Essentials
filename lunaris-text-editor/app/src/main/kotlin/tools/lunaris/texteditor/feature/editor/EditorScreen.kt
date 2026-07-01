@@ -300,13 +300,8 @@ fun EditorScreen(
                 EditorMenuAction.READ_ONLY -> viewModel.toggleReadOnly()
                 EditorMenuAction.TOOLBAR -> openDialog = EditorDialog.TOOLBAR
                 EditorMenuAction.ACCESSORY_BAR -> showAccessory = !showAccessory
-                EditorMenuAction.SHARE -> {
-                    val send = Intent(Intent.ACTION_SEND).apply {
-                        type = "text/plain"
-                        putExtra(Intent.EXTRA_TEXT, state.text)
-                    }
-                    context.startActivity(Intent.createChooser(send, null))
-                }
+                EditorMenuAction.SHARE ->
+                    shareDocumentAsFile(context, suggestedSaveName(state, viewModel.languageCatalog), state.text)
                 EditorMenuAction.FILE_ASSOCIATIONS ->
                     onNavigate(tools.lunaris.texteditor.feature.Routes.ASSOCIATIONS)
                 EditorMenuAction.STORAGE_MANAGER -> onNavigate(tools.lunaris.texteditor.feature.Routes.STORAGE)
