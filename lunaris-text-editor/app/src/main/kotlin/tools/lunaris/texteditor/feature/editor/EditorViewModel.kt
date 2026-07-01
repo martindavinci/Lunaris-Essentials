@@ -59,6 +59,9 @@ class EditorViewModel @Inject constructor(
     private var associations = Associations.empty()
     private var currentSettings = EditorSettings()
     private val docs = MutableStateFlow(OpenDocuments.initial(newId()))
+    // Per-uri caret offset, remembered when a file is closed so reopening it (same session) lands
+    // the cursor where it was left. In-memory only — not restored across an app restart.
+    private val cursorMemory = HashMap<String, Int>()
     private val _state = MutableStateFlow(EditorUiState(colorSchemeId = colorSchemeId))
     val state: StateFlow<EditorUiState> = _state.asStateFlow()
 
@@ -126,7 +129,15 @@ class EditorViewModel @Inject constructor(
     fun onContentChanged(text: String) = mutate { it.updateActive { s -> s.copy(text = text) } }
     fun newTab() = mutate { it.opened(DocumentSession(id = newId(), lineEnding = parseLineEnding(currentSettings.defaultLineEnding))) }
     fun switchTab(id: String) = mutate { it.activated(id) }
-    fun closeTab(id: String) = mutate { it.closed(id, freshId = newId()) }
+    /** [cursorOffset] is the caret position of the closing tab (when it's the active one), kept so
+     *  reopening the same file restores it. */
+    fun closeTab(id: String, cursorOffset: Int? = null) {
+        if (cursorOffset != null) {
+            docs.value.sessions.firstOrNull { it.id == id }?.fileRef?.uri
+                ?.let { cursorMemory[it] = cursorOffset }
+        }
+        mutate { it.closed(id, freshId = newId()) }
+    }
 
     fun openFile(ref: FileRef, gotoLine: Int? = null, readOnly: Boolean = false) {
         val existing = docs.value.sessions.firstOrNull { it.fileRef?.uri == ref.uri }
@@ -145,7 +156,11 @@ class EditorViewModel @Inject constructor(
                 val tab = documentIo.openTab(ref, newId(), associations.map, forced = forced)
                 docs.value = docs.value.openedReplacingScratch(tab.copy(readOnly = readOnly))
                 publish()
-                _state.update { it.copy(pendingGoToLine = gotoLine, isLoading = false) }
+                // Restore the remembered caret unless the caller asked for a specific line.
+                val restoredOffset = if (gotoLine == null) cursorMemory[ref.uri] else null
+                _state.update {
+                    it.copy(pendingGoToLine = gotoLine, pendingGoToOffset = restoredOffset, isLoading = false)
+                }
             } catch (t: FileTooLargeException) {
                 _state.update { it.copy(isLoading = false, error = null, errorKind = EditorErrorKind.TOO_LARGE) }
             } catch (t: SecurityException) {
@@ -164,6 +179,8 @@ class EditorViewModel @Inject constructor(
     }
 
     fun consumeGoToLine() = _state.update { it.copy(pendingGoToLine = null) }
+
+    fun consumeGoToOffset() = _state.update { it.copy(pendingGoToOffset = null) }
 
     fun save(ref: FileRef) {
         val active = docs.value.active ?: return

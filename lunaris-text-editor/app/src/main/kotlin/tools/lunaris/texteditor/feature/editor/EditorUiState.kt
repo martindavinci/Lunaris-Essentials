@@ -33,4 +33,6 @@ data class EditorUiState(
     val readOnly: Boolean = false,
     val toolbar: ToolbarConfig = ToolbarConfig.DEFAULT,
     val pendingGoToLine: Int? = null,
+    /** One-shot caret offset to restore after a document loads (e.g. reopening a closed file). */
+    val pendingGoToOffset: Int? = null,
 )

@@ -10,19 +10,20 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PreviewViewModel @Inject constructor(
-    holder: PreviewHolder,
+    private val holder: PreviewHolder,
     private val renderer: MarkdownRenderer,
     private val highlight: HighlightAssets,
 ) : ViewModel() {
-    private val request = holder.request
-    val title: String = request?.title ?: ""
+    // Read the holder live (not snapshotted in init): as an overlay this VM is reused across
+    // previews, so each render must reflect the latest requested document, not the first one.
+    val title: String get() = holder.request?.title ?: ""
 
     /** Raw-HTML previews render the user's own page unsanitized, so JS must stay disabled for them. */
-    val isRawHtmlPreview: Boolean = PreviewResolver.isRawHtml(request?.fileName)
+    val isRawHtmlPreview: Boolean get() = PreviewResolver.isRawHtml(holder.request?.fileName)
 
     /** Renders the document HTML for the chosen [dark]/light theme (null if nothing to preview). */
     fun html(dark: Boolean): String? =
-        request?.let {
+        holder.request?.let {
             PreviewResolver.toHtmlDocument(
                 it.fileName, it.text, renderer::toHtml, dark,
                 highlightCss = if (dark) highlight.darkCss else highlight.lightCss,

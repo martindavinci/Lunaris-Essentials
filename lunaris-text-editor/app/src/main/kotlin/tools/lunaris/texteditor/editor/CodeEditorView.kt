@@ -35,6 +35,8 @@ fun CodeEditorView(
     modifier: Modifier = Modifier,
     gotoLine: Int? = null,
     onGotoConsumed: () -> Unit = {},
+    gotoOffset: Int? = null,
+    onGotoOffsetConsumed: () -> Unit = {},
 ) {
     val holder = remember { EditorBinding() }
     holder.callback = onTextChange
@@ -122,6 +124,13 @@ fun CodeEditorView(
                 editor.setSelection(target, 0)
                 editor.ensureSelectionVisible()
                 onGotoConsumed()
+            }
+            if (gotoOffset != null) {
+                // Restore a remembered caret offset after the document text is in place.
+                val pos = editor.text.indexer.getCharPosition(gotoOffset.coerceIn(0, editor.text.length))
+                editor.setSelection(pos.line, pos.column)
+                editor.ensureSelectionVisible()
+                onGotoOffsetConsumed()
             }
         },
         onRelease = { editor ->

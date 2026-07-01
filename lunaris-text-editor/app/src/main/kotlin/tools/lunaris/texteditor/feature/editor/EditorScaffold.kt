@@ -189,6 +189,8 @@ internal fun EditorScaffold(
                     modifier = Modifier.fillMaxWidth().weight(1f),
                     gotoLine = state.pendingGoToLine,
                     onGotoConsumed = viewModel::consumeGoToLine,
+                    gotoOffset = state.pendingGoToOffset,
+                    onGotoOffsetConsumed = viewModel::consumeGoToOffset,
                 )
                 if (showAccessory) {
                     AccessoryBar(

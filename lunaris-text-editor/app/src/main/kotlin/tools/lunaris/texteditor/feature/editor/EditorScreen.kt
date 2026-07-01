@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.DocumentsContract
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.Box
@@ -70,6 +72,7 @@ import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfig
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarItem
 import tools.lunaris.texteditor.feature.editor.toolbar.icon
 import tools.lunaris.texteditor.feature.editor.toolbar.labelRes
+import tools.lunaris.texteditor.feature.preview.PreviewScreen
 import tools.lunaris.texteditor.feature.settings.SettingsViewModel
 import tools.lunaris.texteditor.file.FileRef
 import java.time.Instant
@@ -131,6 +134,9 @@ fun EditorScreen(
     }
 
     var openDialog by remember { mutableStateOf<EditorDialog?>(null) }
+    // Preview is an overlay, not a nav destination: navigating away would dispose the editor and
+    // lose its cursor position and undo/redo history. Kept on top, the editor stays alive behind it.
+    var showPreview by remember { mutableStateOf(false) }
     var showAccessory by remember { mutableStateOf(false) }
     var accessoryInitDone by remember { mutableStateOf(false) }
     LaunchedEffect(viewSettings) {
@@ -157,8 +163,10 @@ fun EditorScreen(
     // Closing a tab with unsaved changes asks for confirmation first; clean tabs close directly.
     var closeConfirmId by remember { mutableStateOf<String?>(null) }
     val requestClose: (String) -> Unit = { id ->
+        // Remember the caret of the active tab so reopening this file restores it.
+        val cursor = if (id == state.activeTabId) editorController.cursorOffset() else null
         if (state.tabs.firstOrNull { it.id == id }?.dirty == true) closeConfirmId = id
-        else viewModel.closeTab(id)
+        else viewModel.closeTab(id, cursor)
     }
 
     // Search mode: a persistent top bar (back + prev/next) replaces the normal one while a
@@ -298,7 +306,7 @@ fun EditorScreen(
                     onNavigate(tools.lunaris.texteditor.feature.Routes.ASSOCIATIONS)
                 EditorMenuAction.STORAGE_MANAGER -> onNavigate(tools.lunaris.texteditor.feature.Routes.STORAGE)
                 EditorMenuAction.SETTINGS -> onNavigate(tools.lunaris.texteditor.feature.Routes.SETTINGS)
-                EditorMenuAction.RUN -> { viewModel.previewActive(); onNavigate(tools.lunaris.texteditor.feature.Routes.PREVIEW) }
+                EditorMenuAction.RUN -> { viewModel.previewActive(); showPreview = true }
                 EditorMenuAction.NEW_TAB -> viewModel.newTab()
                 EditorMenuAction.OPEN -> openLauncher.launch(arrayOf("*/*"))
                 EditorMenuAction.OPEN_TREE -> treeLauncher.launch(null)
@@ -328,7 +336,7 @@ fun EditorScreen(
                     if (ref != null) viewModel.save(ref) else createLauncher.launch(suggestedSaveName(state, viewModel.languageCatalog))
                 }
                 ToolbarItem.CLOSE -> requestClose(state.activeTabId)
-                ToolbarItem.RUN -> { viewModel.previewActive(); onNavigate(tools.lunaris.texteditor.feature.Routes.PREVIEW) }
+                ToolbarItem.RUN -> { viewModel.previewActive(); showPreview = true }
             }
         },
         onPickFolder = { treeLauncher.launch(null) },
@@ -348,7 +356,10 @@ fun EditorScreen(
         AlertDialog(
             onDismissRequest = { closeConfirmId = null },
             confirmButton = {
-                TextButton(onClick = { viewModel.closeTab(id); closeConfirmId = null }) {
+                TextButton(onClick = {
+                    val cursor = if (id == state.activeTabId) editorController.cursorOffset() else null
+                    viewModel.closeTab(id, cursor); closeConfirmId = null
+                }) {
                     Text(stringResource(R.string.close_confirm_discard))
                 }
             },
@@ -378,6 +389,14 @@ fun EditorScreen(
             title = { Text(stringResource(R.string.reopen_title)) },
             text = { Text(stringResource(R.string.reopen_message)) },
         )
+    }
+
+    if (showPreview) {
+        BackHandler { showPreview = false }
+        // Opaque, full-screen so the editor behind it is fully covered but never disposed.
+        Surface(modifier = Modifier.fillMaxSize()) {
+            PreviewScreen(onBack = { showPreview = false })
+        }
     }
 }
 
