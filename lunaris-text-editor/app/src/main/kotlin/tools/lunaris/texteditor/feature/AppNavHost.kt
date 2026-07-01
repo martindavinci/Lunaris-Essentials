@@ -16,12 +16,18 @@ object Routes {
 }
 
 /**
- * A file the app was asked to open via a VIEW/EDIT intent. [readOnly] when no write grant.
- * [nonce] is bumped per intent delivery so re-opening the SAME uri (e.g. tapping the same file
- * in "open with" while the app is already running) still changes this value — otherwise an equal
- * OpenRequest leaves the editor's LaunchedEffect key unchanged and the file never opens.
+ * Something the app was asked to open. Either a [uri] (VIEW/EDIT or a shared file) — [readOnly]
+ * when no write grant — or inline [sharedText] (ACTION_SEND of plain text, no uri).
+ * [nonce] is bumped per intent delivery so re-delivering the SAME content (e.g. tapping the same
+ * file in "open with" while the app is already running) still changes this value — otherwise an
+ * equal OpenRequest leaves the editor's LaunchedEffect key unchanged and nothing opens.
  */
-data class OpenRequest(val uri: String, val readOnly: Boolean = false, val nonce: Int = 0)
+data class OpenRequest(
+    val uri: String? = null,
+    val readOnly: Boolean = false,
+    val sharedText: String? = null,
+    val nonce: Int = 0,
+)
 
 @Composable
 fun AppNavHost(openRequest: OpenRequest? = null) {

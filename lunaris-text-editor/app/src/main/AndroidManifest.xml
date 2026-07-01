@@ -50,6 +50,23 @@
                 <data android:mimeType="application/x-csh" />
                 <data android:mimeType="application/sql" />
             </intent-filter>
+
+            <!-- Appear in the "Share" sheet: receive shared text or a text/code file. -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/*" />
+                <data android:mimeType="application/json" />
+                <data android:mimeType="application/xml" />
+                <data android:mimeType="application/javascript" />
+                <data android:mimeType="application/ecmascript" />
+                <data android:mimeType="application/x-sh" />
+                <data android:mimeType="application/x-yaml" />
+                <data android:mimeType="application/x-python" />
+                <data android:mimeType="application/x-httpd-php" />
+                <data android:mimeType="application/x-csh" />
+                <data android:mimeType="application/sql" />
+            </intent-filter>
         </activity>
     </application>
 </manifest>

@@ -128,6 +128,13 @@ class EditorViewModel @Inject constructor(
 
     fun onContentChanged(text: String) = mutate { it.updateActive { s -> s.copy(text = text) } }
     fun newTab() = mutate { it.opened(DocumentSession(id = newId(), lineEnding = parseLineEnding(currentSettings.defaultLineEnding))) }
+
+    /** Opens shared text (ACTION_SEND) in a new tab. Left dirty so Save offers to write it out. */
+    fun newTabWithText(text: String) = mutate {
+        it.openedReplacingScratch(
+            DocumentSession(id = newId(), text = text, lineEnding = parseLineEnding(currentSettings.defaultLineEnding)),
+        )
+    }
     fun switchTab(id: String) = mutate { it.activated(id) }
     /** [cursorOffset] is the caret position of the closing tab (when it's the active one), kept so
      *  reopening the same file restores it. */

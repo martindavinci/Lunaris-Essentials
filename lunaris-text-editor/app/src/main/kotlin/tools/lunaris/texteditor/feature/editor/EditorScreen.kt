@@ -98,7 +98,12 @@ fun EditorScreen(
     // already-open tab for the same uri, so re-firing on config change is harmless. VIEW intents
     // with no write grant open read-only.
     LaunchedEffect(openRequest) {
-        openRequest?.let { viewModel.openFile(FileRef(it.uri), readOnly = it.readOnly) }
+        openRequest?.let { req ->
+            when {
+                req.uri != null -> viewModel.openFile(FileRef(req.uri), readOnly = req.readOnly)
+                req.sharedText != null -> viewModel.newTabWithText(req.sharedText)
+            }
+        }
     }
 
     val openLauncher = rememberLauncherForActivityResult(

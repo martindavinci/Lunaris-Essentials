@@ -50,10 +50,21 @@ class MainActivity : ComponentActivity() {
         openRequest.value = requestFromIntent(intent)
     }
 
-    private fun requestFromIntent(intent: Intent?): OpenRequest? {
-        val action = intent?.action
-        if (action != Intent.ACTION_VIEW && action != Intent.ACTION_EDIT) return null
-        val uri = intent.data ?: return null
+    private fun requestFromIntent(intent: Intent?): OpenRequest? = when (intent?.action) {
+        Intent.ACTION_VIEW, Intent.ACTION_EDIT -> intent.data?.let { fileRequest(intent, it) }
+        Intent.ACTION_SEND -> {
+            // Shared file → open it; shared plain text (no stream) → a new tab with that text.
+            val stream = intent.getStreamUri()
+            when {
+                stream != null -> fileRequest(intent, stream)
+                else -> intent.getCharSequenceExtra(Intent.EXTRA_TEXT)?.toString()
+                    ?.let { OpenRequest(sharedText = it, nonce = ++intentNonce) }
+            }
+        }
+        else -> null
+    }
+
+    private fun fileRequest(intent: Intent, uri: android.net.Uri): OpenRequest {
         val canWrite = intent.flags and Intent.FLAG_GRANT_WRITE_URI_PERMISSION != 0
         // Best-effort: persist the offered grant so the file stays reachable later (many openers
         // don't offer a persistable grant — then this no-ops; the per-launch grant still applies).
@@ -68,4 +79,10 @@ class MainActivity : ComponentActivity() {
         // No write grant → open read-only so the user isn't surprised by a failing save.
         return OpenRequest(uri.toString(), readOnly = !canWrite, nonce = ++intentNonce)
     }
+
+    @Suppress("DEPRECATION")
+    private fun Intent.getStreamUri(): android.net.Uri? =
+        if (android.os.Build.VERSION.SDK_INT >= 33)
+            getParcelableExtra(Intent.EXTRA_STREAM, android.net.Uri::class.java)
+        else getParcelableExtra(Intent.EXTRA_STREAM)
 }
