@@ -309,7 +309,7 @@ fun EditorScreen(
             EditorMenuAction.SHARE ->
                 shareDocumentAsFile(context, suggestedSaveName(state, viewModel.languageCatalog), state.text)
             EditorMenuAction.FILE_ASSOCIATIONS ->
-                onNavigate(tools.lunaris.texteditor.feature.Routes.ASSOCIATIONS)
+                Unit // TODO: wire to in-drawer associations panel; old full-screen route removed
             EditorMenuAction.STORAGE_MANAGER -> onNavigate(tools.lunaris.texteditor.feature.Routes.STORAGE)
             EditorMenuAction.SETTINGS -> onNavigate(tools.lunaris.texteditor.feature.Routes.SETTINGS)
             EditorMenuAction.PREVIEW -> { viewModel.previewActive(); showPreview = true }

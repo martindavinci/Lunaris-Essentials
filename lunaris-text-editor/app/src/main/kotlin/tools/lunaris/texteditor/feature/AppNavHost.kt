@@ -5,11 +5,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import tools.lunaris.texteditor.feature.editor.EditorScreen
-import tools.lunaris.texteditor.feature.settings.FileAssociationScreen
 
 object Routes {
     const val EDITOR = "editor"
-    const val ASSOCIATIONS = "associations"
     const val STORAGE = "storage"
     const val SETTINGS = "settings"
     const val LICENSES = "licenses"
@@ -36,16 +34,12 @@ fun AppNavHost(openRequest: OpenRequest? = null) {
         composable(Routes.EDITOR) {
             EditorScreen(onNavigate = { route -> nav.navigate(route) }, openRequest = openRequest)
         }
-        composable(Routes.ASSOCIATIONS) {
-            FileAssociationScreen(onBack = { nav.popBackStack() })
-        }
         composable(Routes.STORAGE) {
             tools.lunaris.texteditor.feature.browser.StorageManagerScreen(onBack = { nav.popBackStack() })
         }
         composable(Routes.SETTINGS) {
             tools.lunaris.texteditor.feature.settings.SettingsScreen(
                 onBack = { nav.popBackStack() },
-                onOpenAssociations = { nav.navigate(Routes.ASSOCIATIONS) },
                 onOpenLicenses = { nav.navigate(Routes.LICENSES) },
             )
         }

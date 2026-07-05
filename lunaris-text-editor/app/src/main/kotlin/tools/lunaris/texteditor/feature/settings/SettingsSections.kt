@@ -12,7 +12,6 @@ internal fun GeneralSection(
     fileFilterOn: Boolean,
     onUpdate: ((EditorSettings) -> EditorSettings) -> Unit,
     onSetFileFilter: (Boolean) -> Unit,
-    onOpenAssociations: () -> Unit,
     onShowToolbar: () -> Unit,
     onEncodingClick: () -> Unit,
     onLineBreakClick: () -> Unit,
@@ -29,7 +28,6 @@ internal fun GeneralSection(
     SettingsToggleRow(stringResource(R.string.set_file_filter), null, fileFilterOn, onSetFileFilter)
     SettingsToggleRow(stringResource(R.string.set_session_restore), null, s.sessionRestore) { onUpdate { it.copy(sessionRestore = !it.sessionRestore) } }
     SettingsNavRow(stringResource(R.string.set_toolbar), onShowToolbar)
-    SettingsNavRow(stringResource(R.string.menu_file_associations), onOpenAssociations)
 }
 
 @Composable

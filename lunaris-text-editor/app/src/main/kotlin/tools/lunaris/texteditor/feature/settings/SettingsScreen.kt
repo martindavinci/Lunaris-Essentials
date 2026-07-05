@@ -47,7 +47,6 @@ internal enum class SettingChoice {
 @Composable
 fun SettingsScreen(
     onBack: () -> Unit,
-    onOpenAssociations: () -> Unit,
     onOpenLicenses: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
@@ -82,7 +81,6 @@ fun SettingsScreen(
         onUpdate = viewModel::update,
         onSetFileFilter = viewModel::setFileFilter,
         onSetToolbar = viewModel::setToolbar,
-        onOpenAssociations = onOpenAssociations,
         onOpenLicenses = onOpenLicenses,
         onBackup = { backupLauncher.launch(context.getString(R.string.backup_default_name)) },
         onRestore = { restoreLauncher.launch(arrayOf("application/json")) },
@@ -100,7 +98,6 @@ internal fun SettingsContent(
     onUpdate: ((EditorSettings) -> EditorSettings) -> Unit,
     onSetFileFilter: (Boolean) -> Unit,
     onSetToolbar: (ToolbarConfig) -> Unit,
-    onOpenAssociations: () -> Unit,
     onOpenLicenses: () -> Unit,
     onBackup: () -> Unit,
     onRestore: () -> Unit,
@@ -141,7 +138,6 @@ internal fun SettingsContent(
                 fileFilterOn = fileFilterOn,
                 onUpdate = onUpdate,
                 onSetFileFilter = onSetFileFilter,
-                onOpenAssociations = onOpenAssociations,
                 onShowToolbar = { showToolbar = true },
                 onEncodingClick = { openChoice = SettingChoice.ENCODING },
                 onLineBreakClick = { openChoice = SettingChoice.LINE_BREAK },

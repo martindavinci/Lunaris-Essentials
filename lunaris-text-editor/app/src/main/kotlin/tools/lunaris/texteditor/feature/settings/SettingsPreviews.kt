@@ -19,7 +19,6 @@ private fun SettingsContentPreview() {
             onUpdate = {},
             onSetFileFilter = {},
             onSetToolbar = {},
-            onOpenAssociations = {},
             onOpenLicenses = {},
             onBackup = {},
             onRestore = {},
@@ -62,20 +61,3 @@ private fun LicensesScreenPreview() {
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-private fun AssocRowPreview() {
-    LunarisEditorTheme {
-        AssocRow(extension = "kt", languageDisplay = "Kotlin", onDelete = {})
-    }
-}
-
-/** Component-level preview: the FileAssociationScreen body is VM-driven; the
- *  stateless top bar + row are previewed instead of the full screen. */
-@Preview(showBackground = true)
-@Composable
-private fun AssocTopBarPreview() {
-    LunarisEditorTheme {
-        AssocTopBar(onBack = {})
-    }
-}
