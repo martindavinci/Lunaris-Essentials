@@ -56,7 +56,9 @@ class MainActivity : ComponentActivity() {
             // Shared file → open it; shared plain text (no stream) → a new tab with that text.
             val stream = intent.getStreamUri()
             when {
-                stream != null -> fileRequest(intent, stream)
+                // A file shared *into* the editor is meant to be worked on: open it editable even
+                // when the sender only granted read (if it can't be written back, the user Saves As).
+                stream != null -> fileRequest(intent, stream, forceEditable = true)
                 else -> intent.getCharSequenceExtra(Intent.EXTRA_TEXT)?.toString()
                     ?.let { OpenRequest(sharedText = it, nonce = ++intentNonce) }
             }
@@ -64,7 +66,7 @@ class MainActivity : ComponentActivity() {
         else -> null
     }
 
-    private fun fileRequest(intent: Intent, uri: android.net.Uri): OpenRequest {
+    private fun fileRequest(intent: Intent, uri: android.net.Uri, forceEditable: Boolean = false): OpenRequest {
         val canWrite = intent.flags and Intent.FLAG_GRANT_WRITE_URI_PERMISSION != 0
         // Best-effort: persist the offered grant so the file stays reachable later (many openers
         // don't offer a persistable grant — then this no-ops; the per-launch grant still applies).
@@ -76,8 +78,9 @@ class MainActivity : ComponentActivity() {
                     contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 }
             }
-        // No write grant → open read-only so the user isn't surprised by a failing save.
-        return OpenRequest(uri.toString(), readOnly = !canWrite, nonce = ++intentNonce)
+        // No write grant → open read-only so the user isn't surprised by a failing save, unless
+        // the caller forces editable (a file shared into the editor).
+        return OpenRequest(uri.toString(), readOnly = !canWrite && !forceEditable, nonce = ++intentNonce)
     }
 
     @Suppress("DEPRECATION")
