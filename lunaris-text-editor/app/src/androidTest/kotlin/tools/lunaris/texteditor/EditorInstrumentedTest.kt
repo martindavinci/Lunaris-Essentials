@@ -17,10 +17,12 @@ class EditorInstrumentedTest {
     val composeRule = createAndroidComposeRule<MainActivity>()
 
     @Test
-    fun editorScaffold_showsTitleAndToolbarActions() {
+    fun editorScaffold_showsTitleAndDefaultToolbar() {
         // With a single open file the tab strip is hidden, so "untitled" shows once (title bar).
         composeRule.onAllNodesWithText("untitled").onFirst().assertIsDisplayed()
-        composeRule.onNodeWithContentDescription("Open").assertIsDisplayed()
-        composeRule.onNodeWithContentDescription("Save").assertIsDisplayed()
+        // Simplified default bottom bar: grouped cursor arrows + accented preview.
+        composeRule.onNodeWithContentDescription("Cursor left").assertIsDisplayed()
+        composeRule.onNodeWithContentDescription("Cursor right").assertIsDisplayed()
+        composeRule.onNodeWithContentDescription("Preview").assertIsDisplayed()
     }
 }

@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
@@ -36,6 +37,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
@@ -522,6 +524,7 @@ internal fun EditorBottomBar(
     onItem: (ToolbarItem) -> Unit,
     isEnabled: (ToolbarItem) -> Boolean = { true },
 ) {
+    val items = config.enabled
     Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = BarElevation) {
         Row(
             modifier = Modifier
@@ -531,21 +534,59 @@ internal fun EditorBottomBar(
                 .windowInsetsPadding(WindowInsets.ime.union(WindowInsets.navigationBars))
                 .padding(vertical = 4.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            config.enabled.forEach { item ->
-                // Fixed 40dp slots so a full toolbar (9-10 items) fits the width without the
-                // last icon being squished. Icons render at a uniform 24dp.
-                IconButton(
-                    onClick = { onItem(item) },
-                    enabled = isEnabled(item),
-                    modifier = Modifier.size(40.dp),
-                ) {
-                    Icon(
-                        item.icon(),
-                        contentDescription = stringResource(item.labelRes()),
-                        modifier = Modifier.size(24.dp),
+            var i = 0
+            while (i < items.size) {
+                val item = items[i]
+                // Render an adjacent left+right cursor pair as one connected pill.
+                if (item == ToolbarItem.CURSOR_LEFT && items.getOrNull(i + 1) == ToolbarItem.CURSOR_RIGHT) {
+                    ArrowPill(
+                        onLeft = { onItem(ToolbarItem.CURSOR_LEFT) },
+                        onRight = { onItem(ToolbarItem.CURSOR_RIGHT) },
                     )
+                    i += 2
+                } else {
+                    ToolbarIconButton(item, onItem, isEnabled(item))
+                    i += 1
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ToolbarIconButton(item: ToolbarItem, onItem: (ToolbarItem) -> Unit, enabled: Boolean) {
+    // The preview action is accented; everything else uses the default content color.
+    val tint = if (item == ToolbarItem.PREVIEW) MaterialTheme.colorScheme.primary
+               else LocalContentColor.current
+    IconButton(onClick = { onItem(item) }, enabled = enabled, modifier = Modifier.size(40.dp)) {
+        Icon(
+            item.icon(),
+            contentDescription = stringResource(item.labelRes()),
+            tint = tint,
+            modifier = Modifier.size(24.dp),
+        )
+    }
+}
+
+@Composable
+private fun ArrowPill(onLeft: () -> Unit, onRight: () -> Unit) {
+    Surface(shape = RoundedCornerShape(percent = 50), color = MaterialTheme.colorScheme.surfaceVariant) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            IconButton(onClick = onLeft, modifier = Modifier.size(40.dp)) {
+                Icon(
+                    ToolbarItem.CURSOR_LEFT.icon(),
+                    contentDescription = stringResource(ToolbarItem.CURSOR_LEFT.labelRes()),
+                    modifier = Modifier.size(24.dp),
+                )
+            }
+            IconButton(onClick = onRight, modifier = Modifier.size(40.dp)) {
+                Icon(
+                    ToolbarItem.CURSOR_RIGHT.icon(),
+                    contentDescription = stringResource(ToolbarItem.CURSOR_RIGHT.labelRes()),
+                    modifier = Modifier.size(24.dp),
+                )
             }
         }
     }
