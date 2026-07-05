@@ -173,4 +173,9 @@
     <string name="toolbar_preview">Preview</string>
     <string name="toolbar_select_mode">Select mode</string>
     <string name="toolbar_keys">Special characters</string>
+    <string name="drawer_recents">Recents</string>
+    <string name="drawer_folders">Folders</string>
+    <string name="drawer_extensions">Extensions</string>
+    <string name="drawer_editor">Editor</string>
+    <string name="name_hint">Name</string>
 </resources>
