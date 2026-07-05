@@ -113,6 +113,12 @@
     <string name="assoc_extension">Estensione</string>
     <string name="assoc_language">Sintassi</string>
     <string name="assoc_delete">Elimina</string>
+    <string name="assoc_subtitle">Estensione → evidenziazione</string>
+    <string name="assoc_language_for">Linguaggio per %s</string>
+    <string name="assoc_search">Cerca linguaggio…</string>
+    <string name="assoc_plaintext">Testo semplice</string>
+    <string name="assoc_remove_title">Rimuovere l\'associazione?</string>
+    <string name="assoc_remove">Rimuovi</string>
     <string name="action_back">Indietro</string>
     <string name="menu_storage">Gestione archiviazione</string>
     <string name="storage_title">Gestione archiviazione</string>

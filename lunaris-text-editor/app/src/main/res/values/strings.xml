@@ -113,6 +113,12 @@
     <string name="assoc_extension">Extension</string>
     <string name="assoc_language">Syntax</string>
     <string name="assoc_delete">Delete</string>
+    <string name="assoc_subtitle">Extension → highlighting</string>
+    <string name="assoc_language_for">Language for %s</string>
+    <string name="assoc_search">Search language…</string>
+    <string name="assoc_plaintext">Plain text</string>
+    <string name="assoc_remove_title">Remove association?</string>
+    <string name="assoc_remove">Remove</string>
     <string name="action_back">Back</string>
     <string name="menu_storage">Storage manager</string>
     <string name="storage_title">Storage manager</string>

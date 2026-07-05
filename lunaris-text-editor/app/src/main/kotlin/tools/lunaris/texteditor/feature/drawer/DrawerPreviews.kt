@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.Modifier
 import tools.lunaris.texteditor.data.RecentEntry
+import tools.lunaris.texteditor.syntax.LanguageDefinition
 import tools.lunaris.texteditor.ui.theme.LunarisEditorTheme
 
 @Preview(showBackground = true)
@@ -78,5 +79,19 @@ private fun FoldersPanelPreview() {
             onRename = { _, _ -> },
             onCloseRoot = {},
         )
+    }
+}
+
+@Preview(showBackground = true, widthDp = 360, heightDp = 640)
+@Composable
+private fun LanguagePickerPreview() {
+    val languages = listOf(
+        LanguageDefinition("plaintext", "Testo semplice", null, null, emptyList()),
+        LanguageDefinition("kotlin", "Kotlin", "source.kotlin", "kotlin.tmLanguage.json", listOf("kt", "kts")),
+        LanguageDefinition("markdown", "Markdown", "text.html.markdown", "markdown.tmLanguage.json", listOf("md")),
+        LanguageDefinition("json", "JSON", "source.json", "json.tmLanguage.json", listOf("json")),
+    )
+    LunarisEditorTheme {
+        LanguagePicker(ext = "md", currentLangId = "markdown", languages = languages, onPick = {}, onBack = {})
     }
 }
