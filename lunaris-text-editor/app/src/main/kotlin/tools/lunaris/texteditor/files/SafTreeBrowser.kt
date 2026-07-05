@@ -39,4 +39,22 @@ class SafTreeBrowser @Inject constructor(
     override suspend fun parent(locationRef: String): String? = withContext(Dispatchers.IO) {
         docFor(locationRef)?.parentFile?.uri?.toString()
     }
+
+    /** Create a text file named [name] under [parentRef]; returns its uri or null. */
+    suspend fun createFile(parentRef: String, name: String): String? = withContext(Dispatchers.IO) {
+        runCatching { docFor(parentRef)?.createFile("text/plain", name)?.uri?.toString() }.getOrNull()
+    }
+
+    /** Create a subfolder named [name] under [parentRef]; returns its uri or null. */
+    suspend fun createFolder(parentRef: String, name: String): String? = withContext(Dispatchers.IO) {
+        runCatching { docFor(parentRef)?.createDirectory(name)?.uri?.toString() }.getOrNull()
+    }
+
+    /** Rename the document/folder [ref] to [newName]; returns its (possibly new) uri or null. */
+    suspend fun rename(ref: String, newName: String): String? = withContext(Dispatchers.IO) {
+        runCatching {
+            val doc = docFor(ref) ?: return@runCatching null
+            if (doc.renameTo(newName)) doc.uri.toString() else null
+        }.getOrNull()
+    }
 }
