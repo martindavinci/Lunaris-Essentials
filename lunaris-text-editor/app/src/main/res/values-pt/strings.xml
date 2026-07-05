@@ -159,4 +159,6 @@
     <string name="preview_nothing">Nada para pré-visualizar</string>
     <string name="menu_preview">Pré-visualização</string>
     <string name="toolbar_preview">Pré-visualização</string>
+    <string name="toolbar_select_mode">Modo de seleção</string>
+    <string name="toolbar_keys">Caracteres especiais</string>
 </resources>

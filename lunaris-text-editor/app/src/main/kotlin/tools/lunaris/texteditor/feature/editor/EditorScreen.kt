@@ -20,10 +20,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -147,6 +149,8 @@ fun EditorScreen(
     var showAccessory by remember { mutableStateOf(false) }
     // The unified action menu (⋮) opens this bottom sheet.
     var showSheet by remember { mutableStateOf(false) }
+    // Select mode: while on, the cursor arrows extend the selection instead of moving the caret.
+    var selectMode by remember { mutableStateOf(false) }
     var accessoryInitDone by remember { mutableStateOf(false) }
     LaunchedEffect(viewSettings) {
         if (!accessoryInitDone) { showAccessory = viewSettings.accessoryBarDefault; accessoryInitDone = true }
@@ -317,6 +321,7 @@ fun EditorScreen(
         snackbar = snackbar,
         editorController = editorController,
         showAccessory = showAccessory,
+        selectMode = selectMode,
         onNavigate = onNavigate,
         folderDrawerEnabled = viewSettings.folderDrawerEnabled,
         lineNumbers = viewSettings.lineNumbers,
@@ -340,8 +345,15 @@ fun EditorScreen(
                 ToolbarItem.UNDO -> editorController.undo()
                 ToolbarItem.REDO -> editorController.redo()
                 ToolbarItem.SEARCH -> openDialog = EditorDialog.SEARCH
-                ToolbarItem.CURSOR_LEFT -> editorController.moveCursor(-1)
-                ToolbarItem.CURSOR_RIGHT -> editorController.moveCursor(1)
+                ToolbarItem.CURSOR_LEFT ->
+                    if (selectMode) editorController.extendSelection(-1) else editorController.moveCursor(-1)
+                ToolbarItem.CURSOR_RIGHT ->
+                    if (selectMode) editorController.extendSelection(1) else editorController.moveCursor(1)
+                ToolbarItem.SELECT_MODE -> {
+                    selectMode = !selectMode
+                    if (selectMode) editorController.beginSelect()
+                }
+                ToolbarItem.ACCESSORY -> showAccessory = !showAccessory
                 ToolbarItem.SAVE -> {
                     val ref = state.fileRef
                     if (ref != null) viewModel.save(ref) else createLauncher.launch(suggestedSaveName(state, viewModel.languageCatalog))
@@ -529,6 +541,7 @@ internal fun EditorBottomBar(
     config: ToolbarConfig,
     onItem: (ToolbarItem) -> Unit,
     isEnabled: (ToolbarItem) -> Boolean = { true },
+    toggled: (ToolbarItem) -> Boolean = { false },
 ) {
     val items = config.enabled
     Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = BarElevation) {
@@ -538,69 +551,80 @@ internal fun EditorBottomBar(
                 // Float above the IME when the keyboard is up; fall back to the nav bar otherwise
                 // (union picks the larger inset, so the toolbar is never hidden behind the keyboard).
                 .windowInsetsPadding(WindowInsets.ime.union(WindowInsets.navigationBars))
-                .padding(vertical = 4.dp),
+                .padding(horizontal = 8.dp, vertical = 4.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            // Consecutive items of the same group render as one connected pill; preview is a
+            // standalone accent circle; anything else is a bare icon.
             var i = 0
             while (i < items.size) {
-                val item = items[i]
-                val next = items.getOrNull(i + 1)
-                // Render a known adjacent pair (cursor left/right, undo/redo) as one connected pill.
-                if (next != null && (item to next) in TOOLBAR_PAIRS) {
-                    PairPill(item, next, onItem, isEnabled(item), isEnabled(next))
-                    i += 2
-                } else {
-                    ToolbarIconButton(item, onItem, isEnabled(item))
-                    i += 1
+                val group = items[i].barGroup()
+                var j = i + 1
+                while (j < items.size && items[j].barGroup() == group) j++
+                val run = items.subList(i, j)
+                when (group) {
+                    BarGroup.PREVIEW -> run.forEach { PreviewButton(it, onItem, isEnabled(it)) }
+                    BarGroup.SOLO -> run.forEach { ToolbarIconButton(it, onItem, isEnabled(it)) }
+                    else -> SegmentPill { run.forEach { PillButton(it, onItem, isEnabled(it), toggled(it)) } }
                 }
+                i = j
             }
         }
     }
 }
 
+/** Logical grouping that drives the segmented bottom bar. */
+private enum class BarGroup { NAV, HISTORY, KEYS, PREVIEW, SOLO }
+
+private fun ToolbarItem.barGroup(): BarGroup = when (this) {
+    ToolbarItem.CURSOR_LEFT, ToolbarItem.CURSOR_RIGHT, ToolbarItem.SELECT_MODE -> BarGroup.NAV
+    ToolbarItem.UNDO, ToolbarItem.REDO -> BarGroup.HISTORY
+    ToolbarItem.ACCESSORY -> BarGroup.KEYS
+    ToolbarItem.PREVIEW -> BarGroup.PREVIEW
+    else -> BarGroup.SOLO
+}
+
+/** Neutral rounded container holding one group's buttons. */
 @Composable
-private fun ToolbarIconButton(item: ToolbarItem, onItem: (ToolbarItem) -> Unit, enabled: Boolean) {
-    IconButton(onClick = { onItem(item) }, enabled = enabled, modifier = Modifier.size(40.dp)) {
-        // Read the content color INSIDE the button so a disabled item (e.g. undo/redo with no
-        // history) dims correctly; the preview action is accented instead.
-        val tint = if (item == ToolbarItem.PREVIEW) MaterialTheme.colorScheme.primary
-                   else LocalContentColor.current
-        Icon(
-            item.icon(),
-            contentDescription = stringResource(item.labelRes()),
-            tint = tint,
-            modifier = Modifier.size(24.dp),
-        )
+private fun SegmentPill(content: @Composable RowScope.() -> Unit) {
+    Surface(
+        shape = RoundedCornerShape(percent = 50),
+        // Neutral grey (not the theme's warm surfaceVariant) to match the design.
+        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically, content = content)
     }
 }
 
-/** Adjacent toolbar items (in this order) rendered as one connected pill. */
-private val TOOLBAR_PAIRS = setOf(
-    ToolbarItem.CURSOR_LEFT to ToolbarItem.CURSOR_RIGHT,
-    ToolbarItem.UNDO to ToolbarItem.REDO,
-)
-
+/** Icon button inside a pill; [active] tints a live toggle (select mode, special chars) to the accent. */
 @Composable
-private fun PairPill(
-    left: ToolbarItem,
-    right: ToolbarItem,
-    onItem: (ToolbarItem) -> Unit,
-    leftEnabled: Boolean,
-    rightEnabled: Boolean,
-) {
-    Surface(shape = RoundedCornerShape(percent = 50), color = MaterialTheme.colorScheme.surfaceVariant) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            PillButton(left, onItem, leftEnabled)
-            PillButton(right, onItem, rightEnabled)
+private fun PillButton(item: ToolbarItem, onItem: (ToolbarItem) -> Unit, enabled: Boolean, active: Boolean) {
+    IconButton(onClick = { onItem(item) }, enabled = enabled, modifier = Modifier.size(40.dp)) {
+        val tint = if (active) MaterialTheme.colorScheme.primary else LocalContentColor.current
+        Icon(item.icon(), contentDescription = stringResource(item.labelRes()), tint = tint, modifier = Modifier.size(24.dp))
+    }
+}
+
+/** Preview: a filled accent circle with a contrasting eye. */
+@Composable
+private fun PreviewButton(item: ToolbarItem, onItem: (ToolbarItem) -> Unit, enabled: Boolean) {
+    Surface(shape = CircleShape, color = MaterialTheme.colorScheme.primary) {
+        IconButton(onClick = { onItem(item) }, enabled = enabled, modifier = Modifier.size(40.dp)) {
+            Icon(
+                item.icon(),
+                contentDescription = stringResource(item.labelRes()),
+                tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.size(24.dp),
+            )
         }
     }
 }
 
+/** Bare icon button for ungrouped (SOLO) toolbar items. */
 @Composable
-private fun PillButton(item: ToolbarItem, onItem: (ToolbarItem) -> Unit, enabled: Boolean) {
+private fun ToolbarIconButton(item: ToolbarItem, onItem: (ToolbarItem) -> Unit, enabled: Boolean) {
     IconButton(onClick = { onItem(item) }, enabled = enabled, modifier = Modifier.size(40.dp)) {
-        // Content color read inside the button so a disabled item (e.g. redo with no history) dims.
         Icon(
             item.icon(),
             contentDescription = stringResource(item.labelRes()),

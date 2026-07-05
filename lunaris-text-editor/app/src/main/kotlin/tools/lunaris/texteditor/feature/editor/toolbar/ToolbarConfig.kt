@@ -24,16 +24,19 @@ data class ToolbarConfig(val items: List<ToolbarItem>, val disabled: Set<Toolbar
     }
 
     companion object {
-        // Simplified default: cursor arrows (rendered as a group), undo/redo, preview.
+        // Segmented default: [cursor ◀ ▶ + select] · [# special chars] · [undo redo] · preview.
         // The rest stay present-but-disabled so users can add them via the config dialog.
         private val DEFAULT_ORDER = listOf(
-            ToolbarItem.CURSOR_LEFT, ToolbarItem.CURSOR_RIGHT,
-            ToolbarItem.UNDO, ToolbarItem.REDO, ToolbarItem.PREVIEW,
+            ToolbarItem.CURSOR_LEFT, ToolbarItem.CURSOR_RIGHT, ToolbarItem.SELECT_MODE,
+            ToolbarItem.ACCESSORY,
+            ToolbarItem.UNDO, ToolbarItem.REDO,
+            ToolbarItem.PREVIEW,
             ToolbarItem.OPEN, ToolbarItem.PASTE, ToolbarItem.SEARCH,
             ToolbarItem.SAVE, ToolbarItem.CLOSE,
         )
         private val DEFAULT_ENABLED = setOf(
-            ToolbarItem.CURSOR_LEFT, ToolbarItem.CURSOR_RIGHT,
+            ToolbarItem.CURSOR_LEFT, ToolbarItem.CURSOR_RIGHT, ToolbarItem.SELECT_MODE,
+            ToolbarItem.ACCESSORY,
             ToolbarItem.UNDO, ToolbarItem.REDO, ToolbarItem.PREVIEW,
         )
         val DEFAULT = ToolbarConfig(

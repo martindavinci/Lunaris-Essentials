@@ -168,4 +168,6 @@
     <string name="preview_nothing">Niente da visualizzare in anteprima</string>
     <string name="menu_preview">Anteprima</string>
     <string name="toolbar_preview">Anteprima</string>
+    <string name="toolbar_select_mode">Modalità selezione</string>
+    <string name="toolbar_keys">Caratteri speciali</string>
 </resources>

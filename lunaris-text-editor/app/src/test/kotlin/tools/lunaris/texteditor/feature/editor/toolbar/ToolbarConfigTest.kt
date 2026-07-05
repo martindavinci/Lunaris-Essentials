@@ -8,9 +8,10 @@ class ToolbarConfigTest {
         val c = ToolbarConfig.DEFAULT
         // Every item is still present (config dialog can re-enable any; fromJson append still works).
         assertThat(c.items).containsExactlyElementsIn(ToolbarItem.entries)
-        // Only the simplified default bar is enabled, in this order.
+        // Only the segmented default bar is enabled, in this order.
         assertThat(c.enabled).containsExactly(
-            ToolbarItem.CURSOR_LEFT, ToolbarItem.CURSOR_RIGHT,
+            ToolbarItem.CURSOR_LEFT, ToolbarItem.CURSOR_RIGHT, ToolbarItem.SELECT_MODE,
+            ToolbarItem.ACCESSORY,
             ToolbarItem.UNDO, ToolbarItem.REDO, ToolbarItem.PREVIEW,
         ).inOrder()
     }

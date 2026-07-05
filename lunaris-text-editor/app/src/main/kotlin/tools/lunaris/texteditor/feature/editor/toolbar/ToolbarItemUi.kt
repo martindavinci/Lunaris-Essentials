@@ -10,8 +10,10 @@ import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.HighlightAlt
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Tag
 import androidx.compose.ui.graphics.vector.ImageVector
 import tools.lunaris.texteditor.R
 
@@ -27,6 +29,8 @@ fun ToolbarItem.labelRes(): Int = when (this) {
     ToolbarItem.SAVE -> R.string.toolbar_save
     ToolbarItem.CLOSE -> R.string.toolbar_close
     ToolbarItem.PREVIEW -> R.string.toolbar_preview
+    ToolbarItem.SELECT_MODE -> R.string.toolbar_select_mode
+    ToolbarItem.ACCESSORY -> R.string.toolbar_keys
 }
 
 fun ToolbarItem.icon(): ImageVector = when (this) {
@@ -40,4 +44,6 @@ fun ToolbarItem.icon(): ImageVector = when (this) {
     ToolbarItem.SAVE -> Icons.Filled.Save
     ToolbarItem.CLOSE -> Icons.Filled.Close
     ToolbarItem.PREVIEW -> Icons.Filled.Visibility
+    ToolbarItem.SELECT_MODE -> Icons.Filled.HighlightAlt
+    ToolbarItem.ACCESSORY -> Icons.Filled.Tag
 }

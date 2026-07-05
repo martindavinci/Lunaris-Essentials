@@ -159,4 +159,6 @@
     <string name="preview_nothing">Brak treści do podglądu</string>
     <string name="menu_preview">Podgląd</string>
     <string name="toolbar_preview">Podgląd</string>
+    <string name="toolbar_select_mode">Tryb zaznaczania</string>
+    <string name="toolbar_keys">Znaki specjalne</string>
 </resources>

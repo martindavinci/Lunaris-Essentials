@@ -159,4 +159,6 @@
     <string name="preview_nothing">プレビューする内容がありません</string>
     <string name="menu_preview">プレビュー</string>
     <string name="toolbar_preview">プレビュー</string>
+    <string name="toolbar_select_mode">選択モード</string>
+    <string name="toolbar_keys">特殊文字</string>
 </resources>

@@ -44,6 +44,7 @@ internal fun EditorScaffold(
     snackbar: SnackbarHostState,
     editorController: CodeEditorController,
     showAccessory: Boolean,
+    selectMode: Boolean,
     onNavigate: (String) -> Unit,
     folderDrawerEnabled: Boolean,
     onMenuAction: (EditorMenuAction) -> Unit,
@@ -158,6 +159,10 @@ internal fun EditorScaffold(
                             ToolbarItem.SAVE -> state.dirty
                             else -> true
                         }
+                    },
+                    toggled = { item ->
+                        (item == ToolbarItem.ACCESSORY && showAccessory) ||
+                            (item == ToolbarItem.SELECT_MODE && selectMode)
                     },
                 )
             },

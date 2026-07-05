@@ -159,4 +159,6 @@
     <string name="preview_nothing">Niets om weer te geven</string>
     <string name="menu_preview">Voorbeeld</string>
     <string name="toolbar_preview">Voorbeeld</string>
+    <string name="toolbar_select_mode">Selectiemodus</string>
+    <string name="toolbar_keys">Speciale tekens</string>
 </resources>

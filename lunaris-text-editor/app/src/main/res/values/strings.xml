@@ -168,4 +168,6 @@
     <string name="preview_nothing">Nothing to preview</string>
     <string name="menu_preview">Preview</string>
     <string name="toolbar_preview">Preview</string>
+    <string name="toolbar_select_mode">Select mode</string>
+    <string name="toolbar_keys">Special characters</string>
 </resources>

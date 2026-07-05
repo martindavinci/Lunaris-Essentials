@@ -60,6 +60,17 @@ class CodeEditorController {
     fun selectAll() { editor?.selectAll() }
     fun cut() { editor?.cutText() }
     fun copy() { editor?.copyText() }
+
+    // Select mode: anchor the selection at the caret, then extend from that anchor as the
+    // cursor arrows are tapped.
+    private var selAnchor = 0
+    private var selActive = 0
+    fun beginSelect() { selAnchor = cursorOffset(); selActive = selAnchor }
+    fun extendSelection(delta: Int) {
+        val e = editor ?: return
+        selActive = (selActive + delta).coerceIn(0, e.text.length)
+        selectRange(minOf(selAnchor, selActive), maxOf(selAnchor, selActive))
+    }
     fun paste() { editor?.pasteText() }
     fun setWordWrap(enabled: Boolean) { editor?.setWordwrap(enabled) }
     fun setReadOnly(readOnly: Boolean) { editor?.setEditable(!readOnly) }
