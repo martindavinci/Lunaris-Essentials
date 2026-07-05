@@ -88,7 +88,6 @@ internal fun EditorScaffold(
                 DrawerShell(
                     section = section,
                     onSection = { section = it },
-                    onEditor = { scope.launch { drawerState.close() } },
                     onSettings = {
                         scope.launch { drawerState.close() }
                         onNavigate(tools.lunaris.texteditor.feature.Routes.SETTINGS)

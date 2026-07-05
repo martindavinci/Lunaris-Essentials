@@ -12,7 +12,7 @@ import tools.lunaris.texteditor.ui.theme.LunarisEditorTheme
 @Preview(showBackground = true)
 @Composable
 private fun NavRailPreview() {
-    LunarisEditorTheme { NavRail(DrawerSection.RECENTS, {}, {}, {}) }
+    LunarisEditorTheme { NavRail(DrawerSection.RECENTS, {}, {}) }
 }
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 640)
@@ -22,7 +22,6 @@ private fun DrawerShellPreview() {
         DrawerShell(
             section = DrawerSection.RECENTS,
             onSection = {},
-            onEditor = {},
             onSettings = {},
             recentsSlot = { Text("Recents", modifier = Modifier.fillMaxSize()) },
             foldersSlot = { Text("Folders", modifier = Modifier.fillMaxSize()) },

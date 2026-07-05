@@ -173,7 +173,6 @@
     <string name="drawer_recents">Recenti</string>
     <string name="drawer_folders">Cartelle</string>
     <string name="drawer_extensions">Estensioni</string>
-    <string name="drawer_editor">Editor</string>
     <string name="name_hint">Nome</string>
     <string name="time_now">ora</string>
     <string name="time_minutes">%d min fa</string>

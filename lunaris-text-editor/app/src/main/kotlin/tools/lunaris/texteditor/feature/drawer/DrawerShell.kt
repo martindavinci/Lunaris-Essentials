@@ -10,14 +10,13 @@ import androidx.compose.ui.Modifier
 fun DrawerShell(
     section: DrawerSection,
     onSection: (DrawerSection) -> Unit,
-    onEditor: () -> Unit,
     onSettings: () -> Unit,
     recentsSlot: @Composable () -> Unit,
     foldersSlot: @Composable () -> Unit,
     extensionsSlot: @Composable () -> Unit,
 ) {
     Row(Modifier.fillMaxSize()) {
-        NavRail(section, onSection, onEditor, onSettings)
+        NavRail(section, onSection, onSettings)
         Surface(color = MaterialTheme.colorScheme.surface, modifier = Modifier.weight(1f).fillMaxHeight()) {
             when (section) {
                 DrawerSection.RECENTS -> recentsSlot()

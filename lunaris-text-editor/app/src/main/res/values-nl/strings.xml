@@ -152,7 +152,6 @@
     <string name="drawer_recents">Recent</string>
     <string name="drawer_folders">Mappen</string>
     <string name="drawer_extensions">Extensies</string>
-    <string name="drawer_editor">Editor</string>
     <string name="name_hint">Naam</string>
     <string name="time_now">nu</string>
     <string name="time_minutes">%d min geleden</string>

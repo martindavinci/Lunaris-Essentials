@@ -152,7 +152,6 @@
     <string name="drawer_recents">Recentes</string>
     <string name="drawer_folders">Pastas</string>
     <string name="drawer_extensions">Extensões</string>
-    <string name="drawer_editor">Editor</string>
     <string name="name_hint">Nome</string>
     <string name="time_now">agora</string>
     <string name="time_minutes">há %d min</string>

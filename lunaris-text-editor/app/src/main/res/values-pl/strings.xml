@@ -152,7 +152,6 @@
     <string name="drawer_recents">Ostatnie</string>
     <string name="drawer_folders">Foldery</string>
     <string name="drawer_extensions">Rozszerzenia</string>
-    <string name="drawer_editor">Edytor</string>
     <string name="name_hint">Nazwa</string>
     <string name="time_now">teraz</string>
     <string name="time_minutes">%d min temu</string>

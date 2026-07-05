@@ -173,7 +173,6 @@
     <string name="drawer_recents">Recents</string>
     <string name="drawer_folders">Folders</string>
     <string name="drawer_extensions">Extensions</string>
-    <string name="drawer_editor">Editor</string>
     <string name="name_hint">Name</string>
     <string name="time_now">now</string>
     <string name="time_minutes">%d min ago</string>

@@ -152,7 +152,6 @@
     <string name="drawer_recents">Récents</string>
     <string name="drawer_folders">Dossiers</string>
     <string name="drawer_extensions">Extensions</string>
-    <string name="drawer_editor">Éditeur</string>
     <string name="name_hint">Nom</string>
     <string name="time_now">à l\'instant</string>
     <string name="time_minutes">il y a %d min</string>
