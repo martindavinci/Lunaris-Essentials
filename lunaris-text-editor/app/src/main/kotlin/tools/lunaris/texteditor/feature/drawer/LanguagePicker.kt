@@ -36,7 +36,8 @@ fun LanguagePicker(ext: String, currentLangId: String?, languages: List<Language
                     if (lang.id == currentLangId) Icon(Icons.Filled.Check, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
                     else Spacer(Modifier.width(24.dp))
                     val faded = lang.scopeName == null // plaintext = no highlighting → greyed
-                    Text(lang.display, modifier = Modifier.padding(start = 12.dp),
+                    val label = if (lang.scopeName == null) stringResource(R.string.assoc_plaintext) else lang.display
+                    Text(label, modifier = Modifier.padding(start = 12.dp),
                         color = if (faded) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface)
                 }
             }

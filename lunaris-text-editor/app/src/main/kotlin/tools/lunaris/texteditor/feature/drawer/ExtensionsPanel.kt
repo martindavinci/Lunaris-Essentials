@@ -52,7 +52,8 @@ fun ExtensionsPanel(viewModel: FileAssociationViewModel = hiltViewModel()) {
                         Text(".${row.ext}", style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp))
                     }
                     val faded = viewModel.pickerLanguages.firstOrNull { it.id == row.langId }?.scopeName == null
-                    Text(row.display, modifier = Modifier.weight(1f).padding(start = 12.dp),
+                    val label = if (faded) stringResource(R.string.assoc_plaintext) else row.display
+                    Text(label, modifier = Modifier.weight(1f).padding(start = 12.dp),
                         color = if (faded) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface)
                     Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null)
                 }
