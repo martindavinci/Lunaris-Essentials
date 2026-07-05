@@ -543,12 +543,10 @@ internal fun EditorBottomBar(
             var i = 0
             while (i < items.size) {
                 val item = items[i]
-                // Render an adjacent left+right cursor pair as one connected pill.
-                if (item == ToolbarItem.CURSOR_LEFT && items.getOrNull(i + 1) == ToolbarItem.CURSOR_RIGHT) {
-                    ArrowPill(
-                        onLeft = { onItem(ToolbarItem.CURSOR_LEFT) },
-                        onRight = { onItem(ToolbarItem.CURSOR_RIGHT) },
-                    )
+                val next = items.getOrNull(i + 1)
+                // Render a known adjacent pair (cursor left/right, undo/redo) as one connected pill.
+                if (next != null && (item to next) in TOOLBAR_PAIRS) {
+                    PairPill(item, next, onItem, isEnabled(item), isEnabled(next))
                     i += 2
                 } else {
                     ToolbarIconButton(item, onItem, isEnabled(item))
@@ -575,25 +573,38 @@ private fun ToolbarIconButton(item: ToolbarItem, onItem: (ToolbarItem) -> Unit, 
     }
 }
 
+/** Adjacent toolbar items (in this order) rendered as one connected pill. */
+private val TOOLBAR_PAIRS = setOf(
+    ToolbarItem.CURSOR_LEFT to ToolbarItem.CURSOR_RIGHT,
+    ToolbarItem.UNDO to ToolbarItem.REDO,
+)
+
 @Composable
-private fun ArrowPill(onLeft: () -> Unit, onRight: () -> Unit) {
+private fun PairPill(
+    left: ToolbarItem,
+    right: ToolbarItem,
+    onItem: (ToolbarItem) -> Unit,
+    leftEnabled: Boolean,
+    rightEnabled: Boolean,
+) {
     Surface(shape = RoundedCornerShape(percent = 50), color = MaterialTheme.colorScheme.surfaceVariant) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = onLeft, modifier = Modifier.size(40.dp)) {
-                Icon(
-                    ToolbarItem.CURSOR_LEFT.icon(),
-                    contentDescription = stringResource(ToolbarItem.CURSOR_LEFT.labelRes()),
-                    modifier = Modifier.size(24.dp),
-                )
-            }
-            IconButton(onClick = onRight, modifier = Modifier.size(40.dp)) {
-                Icon(
-                    ToolbarItem.CURSOR_RIGHT.icon(),
-                    contentDescription = stringResource(ToolbarItem.CURSOR_RIGHT.labelRes()),
-                    modifier = Modifier.size(24.dp),
-                )
-            }
+            PillButton(left, onItem, leftEnabled)
+            PillButton(right, onItem, rightEnabled)
         }
+    }
+}
+
+@Composable
+private fun PillButton(item: ToolbarItem, onItem: (ToolbarItem) -> Unit, enabled: Boolean) {
+    IconButton(onClick = { onItem(item) }, enabled = enabled, modifier = Modifier.size(40.dp)) {
+        // Content color read inside the button so a disabled item (e.g. redo with no history) dims.
+        Icon(
+            item.icon(),
+            contentDescription = stringResource(item.labelRes()),
+            tint = LocalContentColor.current,
+            modifier = Modifier.size(24.dp),
+        )
     }
 }
 
