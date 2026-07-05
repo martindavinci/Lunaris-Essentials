@@ -31,6 +31,15 @@ class ToolbarConfigTest {
     @Test fun fromJson_blank_isDefault() {
         assertThat(ToolbarConfig.fromJson("")).isEqualTo(ToolbarConfig.DEFAULT)
     }
+    @Test fun fromJson_migratesLegacyRunNameToPreview() {
+        // Pre-rename configs stored "RUN"; it must map onto PREVIEW (not be dropped),
+        // preserving whether the user had it disabled.
+        val legacy = """{"items":["CURSOR_LEFT","RUN","UNDO"],"disabled":["RUN"]}"""
+        val c = ToolbarConfig.fromJson(legacy)
+        assertThat(c.items).contains(ToolbarItem.PREVIEW)
+        assertThat(c.enabled).doesNotContain(ToolbarItem.PREVIEW)
+    }
+
     @Test fun fromJson_appendsNewlyAddedItems() {
         // a stored config missing some items still ends up containing every ToolbarItem
         val partial = """{"items":["OPEN","SAVE"],"disabled":[]}"""

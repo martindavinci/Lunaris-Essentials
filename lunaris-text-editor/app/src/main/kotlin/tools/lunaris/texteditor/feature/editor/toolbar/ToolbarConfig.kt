@@ -41,14 +41,20 @@ data class ToolbarConfig(val items: List<ToolbarItem>, val disabled: Set<Toolbar
             disabled = ToolbarItem.entries.toSet() - DEFAULT_ENABLED,
         )
 
+        // Renamed enum members whose old name may still sit in a persisted config.
+        private val LEGACY_NAMES = mapOf("RUN" to "PREVIEW")
+
+        private fun parseItem(name: String): ToolbarItem? =
+            runCatching { ToolbarItem.valueOf(LEGACY_NAMES[name] ?: name) }.getOrNull()
+
         fun fromJson(json: String): ToolbarConfig {
             if (json.isBlank()) return DEFAULT
             val o = JSONObject(json)
             val items = o.getJSONArray("items").let { a ->
-                (0 until a.length()).mapNotNull { runCatching { ToolbarItem.valueOf(a.getString(it)) }.getOrNull() }
+                (0 until a.length()).mapNotNull { parseItem(a.getString(it)) }
             }.ifEmpty { return DEFAULT }
             val disabled = o.getJSONArray("disabled").let { a ->
-                (0 until a.length()).mapNotNull { runCatching { ToolbarItem.valueOf(a.getString(it)) }.getOrNull() }
+                (0 until a.length()).mapNotNull { parseItem(a.getString(it)) }
             }.toSet()
             // Append any newly-added enum members so the toolbar never silently drops new actions.
             val complete = items + ToolbarItem.entries.filter { it !in items }
