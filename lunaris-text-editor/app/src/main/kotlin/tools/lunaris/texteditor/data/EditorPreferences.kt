@@ -34,8 +34,9 @@ class EditorPreferences @Inject constructor(
         context.dataStore.data.map { RecentFiles.fromJson(it[RECENTS_KEY] ?: "") }
 
     override suspend fun touch(entry: RecentEntry) {
+        val stamped = if (entry.timestamp != 0L) entry else entry.copy(timestamp = System.currentTimeMillis())
         context.dataStore.edit { prefs ->
-            prefs[RECENTS_KEY] = RecentFiles.toJson(RecentFiles.touch(RecentFiles.fromJson(prefs[RECENTS_KEY] ?: ""), entry))
+            prefs[RECENTS_KEY] = RecentFiles.toJson(RecentFiles.touch(RecentFiles.fromJson(prefs[RECENTS_KEY] ?: ""), stamped))
         }
     }
 

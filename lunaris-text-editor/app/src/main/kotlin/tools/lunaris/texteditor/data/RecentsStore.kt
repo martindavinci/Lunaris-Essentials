@@ -2,7 +2,7 @@ package tools.lunaris.texteditor.data
 
 import kotlinx.coroutines.flow.Flow
 
-data class RecentEntry(val uri: String, val name: String)
+data class RecentEntry(val uri: String, val name: String, val timestamp: Long = 0L)
 
 interface RecentsStore {
     fun recents(): Flow<List<RecentEntry>>

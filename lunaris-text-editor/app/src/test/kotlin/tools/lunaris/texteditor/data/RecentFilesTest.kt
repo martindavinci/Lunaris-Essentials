@@ -43,4 +43,14 @@ class RecentFilesTest {
     fun fromJson_blank_isEmpty() {
         assertThat(RecentFiles.fromJson("")).isEmpty()
     }
+
+    @Test fun toJson_fromJson_roundTripsTimestamp() {
+        val list = listOf(RecentEntry("u1", "a.md", 1234L), RecentEntry("u2", "b.js", 5678L))
+        assertThat(RecentFiles.fromJson(RecentFiles.toJson(list))).isEqualTo(list)
+    }
+
+    @Test fun fromJson_legacyWithoutTimestamp_defaultsToZero() {
+        val legacy = """[{"uri":"u1","name":"a.md"}]"""
+        assertThat(RecentFiles.fromJson(legacy)).containsExactly(RecentEntry("u1", "a.md", 0L))
+    }
 }

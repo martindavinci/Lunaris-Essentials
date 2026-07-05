@@ -14,7 +14,7 @@ object RecentFiles {
 
     fun toJson(list: List<RecentEntry>): String {
         val arr = JSONArray()
-        list.forEach { arr.put(JSONObject().put("uri", it.uri).put("name", it.name)) }
+        list.forEach { arr.put(JSONObject().put("uri", it.uri).put("name", it.name).put("timestamp", it.timestamp)) }
         return arr.toString()
     }
 
@@ -23,7 +23,7 @@ object RecentFiles {
         val arr = JSONArray(json)
         return (0 until arr.length()).map { i ->
             val o = arr.getJSONObject(i)
-            RecentEntry(o.getString("uri"), o.getString("name"))
+            RecentEntry(o.getString("uri"), o.getString("name"), o.optLong("timestamp", 0L))
         }
     }
 }
