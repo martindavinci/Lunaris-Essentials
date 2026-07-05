@@ -20,6 +20,7 @@ enum class EditorMenuAction(@StringRes val labelRes: Int) {
     REDO(R.string.menu_redo),
     SELECT_ALL(R.string.menu_select_all),
     CUT(R.string.menu_cut),
+    COPY(R.string.menu_copy),
     PASTE(R.string.menu_paste),
     WORD_WRAP(R.string.menu_word_wrap),
     READ_ONLY(R.string.menu_read_only),

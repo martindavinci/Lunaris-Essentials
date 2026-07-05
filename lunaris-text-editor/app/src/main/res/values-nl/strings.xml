@@ -36,6 +36,7 @@
     <string name="menu_redo">Opnieuw uitvoeren</string>
     <string name="menu_select_all">Alles selecteren</string>
     <string name="menu_cut">Knippen</string>
+    <string name="menu_copy">Kopiëren</string>
     <string name="menu_paste">Plakken</string>
     <string name="menu_open">Openen</string>
     <string name="menu_open_folder">Map openen</string>

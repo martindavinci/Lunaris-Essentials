@@ -59,6 +59,7 @@ class CodeEditorController {
     fun redo() { editor?.redo() }
     fun selectAll() { editor?.selectAll() }
     fun cut() { editor?.cutText() }
+    fun copy() { editor?.copyText() }
     fun paste() { editor?.pasteText() }
     fun setWordWrap(enabled: Boolean) { editor?.setWordwrap(enabled) }
     fun setReadOnly(readOnly: Boolean) { editor?.setEditable(!readOnly) }

@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ColorLens
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.ContentCut
 import androidx.compose.material.icons.filled.ContentPaste
 import androidx.compose.material.icons.filled.Edit
@@ -43,6 +44,7 @@ fun EditorMenuAction.icon(): ImageVector = when (this) {
     EditorMenuAction.REDO -> Icons.AutoMirrored.Filled.Redo
     EditorMenuAction.SELECT_ALL -> Icons.Filled.SelectAll
     EditorMenuAction.CUT -> Icons.Filled.ContentCut
+    EditorMenuAction.COPY -> Icons.Filled.ContentCopy
     EditorMenuAction.PASTE -> Icons.Filled.ContentPaste
     EditorMenuAction.INSERT_COLOR -> Icons.Filled.ColorLens
     EditorMenuAction.INSERT_TIMESTAMP -> Icons.Filled.Schedule

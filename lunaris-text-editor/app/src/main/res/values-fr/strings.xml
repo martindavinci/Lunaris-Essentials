@@ -36,6 +36,7 @@
     <string name="menu_redo">Rétablir</string>
     <string name="menu_select_all">Tout sélectionner</string>
     <string name="menu_cut">Couper</string>
+    <string name="menu_copy">Copier</string>
     <string name="menu_paste">Coller</string>
     <string name="menu_open">Ouvrir</string>
     <string name="menu_open_folder">Ouvrir un dossier</string>

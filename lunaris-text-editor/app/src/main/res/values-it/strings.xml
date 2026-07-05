@@ -37,6 +37,7 @@
     <string name="menu_redo">Ripeti</string>
     <string name="menu_select_all">Seleziona tutto</string>
     <string name="menu_cut">Taglia</string>
+    <string name="menu_copy">Copia</string>
     <string name="menu_paste">Incolla</string>
     <string name="menu_open">Apri</string>
     <string name="menu_open_folder">Apri cartella</string>

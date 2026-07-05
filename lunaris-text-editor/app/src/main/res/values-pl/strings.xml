@@ -36,6 +36,7 @@
     <string name="menu_redo">Ponów</string>
     <string name="menu_select_all">Zaznacz wszystko</string>
     <string name="menu_cut">Wytnij</string>
+    <string name="menu_copy">Kopiuj</string>
     <string name="menu_paste">Wklej</string>
     <string name="menu_open">Otwórz</string>
     <string name="menu_open_folder">Otwórz folder</string>

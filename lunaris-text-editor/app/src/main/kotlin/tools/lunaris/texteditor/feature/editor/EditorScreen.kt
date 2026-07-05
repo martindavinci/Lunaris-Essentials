@@ -280,6 +280,7 @@ fun EditorScreen(
             EditorMenuAction.REDO -> editorController.redo()
             EditorMenuAction.SELECT_ALL -> editorController.selectAll()
             EditorMenuAction.CUT -> editorController.cut()
+            EditorMenuAction.COPY -> editorController.copy()
             EditorMenuAction.PASTE -> editorController.paste()
             EditorMenuAction.WORD_WRAP -> viewModel.toggleWordWrap()
             EditorMenuAction.READ_ONLY -> viewModel.toggleReadOnly()
