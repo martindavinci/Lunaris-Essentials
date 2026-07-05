@@ -178,4 +178,10 @@
     <string name="drawer_extensions">Estensioni</string>
     <string name="drawer_editor">Editor</string>
     <string name="name_hint">Nome</string>
+    <string name="time_now">ora</string>
+    <string name="time_minutes">%d min fa</string>
+    <string name="time_hours">%d h fa</string>
+    <string name="time_yesterday">ieri</string>
+    <string name="time_days">%d giorni</string>
+    <string name="drawer_new_file">Nuovo file</string>
 </resources>
