@@ -50,6 +50,8 @@
     <string name="menu_group_edit">MODIFICA</string>
     <string name="menu_group_tools">STRUMENTI</string>
     <string name="menu_group_view">VISTA</string>
+    <string name="sheet_search_hint">Cerca un\'azione…</string>
+    <string name="sheet_no_match">Nessuna azione</string>
     <string name="menu_word_wrap">A capo automatico</string>
     <string name="menu_read_only">Sola lettura</string>
     <string name="search_query_hint">Trova</string>

@@ -49,6 +49,8 @@
     <string name="menu_group_edit">EDIT</string>
     <string name="menu_group_tools">TOOLS</string>
     <string name="menu_group_view">VIEW</string>
+    <string name="sheet_search_hint">Search an action…</string>
+    <string name="sheet_no_match">No actions</string>
     <string name="menu_word_wrap">Word wrap</string>
     <string name="menu_read_only">Read only</string>
     <string name="search_query_hint">Find</string>
