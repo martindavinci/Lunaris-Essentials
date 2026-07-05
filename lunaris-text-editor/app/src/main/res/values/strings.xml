@@ -45,6 +45,10 @@
     <string name="menu_input_method">Input method</string>
     <string name="menu_file">File</string>
     <string name="menu_edit">Edit</string>
+    <string name="menu_group_file">FILE</string>
+    <string name="menu_group_edit">EDIT</string>
+    <string name="menu_group_tools">TOOLS</string>
+    <string name="menu_group_view">VIEW</string>
     <string name="menu_word_wrap">Word wrap</string>
     <string name="menu_read_only">Read only</string>
     <string name="search_query_hint">Find</string>

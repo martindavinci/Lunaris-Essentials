@@ -46,6 +46,10 @@
     <string name="menu_input_method">Metodo di inserimento</string>
     <string name="menu_file">File</string>
     <string name="menu_edit">Modifica</string>
+    <string name="menu_group_file">FILE</string>
+    <string name="menu_group_edit">MODIFICA</string>
+    <string name="menu_group_tools">STRUMENTI</string>
+    <string name="menu_group_view">VISTA</string>
     <string name="menu_word_wrap">A capo automatico</string>
     <string name="menu_read_only">Sola lettura</string>
     <string name="search_query_hint">Trova</string>
