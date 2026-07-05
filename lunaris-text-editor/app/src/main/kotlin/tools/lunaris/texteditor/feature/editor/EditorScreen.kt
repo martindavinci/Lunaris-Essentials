@@ -238,6 +238,10 @@ fun EditorScreen(
     LaunchedEffect(state.savedSignal) {
         if (state.savedSignal > 0) snackbar.showSnackbar(savedMsg)
     }
+    // In-place save couldn't write back (e.g. a read-only shared file) → fall back to Save As.
+    LaunchedEffect(state.saveAsRequest) {
+        if (state.saveAsRequest > 0) createLauncher.launch(suggestedSaveName(state, viewModel.languageCatalog))
+    }
     val openFailedMsg = stringResource(R.string.error_open_failed)
     val saveFailedMsg = stringResource(R.string.error_save_failed)
     val tooLargeMsg = stringResource(

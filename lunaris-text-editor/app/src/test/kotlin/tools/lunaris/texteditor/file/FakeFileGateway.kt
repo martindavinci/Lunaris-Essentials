@@ -19,6 +19,8 @@ class FakeFileGateway : FileGateway {
     }
 
     override suspend fun writeBytes(ref: FileRef, bytes: ByteArray) {
+        if (ref.uri in denied) throw SecurityException("no write grant for ${ref.uri}")
+        if (ref.uri in gone) throw java.io.FileNotFoundException("missing ${ref.uri}")
         store[ref.uri] = bytes
     }
 

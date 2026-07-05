@@ -29,6 +29,8 @@ data class EditorUiState(
     /** A uri whose access has expired — the UI offers to re-pick it to restore the grant. */
     val reauthorizeUri: String? = null,
     val savedSignal: Int = 0,
+    /** Bumped when an in-place save can't write back (read-only source) so the UI offers Save As. */
+    val saveAsRequest: Int = 0,
     val wordWrap: Boolean = true,
     val readOnly: Boolean = false,
     val toolbar: ToolbarConfig = ToolbarConfig.DEFAULT,

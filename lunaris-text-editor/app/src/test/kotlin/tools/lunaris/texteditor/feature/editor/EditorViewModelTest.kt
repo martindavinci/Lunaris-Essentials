@@ -69,6 +69,22 @@ class EditorViewModelTest {
     )
 
     @Test
+    fun save_whenTargetNotWritable_requestsSaveAsInsteadOfError() = runTest {
+        val vm = newVm()
+        val ref = FileRef("content://shared/read-only.txt")
+        gateway.store[ref.uri] = "hello".toByteArray()
+        vm.openFile(ref)
+        advanceUntilIdle()
+        // Source grants read but not write → saving should request Save As, not raise a save error.
+        gateway.denied.add(ref.uri)
+        val before = vm.state.value.saveAsRequest
+        vm.save(ref)
+        advanceUntilIdle()
+        assertThat(vm.state.value.saveAsRequest).isEqualTo(before + 1)
+        assertThat(vm.state.value.errorKind).isNull()
+    }
+
+    @Test
     fun startsWithOneUntitledTab() {
         val vm = newVm()
         assertThat(vm.state.value.tabs).hasSize(1)

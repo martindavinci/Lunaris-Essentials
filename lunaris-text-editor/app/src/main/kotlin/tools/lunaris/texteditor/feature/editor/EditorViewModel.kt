@@ -200,11 +200,18 @@ class EditorViewModel @Inject constructor(
                 }
                 publish()
                 _state.update { it.copy(savedSignal = it.savedSignal + 1, error = null, errorKind = null) }
+            } catch (t: SecurityException) {
+                requestSaveAs()          // no write grant (e.g. a shared read-only file)
+            } catch (t: java.io.FileNotFoundException) {
+                requestSaveAs()          // target can't be opened for writing
             } catch (t: Throwable) {
                 _state.update { it.copy(error = t.message, errorKind = EditorErrorKind.SAVE) }
             }
         }
     }
+
+    private fun requestSaveAs() =
+        _state.update { it.copy(saveAsRequest = it.saveAsRequest + 1, error = null, errorKind = null) }
 
     fun autosave() {
         val targets = Autosaver.tabsToAutosave(docs.value)
