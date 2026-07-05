@@ -38,7 +38,7 @@
     <string name="menu_cut">Ausschneiden</string>
     <string name="menu_paste">Einfügen</string>
     <string name="menu_open">Öffnen</string>
-    <string name="menu_open_saf">Ordner öffnen</string>
+    <string name="menu_open_folder">Ordner öffnen</string>
     <string name="menu_save">Speichern</string>
     <string name="menu_save_as">Speichern unter</string>
     <string name="menu_reload">Neu laden</string>

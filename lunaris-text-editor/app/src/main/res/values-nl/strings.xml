@@ -38,7 +38,7 @@
     <string name="menu_cut">Knippen</string>
     <string name="menu_paste">Plakken</string>
     <string name="menu_open">Openen</string>
-    <string name="menu_open_saf">Map openen</string>
+    <string name="menu_open_folder">Map openen</string>
     <string name="menu_save">Opslaan</string>
     <string name="menu_save_as">Opslaan als</string>
     <string name="menu_reload">Opnieuw laden</string>

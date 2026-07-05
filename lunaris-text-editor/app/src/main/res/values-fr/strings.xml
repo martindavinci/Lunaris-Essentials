@@ -38,7 +38,7 @@
     <string name="menu_cut">Couper</string>
     <string name="menu_paste">Coller</string>
     <string name="menu_open">Ouvrir</string>
-    <string name="menu_open_saf">Ouvrir un dossier</string>
+    <string name="menu_open_folder">Ouvrir un dossier</string>
     <string name="menu_save">Enregistrer</string>
     <string name="menu_save_as">Enregistrer sous</string>
     <string name="menu_reload">Recharger</string>
