@@ -3,9 +3,9 @@ package tools.lunaris.texteditor.feature.editor.action
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import tools.lunaris.texteditor.feature.editor.EditorMenuAction
 import tools.lunaris.texteditor.feature.editor.icon
 
-private val TileWidth = 76.dp
 private val TileIconSize = 24.dp
 private val DisabledAlpha = 0.38f
 
@@ -39,7 +38,7 @@ fun ActionTile(
     val content = if (enabled) tint else MaterialTheme.colorScheme.onSurface.copy(alpha = DisabledAlpha)
     Column(
         modifier = Modifier
-            .width(TileWidth)
+            .fillMaxWidth()
             .clickable(enabled = enabled, onClick = onClick)
             .padding(vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,

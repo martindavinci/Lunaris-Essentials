@@ -1,8 +1,9 @@
 package tools.lunaris.texteditor.feature.editor.action
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -29,6 +30,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import tools.lunaris.texteditor.R
 import tools.lunaris.texteditor.feature.editor.EditorMenuAction
+
+/** Tiles per row — a fixed grid so each row fills the sheet width evenly (matches the mockup). */
+private const val SHEET_COLUMNS = 4
 
 /**
  * The unified editor action menu. Replaces the old File/Edit/overflow dropdowns with one
@@ -86,18 +90,21 @@ fun EditorActionSheet(
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(start = 20.dp, top = 12.dp, bottom = 4.dp),
                 )
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
-                    horizontalArrangement = Arrangement.Start,
-                ) {
-                    section.items.forEach { action ->
-                        ActionTile(
-                            action = action,
-                            enabled = action !in disabled,
-                            active = action in checked,
-                            tint = tintFor(action),
-                            onClick = { onDismiss(); onAction(action) },
-                        )
+                section.items.chunked(SHEET_COLUMNS).forEach { rowItems ->
+                    Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
+                        rowItems.forEach { action ->
+                            Box(Modifier.weight(1f)) {
+                                ActionTile(
+                                    action = action,
+                                    enabled = action !in disabled,
+                                    active = action in checked,
+                                    tint = tintFor(action),
+                                    onClick = { onDismiss(); onAction(action) },
+                                )
+                            }
+                        }
+                        // Keep a partially-filled last row left-aligned instead of stretched.
+                        repeat(SHEET_COLUMNS - rowItems.size) { Spacer(Modifier.weight(1f)) }
                     }
                 }
             }
