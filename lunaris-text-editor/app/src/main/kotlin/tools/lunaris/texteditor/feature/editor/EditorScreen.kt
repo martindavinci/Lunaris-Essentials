@@ -71,7 +71,6 @@ import tools.lunaris.texteditor.edit.SearchEngine
 import tools.lunaris.texteditor.edit.SearchOptions
 import tools.lunaris.texteditor.edit.TimestampFormatter
 import tools.lunaris.texteditor.editor.CodeEditorController
-import tools.lunaris.texteditor.feature.browser.FolderBrowserViewModel
 import tools.lunaris.texteditor.feature.editor.action.EditorActionSheet
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfig
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarItem
@@ -212,13 +211,14 @@ fun EditorScreen(
     LaunchedEffect(state.activeTabId) { searchSession = null }
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
-    val folderVm: FolderBrowserViewModel = hiltViewModel()
+    val folderTreeVm: tools.lunaris.texteditor.feature.drawer.FolderTreeViewModel = hiltViewModel()
     val treeLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
-        if (uri != null) folderVm.onTreePicked(uri)
+        if (uri != null) folderTreeVm.pickTree(uri)
     }
     LaunchedEffect(drawerState.currentValue) {
-        if (drawerState.currentValue == DrawerValue.Open) folderVm.start()
+        if (drawerState.currentValue == DrawerValue.Open) folderTreeVm.start()
     }
+    val recents by viewModel.recents().collectAsStateWithLifecycle(initialValue = emptyList())
 
     LifecycleEventEffect(androidx.lifecycle.Lifecycle.Event.ON_STOP) {
         viewModel.snapshotSession()
@@ -332,7 +332,8 @@ fun EditorScreen(
     EditorScaffold(
         state = state,
         viewModel = viewModel,
-        folderVm = folderVm,
+        folderTreeVm = folderTreeVm,
+        recents = recents,
         drawerState = drawerState,
         snackbar = snackbar,
         editorController = editorController,

@@ -5,33 +5,34 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.History
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Storage
 import androidx.compose.material3.DrawerState
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Snackbar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import tools.lunaris.texteditor.R
+import tools.lunaris.texteditor.data.RecentEntry
 import tools.lunaris.texteditor.editor.CodeEditorController
 import tools.lunaris.texteditor.editor.CodeEditorView
-import tools.lunaris.texteditor.feature.browser.FolderBrowserViewModel
-import tools.lunaris.texteditor.feature.browser.FolderDrawer
+import tools.lunaris.texteditor.feature.drawer.DrawerSection
+import tools.lunaris.texteditor.feature.drawer.DrawerShell
+import tools.lunaris.texteditor.feature.drawer.ExtensionsPanel
+import tools.lunaris.texteditor.feature.drawer.FolderTreeViewModel
+import tools.lunaris.texteditor.feature.drawer.FoldersPanel
+import tools.lunaris.texteditor.feature.drawer.RecentsPanel
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarItem
 import tools.lunaris.texteditor.file.FileRef
 
@@ -39,7 +40,8 @@ import tools.lunaris.texteditor.file.FileRef
 internal fun EditorScaffold(
     state: EditorUiState,
     viewModel: EditorViewModel,
-    folderVm: FolderBrowserViewModel,
+    folderTreeVm: FolderTreeViewModel,
+    recents: List<RecentEntry>,
     drawerState: DrawerState,
     snackbar: SnackbarHostState,
     editorController: CodeEditorController,
@@ -81,38 +83,39 @@ internal fun EditorScaffold(
         gesturesEnabled = drawerState.isOpen,
         drawerContent = {
             ModalDrawerSheet {
-                NavigationDrawerItem(
-                    label = { Text(stringResource(EditorMenuAction.RECENT_FILES.labelRes)) },
-                    icon = { Icon(Icons.Filled.History, contentDescription = null) },
-                    selected = false,
-                    onClick = { scope.launch { drawerState.close() }; onMenuAction(EditorMenuAction.RECENT_FILES) },
-                )
-                NavigationDrawerItem(
-                    label = { Text(stringResource(EditorMenuAction.FILE_ASSOCIATIONS.labelRes)) },
-                    icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = null) },
-                    selected = false,
-                    onClick = { scope.launch { drawerState.close() }; onMenuAction(EditorMenuAction.FILE_ASSOCIATIONS) },
-                )
-                NavigationDrawerItem(
-                    label = { Text(stringResource(EditorMenuAction.STORAGE_MANAGER.labelRes)) },
-                    icon = { Icon(Icons.Filled.Storage, contentDescription = null) },
-                    selected = false,
-                    onClick = { scope.launch { drawerState.close() }; onMenuAction(EditorMenuAction.STORAGE_MANAGER) },
-                )
-                NavigationDrawerItem(
-                    label = { Text(stringResource(EditorMenuAction.SETTINGS.labelRes)) },
-                    icon = { Icon(Icons.Filled.Settings, contentDescription = null) },
-                    selected = false,
-                    onClick = { scope.launch { drawerState.close() }; onMenuAction(EditorMenuAction.SETTINGS) },
-                )
-                HorizontalDivider()
-                FolderDrawer(
-                    onOpenFile = { ref ->
-                        viewModel.openFile(FileRef(ref))
+                var section by rememberSaveable { mutableStateOf(DrawerSection.RECENTS) }
+                val treeState by folderTreeVm.state.collectAsStateWithLifecycle()
+                DrawerShell(
+                    section = section,
+                    onSection = { section = it },
+                    onEditor = { scope.launch { drawerState.close() } },
+                    onSettings = {
                         scope.launch { drawerState.close() }
+                        onNavigate(tools.lunaris.texteditor.feature.Routes.SETTINGS)
                     },
-                    onPickFolder = onPickFolder,
-                    viewModel = folderVm,
+                    recentsSlot = {
+                        RecentsPanel(
+                            recents = recents,
+                            currentUri = state.fileRef?.uri,
+                            nowMillis = System.currentTimeMillis(),
+                            onOpen = { uri -> viewModel.openFile(FileRef(uri)); scope.launch { drawerState.close() } },
+                            onNewTab = { viewModel.newTab(); scope.launch { drawerState.close() } },
+                        )
+                    },
+                    foldersSlot = {
+                        FoldersPanel(
+                            state = treeState,
+                            onToggle = folderTreeVm::toggle,
+                            onOpenFile = { ref -> viewModel.openFile(FileRef(ref)); scope.launch { drawerState.close() } },
+                            onPickFolder = onPickFolder,
+                            onNewTab = { viewModel.newTab(); scope.launch { drawerState.close() } },
+                            onCreateFile = folderTreeVm::createFile,
+                            onCreateFolder = folderTreeVm::createFolder,
+                            onRename = folderTreeVm::rename,
+                            onCloseRoot = folderTreeVm::closeRoot,
+                        )
+                    },
+                    extensionsSlot = { ExtensionsPanel() },
                 )
             }
         },
