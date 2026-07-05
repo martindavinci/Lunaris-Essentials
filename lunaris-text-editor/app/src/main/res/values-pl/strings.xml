@@ -19,6 +19,9 @@
     <string name="close_confirm_title">Zamknąć kartę?</string>
     <string name="close_confirm_message">Ta karta zawiera niezapisane zmiany.</string>
     <string name="close_confirm_discard">Zamknij mimo to</string>
+    <string name="exit_confirm_title">Wyjść bez zapisywania?</string>
+    <string name="exit_confirm_message">Masz niezapisane zmiany.</string>
+    <string name="exit_confirm_discard">Wyjdź mimo to</string>
     <string name="reopen_title">Uprawnienie wygasło</string>
     <string name="reopen_message">Utracono dostęp do tego pliku. Wybierz go ponownie, aby go otworzyć.</string>
     <string name="reopen_reselect">Wybierz ponownie</string>

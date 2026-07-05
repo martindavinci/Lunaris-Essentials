@@ -19,6 +19,9 @@
     <string name="close_confirm_title">¿Cerrar pestaña?</string>
     <string name="close_confirm_message">Esta pestaña tiene cambios sin guardar.</string>
     <string name="close_confirm_discard">Cerrar de todos modos</string>
+    <string name="exit_confirm_title">¿Salir sin guardar?</string>
+    <string name="exit_confirm_message">Tienes cambios sin guardar.</string>
+    <string name="exit_confirm_discard">Salir de todos modos</string>
     <string name="reopen_title">Permiso caducado</string>
     <string name="reopen_message">Se perdió el acceso a este archivo. Vuelve a seleccionarlo para abrirlo de nuevo.</string>
     <string name="reopen_reselect">Volver a seleccionar</string>

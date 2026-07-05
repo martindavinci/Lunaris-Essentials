@@ -19,6 +19,9 @@
     <string name="close_confirm_title">Tabblad sluiten?</string>
     <string name="close_confirm_message">Dit tabblad heeft niet-opgeslagen wijzigingen.</string>
     <string name="close_confirm_discard">Toch sluiten</string>
+    <string name="exit_confirm_title">Afsluiten zonder opslaan?</string>
+    <string name="exit_confirm_message">Je hebt niet-opgeslagen wijzigingen.</string>
+    <string name="exit_confirm_discard">Toch afsluiten</string>
     <string name="reopen_title">Toegang verlopen</string>
     <string name="reopen_message">De toegang tot dit bestand is verloren. Selecteer het opnieuw om het te openen.</string>
     <string name="reopen_reselect">Opnieuw selecteren</string>

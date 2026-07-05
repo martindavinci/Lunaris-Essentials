@@ -19,6 +19,9 @@
     <string name="close_confirm_title">タブを閉じますか？</string>
     <string name="close_confirm_message">このタブには保存されていない変更があります。</string>
     <string name="close_confirm_discard">閉じる</string>
+    <string name="exit_confirm_title">保存せずに終了しますか？</string>
+    <string name="exit_confirm_message">保存されていない変更があります。</string>
+    <string name="exit_confirm_discard">終了</string>
     <string name="reopen_title">権限の有効期限が切れました</string>
     <string name="reopen_message">このファイルへのアクセス権が失われました。もう一度開くには再選択してください。</string>
     <string name="reopen_reselect">再選択</string>

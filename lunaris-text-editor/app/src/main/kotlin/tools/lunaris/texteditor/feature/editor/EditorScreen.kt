@@ -152,6 +152,8 @@ fun EditorScreen(
     var showSheet by remember { mutableStateOf(false) }
     // Select mode: while on, the cursor arrows extend the selection instead of moving the caret.
     var selectMode by remember { mutableStateOf(false) }
+    // Guard app exit (back / ESC) when any tab has unsaved changes.
+    var showExitConfirm by remember { mutableStateOf(false) }
     var accessoryInitDone by remember { mutableStateOf(false) }
     LaunchedEffect(viewSettings) {
         if (!accessoryInitDone) { showAccessory = viewSettings.accessoryBarDefault; accessoryInitDone = true }
@@ -263,6 +265,15 @@ fun EditorScreen(
         val nt = if (increase) Indenter.increase(t, sel.first, sel.last, viewSettings.indentUnit)
                  else Indenter.decrease(t, sel.first, sel.last, viewSettings.indentUnit)
         if (nt != t) viewModel.onContentChanged(nt)
+    }
+
+    // Back / ESC handling, most specific first (a later BackHandler wins when several are enabled):
+    // close an open drawer, exit search, then guard app exit when there are unsaved changes.
+    val hasUnsaved = state.dirty || state.tabs.any { it.dirty }
+    BackHandler(enabled = drawerState.isOpen) { scope.launch { drawerState.close() } }
+    BackHandler(enabled = searchSession != null) { searchSession = null }
+    BackHandler(enabled = hasUnsaved && drawerState.isClosed && searchSession == null) {
+        showExitConfirm = true
     }
 
     // Hoisted so both the top-bar shortcuts (Search/Save), the bottom toolbar, and the action
@@ -429,6 +440,24 @@ fun EditorScreen(
             },
             title = { Text(stringResource(R.string.reopen_title)) },
             text = { Text(stringResource(R.string.reopen_message)) },
+        )
+    }
+
+    if (showExitConfirm) {
+        AlertDialog(
+            onDismissRequest = { showExitConfirm = false },
+            confirmButton = {
+                TextButton(onClick = { showExitConfirm = false; (context as? Activity)?.finish() }) {
+                    Text(stringResource(R.string.exit_confirm_discard))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showExitConfirm = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+            title = { Text(stringResource(R.string.exit_confirm_title)) },
+            text = { Text(stringResource(R.string.exit_confirm_message)) },
         )
     }
 

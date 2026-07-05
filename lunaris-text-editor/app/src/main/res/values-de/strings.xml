@@ -19,6 +19,9 @@
     <string name="close_confirm_title">Tab schließen?</string>
     <string name="close_confirm_message">Dieser Tab enthält ungespeicherte Änderungen.</string>
     <string name="close_confirm_discard">Trotzdem schließen</string>
+    <string name="exit_confirm_title">Ohne Speichern beenden?</string>
+    <string name="exit_confirm_message">Sie haben ungespeicherte Änderungen.</string>
+    <string name="exit_confirm_discard">Trotzdem beenden</string>
     <string name="reopen_title">Berechtigung abgelaufen</string>
     <string name="reopen_message">Der Zugriff auf diese Datei ist verloren gegangen. Wählen Sie sie erneut aus, um sie wieder zu öffnen.</string>
     <string name="reopen_reselect">Erneut auswählen</string>

@@ -19,6 +19,9 @@
     <string name="close_confirm_title">Fechar separador?</string>
     <string name="close_confirm_message">Este separador tem alterações não guardadas.</string>
     <string name="close_confirm_discard">Fechar mesmo assim</string>
+    <string name="exit_confirm_title">Sair sem guardar?</string>
+    <string name="exit_confirm_message">Tem alterações não guardadas.</string>
+    <string name="exit_confirm_discard">Sair mesmo assim</string>
     <string name="reopen_title">Permissão expirada</string>
     <string name="reopen_message">O acesso a este ficheiro foi perdido. Selecione-o novamente para o abrir.</string>
     <string name="reopen_reselect">Selecionar de novo</string>

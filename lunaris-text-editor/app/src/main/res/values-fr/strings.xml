@@ -19,6 +19,9 @@
     <string name="close_confirm_title">Fermer l\'onglet ?</string>
     <string name="close_confirm_message">Cet onglet contient des modifications non enregistrées.</string>
     <string name="close_confirm_discard">Fermer quand même</string>
+    <string name="exit_confirm_title">Quitter sans enregistrer ?</string>
+    <string name="exit_confirm_message">Vous avez des modifications non enregistrées.</string>
+    <string name="exit_confirm_discard">Quitter quand même</string>
     <string name="reopen_title">Autorisation expirée</string>
     <string name="reopen_message">L\'accès à ce fichier a été perdu. Sélectionnez-le à nouveau pour le rouvrir.</string>
     <string name="reopen_reselect">Resélectionner</string>
