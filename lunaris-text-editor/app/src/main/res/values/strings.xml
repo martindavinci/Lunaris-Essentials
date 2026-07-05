@@ -51,6 +51,9 @@
     <string name="menu_group_view">VIEW</string>
     <string name="sheet_search_hint">Search an action…</string>
     <string name="sheet_no_match">No actions</string>
+    <string name="syntax_plain">Plain text</string>
+    <string name="unsaved">not saved</string>
+    <string name="subtitle_dirty">%1$s · %2$s</string>
     <string name="menu_word_wrap">Word wrap</string>
     <string name="menu_read_only">Read only</string>
     <string name="search_query_hint">Find</string>

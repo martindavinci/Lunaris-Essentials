@@ -27,6 +27,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.launch
+import tools.lunaris.texteditor.R
 import tools.lunaris.texteditor.editor.CodeEditorController
 import tools.lunaris.texteditor.editor.CodeEditorView
 import tools.lunaris.texteditor.feature.browser.FolderBrowserViewModel
@@ -62,6 +63,14 @@ internal fun EditorScaffold(
     onSearchNext: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
+
+    // Subtitle: the current language name, plus a "not saved" suffix while the doc is dirty.
+    // Plain text (no grammar) falls back to a localized label instead of the catalog's English.
+    val languageName = viewModel.languageCatalog.displayName(state.syntax, state.scopeName)
+        ?: stringResource(R.string.syntax_plain)
+    val subtitle = if (state.dirty) {
+        stringResource(R.string.subtitle_dirty, languageName, stringResource(R.string.unsaved))
+    } else languageName
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -128,7 +137,7 @@ internal fun EditorScaffold(
                     )
                 } else EditorTopBar(
                     title = state.title,
-                    subtitle = state.fileRef?.uri?.let { fileLocationHint(it) },
+                    subtitle = subtitle,
                     checked = buildSet {
                         if (state.wordWrap) add(EditorMenuAction.WORD_WRAP)
                         if (state.readOnly) add(EditorMenuAction.READ_ONLY)
