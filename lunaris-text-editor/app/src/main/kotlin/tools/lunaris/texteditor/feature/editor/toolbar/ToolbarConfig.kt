@@ -24,7 +24,22 @@ data class ToolbarConfig(val items: List<ToolbarItem>, val disabled: Set<Toolbar
     }
 
     companion object {
-        val DEFAULT = ToolbarConfig(ToolbarItem.entries.toList(), emptySet())
+        // Simplified default: cursor arrows (rendered as a group), undo/redo, preview.
+        // The rest stay present-but-disabled so users can add them via the config dialog.
+        private val DEFAULT_ORDER = listOf(
+            ToolbarItem.CURSOR_LEFT, ToolbarItem.CURSOR_RIGHT,
+            ToolbarItem.UNDO, ToolbarItem.REDO, ToolbarItem.PREVIEW,
+            ToolbarItem.OPEN, ToolbarItem.PASTE, ToolbarItem.SEARCH,
+            ToolbarItem.SAVE, ToolbarItem.CLOSE,
+        )
+        private val DEFAULT_ENABLED = setOf(
+            ToolbarItem.CURSOR_LEFT, ToolbarItem.CURSOR_RIGHT,
+            ToolbarItem.UNDO, ToolbarItem.REDO, ToolbarItem.PREVIEW,
+        )
+        val DEFAULT = ToolbarConfig(
+            items = DEFAULT_ORDER,
+            disabled = ToolbarItem.entries.toSet() - DEFAULT_ENABLED,
+        )
 
         fun fromJson(json: String): ToolbarConfig {
             if (json.isBlank()) return DEFAULT
