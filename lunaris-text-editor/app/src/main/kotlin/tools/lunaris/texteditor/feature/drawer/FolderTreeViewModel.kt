@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import tools.lunaris.texteditor.files.SafTreeBrowser
 import tools.lunaris.texteditor.files.StorageAccess
 import javax.inject.Inject
@@ -24,58 +26,74 @@ class FolderTreeViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var tree = FolderTree(emptyList())
+    private val mutex = Mutex()
     private val _state = MutableStateFlow(FolderTreeUiState())
     val state: StateFlow<FolderTreeUiState> = _state.asStateFlow()
 
     /** Load granted roots and pre-count their children (badges show while collapsed). */
     fun start() = viewModelScope.launch {
-        val roots = storageAccess.grantedTrees().map { RootRef(it.toString(), prettyLocation(it.toString())) }
-        var t = FolderTree(roots)
-        roots.forEach { t = t.withChildren(it.ref, browser.list(it.ref)) }
-        tree = t
-        publish(roots.isNotEmpty())
+        mutex.withLock { loadRoots() }
     }
 
     fun toggle(ref: String) = viewModelScope.launch {
-        tree = tree.toggle(ref)
-        if (ref in tree.expanded && tree.children[ref] == null) {
-            tree = tree.withChildren(ref, browser.list(ref))
+        mutex.withLock {
+            tree = tree.toggle(ref)
+            if (ref in tree.expanded && tree.children[ref] == null) {
+                tree = tree.withChildren(ref, browser.list(ref))
+            }
+            publish()
         }
-        publish(tree.roots.isNotEmpty())
     }
 
     fun pickTree(uri: Uri) {
         storageAccess.persistTree(uri)
-        start()
+        viewModelScope.launch { mutex.withLock { loadRoots() } }
     }
 
     fun closeRoot(ref: String) = viewModelScope.launch {
-        storageAccess.releaseTree(Uri.parse(ref))
-        start()
+        mutex.withLock {
+            storageAccess.releaseTree(Uri.parse(ref))
+            loadRoots()
+        }
     }
 
     fun createFile(parentRef: String, name: String) = viewModelScope.launch {
-        browser.createFile(parentRef, name); reload(parentRef)
+        mutex.withLock {
+            browser.createFile(parentRef, name); reload(parentRef)
+        }
     }
 
     fun createFolder(parentRef: String, name: String) = viewModelScope.launch {
-        browser.createFolder(parentRef, name); reload(parentRef)
+        mutex.withLock {
+            browser.createFolder(parentRef, name); reload(parentRef)
+        }
     }
 
     fun rename(ref: String, newName: String) = viewModelScope.launch {
-        browser.rename(ref, newName)
-        // A renamed root/child changes a listing → reload from the top for correctness.
-        start()
+        mutex.withLock {
+            browser.rename(ref, newName)
+            // A renamed root/child changes a listing → reload from the top for correctness.
+            loadRoots()
+        }
+    }
+
+    /** Rebuild the tree from granted roots and pre-count each root's children. */
+    private suspend fun loadRoots() {
+        val roots = storageAccess.grantedTrees().map { RootRef(it.toString(), prettyLocation(it.toString())) }
+        var t = FolderTree(roots)
+        roots.forEach { t = t.withChildren(it.ref, browser.list(it.ref)) }
+        tree = t
+        publish()
     }
 
     /** Re-list one folder's children in place (after create). */
     private suspend fun reload(ref: String) {
         tree = tree.withChildren(ref, browser.list(ref))
-        publish(tree.roots.isNotEmpty())
+        publish()
     }
 
-    private fun publish(granted: Boolean) {
-        _state.value = FolderTreeUiState(accessGranted = granted, nodes = tree.flatten())
+    private fun publish() {
+        _state.value = FolderTreeUiState(accessGranted = tree.roots.isNotEmpty(), nodes = tree.flatten())
     }
 }
 
