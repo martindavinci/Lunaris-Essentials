@@ -54,3 +54,29 @@ private fun RecentsPanelPreview() {
         RecentsPanel(recents = recents, currentUri = "content://recent/2", nowMillis = nowMillis, onOpen = {}, onNewTab = {})
     }
 }
+
+@Preview(showBackground = true, widthDp = 360, heightDp = 640)
+@Composable
+private fun FoldersPanelPreview() {
+    val nodes = listOf(
+        TreeNode(ref = "content://tree/root", name = "Project", isDirectory = true, depth = 0, expanded = true, childCount = 3),
+        TreeNode(ref = "content://tree/root/README.md", name = "README.md", isDirectory = false, depth = 1, expanded = false, childCount = null),
+        TreeNode(ref = "content://tree/root/src", name = "src", isDirectory = true, depth = 1, expanded = true, childCount = 2),
+        TreeNode(ref = "content://tree/root/src/main.kt", name = "main.kt", isDirectory = false, depth = 2, expanded = false, childCount = null),
+        TreeNode(ref = "content://tree/root/src/utils.kt", name = "utils.kt", isDirectory = false, depth = 2, expanded = false, childCount = null),
+        TreeNode(ref = "content://tree/root/assets", name = "assets", isDirectory = true, depth = 1, expanded = false, childCount = 5),
+    )
+    LunarisEditorTheme {
+        FoldersPanel(
+            state = FolderTreeUiState(accessGranted = true, nodes = nodes),
+            onToggle = {},
+            onOpenFile = {},
+            onPickFolder = {},
+            onNewTab = {},
+            onCreateFile = { _, _ -> },
+            onCreateFolder = { _, _ -> },
+            onRename = { _, _ -> },
+            onCloseRoot = {},
+        )
+    }
+}

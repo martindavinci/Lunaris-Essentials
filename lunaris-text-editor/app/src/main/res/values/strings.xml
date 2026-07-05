@@ -100,6 +100,12 @@
     <string name="folder_no_access">No folder access yet</string>
     <string name="folder_is_directory">Folder</string>
     <string name="folder_is_file">File</string>
+    <string name="folder_add">Add folder</string>
+    <string name="folder_new_file">New file</string>
+    <string name="folder_new_subfolder">New subfolder</string>
+    <string name="folder_rename">Rename</string>
+    <string name="folder_more">More</string>
+    <string name="folder_expand">Expand</string>
     <string name="menu_file_associations">File associations</string>
     <string name="assoc_title">File associations</string>
     <string name="assoc_empty">Empty</string>

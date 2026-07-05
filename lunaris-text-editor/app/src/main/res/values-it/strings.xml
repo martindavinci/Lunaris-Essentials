@@ -100,6 +100,12 @@
     <string name="folder_no_access">Nessun accesso alla cartella</string>
     <string name="folder_is_directory">Cartella</string>
     <string name="folder_is_file">File</string>
+    <string name="folder_add">Aggiungi cartella</string>
+    <string name="folder_new_file">Nuovo file</string>
+    <string name="folder_new_subfolder">Nuova sottocartella</string>
+    <string name="folder_rename">Rinomina</string>
+    <string name="folder_more">Altro</string>
+    <string name="folder_expand">Espandi</string>
     <string name="menu_file_associations">Associazioni file</string>
     <string name="assoc_title">Associazioni file</string>
     <string name="assoc_empty">Vuoto</string>
