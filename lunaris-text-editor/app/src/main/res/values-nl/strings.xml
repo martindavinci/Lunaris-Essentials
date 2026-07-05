@@ -35,6 +35,7 @@
     <string name="menu_undo">Ongedaan maken</string>
     <string name="menu_redo">Opnieuw uitvoeren</string>
     <string name="menu_select_all">Alles selecteren</string>
+    <string name="menu_cut">Knippen</string>
     <string name="menu_paste">Plakken</string>
     <string name="menu_open">Openen</string>
     <string name="menu_open_saf">Map openen</string>

@@ -35,7 +35,7 @@ val ACTION_SECTIONS: List<ActionSection> = listOf(
     ),
     ActionSection(
         ActionGroup.EDIT,
-        listOf(SELECT_ALL, PASTE, INSERT_COLOR, INSERT_TIMESTAMP, INDENT_INCREASE, INDENT_DECREASE, INPUT_METHOD),
+        listOf(SELECT_ALL, CUT, PASTE, INSERT_COLOR, INSERT_TIMESTAMP, INDENT_INCREASE, INDENT_DECREASE, INPUT_METHOD),
     ),
     ActionSection(
         ActionGroup.TOOLS,

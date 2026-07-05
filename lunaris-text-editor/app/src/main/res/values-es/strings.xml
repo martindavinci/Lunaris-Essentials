@@ -35,6 +35,7 @@
     <string name="menu_undo">Deshacer</string>
     <string name="menu_redo">Rehacer</string>
     <string name="menu_select_all">Seleccionar todo</string>
+    <string name="menu_cut">Cortar</string>
     <string name="menu_paste">Pegar</string>
     <string name="menu_open">Abrir</string>
     <string name="menu_open_saf">Abrir carpeta</string>

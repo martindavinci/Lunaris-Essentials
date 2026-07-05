@@ -35,6 +35,7 @@
     <string name="menu_undo">Annuler</string>
     <string name="menu_redo">Rétablir</string>
     <string name="menu_select_all">Tout sélectionner</string>
+    <string name="menu_cut">Couper</string>
     <string name="menu_paste">Coller</string>
     <string name="menu_open">Ouvrir</string>
     <string name="menu_open_saf">Ouvrir un dossier</string>
