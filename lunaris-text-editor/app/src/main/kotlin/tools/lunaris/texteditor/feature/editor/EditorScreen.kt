@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.union
@@ -536,6 +537,8 @@ internal fun SearchTopBar(
     }
 }
 
+private val GroupGap = 10.dp
+
 @Composable
 internal fun EditorBottomBar(
     config: ToolbarConfig,
@@ -544,6 +547,9 @@ internal fun EditorBottomBar(
     toggled: (ToolbarItem) -> Boolean = { false },
 ) {
     val items = config.enabled
+    // Preview is always pinned to the far right; every other group clusters on the left in order.
+    val leftItems = items.filter { it.barGroup() != BarGroup.PREVIEW }
+    val previewItems = items.filter { it.barGroup() == BarGroup.PREVIEW }
     Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = BarElevation) {
         Row(
             modifier = Modifier
@@ -551,26 +557,41 @@ internal fun EditorBottomBar(
                 // Float above the IME when the keyboard is up; fall back to the nav bar otherwise
                 // (union picks the larger inset, so the toolbar is never hidden behind the keyboard).
                 .windowInsetsPadding(WindowInsets.ime.union(WindowInsets.navigationBars))
-                .padding(horizontal = 8.dp, vertical = 4.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
+                .padding(horizontal = 12.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // Consecutive items of the same group render as one connected pill; preview is a
-            // standalone accent circle; anything else is a bare icon.
-            var i = 0
-            while (i < items.size) {
-                val group = items[i].barGroup()
-                var j = i + 1
-                while (j < items.size && items[j].barGroup() == group) j++
-                val run = items.subList(i, j)
-                when (group) {
-                    BarGroup.PREVIEW -> run.forEach { PreviewButton(it, onItem, isEnabled(it)) }
-                    BarGroup.SOLO -> run.forEach { ToolbarIconButton(it, onItem, isEnabled(it)) }
-                    else -> SegmentPill { run.forEach { PillButton(it, onItem, isEnabled(it), toggled(it)) } }
-                }
-                i = j
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(GroupGap),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                BarSegments(leftItems, onItem, isEnabled, toggled)
             }
+            Spacer(Modifier.weight(1f))
+            BarSegments(previewItems, onItem, isEnabled, toggled)
         }
+    }
+}
+
+/** Emits items as grouped pills / accent circles — consecutive same-group items merge into one pill. */
+@Composable
+private fun BarSegments(
+    items: List<ToolbarItem>,
+    onItem: (ToolbarItem) -> Unit,
+    isEnabled: (ToolbarItem) -> Boolean,
+    toggled: (ToolbarItem) -> Boolean,
+) {
+    var i = 0
+    while (i < items.size) {
+        val group = items[i].barGroup()
+        var j = i + 1
+        while (j < items.size && items[j].barGroup() == group) j++
+        val run = items.subList(i, j)
+        when (group) {
+            BarGroup.PREVIEW -> run.forEach { PreviewButton(it, onItem, isEnabled(it)) }
+            BarGroup.SOLO -> run.forEach { ToolbarIconButton(it, onItem, isEnabled(it)) }
+            else -> SegmentPill { run.forEach { PillButton(it, onItem, isEnabled(it), toggled(it)) } }
+        }
+        i = j
     }
 }
 
