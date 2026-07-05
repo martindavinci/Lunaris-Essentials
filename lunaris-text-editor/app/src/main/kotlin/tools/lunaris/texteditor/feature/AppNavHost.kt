@@ -8,7 +8,6 @@ import tools.lunaris.texteditor.feature.editor.EditorScreen
 
 object Routes {
     const val EDITOR = "editor"
-    const val STORAGE = "storage"
     const val SETTINGS = "settings"
     const val LICENSES = "licenses"
 }
@@ -33,9 +32,6 @@ fun AppNavHost(openRequest: OpenRequest? = null) {
     NavHost(navController = nav, startDestination = Routes.EDITOR) {
         composable(Routes.EDITOR) {
             EditorScreen(onNavigate = { route -> nav.navigate(route) }, openRequest = openRequest)
-        }
-        composable(Routes.STORAGE) {
-            tools.lunaris.texteditor.feature.browser.StorageManagerScreen(onBack = { nav.popBackStack() })
         }
         composable(Routes.SETTINGS) {
             tools.lunaris.texteditor.feature.settings.SettingsScreen(

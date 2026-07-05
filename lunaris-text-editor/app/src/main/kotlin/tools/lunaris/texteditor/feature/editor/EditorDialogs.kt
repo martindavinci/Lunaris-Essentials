@@ -1,18 +1,15 @@
 package tools.lunaris.texteditor.feature.editor
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import tools.lunaris.texteditor.edit.ColorLiteral
 import tools.lunaris.texteditor.edit.SearchEngine
 import tools.lunaris.texteditor.edit.SearchOptions
 import tools.lunaris.texteditor.edit.TextStats
 import tools.lunaris.texteditor.editor.CodeEditorController
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfigDialog
-import tools.lunaris.texteditor.file.FileRef
 
 /** Which modal dialog (if any) is currently shown. */
-enum class EditorDialog { SYNTAX, DISPLAY_STYLE, ENCODING, RECENT, SEARCH, GOTO, STATS, INSERT_COLOR, TOOLBAR }
+enum class EditorDialog { SYNTAX, DISPLAY_STYLE, ENCODING, SEARCH, GOTO, STATS, INSERT_COLOR, TOOLBAR }
 
 /** Single host that renders whichever editor dialog is open. */
 @Composable
@@ -33,10 +30,6 @@ fun EditorDialogs(
             ColorSchemePickerDialog(viewModel.colorSchemeCatalog, state.colorSchemeId, { viewModel.setColorScheme(it) }, onDismiss)
         EditorDialog.ENCODING ->
             EncodingPickerDialog(viewModel.charsetCatalog, state.charset, { viewModel.reopenWithEncoding(it) }, onDismiss)
-        EditorDialog.RECENT -> {
-            val recents by viewModel.recents().collectAsStateWithLifecycle(initialValue = emptyList())
-            RecentFilesDialog(recents, { viewModel.openFile(FileRef(it)) }, onDismiss)
-        }
         EditorDialog.SEARCH -> SearchDialog(
             onFind = { q, o -> onStartSearch(q, o, true); onDismiss() },
             onFindPrev = { q, o -> onStartSearch(q, o, false); onDismiss() },

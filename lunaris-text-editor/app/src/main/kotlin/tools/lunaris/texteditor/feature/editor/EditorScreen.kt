@@ -287,7 +287,6 @@ fun EditorScreen(
             EditorMenuAction.SYNTAX -> openDialog = EditorDialog.SYNTAX
             EditorMenuAction.DISPLAY_STYLE -> openDialog = EditorDialog.DISPLAY_STYLE
             EditorMenuAction.ENCODING -> openDialog = EditorDialog.ENCODING
-            EditorMenuAction.RECENT_FILES -> openDialog = EditorDialog.RECENT
             EditorMenuAction.SEARCH -> openDialog = EditorDialog.SEARCH
             EditorMenuAction.GOTO_LINE -> openDialog = EditorDialog.GOTO
             EditorMenuAction.STATS -> openDialog = EditorDialog.STATS
@@ -308,10 +307,6 @@ fun EditorScreen(
             EditorMenuAction.ACCESSORY_BAR -> showAccessory = !showAccessory
             EditorMenuAction.SHARE ->
                 shareDocumentAsFile(context, suggestedSaveName(state, viewModel.languageCatalog), state.text)
-            EditorMenuAction.FILE_ASSOCIATIONS ->
-                Unit // TODO: wire to in-drawer associations panel; old full-screen route removed
-            EditorMenuAction.STORAGE_MANAGER -> onNavigate(tools.lunaris.texteditor.feature.Routes.STORAGE)
-            EditorMenuAction.SETTINGS -> onNavigate(tools.lunaris.texteditor.feature.Routes.SETTINGS)
             EditorMenuAction.PREVIEW -> { viewModel.previewActive(); showPreview = true }
             EditorMenuAction.NEW_TAB -> viewModel.newTab()
             EditorMenuAction.OPEN -> openLauncher.launch(arrayOf("*/*"))

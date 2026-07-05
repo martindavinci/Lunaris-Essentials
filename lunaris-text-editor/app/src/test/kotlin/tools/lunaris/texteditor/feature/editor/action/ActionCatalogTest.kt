@@ -19,10 +19,6 @@ class ActionCatalogTest {
 
     @Test fun excludedAreDrawerNavAndToolbarActions() {
         assertThat(SHEET_EXCLUDED).containsExactly(
-            EditorMenuAction.RECENT_FILES,
-            EditorMenuAction.FILE_ASSOCIATIONS,
-            EditorMenuAction.STORAGE_MANAGER,
-            EditorMenuAction.SETTINGS,
             EditorMenuAction.UNDO,
             EditorMenuAction.REDO,
         )

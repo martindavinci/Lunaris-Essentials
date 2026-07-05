@@ -2,7 +2,6 @@ package tools.lunaris.texteditor.feature.editor
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import tools.lunaris.texteditor.data.RecentEntry
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfig
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfigDialog
 import tools.lunaris.texteditor.syntax.CharsetCatalog
@@ -104,21 +103,6 @@ private fun StatsDialogPreview() {
 private fun InsertColorDialogPreview() {
     LunarisEditorTheme {
         InsertColorDialog(onPick = {}, onDismiss = {})
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun RecentFilesDialogPreview() {
-    LunarisEditorTheme {
-        RecentFilesDialog(
-            recents = listOf(
-                RecentEntry(uri = "content://doc/1", name = "main.kt"),
-                RecentEntry(uri = "content://doc/2", name = "notes.md"),
-            ),
-            onOpen = {},
-            onDismiss = {},
-        )
     }
 }
 

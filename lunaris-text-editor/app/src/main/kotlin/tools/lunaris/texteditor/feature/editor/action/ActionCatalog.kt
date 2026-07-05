@@ -22,9 +22,9 @@ data class ActionSection(val group: ActionGroup, val items: List<EditorMenuActio
 /** Actions rendered as on/off tiles (tinted when active). */
 val TOGGLE_ACTIONS: Set<EditorMenuAction> = setOf(WORD_WRAP, READ_ONLY, ACCESSORY_BAR)
 
-/** Actions intentionally NOT in the sheet: nav-drawer destinations + toolbar-only undo/redo. */
+/** Actions intentionally NOT in the sheet: toolbar-only undo/redo. */
 val SHEET_EXCLUDED: Set<EditorMenuAction> = setOf(
-    RECENT_FILES, FILE_ASSOCIATIONS, STORAGE_MANAGER, SETTINGS, UNDO, REDO,
+    UNDO, REDO,
 )
 
 /** The grouped catalog driving the action sheet grid + its search filter. */
