@@ -72,6 +72,39 @@ class LanguageCatalogTest {
     }
 
     @Test
+    fun findByScope_knownScope_returnsLanguage() {
+        assertThat(catalog.findByScope("source.python")?.id).isEqualTo("python")
+    }
+
+    @Test
+    fun findByScope_nullScope_returnsPlaintext() {
+        assertThat(catalog.findByScope(null)?.id).isEqualTo("plaintext")
+    }
+
+    @Test
+    fun findByScope_unknownScope_returnsNull() {
+        assertThat(catalog.findByScope("source.nope")).isNull()
+    }
+
+    @Test
+    fun displayName_explicit_returnsCatalogDisplay() {
+        assertThat(catalog.displayName(SyntaxSelection.Explicit("kotlin"), scopeName = null))
+            .isEqualTo("Kotlin")
+    }
+
+    @Test
+    fun displayName_autoResolvedScope_returnsCatalogDisplay() {
+        assertThat(catalog.displayName(SyntaxSelection.Auto, scopeName = "source.python"))
+            .isEqualTo("Python")
+    }
+
+    @Test
+    fun displayName_plaintext_returnsNull() {
+        assertThat(catalog.displayName(SyntaxSelection.Auto, scopeName = null)).isNull()
+        assertThat(catalog.displayName(SyntaxSelection.Explicit("plaintext"), scopeName = null)).isNull()
+    }
+
+    @Test
     fun findByExtension_duplicateExtension_lastWins() {
         val c = LanguageCatalog(
             listOf(

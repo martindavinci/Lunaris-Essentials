@@ -13,9 +13,26 @@ class LanguageCatalog(languages: List<LanguageDefinition>) {
             languages.forEach { def -> def.extensions.forEach { put(it.lowercase(), def) } }
         }
     private val byId: Map<String, LanguageDefinition> = languages.associateBy { it.id }
+    // Last language wins on a duplicate scope; a null scope maps to the plain-text entry.
+    private val byScope: Map<String?, LanguageDefinition> = languages.associateBy { it.scopeName }
 
     fun findByExtension(ext: String): LanguageDefinition? = byExt[ext.lowercase()]
     fun findById(id: String): LanguageDefinition? = byId[id]
+
+    /** Language whose grammar scope matches [scope]; a `null` scope maps to plain text. */
+    fun findByScope(scope: String?): LanguageDefinition? = byScope[scope]
+
+    /**
+     * Display name for the editor's current syntax, or `null` when the resolved language is
+     * plain text (scopeName == null) so callers can substitute a localized "Plain text".
+     */
+    fun displayName(syntax: SyntaxSelection, scopeName: String?): String? {
+        val def = when (syntax) {
+            is SyntaxSelection.Explicit -> findById(syntax.languageId)
+            else -> findByScope(scopeName)
+        }
+        return def?.takeIf { it.scopeName != null }?.display
+    }
 
     companion object {
         fun fromJson(json: String): LanguageCatalog {
