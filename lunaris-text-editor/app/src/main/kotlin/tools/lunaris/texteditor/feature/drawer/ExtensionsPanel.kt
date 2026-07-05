@@ -33,7 +33,7 @@ fun ExtensionsPanel(viewModel: FileAssociationViewModel = hiltViewModel()) {
         return
     }
 
-    Column(Modifier.fillMaxSize().statusBarsPadding()) {
+    Column(Modifier.fillMaxSize()) {
         Column(Modifier.padding(start = 16.dp, top = 12.dp, bottom = 8.dp)) {
             Text(stringResource(R.string.assoc_title), style = MaterialTheme.typography.titleLarge)
             Text(stringResource(R.string.assoc_subtitle), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)

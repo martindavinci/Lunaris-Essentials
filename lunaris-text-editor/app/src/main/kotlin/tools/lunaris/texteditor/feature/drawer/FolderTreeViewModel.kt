@@ -59,13 +59,17 @@ class FolderTreeViewModel @Inject constructor(
 
     fun createFile(parentRef: String, name: String) = viewModelScope.launch {
         mutex.withLock {
-            browser.createFile(parentRef, name); reload(parentRef)
+            browser.createFile(parentRef, name)
+            tree = tree.copy(expanded = tree.expanded + parentRef)
+            reload(parentRef)
         }
     }
 
     fun createFolder(parentRef: String, name: String) = viewModelScope.launch {
         mutex.withLock {
-            browser.createFolder(parentRef, name); reload(parentRef)
+            browser.createFolder(parentRef, name)
+            tree = tree.copy(expanded = tree.expanded + parentRef)
+            reload(parentRef)
         }
     }
 
@@ -77,11 +81,12 @@ class FolderTreeViewModel @Inject constructor(
         }
     }
 
-    /** Rebuild the tree from granted roots and pre-count each root's children. */
+    /** Rebuild the tree from granted roots, preserving expansion and reloading expanded folders' children. */
     private suspend fun loadRoots() {
         val roots = storageAccess.grantedTrees().map { RootRef(it.toString(), prettyLocation(it.toString())) }
-        var t = FolderTree(roots)
-        roots.forEach { t = t.withChildren(it.ref, browser.list(it.ref)) }
+        val keepExpanded = tree.expanded
+        var t = FolderTree(roots, expanded = keepExpanded)
+        (roots.map { it.ref } + keepExpanded).distinct().forEach { ref -> t = t.withChildren(ref, browser.list(ref)) }
         tree = t
         publish()
     }

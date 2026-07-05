@@ -23,7 +23,7 @@ import java.util.Date
 
 @Composable
 fun RecentsPanel(recents: List<RecentEntry>, currentUri: String?, nowMillis: Long, onOpen: (String) -> Unit, onNewTab: () -> Unit) {
-    Column(Modifier.fillMaxSize().statusBarsPadding()) {
+    Column(Modifier.fillMaxSize()) {
         Text(stringResource(R.string.drawer_recents), style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(start = 16.dp, top = 12.dp, bottom = 8.dp))
         if (recents.isEmpty()) {

@@ -16,7 +16,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import tools.lunaris.texteditor.R
 
-private data class PendingPrompt(val title: String, val confirm: String, val onConfirm: (String) -> Unit)
+private data class PendingPrompt(val title: String, val confirm: String, val onConfirm: (String) -> Unit, val initial: String = "")
 
 @Composable
 fun FoldersPanel(
@@ -31,7 +31,8 @@ fun FoldersPanel(
     onCloseRoot: (String) -> Unit,
 ) {
     var prompt by remember { mutableStateOf<PendingPrompt?>(null) }
-    Column(Modifier.fillMaxSize().statusBarsPadding()) {
+    var confirmCloseRef by remember { mutableStateOf<String?>(null) }
+    Column(Modifier.fillMaxSize()) {
         Row(
             Modifier.fillMaxWidth().padding(start = 16.dp, top = 12.dp, bottom = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -57,7 +58,7 @@ fun FoldersPanel(
                             onCreateFile = { onCreateFile(node.ref, it) },
                             onCreateFolder = { onCreateFolder(node.ref, it) },
                             onRename = { onRename(node.ref, it) },
-                            onCloseRoot = { onCloseRoot(node.ref) },
+                            onRequestClose = { confirmCloseRef = node.ref },
                             setPrompt = { prompt = it },
                         )
                     },
@@ -66,11 +67,19 @@ fun FoldersPanel(
         }
         Button(onClick = onNewTab, modifier = Modifier.fillMaxWidth().padding(16.dp)) {
             Icon(Icons.Filled.Add, contentDescription = null)
-            Text(stringResource(R.string.folder_new_file), Modifier.padding(start = 8.dp))
+            Text(stringResource(R.string.drawer_new_file), Modifier.padding(start = 8.dp))
         }
     }
     prompt?.let { p ->
-        NameInputDialog(title = p.title, confirmLabel = p.confirm, onConfirm = { p.onConfirm(it); prompt = null }, onDismiss = { prompt = null })
+        NameInputDialog(title = p.title, initial = p.initial, confirmLabel = p.confirm, onConfirm = { p.onConfirm(it); prompt = null }, onDismiss = { prompt = null })
+    }
+    confirmCloseRef?.let { ref ->
+        AlertDialog(
+            onDismissRequest = { confirmCloseRef = null },
+            title = { Text(stringResource(R.string.folder_close_title)) },
+            confirmButton = { TextButton(onClick = { onCloseRoot(ref); confirmCloseRef = null }) { Text(stringResource(R.string.folder_close)) } },
+            dismissButton = { TextButton(onClick = { confirmCloseRef = null }) { Text(stringResource(R.string.cancel)) } },
+        )
     }
 }
 
@@ -112,7 +121,7 @@ private fun FolderNodeMenu(
     onCreateFile: (String) -> Unit,
     onCreateFolder: (String) -> Unit,
     onRename: (String) -> Unit,
-    onCloseRoot: () -> Unit,
+    onRequestClose: () -> Unit,
     setPrompt: (PendingPrompt) -> Unit,
 ) {
     var open by remember { mutableStateOf(false) }
@@ -125,12 +134,12 @@ private fun FolderNodeMenu(
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
             DropdownMenuItem(text = { Text(newFileT) }, onClick = { open = false; setPrompt(PendingPrompt(newFileT, ok, onCreateFile)) })
             DropdownMenuItem(text = { Text(newSubT) }, onClick = { open = false; setPrompt(PendingPrompt(newSubT, ok, onCreateFolder)) })
-            DropdownMenuItem(text = { Text(renameT) }, onClick = { open = false; setPrompt(PendingPrompt(renameT, ok, onRename)) })
+            DropdownMenuItem(text = { Text(renameT) }, onClick = { open = false; setPrompt(PendingPrompt(renameT, ok, onRename, initial = node.name)) })
             if (node.depth == 0) {
                 HorizontalDivider()
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.folder_close), color = MaterialTheme.colorScheme.error) },
-                    onClick = { open = false; onCloseRoot() },
+                    onClick = { open = false; onRequestClose() },
                 )
             }
         }

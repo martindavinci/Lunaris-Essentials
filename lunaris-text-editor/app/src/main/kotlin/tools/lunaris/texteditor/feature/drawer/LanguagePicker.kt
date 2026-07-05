@@ -20,7 +20,7 @@ import tools.lunaris.texteditor.syntax.LanguageDefinition
 @Composable
 fun LanguagePicker(ext: String, currentLangId: String?, languages: List<LanguageDefinition>, onPick: (String) -> Unit, onBack: () -> Unit) {
     var query by remember { mutableStateOf("") }
-    Column(Modifier.fillMaxSize().statusBarsPadding()) {
+    Column(Modifier.fillMaxSize()) {
         Row(Modifier.fillMaxWidth().padding(4.dp), verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = onBack) { Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back)) }
             Text(stringResource(R.string.assoc_language_for, ".$ext"), style = MaterialTheme.typography.titleMedium)

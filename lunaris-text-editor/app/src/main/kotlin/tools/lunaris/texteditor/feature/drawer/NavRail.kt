@@ -23,7 +23,7 @@ private val RailWidth = 72.dp
 fun NavRail(selected: DrawerSection, onSelect: (DrawerSection) -> Unit, onEditor: () -> Unit, onSettings: () -> Unit) {
     Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = 2.dp) {
         Column(
-            Modifier.fillMaxHeight().width(RailWidth).statusBarsPadding().padding(vertical = 8.dp),
+            Modifier.fillMaxHeight().width(RailWidth).padding(vertical = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             RailButton(Icons.Filled.EditNote, stringResource(R.string.drawer_editor), selected = false, accent = true, onClick = onEditor)
