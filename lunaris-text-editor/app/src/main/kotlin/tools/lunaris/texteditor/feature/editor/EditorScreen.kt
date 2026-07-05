@@ -306,7 +306,7 @@ fun EditorScreen(
                     onNavigate(tools.lunaris.texteditor.feature.Routes.ASSOCIATIONS)
                 EditorMenuAction.STORAGE_MANAGER -> onNavigate(tools.lunaris.texteditor.feature.Routes.STORAGE)
                 EditorMenuAction.SETTINGS -> onNavigate(tools.lunaris.texteditor.feature.Routes.SETTINGS)
-                EditorMenuAction.RUN -> { viewModel.previewActive(); showPreview = true }
+                EditorMenuAction.PREVIEW -> { viewModel.previewActive(); showPreview = true }
                 EditorMenuAction.NEW_TAB -> viewModel.newTab()
                 EditorMenuAction.OPEN -> openLauncher.launch(arrayOf("*/*"))
                 EditorMenuAction.OPEN_TREE -> treeLauncher.launch(null)
@@ -336,7 +336,7 @@ fun EditorScreen(
                     if (ref != null) viewModel.save(ref) else createLauncher.launch(suggestedSaveName(state, viewModel.languageCatalog))
                 }
                 ToolbarItem.CLOSE -> requestClose(state.activeTabId)
-                ToolbarItem.RUN -> { viewModel.previewActive(); showPreview = true }
+                ToolbarItem.PREVIEW -> { viewModel.previewActive(); showPreview = true }
             }
         },
         onPickFolder = { treeLauncher.launch(null) },

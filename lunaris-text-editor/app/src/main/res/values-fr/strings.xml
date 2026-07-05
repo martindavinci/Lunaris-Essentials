@@ -155,6 +155,6 @@
     <string name="preview_print">Imprimer</string>
     <string name="preview_toggle_theme">Basculer clair/sombre</string>
     <string name="preview_nothing">Rien à prévisualiser</string>
-    <string name="menu_run">Aperçu</string>
-    <string name="toolbar_run">Aperçu</string>
+    <string name="menu_preview">Aperçu</string>
+    <string name="toolbar_preview">Aperçu</string>
 </resources>

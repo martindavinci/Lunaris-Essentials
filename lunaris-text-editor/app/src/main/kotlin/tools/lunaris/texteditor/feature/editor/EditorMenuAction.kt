@@ -28,7 +28,7 @@ enum class EditorMenuAction(@StringRes val labelRes: Int) {
     FILE_ASSOCIATIONS(R.string.menu_file_associations),
     STORAGE_MANAGER(R.string.menu_storage),
     SETTINGS(R.string.menu_settings),
-    RUN(R.string.menu_run),
+    PREVIEW(R.string.menu_preview),
     NEW_TAB(R.string.menu_new),
     OPEN(R.string.menu_open),
     OPEN_TREE(R.string.menu_open_saf),

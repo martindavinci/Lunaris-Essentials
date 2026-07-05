@@ -155,6 +155,6 @@
     <string name="preview_print">Drucken</string>
     <string name="preview_toggle_theme">Hell/Dunkel umschalten</string>
     <string name="preview_nothing">Nichts zum Anzeigen</string>
-    <string name="menu_run">Vorschau</string>
-    <string name="toolbar_run">Vorschau</string>
+    <string name="menu_preview">Vorschau</string>
+    <string name="toolbar_preview">Vorschau</string>
 </resources>

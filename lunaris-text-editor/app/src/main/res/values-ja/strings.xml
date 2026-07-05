@@ -155,6 +155,6 @@
     <string name="preview_print">印刷</string>
     <string name="preview_toggle_theme">ライト/ダークを切り替え</string>
     <string name="preview_nothing">プレビューする内容がありません</string>
-    <string name="menu_run">プレビュー</string>
-    <string name="toolbar_run">プレビュー</string>
+    <string name="menu_preview">プレビュー</string>
+    <string name="toolbar_preview">プレビュー</string>
 </resources>

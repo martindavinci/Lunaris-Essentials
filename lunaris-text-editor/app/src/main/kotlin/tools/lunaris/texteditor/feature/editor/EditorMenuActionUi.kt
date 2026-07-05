@@ -17,7 +17,7 @@ import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.Keyboard
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.SaveAs
@@ -62,7 +62,7 @@ val OVERFLOW_ITEMS = listOf(
     EditorMenuAction.ENCODING,
     EditorMenuAction.DISPLAY_STYLE,
     EditorMenuAction.STATS,
-    EditorMenuAction.RUN,
+    EditorMenuAction.PREVIEW,
     EditorMenuAction.WORD_WRAP,
     EditorMenuAction.READ_ONLY,
     EditorMenuAction.ACCESSORY_BAR,
@@ -100,7 +100,7 @@ fun EditorMenuAction.icon(): ImageVector = when (this) {
     EditorMenuAction.ENCODING -> Icons.Filled.Tag
     EditorMenuAction.DISPLAY_STYLE -> Icons.Filled.Palette
     EditorMenuAction.STATS -> Icons.Filled.BarChart
-    EditorMenuAction.RUN -> Icons.Filled.PlayArrow
+    EditorMenuAction.PREVIEW -> Icons.Filled.Visibility
     EditorMenuAction.WORD_WRAP -> Icons.Filled.WrapText
     EditorMenuAction.READ_ONLY -> Icons.Filled.Lock
     EditorMenuAction.ACCESSORY_BAR -> Icons.Filled.Keyboard

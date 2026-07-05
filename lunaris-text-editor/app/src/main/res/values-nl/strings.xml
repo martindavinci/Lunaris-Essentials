@@ -155,6 +155,6 @@
     <string name="preview_print">Afdrukken</string>
     <string name="preview_toggle_theme">Licht/donker wisselen</string>
     <string name="preview_nothing">Niets om weer te geven</string>
-    <string name="menu_run">Voorbeeld</string>
-    <string name="toolbar_run">Voorbeeld</string>
+    <string name="menu_preview">Voorbeeld</string>
+    <string name="toolbar_preview">Voorbeeld</string>
 </resources>
