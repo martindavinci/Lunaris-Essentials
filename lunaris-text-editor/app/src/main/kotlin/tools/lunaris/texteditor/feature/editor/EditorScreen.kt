@@ -561,10 +561,11 @@ internal fun EditorBottomBar(
 
 @Composable
 private fun ToolbarIconButton(item: ToolbarItem, onItem: (ToolbarItem) -> Unit, enabled: Boolean) {
-    // The preview action is accented; everything else uses the default content color.
-    val tint = if (item == ToolbarItem.PREVIEW) MaterialTheme.colorScheme.primary
-               else LocalContentColor.current
     IconButton(onClick = { onItem(item) }, enabled = enabled, modifier = Modifier.size(40.dp)) {
+        // Read the content color INSIDE the button so a disabled item (e.g. undo/redo with no
+        // history) dims correctly; the preview action is accented instead.
+        val tint = if (item == ToolbarItem.PREVIEW) MaterialTheme.colorScheme.primary
+                   else LocalContentColor.current
         Icon(
             item.icon(),
             contentDescription = stringResource(item.labelRes()),
