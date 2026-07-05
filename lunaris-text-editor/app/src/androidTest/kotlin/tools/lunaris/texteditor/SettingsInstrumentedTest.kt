@@ -18,8 +18,7 @@ class SettingsInstrumentedTest {
 
     @Test
     fun drawer_opensSettingsScreen() {
-        // Open Settings via the nav drawer (the overflow menu also has a "Settings" item;
-        // routing through the drawer keeps a single matching node).
+        // Settings lives in the nav drawer (it's intentionally excluded from the action sheet).
         composeRule.onNodeWithContentDescription("Menu").performClick()
         composeRule.onNodeWithText("Settings").performClick()
         // "General" is the first (top, on-screen) settings section — confirms the screen opened.

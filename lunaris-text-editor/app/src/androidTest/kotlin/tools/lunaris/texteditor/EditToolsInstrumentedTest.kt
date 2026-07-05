@@ -5,6 +5,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Rule
 import org.junit.Test
@@ -17,16 +18,16 @@ class EditToolsInstrumentedTest {
     val composeRule = createAndroidComposeRule<MainActivity>()
 
     @Test
-    fun overflow_opensStatsDialog() {
+    fun sheet_opensStatsDialog() {
         composeRule.onNodeWithContentDescription("More").performClick()
-        composeRule.onNodeWithText("Statistics").performClick()
+        composeRule.onNodeWithText("Statistics").performScrollTo().performClick()
         composeRule.onNodeWithText("Words: 0").assertIsDisplayed()
     }
 
     @Test
-    fun overflow_opensSearchDialog() {
+    fun sheet_opensSearchDialog() {
         composeRule.onNodeWithContentDescription("More").performClick()
-        composeRule.onNodeWithText("Search").performClick()
+        composeRule.onNodeWithText("Search").performScrollTo().performClick()
         composeRule.onNodeWithText("Replace all").assertIsDisplayed()
     }
 }

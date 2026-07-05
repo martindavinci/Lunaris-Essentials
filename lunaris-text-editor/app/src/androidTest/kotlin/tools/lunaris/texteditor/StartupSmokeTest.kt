@@ -23,8 +23,8 @@ class StartupSmokeTest {
 
     @Test
     fun appLaunches_withoutCrashing() {
-        // Reaching a composed editor toolbar means Application + Hilt + MainActivity all
+        // Reaching the composed editor top bar means Application + Hilt + MainActivity all
         // initialized without throwing.
-        composeRule.onNodeWithContentDescription("Open").assertIsDisplayed()
+        composeRule.onNodeWithContentDescription("Search").assertIsDisplayed()
     }
 }

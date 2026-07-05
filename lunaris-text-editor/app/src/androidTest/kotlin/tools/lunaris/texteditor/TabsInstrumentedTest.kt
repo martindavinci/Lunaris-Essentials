@@ -6,6 +6,7 @@ import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Rule
 import org.junit.Test
@@ -21,9 +22,9 @@ class TabsInstrumentedTest {
     fun drawerNew_showsTabStrip_thenCloseHidesIt() {
         // Single open file: the tab strip (and its close buttons) is hidden.
         composeRule.onAllNodesWithContentDescription("Close tab").assertCountEquals(0)
-        // Create a second tab from the File menu; now the strip appears with two tabs.
-        composeRule.onNodeWithContentDescription("File").performClick()
-        composeRule.onNodeWithText("New").performClick()
+        // Create a second tab from the action sheet's FILE group; the strip appears with two tabs.
+        composeRule.onNodeWithContentDescription("More").performClick()
+        composeRule.onNodeWithText("New").performScrollTo().performClick()
         composeRule.onAllNodesWithContentDescription("Close tab").assertCountEquals(2)
         // Close one tab → back to a single file → strip hidden again.
         composeRule.onAllNodesWithContentDescription("Close tab")[0].performClick()
