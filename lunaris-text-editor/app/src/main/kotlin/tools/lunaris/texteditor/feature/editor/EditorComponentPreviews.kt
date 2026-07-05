@@ -43,10 +43,13 @@ private fun EditorTopBarPreview() {
     LunarisEditorTheme {
         EditorTopBar(
             title = "main.kt",
-            checked = setOf(EditorMenuAction.WORD_WRAP),
+            subtitle = "kotlin · not saved",
+            saveEnabled = true,
             onMenu = {},
             showMenu = true,
-            onMenuAction = {},
+            onSearch = {},
+            onSave = {},
+            onOpenSheet = {},
         )
     }
 }
@@ -59,15 +62,16 @@ private fun EditorBottomBarPreview() {
     }
 }
 
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
-private fun EditorOverflowMenuPreview() {
+private fun EditorActionSheetPreview() {
     LunarisEditorTheme {
-        EditorOverflowMenu(
-            expanded = true,
-            onDismiss = {},
-            onAction = {},
+        tools.lunaris.texteditor.feature.editor.action.EditorActionSheet(
             checked = setOf(EditorMenuAction.WORD_WRAP),
+            disabled = setOf(EditorMenuAction.RELOAD),
+            onAction = {},
+            onDismiss = {},
         )
     }
 }

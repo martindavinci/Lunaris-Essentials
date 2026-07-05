@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.size
@@ -30,10 +29,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -70,6 +69,7 @@ import tools.lunaris.texteditor.edit.SearchOptions
 import tools.lunaris.texteditor.edit.TimestampFormatter
 import tools.lunaris.texteditor.editor.CodeEditorController
 import tools.lunaris.texteditor.feature.browser.FolderBrowserViewModel
+import tools.lunaris.texteditor.feature.editor.action.EditorActionSheet
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfig
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarItem
 import tools.lunaris.texteditor.feature.editor.toolbar.icon
@@ -145,6 +145,8 @@ fun EditorScreen(
     // lose its cursor position and undo/redo history. Kept on top, the editor stays alive behind it.
     var showPreview by remember { mutableStateOf(false) }
     var showAccessory by remember { mutableStateOf(false) }
+    // The unified action menu (⋮) opens this bottom sheet.
+    var showSheet by remember { mutableStateOf(false) }
     var accessoryInitDone by remember { mutableStateOf(false) }
     LaunchedEffect(viewSettings) {
         if (!accessoryInitDone) { showAccessory = viewSettings.accessoryBarDefault; accessoryInitDone = true }
@@ -258,6 +260,53 @@ fun EditorScreen(
         if (nt != t) viewModel.onContentChanged(nt)
     }
 
+    // Hoisted so both the top-bar shortcuts (Search/Save), the bottom toolbar, and the action
+    // sheet route through one handler.
+    val onEditorMenuAction: (EditorMenuAction) -> Unit = { action ->
+        when (action) {
+            EditorMenuAction.SYNTAX -> openDialog = EditorDialog.SYNTAX
+            EditorMenuAction.DISPLAY_STYLE -> openDialog = EditorDialog.DISPLAY_STYLE
+            EditorMenuAction.ENCODING -> openDialog = EditorDialog.ENCODING
+            EditorMenuAction.RECENT_FILES -> openDialog = EditorDialog.RECENT
+            EditorMenuAction.SEARCH -> openDialog = EditorDialog.SEARCH
+            EditorMenuAction.GOTO_LINE -> openDialog = EditorDialog.GOTO
+            EditorMenuAction.STATS -> openDialog = EditorDialog.STATS
+            EditorMenuAction.INSERT_COLOR -> openDialog = EditorDialog.INSERT_COLOR
+            EditorMenuAction.INSERT_TIMESTAMP ->
+                editorController.insertAtCursor(TimestampFormatter.format(Instant.now(), ZoneId.systemDefault()))
+            EditorMenuAction.INDENT_INCREASE -> applyIndent(true)
+            EditorMenuAction.INDENT_DECREASE -> applyIndent(false)
+            EditorMenuAction.UNDO -> editorController.undo()
+            EditorMenuAction.REDO -> editorController.redo()
+            EditorMenuAction.SELECT_ALL -> editorController.selectAll()
+            EditorMenuAction.PASTE -> editorController.paste()
+            EditorMenuAction.WORD_WRAP -> viewModel.toggleWordWrap()
+            EditorMenuAction.READ_ONLY -> viewModel.toggleReadOnly()
+            EditorMenuAction.TOOLBAR -> openDialog = EditorDialog.TOOLBAR
+            EditorMenuAction.ACCESSORY_BAR -> showAccessory = !showAccessory
+            EditorMenuAction.SHARE ->
+                shareDocumentAsFile(context, suggestedSaveName(state, viewModel.languageCatalog), state.text)
+            EditorMenuAction.FILE_ASSOCIATIONS ->
+                onNavigate(tools.lunaris.texteditor.feature.Routes.ASSOCIATIONS)
+            EditorMenuAction.STORAGE_MANAGER -> onNavigate(tools.lunaris.texteditor.feature.Routes.STORAGE)
+            EditorMenuAction.SETTINGS -> onNavigate(tools.lunaris.texteditor.feature.Routes.SETTINGS)
+            EditorMenuAction.PREVIEW -> { viewModel.previewActive(); showPreview = true }
+            EditorMenuAction.NEW_TAB -> viewModel.newTab()
+            EditorMenuAction.OPEN -> openLauncher.launch(arrayOf("*/*"))
+            EditorMenuAction.OPEN_TREE -> treeLauncher.launch(null)
+            EditorMenuAction.SAVE -> {
+                val ref = state.fileRef
+                if (ref != null) viewModel.save(ref) else createLauncher.launch(suggestedSaveName(state, viewModel.languageCatalog))
+            }
+            EditorMenuAction.SAVE_AS -> createLauncher.launch(suggestedSaveName(state, viewModel.languageCatalog))
+            EditorMenuAction.RELOAD -> if (state.fileRef != null) viewModel.reopenWithEncoding(state.charset)
+            EditorMenuAction.CLOSE -> requestClose(state.activeTabId)
+            EditorMenuAction.INPUT_METHOD ->
+                context.getSystemService(android.view.inputmethod.InputMethodManager::class.java)
+                    ?.showInputMethodPicker()
+        }
+    }
+
     EditorScaffold(
         state = state,
         viewModel = viewModel,
@@ -280,50 +329,8 @@ fun EditorScreen(
         onSearchBack = { searchSession = null },
         onSearchPrev = { runFind(false) },
         onSearchNext = { runFind(true) },
-        onMenuAction = { action ->
-            when (action) {
-                EditorMenuAction.SYNTAX -> openDialog = EditorDialog.SYNTAX
-                EditorMenuAction.DISPLAY_STYLE -> openDialog = EditorDialog.DISPLAY_STYLE
-                EditorMenuAction.ENCODING -> openDialog = EditorDialog.ENCODING
-                EditorMenuAction.RECENT_FILES -> openDialog = EditorDialog.RECENT
-                EditorMenuAction.SEARCH -> openDialog = EditorDialog.SEARCH
-                EditorMenuAction.GOTO_LINE -> openDialog = EditorDialog.GOTO
-                EditorMenuAction.STATS -> openDialog = EditorDialog.STATS
-                EditorMenuAction.INSERT_COLOR -> openDialog = EditorDialog.INSERT_COLOR
-                EditorMenuAction.INSERT_TIMESTAMP ->
-                    editorController.insertAtCursor(TimestampFormatter.format(Instant.now(), ZoneId.systemDefault()))
-                EditorMenuAction.INDENT_INCREASE -> applyIndent(true)
-                EditorMenuAction.INDENT_DECREASE -> applyIndent(false)
-                EditorMenuAction.UNDO -> editorController.undo()
-                EditorMenuAction.REDO -> editorController.redo()
-                EditorMenuAction.SELECT_ALL -> editorController.selectAll()
-                EditorMenuAction.PASTE -> editorController.paste()
-                EditorMenuAction.WORD_WRAP -> viewModel.toggleWordWrap()
-                EditorMenuAction.READ_ONLY -> viewModel.toggleReadOnly()
-                EditorMenuAction.TOOLBAR -> openDialog = EditorDialog.TOOLBAR
-                EditorMenuAction.ACCESSORY_BAR -> showAccessory = !showAccessory
-                EditorMenuAction.SHARE ->
-                    shareDocumentAsFile(context, suggestedSaveName(state, viewModel.languageCatalog), state.text)
-                EditorMenuAction.FILE_ASSOCIATIONS ->
-                    onNavigate(tools.lunaris.texteditor.feature.Routes.ASSOCIATIONS)
-                EditorMenuAction.STORAGE_MANAGER -> onNavigate(tools.lunaris.texteditor.feature.Routes.STORAGE)
-                EditorMenuAction.SETTINGS -> onNavigate(tools.lunaris.texteditor.feature.Routes.SETTINGS)
-                EditorMenuAction.PREVIEW -> { viewModel.previewActive(); showPreview = true }
-                EditorMenuAction.NEW_TAB -> viewModel.newTab()
-                EditorMenuAction.OPEN -> openLauncher.launch(arrayOf("*/*"))
-                EditorMenuAction.OPEN_TREE -> treeLauncher.launch(null)
-                EditorMenuAction.SAVE -> {
-                    val ref = state.fileRef
-                    if (ref != null) viewModel.save(ref) else createLauncher.launch(suggestedSaveName(state, viewModel.languageCatalog))
-                }
-                EditorMenuAction.SAVE_AS -> createLauncher.launch(suggestedSaveName(state, viewModel.languageCatalog))
-                EditorMenuAction.RELOAD -> if (state.fileRef != null) viewModel.reopenWithEncoding(state.charset)
-                EditorMenuAction.CLOSE -> requestClose(state.activeTabId)
-                EditorMenuAction.INPUT_METHOD ->
-                    context.getSystemService(android.view.inputmethod.InputMethodManager::class.java)
-                        ?.showInputMethodPicker()
-            }
-        },
+        onMenuAction = onEditorMenuAction,
+        onOpenSheet = { showSheet = true },
         onToolbarItem = { item ->
             when (item) {
                 ToolbarItem.OPEN -> openLauncher.launch(arrayOf("*/*"))
@@ -353,6 +360,23 @@ fun EditorScreen(
         onStartSearch = startSearch,
         onDismiss = { openDialog = null },
     )
+
+    if (showSheet) {
+        EditorActionSheet(
+            checked = buildSet {
+                if (state.wordWrap) add(EditorMenuAction.WORD_WRAP)
+                if (state.readOnly) add(EditorMenuAction.READ_ONLY)
+                if (showAccessory) add(EditorMenuAction.ACCESSORY_BAR)
+            },
+            disabled = buildSet {
+                if (state.text.isBlank()) add(EditorMenuAction.SHARE)
+                if (state.fileRef == null) add(EditorMenuAction.RELOAD)
+                if (!state.dirty) add(EditorMenuAction.SAVE)
+            },
+            onAction = onEditorMenuAction,
+            onDismiss = { showSheet = false },
+        )
+    }
 
     closeConfirmId?.let { id ->
         AlertDialog(
@@ -406,11 +430,12 @@ fun EditorScreen(
 internal fun EditorTopBar(
     title: String,
     subtitle: String? = null,
-    checked: Set<EditorMenuAction> = emptySet(),
-    disabled: Set<EditorMenuAction> = emptySet(),
+    saveEnabled: Boolean = true,
     onMenu: () -> Unit = {},
     showMenu: Boolean = true,
-    onMenuAction: (EditorMenuAction) -> Unit,
+    onSearch: () -> Unit = {},
+    onSave: () -> Unit = {},
+    onOpenSheet: () -> Unit = {},
 ) {
     Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = BarElevation) {
         Row(
@@ -444,35 +469,14 @@ internal fun EditorTopBar(
                     )
                 }
             }
-            // File menu (folder button).
-            var fileOpen by remember { mutableStateOf(false) }
-            Box {
-                IconButton(onClick = { fileOpen = true }) {
-                    Icon(Icons.Filled.FolderOpen, contentDescription = stringResource(R.string.menu_file))
-                }
-                ActionDropdownMenu(FILE_ITEMS, fileOpen, { fileOpen = false }, onMenuAction, disabled = disabled)
+            IconButton(onClick = onSearch) {
+                Icon(Icons.Filled.Search, contentDescription = stringResource(R.string.menu_search))
             }
-            // Edit menu (pencil button).
-            var editOpen by remember { mutableStateOf(false) }
-            Box {
-                IconButton(onClick = { editOpen = true }) {
-                    Icon(Icons.Filled.Edit, contentDescription = stringResource(R.string.menu_edit))
-                }
-                ActionDropdownMenu(EDIT_ITEMS, editOpen, { editOpen = false }, onMenuAction, disabled = disabled)
+            IconButton(onClick = onSave, enabled = saveEnabled) {
+                Icon(Icons.Filled.Save, contentDescription = stringResource(R.string.menu_save))
             }
-            // Overflow menu (⋮). Box anchors the dropdown under the button (not the left edge).
-            var menuOpen by remember { mutableStateOf(false) }
-            Box {
-                IconButton(onClick = { menuOpen = true }) {
-                    Icon(Icons.Filled.MoreVert, contentDescription = stringResource(R.string.menu_more))
-                }
-                EditorOverflowMenu(
-                    expanded = menuOpen,
-                    onDismiss = { menuOpen = false },
-                    onAction = onMenuAction,
-                    checked = checked,
-                    disabled = disabled,
-                )
+            IconButton(onClick = onOpenSheet) {
+                Icon(Icons.Filled.MoreVert, contentDescription = stringResource(R.string.menu_more))
             }
         }
     }

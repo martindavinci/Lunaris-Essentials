@@ -61,6 +61,7 @@ internal fun EditorScaffold(
     onSearchBack: () -> Unit,
     onSearchPrev: () -> Unit,
     onSearchNext: () -> Unit,
+    onOpenSheet: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
 
@@ -138,21 +139,12 @@ internal fun EditorScaffold(
                 } else EditorTopBar(
                     title = state.title,
                     subtitle = subtitle,
-                    checked = buildSet {
-                        if (state.wordWrap) add(EditorMenuAction.WORD_WRAP)
-                        if (state.readOnly) add(EditorMenuAction.READ_ONLY)
-                        if (showAccessory) add(EditorMenuAction.ACCESSORY_BAR)
-                    },
-                    disabled = buildSet {
-                        if (state.text.isBlank()) add(EditorMenuAction.SHARE)
-                        if (state.fileRef == null) add(EditorMenuAction.RELOAD)
-                        if (!canUndo) add(EditorMenuAction.UNDO)
-                        if (!canRedo) add(EditorMenuAction.REDO)
-                        if (!state.dirty) add(EditorMenuAction.SAVE)
-                    },
+                    saveEnabled = state.dirty,
                     onMenu = { scope.launch { drawerState.open() } },
-                    onMenuAction = onMenuAction,
                     showMenu = folderDrawerEnabled,
+                    onSearch = { onMenuAction(EditorMenuAction.SEARCH) },
+                    onSave = { onMenuAction(EditorMenuAction.SAVE) },
+                    onOpenSheet = onOpenSheet,
                 )
             },
             bottomBar = {

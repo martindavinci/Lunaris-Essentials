@@ -29,52 +29,6 @@ import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material.icons.filled.WrapText
 import androidx.compose.ui.graphics.vector.ImageVector
 
-/** File menu (folder button): new, open, save, reload, close. */
-val FILE_ITEMS = listOf(
-    EditorMenuAction.NEW_TAB,
-    EditorMenuAction.OPEN,
-    EditorMenuAction.OPEN_TREE,
-    EditorMenuAction.SAVE,
-    EditorMenuAction.SAVE_AS,
-    EditorMenuAction.RELOAD,
-    EditorMenuAction.CLOSE,
-)
-
-/** Edit menu (pencil button): undo/redo, clipboard, inserts, indent, input method. */
-val EDIT_ITEMS = listOf(
-    EditorMenuAction.UNDO,
-    EditorMenuAction.REDO,
-    EditorMenuAction.SELECT_ALL,
-    EditorMenuAction.PASTE,
-    EditorMenuAction.INSERT_COLOR,
-    EditorMenuAction.INSERT_TIMESTAMP,
-    EditorMenuAction.INDENT_INCREASE,
-    EditorMenuAction.INDENT_DECREASE,
-    EditorMenuAction.INPUT_METHOD,
-)
-
-/** Overflow (⋮) menu: view/tooling actions not in the File/Edit menus. */
-val OVERFLOW_ITEMS = listOf(
-    EditorMenuAction.SEARCH,
-    EditorMenuAction.SHARE,
-    EditorMenuAction.GOTO_LINE,
-    EditorMenuAction.SYNTAX,
-    EditorMenuAction.ENCODING,
-    EditorMenuAction.DISPLAY_STYLE,
-    EditorMenuAction.STATS,
-    EditorMenuAction.PREVIEW,
-    EditorMenuAction.WORD_WRAP,
-    EditorMenuAction.READ_ONLY,
-    EditorMenuAction.ACCESSORY_BAR,
-)
-
-/** Actions rendered with a trailing checkbox (on/off state). */
-val OVERFLOW_TOGGLES = setOf(
-    EditorMenuAction.WORD_WRAP,
-    EditorMenuAction.READ_ONLY,
-    EditorMenuAction.ACCESSORY_BAR,
-)
-
 /** Leading icon for a menu action. */
 fun EditorMenuAction.icon(): ImageVector = when (this) {
     EditorMenuAction.NEW_TAB -> Icons.Filled.Add
