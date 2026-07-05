@@ -19,17 +19,19 @@ class FileAssociationViewModel @Inject constructor(
     val catalog: LanguageCatalog,
 ) : ViewModel() {
 
-    /** ext -> language display name, sorted by extension. */
-    val rows: StateFlow<List<Pair<String, String>>> =
+    val rows: StateFlow<List<AssocRow>> =
         store.associations()
             .map { assoc ->
                 assoc.entries.sortedBy { it.first }.map { (ext, langId) ->
-                    ext to (catalog.findById(langId)?.display ?: langId)
+                    AssocRow(ext, langId, catalog.findById(langId)?.display ?: langId)
                 }
             }
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+            .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
 
-    val languages: List<LanguageDefinition> get() = catalog.languages.filter { it.scopeName != null }
+    /** Real languages plus plaintext, for the picker ("Testo semplice" = no highlighting). */
+    val pickerLanguages: List<LanguageDefinition> = catalog.languages
+
+    fun setLanguage(extension: String, languageId: String) = add(extension, languageId)
 
     fun add(extension: String, languageId: String) {
         if (extension.isBlank()) return
@@ -38,3 +40,5 @@ class FileAssociationViewModel @Inject constructor(
 
     fun remove(extension: String) { viewModelScope.launch { store.removeAssociation(extension) } }
 }
+
+data class AssocRow(val ext: String, val langId: String, val display: String)
