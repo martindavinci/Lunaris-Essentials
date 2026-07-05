@@ -164,4 +164,27 @@
     <string name="toolbar_preview">Voorbeeld</string>
     <string name="toolbar_select_mode">Selectiemodus</string>
     <string name="toolbar_keys">Speciale tekens</string>
+    <string name="drawer_recents">Recent</string>
+    <string name="drawer_folders">Mappen</string>
+    <string name="drawer_extensions">Extensies</string>
+    <string name="drawer_editor">Editor</string>
+    <string name="name_hint">Naam</string>
+    <string name="time_now">nu</string>
+    <string name="time_minutes">%d min geleden</string>
+    <string name="time_hours">%d u geleden</string>
+    <string name="time_yesterday">gisteren</string>
+    <string name="time_days">%d dagen geleden</string>
+    <string name="drawer_new_file">Nieuw bestand</string>
+    <string name="folder_add">Map toevoegen</string>
+    <string name="folder_new_file">Nieuw bestand</string>
+    <string name="folder_new_subfolder">Nieuwe submap</string>
+    <string name="folder_rename">Hernoemen</string>
+    <string name="folder_more">Meer</string>
+    <string name="folder_expand">Uitvouwen</string>
+    <string name="assoc_subtitle">Extensie → markering</string>
+    <string name="assoc_language_for">Taal voor %s</string>
+    <string name="assoc_search">Taal zoeken…</string>
+    <string name="assoc_plaintext">Platte tekst</string>
+    <string name="assoc_remove_title">Koppeling verwijderen?</string>
+    <string name="assoc_remove">Verwijderen</string>
 </resources>

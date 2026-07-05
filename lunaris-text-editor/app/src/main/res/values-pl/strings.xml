@@ -164,4 +164,27 @@
     <string name="toolbar_preview">Podgląd</string>
     <string name="toolbar_select_mode">Tryb zaznaczania</string>
     <string name="toolbar_keys">Znaki specjalne</string>
+    <string name="drawer_recents">Ostatnie</string>
+    <string name="drawer_folders">Foldery</string>
+    <string name="drawer_extensions">Rozszerzenia</string>
+    <string name="drawer_editor">Edytor</string>
+    <string name="name_hint">Nazwa</string>
+    <string name="time_now">teraz</string>
+    <string name="time_minutes">%d min temu</string>
+    <string name="time_hours">%d godz. temu</string>
+    <string name="time_yesterday">wczoraj</string>
+    <string name="time_days">%d dni temu</string>
+    <string name="drawer_new_file">Nowy plik</string>
+    <string name="folder_add">Dodaj folder</string>
+    <string name="folder_new_file">Nowy plik</string>
+    <string name="folder_new_subfolder">Nowy podfolder</string>
+    <string name="folder_rename">Zmień nazwę</string>
+    <string name="folder_more">Więcej</string>
+    <string name="folder_expand">Rozwiń</string>
+    <string name="assoc_subtitle">Rozszerzenie → podświetlanie składni</string>
+    <string name="assoc_language_for">Język dla %s</string>
+    <string name="assoc_search">Szukaj języka…</string>
+    <string name="assoc_plaintext">Zwykły tekst</string>
+    <string name="assoc_remove_title">Usunąć skojarzenie?</string>
+    <string name="assoc_remove">Usuń</string>
 </resources>

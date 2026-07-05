@@ -164,4 +164,27 @@
     <string name="toolbar_preview">Pré-visualização</string>
     <string name="toolbar_select_mode">Modo de seleção</string>
     <string name="toolbar_keys">Caracteres especiais</string>
+    <string name="drawer_recents">Recentes</string>
+    <string name="drawer_folders">Pastas</string>
+    <string name="drawer_extensions">Extensões</string>
+    <string name="drawer_editor">Editor</string>
+    <string name="name_hint">Nome</string>
+    <string name="time_now">agora</string>
+    <string name="time_minutes">há %d min</string>
+    <string name="time_hours">há %d h</string>
+    <string name="time_yesterday">ontem</string>
+    <string name="time_days">há %d dias</string>
+    <string name="drawer_new_file">Novo ficheiro</string>
+    <string name="folder_add">Adicionar pasta</string>
+    <string name="folder_new_file">Novo ficheiro</string>
+    <string name="folder_new_subfolder">Nova subpasta</string>
+    <string name="folder_rename">Mudar nome</string>
+    <string name="folder_more">Mais</string>
+    <string name="folder_expand">Expandir</string>
+    <string name="assoc_subtitle">Extensão → destaque de sintaxe</string>
+    <string name="assoc_language_for">Linguagem para %s</string>
+    <string name="assoc_search">Procurar linguagem…</string>
+    <string name="assoc_plaintext">Texto simples</string>
+    <string name="assoc_remove_title">Remover esta associação?</string>
+    <string name="assoc_remove">Remover</string>
 </resources>

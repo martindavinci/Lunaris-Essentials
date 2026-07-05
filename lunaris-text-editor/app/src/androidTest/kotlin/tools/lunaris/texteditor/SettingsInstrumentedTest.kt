@@ -18,9 +18,9 @@ class SettingsInstrumentedTest {
 
     @Test
     fun drawer_opensSettingsScreen() {
-        // Settings lives in the nav drawer (it's intentionally excluded from the action sheet).
+        // Settings is the gear icon in the drawer's nav rail (it's intentionally excluded from the action sheet).
         composeRule.onNodeWithContentDescription("Menu").performClick()
-        composeRule.onNodeWithText("Settings").performClick()
+        composeRule.onNodeWithContentDescription("Settings").performClick()
         // "General" is the first (top, on-screen) settings section — confirms the screen opened.
         composeRule.onNodeWithText("General").assertIsDisplayed()
     }
