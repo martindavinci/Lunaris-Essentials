@@ -3,7 +3,16 @@ package tools.lunaris.texteditor.preview
 import javax.inject.Inject
 import javax.inject.Singleton
 
-data class PreviewRequest(val title: String, val fileName: String?, val text: String)
+/**
+ * [languageHint] is the highlight.js language token for the doc's explicitly-chosen syntax, used
+ * when [fileName] has no extension to derive it from (e.g. an untitled file set to C++).
+ */
+data class PreviewRequest(
+    val title: String,
+    val fileName: String?,
+    val text: String,
+    val languageHint: String? = null,
+)
 
 /** Carries the active document to the Preview destination (NavHost destinations get separate ViewModels). */
 @Singleton

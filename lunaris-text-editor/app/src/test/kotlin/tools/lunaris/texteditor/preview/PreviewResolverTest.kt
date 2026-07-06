@@ -76,6 +76,28 @@ class PreviewResolverTest {
         assertThat(doc).doesNotContain("hljs.highlightAll()")
     }
 
+    @Test fun untitledFile_usesLanguageHint_forHighlight() {
+        // No extension to derive the language from, so the explicitly-chosen syntax must drive it.
+        val doc = PreviewResolver.toHtmlDocument(
+            fileName = "untitled", text = "int main(){}", renderMarkdown = renderMd,
+            dark = true, highlightCss = "CSSDATA", highlightJs = "JSDATA", languageHint = "cpp",
+        )
+        assertThat(doc).contains("<code class=\"language-cpp\">int main(){}</code>")
+        assertThat(doc).contains("hljs.highlightAll()")
+    }
+    @Test fun realExtension_winsOverLanguageHint() {
+        // A genuine extension is authoritative; the hint only fills in when there isn't one.
+        val doc = PreviewResolver.toHtmlDocument(
+            fileName = "main.py", text = "x = 1", renderMarkdown = renderMd,
+            highlightCss = "C", highlightJs = "J", languageHint = "cpp",
+        )
+        assertThat(doc).contains("<code class=\"language-py\">x = 1</code>")
+    }
+    @Test fun isRawHtml_honorsLanguageHintWhenNoExtension() {
+        assertThat(PreviewResolver.isRawHtml(fileName = "untitled", languageHint = "html")).isTrue()
+        assertThat(PreviewResolver.isRawHtml(fileName = "untitled", languageHint = "cpp")).isFalse()
+    }
+
     @Test fun highlight_notInjectedWithoutCodeBlock() {
         val doc = PreviewResolver.toHtmlDocument(
             "a.md", "# x", renderMd, dark = true, highlightCss = "CSSDATA", highlightJs = "JSDATA",

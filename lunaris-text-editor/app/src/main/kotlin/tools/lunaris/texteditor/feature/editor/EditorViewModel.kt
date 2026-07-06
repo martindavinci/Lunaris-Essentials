@@ -286,7 +286,21 @@ class EditorViewModel @Inject constructor(
 
     fun previewActive() {
         val a = docs.value.active ?: return
-        previewHolder.request = tools.lunaris.texteditor.preview.PreviewRequest(a.title, a.title, a.text)
+        previewHolder.request =
+            tools.lunaris.texteditor.preview.PreviewRequest(a.title, a.title, a.text, previewLanguageHint(a))
+    }
+
+    /**
+     * highlight.js language token for the doc's chosen syntax (its primary extension), or null for
+     * plain text. Lets an extensionless untitled file still highlight in preview per its selected
+     * language instead of falling back to plain <pre>.
+     */
+    private fun previewLanguageHint(doc: tools.lunaris.texteditor.document.DocumentSession): String? {
+        val def = when (val s = doc.syntax) {
+            is tools.lunaris.texteditor.syntax.SyntaxSelection.Explicit -> languageCatalog.findById(s.languageId)
+            else -> languageCatalog.findByScope(doc.scopeName)
+        }
+        return def?.takeIf { it.scopeName != null }?.extensions?.firstOrNull()
     }
 
     override fun onCleared() {

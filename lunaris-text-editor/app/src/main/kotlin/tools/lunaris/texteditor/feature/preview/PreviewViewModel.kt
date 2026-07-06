@@ -19,7 +19,8 @@ class PreviewViewModel @Inject constructor(
     val title: String get() = holder.request?.title ?: ""
 
     /** Raw-HTML previews render the user's own page unsanitized, so JS must stay disabled for them. */
-    val isRawHtmlPreview: Boolean get() = PreviewResolver.isRawHtml(holder.request?.fileName)
+    val isRawHtmlPreview: Boolean
+        get() = holder.request?.let { PreviewResolver.isRawHtml(it.fileName, it.languageHint) } ?: false
 
     /** Renders the document HTML for the chosen [dark]/light theme (null if nothing to preview). */
     fun html(dark: Boolean): String? =
@@ -28,6 +29,7 @@ class PreviewViewModel @Inject constructor(
                 it.fileName, it.text, renderer::toHtml, dark,
                 highlightCss = if (dark) highlight.darkCss else highlight.lightCss,
                 highlightJs = highlight.js,
+                languageHint = it.languageHint,
             )
         }
 }

@@ -56,7 +56,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -81,7 +80,9 @@ import tools.lunaris.texteditor.feature.preview.PreviewScreen
 import tools.lunaris.texteditor.feature.settings.SettingsViewModel
 import tools.lunaris.texteditor.file.FileRef
 import tools.lunaris.texteditor.ui.theme.ToolbarCloseAccent
+import tools.lunaris.texteditor.ui.theme.ToolbarCloseOnAccent
 import tools.lunaris.texteditor.ui.theme.ToolbarOpenAccent
+import tools.lunaris.texteditor.ui.theme.ToolbarOpenOnAccent
 import java.time.Instant
 import java.time.ZoneId
 
@@ -620,6 +621,7 @@ private fun BarSegments(
         val run = items.subList(i, j)
         when (group) {
             BarGroup.PREVIEW -> run.forEach { PreviewButton(it, onItem, isEnabled(it)) }
+            BarGroup.FILE -> run.forEach { AccentCircleButton(it, onItem, isEnabled(it)) }
             BarGroup.SOLO -> run.forEach { ToolbarIconButton(it, onItem, isEnabled(it)) }
             else -> SegmentPill { run.forEach { PillButton(it, onItem, isEnabled(it), toggled(it)) } }
         }
@@ -639,13 +641,6 @@ private fun ToolbarItem.barGroup(): BarGroup = when (this) {
     else -> BarGroup.SOLO
 }
 
-/** Gold "open" / red "close" accents; null = default content color. */
-private fun ToolbarItem.accentTint(): Color? = when (this) {
-    ToolbarItem.OPEN -> ToolbarOpenAccent
-    ToolbarItem.CLOSE -> ToolbarCloseAccent
-    else -> null
-}
-
 /** Neutral rounded container holding one group's buttons. */
 @Composable
 private fun SegmentPill(content: @Composable RowScope.() -> Unit) {
@@ -658,12 +653,26 @@ private fun SegmentPill(content: @Composable RowScope.() -> Unit) {
     }
 }
 
-/** Icon button inside a pill; open/close keep their gold/red accent, [active] tints a live toggle to primary. */
+/** Icon button inside a pill; [active] tints a live toggle (select mode, special chars) to the accent. */
 @Composable
 private fun PillButton(item: ToolbarItem, onItem: (ToolbarItem) -> Unit, enabled: Boolean, active: Boolean) {
     IconButton(onClick = { onItem(item) }, enabled = enabled, modifier = Modifier.size(40.dp)) {
-        val tint = item.accentTint() ?: if (active) MaterialTheme.colorScheme.primary else LocalContentColor.current
+        val tint = if (active) MaterialTheme.colorScheme.primary else LocalContentColor.current
         Icon(item.icon(), contentDescription = stringResource(item.labelRes()), tint = tint, modifier = Modifier.size(24.dp))
+    }
+}
+
+/** Open/close as filled accent circles (gold / red), mirroring the preview button's shape. */
+@Composable
+private fun AccentCircleButton(item: ToolbarItem, onItem: (ToolbarItem) -> Unit, enabled: Boolean) {
+    val (fill, glyph) = when (item) {
+        ToolbarItem.CLOSE -> ToolbarCloseAccent to ToolbarCloseOnAccent
+        else -> ToolbarOpenAccent to ToolbarOpenOnAccent
+    }
+    Surface(shape = CircleShape, color = fill) {
+        IconButton(onClick = { onItem(item) }, enabled = enabled, modifier = Modifier.size(40.dp)) {
+            Icon(item.icon(), contentDescription = stringResource(item.labelRes()), tint = glyph, modifier = Modifier.size(24.dp))
+        }
     }
 }
 
@@ -689,7 +698,7 @@ private fun ToolbarIconButton(item: ToolbarItem, onItem: (ToolbarItem) -> Unit, 
         Icon(
             item.icon(),
             contentDescription = stringResource(item.labelRes()),
-            tint = item.accentTint() ?: LocalContentColor.current,
+            tint = LocalContentColor.current,
             modifier = Modifier.size(24.dp),
         )
     }

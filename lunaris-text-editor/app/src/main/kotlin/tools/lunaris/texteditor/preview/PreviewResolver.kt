@@ -9,8 +9,12 @@ object PreviewResolver {
         dark: Boolean = false,
         highlightCss: String? = null,
         highlightJs: String? = null,
+        languageHint: String? = null,
     ): String {
-        val ext = fileName?.substringAfterLast('.', "")?.lowercase().orEmpty()
+        // Language comes from the filename extension; when there's none (untitled files), fall back
+        // to the explicitly-chosen syntax so a new C++ scratch file still highlights in preview.
+        val fileExt = fileName?.substringAfterLast('.', "")?.lowercase().orEmpty()
+        val ext = fileExt.ifEmpty { languageHint?.lowercase()?.trim().orEmpty() }
         return when (ext) {
             "md", "markdown" -> wrap(renderMarkdown(text), dark, highlightCss, highlightJs)
             // Raw HTML is shown as-is; in dark mode try a CSS-only color flip (images re-inverted).
@@ -32,9 +36,13 @@ object PreviewResolver {
     // since we don't sanitize their contents. Our generated docs run the bundled highlight.js.
     private val RAW_HTML_EXTS = setOf("html", "htm", "xhtml")
 
-    /** True if [fileName] is rendered as raw HTML passthrough (so the WebView must disable JS). */
-    fun isRawHtml(fileName: String?): Boolean =
-        fileName?.substringAfterLast('.', "")?.lowercase() in RAW_HTML_EXTS
+    /** True if the doc renders as raw HTML passthrough (so the WebView must disable JS). Mirrors the
+     *  extension resolution in [toHtmlDocument], including the untitled-file [languageHint] fallback. */
+    fun isRawHtml(fileName: String?, languageHint: String? = null): Boolean {
+        val fileExt = fileName?.substringAfterLast('.', "")?.lowercase().orEmpty()
+        val ext = fileExt.ifEmpty { languageHint?.lowercase()?.trim().orEmpty() }
+        return ext in RAW_HTML_EXTS
+    }
 
     /**
      * Best-effort dark mode for a raw HTML page. Forces an opaque white base (so inverting yields a
