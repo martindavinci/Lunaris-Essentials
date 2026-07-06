@@ -137,7 +137,7 @@
     <string name="set_line_numbers">Numeri di riga</string>
     <string name="set_font_type">Carattere</string>
     <string name="set_font_size">Dimensione testo</string>
-    <string name="set_line_spacing">Interlinea</string>
+    <string name="set_line_spacing">Spaziatura righe</string>
     <string name="set_autosave">Salvataggio automatico</string>
     <string name="set_autosave_interval">Salva ogni</string>
     <string name="set_theme">Tema</string>

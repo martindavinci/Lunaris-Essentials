@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -108,7 +109,9 @@ internal fun SettingsContent(
     var showToolbar by remember { mutableStateOf(false) }
     var openCategory by rememberSaveable { mutableStateOf<SettingsCategory?>(null) }
 
-    BackHandler(enabled = openCategory != null) { openCategory = null }
+    if (!LocalInspectionMode.current) {
+        BackHandler(enabled = openCategory != null) { openCategory = null }
+    }
 
     Scaffold(
         topBar = {

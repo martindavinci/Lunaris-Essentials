@@ -68,3 +68,19 @@ private fun LicensesScreenPreview() {
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+private fun EditorCategoryPreview() {
+    LunarisEditorTheme {
+        Column {
+            EditorCategory(
+                s = EditorSettings(),
+                onUpdate = {},
+                onIndentClick = {},
+                onLineBreakClick = {},
+                onShowToolbar = {},
+            )
+        }
+    }
+}
+
