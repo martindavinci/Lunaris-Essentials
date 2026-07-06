@@ -138,7 +138,7 @@
     <string name="set_session_restore">Riapri gli ultimi file all\'avvio</string>
     <string name="set_toolbar">Pulsanti barra strumenti</string>
     <string name="set_suggestions">Suggerimenti parole</string>
-    <string name="set_auto_caps">Maiuscula a inizio frase</string>
+    <string name="set_auto_caps">Maiuscola a inizio frase</string>
     <string name="set_accessory">Riga tasti accessori</string>
     <string name="set_line_numbers">Numeri di riga</string>
     <string name="set_font_type">Carattere</string>
