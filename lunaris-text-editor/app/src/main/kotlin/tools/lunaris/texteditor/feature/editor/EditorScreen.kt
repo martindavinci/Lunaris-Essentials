@@ -197,12 +197,11 @@ fun EditorScreen(
     // the toolbar while a query is active; the header never changes. A no-match find snackbars.
     val scope = rememberCoroutineScope()
     var searchSession by remember { mutableStateOf<SearchSession?>(null) }
-    // All matches for the active query, and the 1-based index of the current one, for the "n/total"
-    // counter. Recomputed as the text or query changes.
-    val searchMatches = remember(searchSession, state.text) {
-        searchSession?.let { searchEngine.findAll(state.text, it.query, it.opts) } ?: emptyList()
-    }
+    // 1-based index of the current match and the total, for the "n/total" counter. Computed from a
+    // fresh findAll on each navigate — deriving it from remembered state would read 0/N on the very
+    // first find (the memo hasn't recomposed with the new session yet).
     var searchIndex by remember { mutableStateOf(0) }
+    var searchTotal by remember { mutableStateOf(0) }
     val noMatchTemplate = stringResource(R.string.search_no_match)
     val runFind: (Boolean) -> Unit = { forward ->
         searchSession?.let { s ->
@@ -213,11 +212,13 @@ fun EditorScreen(
             else searchEngine.findPrevious(state.text, s.query, sel.first, s.opts)
             if (m != null) {
                 editorController.selectRange(m.start, m.end)
-                searchIndex = searchMatches.indexOfFirst { it.start == m.start }.let { if (it >= 0) it + 1 else 0 }
+                val all = searchEngine.findAll(state.text, s.query, s.opts)
+                searchTotal = all.size
+                searchIndex = all.indexOfFirst { it.start == m.start }.let { if (it >= 0) it + 1 else 0 }
             } else scope.launch { snackbar.showSnackbar(String.format(noMatchTemplate, s.query)) }
         }
     }
-    val searchCountLabel = if (searchSession == null) "" else "$searchIndex/${searchMatches.size}"
+    val searchCountLabel = if (searchSession == null) "" else "$searchIndex/$searchTotal"
     val startSearch: (String, SearchOptions, Boolean) -> Unit = { q, o, forward ->
         if (q.isNotEmpty()) {
             searchSession = SearchSession(q, o)
@@ -627,7 +628,10 @@ internal fun EditorBottomBar(
     // fit into a trailing "…" overflow menu.
     val leftItems = items.filter { it.barGroup() != BarGroup.PREVIEW }
     val previewItems = items.filter { it.barGroup() == BarGroup.PREVIEW }
-    val cells = remember(leftItems) { groupCells(leftItems) }
+    // Open/close live in the "…" overflow menu rather than on the track, so the visible bar stays a
+    // clean primary set (cursor · keys · history) plus the pinned preview circle.
+    val (secondary, inline) = remember(leftItems) { leftItems.partition { it.overflowOnly() } }
+    val cells = remember(inline) { groupCells(inline) }
     Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = BarElevation) {
         Row(
             modifier = Modifier
@@ -638,7 +642,7 @@ internal fun EditorBottomBar(
                 .padding(horizontal = 12.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            AdaptiveBarCells(cells, onItem, isEnabled, toggled, Modifier.weight(1f))
+            AdaptiveBarCells(cells, secondary, onItem, isEnabled, toggled, Modifier.weight(1f))
             if (previewItems.isNotEmpty()) {
                 Spacer(Modifier.width(GroupGap))
                 previewItems.forEach { PreviewButton(it, onItem, isEnabled(it)) }
@@ -662,12 +666,14 @@ private fun groupCells(items: List<ToolbarItem>): List<List<ToolbarItem>> {
 }
 
 /**
- * Lays out the left [cells] left-to-right, measuring each; any that don't fit collapse into a
- * trailing "…" menu pinned to the right edge (so the visible bar never clips or scrolls).
+ * Lays out the left [cells] left-to-right, measuring each. Any that don't fit — plus the always-
+ * overflow [secondary] actions — collapse into a trailing "…" menu pinned to the right edge, so the
+ * visible bar never clips or scrolls.
  */
 @Composable
 private fun AdaptiveBarCells(
     cells: List<List<ToolbarItem>>,
+    secondary: List<ToolbarItem>,
     onItem: (ToolbarItem) -> Unit,
     isEnabled: (ToolbarItem) -> Boolean,
     toggled: (ToolbarItem) -> Boolean,
@@ -687,18 +693,20 @@ private fun AdaptiveBarCells(
             for (idx in 0 until k) { if (idx > 0) w += gapPx; w += placeables[idx].width }
             return w
         }
-        // Unbounded width (e.g. previews) fits everything; otherwise find the largest prefix that
-        // fits, reserving room for the overflow button when some cells spill.
+        // Unbounded width (e.g. previews) fits everything; otherwise take the largest prefix that
+        // fits. The "…" button is always present when there are [secondary] actions, only conditional
+        // otherwise — either way reserve its width when it will show.
         val maxW = if (constraints.hasBoundedWidth) constraints.maxWidth else prefixWidth(n)
+        val alwaysButton = secondary.isNotEmpty()
         var fit = n
-        if (prefixWidth(n) > maxW) {
+        if (alwaysButton || prefixWidth(n) > maxW) {
             fit = 0
-            for (k in n - 1 downTo 0) {
+            for (k in (if (alwaysButton) n else n - 1) downTo 0) {
                 val lead = if (k > 0) gapPx else 0
                 if (prefixWidth(k) + lead + overflowWidth <= maxW) { fit = k; break }
             }
         }
-        val overflow = cells.drop(fit).flatten()
+        val overflow = cells.drop(fit).flatten() + secondary
         val overflowPlaceable = if (overflow.isNotEmpty()) {
             subcompose("overflow") {
                 OverflowButton(overflow, expanded, { expanded = it }, onItem, isEnabled)
@@ -789,6 +797,9 @@ private fun ToolbarItem.barGroup(): BarGroup = when (this) {
     ToolbarItem.PREVIEW -> BarGroup.PREVIEW
     else -> BarGroup.SOLO
 }
+
+/** Actions kept in the "…" overflow menu rather than on the visible track. */
+private fun ToolbarItem.overflowOnly(): Boolean = this == ToolbarItem.OPEN || this == ToolbarItem.CLOSE
 
 /**
  * Uniform flat toolbar icon — the single treatment for every left-track action. Open/close keep
