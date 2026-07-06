@@ -153,6 +153,7 @@
     <string name="toolbar_preview">Pré-visualização</string>
     <string name="toolbar_select_mode">Modo de seleção</string>
     <string name="toolbar_keys">Caracteres especiais</string>
+    <string name="toolbar_more">Mais</string>
     <string name="drawer_recents">Recentes</string>
     <string name="drawer_folders">Pastas</string>
     <string name="drawer_extensions">Extensões</string>

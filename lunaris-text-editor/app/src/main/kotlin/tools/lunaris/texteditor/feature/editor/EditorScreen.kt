@@ -11,6 +11,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -25,6 +26,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,10 +35,13 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -56,6 +61,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -80,9 +87,7 @@ import tools.lunaris.texteditor.feature.preview.PreviewScreen
 import tools.lunaris.texteditor.feature.settings.SettingsViewModel
 import tools.lunaris.texteditor.file.FileRef
 import tools.lunaris.texteditor.ui.theme.ToolbarCloseAccent
-import tools.lunaris.texteditor.ui.theme.ToolbarCloseOnAccent
 import tools.lunaris.texteditor.ui.theme.ToolbarOpenAccent
-import tools.lunaris.texteditor.ui.theme.ToolbarOpenOnAccent
 import java.time.Instant
 import java.time.ZoneId
 
@@ -571,6 +576,7 @@ internal fun SearchTopBar(
 }
 
 private val GroupGap = 10.dp
+private val BarButtonSize = 40.dp
 
 @Composable
 internal fun EditorBottomBar(
@@ -580,9 +586,11 @@ internal fun EditorBottomBar(
     toggled: (ToolbarItem) -> Boolean = { false },
 ) {
     val items = config.enabled
-    // Preview is always pinned to the far right; every other group clusters on the left in order.
+    // Preview is pinned to the far right; the rest cluster on the left, spilling any that don't
+    // fit into a trailing "…" overflow menu.
     val leftItems = items.filter { it.barGroup() != BarGroup.PREVIEW }
     val previewItems = items.filter { it.barGroup() == BarGroup.PREVIEW }
+    val cells = remember(leftItems) { groupCells(leftItems) }
     Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = BarElevation) {
         Row(
             modifier = Modifier
@@ -593,39 +601,134 @@ internal fun EditorBottomBar(
                 .padding(horizontal = 12.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(GroupGap),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                BarSegments(leftItems, onItem, isEnabled, toggled)
+            AdaptiveBarCells(cells, onItem, isEnabled, toggled, Modifier.weight(1f))
+            if (previewItems.isNotEmpty()) {
+                Spacer(Modifier.width(GroupGap))
+                previewItems.forEach { PreviewButton(it, onItem, isEnabled(it)) }
             }
-            Spacer(Modifier.weight(1f))
-            BarSegments(previewItems, onItem, isEnabled, toggled)
         }
     }
 }
 
-/** Emits items as grouped pills / accent circles — consecutive same-group items merge into one pill. */
+/** Group consecutive same-[barGroup] items into cells; each cell becomes one pill or icon run. */
+private fun groupCells(items: List<ToolbarItem>): List<List<ToolbarItem>> {
+    val out = mutableListOf<List<ToolbarItem>>()
+    var i = 0
+    while (i < items.size) {
+        val g = items[i].barGroup()
+        var j = i + 1
+        while (j < items.size && items[j].barGroup() == g) j++
+        out += items.subList(i, j).toList()
+        i = j
+    }
+    return out
+}
+
+/**
+ * Lays out the left [cells] left-to-right, measuring each; any that don't fit collapse into a
+ * trailing "…" menu pinned to the right edge (so the visible bar never clips or scrolls).
+ */
 @Composable
-private fun BarSegments(
-    items: List<ToolbarItem>,
+private fun AdaptiveBarCells(
+    cells: List<List<ToolbarItem>>,
+    onItem: (ToolbarItem) -> Unit,
+    isEnabled: (ToolbarItem) -> Boolean,
+    toggled: (ToolbarItem) -> Boolean,
+    modifier: Modifier = Modifier,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    SubcomposeLayout(modifier) { constraints ->
+        val loose = constraints.copy(minWidth = 0, minHeight = 0)
+        val gapPx = GroupGap.roundToPx()
+        val overflowWidth = BarButtonSize.roundToPx()
+        val placeables = cells.mapIndexed { idx, cell ->
+            subcompose(idx) { BarCell(cell, onItem, isEnabled, toggled) }.first().measure(loose)
+        }
+        val n = placeables.size
+        fun prefixWidth(k: Int): Int {
+            var w = 0
+            for (idx in 0 until k) { if (idx > 0) w += gapPx; w += placeables[idx].width }
+            return w
+        }
+        // Unbounded width (e.g. previews) fits everything; otherwise find the largest prefix that
+        // fits, reserving room for the overflow button when some cells spill.
+        val maxW = if (constraints.hasBoundedWidth) constraints.maxWidth else prefixWidth(n)
+        var fit = n
+        if (prefixWidth(n) > maxW) {
+            fit = 0
+            for (k in n - 1 downTo 0) {
+                val lead = if (k > 0) gapPx else 0
+                if (prefixWidth(k) + lead + overflowWidth <= maxW) { fit = k; break }
+            }
+        }
+        val overflow = cells.drop(fit).flatten()
+        val overflowPlaceable = if (overflow.isNotEmpty()) {
+            subcompose("overflow") {
+                OverflowButton(overflow, expanded, { expanded = it }, onItem, isEnabled)
+            }.first().measure(loose)
+        } else null
+
+        val placed = placeables.take(fit)
+        val height = (placed.map { it.height } + listOfNotNull(overflowPlaceable?.height)).maxOrNull() ?: 0
+        layout(maxW, height) {
+            var x = 0
+            placed.forEachIndexed { idx, p ->
+                if (idx > 0) x += gapPx
+                p.placeRelative(x, (height - p.height) / 2)
+                x += p.width
+            }
+            overflowPlaceable?.placeRelative(maxW - overflowPlaceable.width, (height - overflowPlaceable.height) / 2)
+        }
+    }
+}
+
+/** One cell: a neutral pill for grouped toggles, or a bare icon run for file/solo actions. */
+@Composable
+private fun BarCell(
+    cell: List<ToolbarItem>,
     onItem: (ToolbarItem) -> Unit,
     isEnabled: (ToolbarItem) -> Boolean,
     toggled: (ToolbarItem) -> Boolean,
 ) {
-    var i = 0
-    while (i < items.size) {
-        val group = items[i].barGroup()
-        var j = i + 1
-        while (j < items.size && items[j].barGroup() == group) j++
-        val run = items.subList(i, j)
-        when (group) {
-            BarGroup.PREVIEW -> run.forEach { PreviewButton(it, onItem, isEnabled(it)) }
-            BarGroup.FILE -> run.forEach { AccentCircleButton(it, onItem, isEnabled(it)) }
-            BarGroup.SOLO -> run.forEach { ToolbarIconButton(it, onItem, isEnabled(it)) }
-            else -> SegmentPill { run.forEach { PillButton(it, onItem, isEnabled(it), toggled(it)) } }
+    when (cell.first().barGroup()) {
+        BarGroup.FILE -> Row(
+            horizontalArrangement = Arrangement.spacedBy(GroupGap),
+            verticalAlignment = Alignment.CenterVertically,
+        ) { cell.forEach { AccentIconButton(it, onItem, isEnabled(it)) } }
+        BarGroup.SOLO -> Row(
+            horizontalArrangement = Arrangement.spacedBy(GroupGap),
+            verticalAlignment = Alignment.CenterVertically,
+        ) { cell.forEach { ToolbarIconButton(it, onItem, isEnabled(it)) } }
+        else -> SegmentPill { cell.forEach { PillButton(it, onItem, isEnabled(it), toggled(it)) } }
+    }
+}
+
+/** "…" button whose menu lists the overflowed actions as icon + label rows (close in red). */
+@Composable
+private fun OverflowButton(
+    overflow: List<ToolbarItem>,
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
+    onItem: (ToolbarItem) -> Unit,
+    isEnabled: (ToolbarItem) -> Boolean,
+) {
+    Box {
+        IconButton(onClick = { onExpandedChange(true) }, modifier = Modifier.size(BarButtonSize)) {
+            Icon(Icons.Filled.MoreHoriz, contentDescription = stringResource(R.string.toolbar_more), modifier = Modifier.size(24.dp))
         }
-        i = j
+        DropdownMenu(expanded = expanded, onDismissRequest = { onExpandedChange(false) }) {
+            overflow.forEach { item ->
+                val red = item == ToolbarItem.CLOSE
+                DropdownMenuItem(
+                    enabled = isEnabled(item),
+                    text = { Text(stringResource(item.labelRes()), color = if (red) ToolbarCloseAccent else Color.Unspecified) },
+                    leadingIcon = {
+                        Icon(item.icon(), contentDescription = null, tint = if (red) ToolbarCloseAccent else LocalContentColor.current)
+                    },
+                    onClick = { onExpandedChange(false); onItem(item) },
+                )
+            }
+        }
     }
 }
 
@@ -662,17 +765,12 @@ private fun PillButton(item: ToolbarItem, onItem: (ToolbarItem) -> Unit, enabled
     }
 }
 
-/** Open/close as filled accent circles (gold / red), mirroring the preview button's shape. */
+/** Open/close as bare colour-tinted icons (yellow folder / red X) — no bubble; only preview is filled. */
 @Composable
-private fun AccentCircleButton(item: ToolbarItem, onItem: (ToolbarItem) -> Unit, enabled: Boolean) {
-    val (fill, glyph) = when (item) {
-        ToolbarItem.CLOSE -> ToolbarCloseAccent to ToolbarCloseOnAccent
-        else -> ToolbarOpenAccent to ToolbarOpenOnAccent
-    }
-    Surface(shape = CircleShape, color = fill) {
-        IconButton(onClick = { onItem(item) }, enabled = enabled, modifier = Modifier.size(40.dp)) {
-            Icon(item.icon(), contentDescription = stringResource(item.labelRes()), tint = glyph, modifier = Modifier.size(24.dp))
-        }
+private fun AccentIconButton(item: ToolbarItem, onItem: (ToolbarItem) -> Unit, enabled: Boolean) {
+    val tint = if (item == ToolbarItem.CLOSE) ToolbarCloseAccent else ToolbarOpenAccent
+    IconButton(onClick = { onItem(item) }, enabled = enabled, modifier = Modifier.size(40.dp)) {
+        Icon(item.icon(), contentDescription = stringResource(item.labelRes()), tint = tint, modifier = Modifier.size(24.dp))
     }
 }
 

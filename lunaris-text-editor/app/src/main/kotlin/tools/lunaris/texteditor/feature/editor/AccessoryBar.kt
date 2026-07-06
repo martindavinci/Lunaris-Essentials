@@ -29,11 +29,13 @@ fun AccessoryBar(
 ) {
     Surface(modifier = modifier, color = MaterialTheme.colorScheme.surface, tonalElevation = 2.dp) {
         Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), verticalAlignment = Alignment.CenterVertically) {
+            // Both cursor arrows lead the row together, then the symbol keys — so ► isn't stranded
+            // at the far end of the scroll.
             TextButton(onClick = onCursorLeft) { Text("◄") }
+            TextButton(onClick = onCursorRight) { Text("►") }
             ACCESSORY_KEYS.forEach { (insert, label) ->
                 TextButton(onClick = { onKey(insert) }) { Text(label) }
             }
-            TextButton(onClick = onCursorRight) { Text("►") }
         }
     }
 }

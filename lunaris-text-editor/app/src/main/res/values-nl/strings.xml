@@ -153,6 +153,7 @@
     <string name="toolbar_preview">Voorbeeld</string>
     <string name="toolbar_select_mode">Selectiemodus</string>
     <string name="toolbar_keys">Speciale tekens</string>
+    <string name="toolbar_more">Meer</string>
     <string name="drawer_recents">Recent</string>
     <string name="drawer_folders">Mappen</string>
     <string name="drawer_extensions">Extensies</string>
