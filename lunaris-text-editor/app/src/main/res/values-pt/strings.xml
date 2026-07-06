@@ -100,12 +100,6 @@
     <string name="cat_files_summary">Codificação, guardar, restauro</string>
     <string name="cat_info_title">Informações e apoio</string>
     <string name="cat_info_summary">Versão, licenças, cópia</string>
-    <string name="settings_general">Geral</string>
-    <string name="settings_input">Método de introdução</string>
-    <string name="settings_display">Visualização</string>
-    <string name="settings_autosave">Guardar automaticamente</string>
-    <string name="settings_appearance">Aspeto</string>
-    <string name="settings_about">Acerca</string>
     <string name="set_default_encoding">Codificação do texto</string>
     <string name="set_line_break">Fim de linha</string>
     <string name="set_indent">Indentação</string>

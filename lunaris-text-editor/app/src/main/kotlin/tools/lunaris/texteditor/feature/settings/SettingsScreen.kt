@@ -1,5 +1,6 @@
 package tools.lunaris.texteditor.feature.settings
 
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
@@ -23,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -104,6 +106,9 @@ internal fun SettingsContent(
 ) {
     var openChoice by remember { mutableStateOf<SettingChoice?>(null) }
     var showToolbar by remember { mutableStateOf(false) }
+    var openCategory by rememberSaveable { mutableStateOf<SettingsCategory?>(null) }
+
+    BackHandler(enabled = openCategory != null) { openCategory = null }
 
     Scaffold(
         topBar = {
@@ -112,14 +117,14 @@ internal fun SettingsContent(
                     Modifier.fillMaxWidth().statusBarsPadding(),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    IconButton(onClick = onBack) {
+                    IconButton(onClick = { if (openCategory != null) openCategory = null else onBack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.action_back),
                         )
                     }
                     Text(
-                        text = stringResource(R.string.settings_title),
+                        text = openCategory?.let { categoryTitle(it) } ?: stringResource(R.string.settings_title),
                         style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier.padding(start = 8.dp),
                     )
@@ -133,43 +138,42 @@ internal fun SettingsContent(
                 .padding(innerPadding)
                 .verticalScroll(rememberScrollState()),
         ) {
-            GeneralSection(
-                s = s,
-                fileFilterOn = fileFilterOn,
-                onUpdate = onUpdate,
-                onSetFileFilter = onSetFileFilter,
-                onShowToolbar = { showToolbar = true },
-                onEncodingClick = { openChoice = SettingChoice.ENCODING },
-                onLineBreakClick = { openChoice = SettingChoice.LINE_BREAK },
-                onIndentClick = { openChoice = SettingChoice.INDENT },
-            )
-            InputSection(
-                s = s,
-                onUpdate = onUpdate,
-                onSuggestionsClick = { openChoice = SettingChoice.SUGGESTIONS },
-            )
-            DisplaySection(
-                s = s,
-                onUpdate = onUpdate,
-                onFontTypeClick = { openChoice = SettingChoice.FONT_TYPE },
-                onFontSizeClick = { openChoice = SettingChoice.FONT_SIZE },
-                onLineSpacingClick = { openChoice = SettingChoice.LINE_SPACING },
-            )
-            AutosaveSection(
-                s = s,
-                onUpdate = onUpdate,
-                onIntervalClick = { openChoice = SettingChoice.AUTOSAVE_INTERVAL },
-            )
-            AppearanceSection(
-                s = s,
-                onUpdate = onUpdate,
-                onThemeClick = { openChoice = SettingChoice.THEME },
-            )
-            AboutSection(
-                onOpenLicenses = onOpenLicenses,
-                onBackup = onBackup,
-                onRestore = onRestore,
-            )
+            when (openCategory) {
+                null -> SettingsHub(onOpen = { openCategory = it })
+                SettingsCategory.EDITOR -> EditorCategory(
+                    s = s,
+                    onUpdate = onUpdate,
+                    onIndentClick = { openChoice = SettingChoice.INDENT },
+                    onLineBreakClick = { openChoice = SettingChoice.LINE_BREAK },
+                    onShowToolbar = { showToolbar = true },
+                )
+                SettingsCategory.DISPLAY -> DisplayCategory(
+                    s = s,
+                    onUpdate = onUpdate,
+                    onThemeClick = { openChoice = SettingChoice.THEME },
+                    onFontTypeClick = { openChoice = SettingChoice.FONT_TYPE },
+                    onFontSizeClick = { openChoice = SettingChoice.FONT_SIZE },
+                    onLineSpacingClick = { openChoice = SettingChoice.LINE_SPACING },
+                )
+                SettingsCategory.KEYBOARD -> KeyboardCategory(
+                    s = s,
+                    onUpdate = onUpdate,
+                    onSuggestionsClick = { openChoice = SettingChoice.SUGGESTIONS },
+                )
+                SettingsCategory.FILES -> FilesCategory(
+                    s = s,
+                    fileFilterOn = fileFilterOn,
+                    onUpdate = onUpdate,
+                    onSetFileFilter = onSetFileFilter,
+                    onEncodingClick = { openChoice = SettingChoice.ENCODING },
+                    onIntervalClick = { openChoice = SettingChoice.AUTOSAVE_INTERVAL },
+                )
+                SettingsCategory.INFO -> InfoCategory(
+                    onOpenLicenses = onOpenLicenses,
+                    onBackup = onBackup,
+                    onRestore = onRestore,
+                )
+            }
         }
     }
 

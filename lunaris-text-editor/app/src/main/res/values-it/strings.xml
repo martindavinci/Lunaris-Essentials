@@ -121,12 +121,6 @@
     <string name="cat_files_summary">Codifica, salvataggio, ripristino</string>
     <string name="cat_info_title">Info e supporto</string>
     <string name="cat_info_summary">Versione, licenze, backup</string>
-    <string name="settings_general">Generale</string>
-    <string name="settings_input">Metodo di immissione</string>
-    <string name="settings_display">Visualizzazione</string>
-    <string name="settings_autosave">Salvataggio automatico</string>
-    <string name="settings_appearance">Aspetto</string>
-    <string name="settings_about">Informazioni</string>
     <string name="set_default_encoding">Codifica del testo</string>
     <string name="set_line_break">Fine riga</string>
     <string name="set_indent">Rientro</string>

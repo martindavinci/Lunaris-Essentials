@@ -100,12 +100,6 @@
     <string name="cat_files_summary">Codering, opslaan, herstellen</string>
     <string name="cat_info_title">Info en ondersteuning</string>
     <string name="cat_info_summary">Versie, licenties, back-up</string>
-    <string name="settings_general">Algemeen</string>
-    <string name="settings_input">Invoermethode</string>
-    <string name="settings_display">Weergave</string>
-    <string name="settings_autosave">Automatisch opslaan</string>
-    <string name="settings_appearance">Weergave</string>
-    <string name="settings_about">Over</string>
     <string name="set_default_encoding">Tekstcodering</string>
     <string name="set_line_break">Regeleinde</string>
     <string name="set_indent">Inspringing</string>

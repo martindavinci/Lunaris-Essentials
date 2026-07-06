@@ -18,10 +18,13 @@ class SettingsInstrumentedTest {
 
     @Test
     fun drawer_opensSettingsScreen() {
-        // Settings is the gear icon in the drawer's nav rail (it's intentionally excluded from the action sheet).
+        // Settings is the gear icon in the drawer's nav rail.
         composeRule.onNodeWithContentDescription("Menu").performClick()
         composeRule.onNodeWithContentDescription("Settings").performClick()
-        // "General" is the first (top, on-screen) settings section — confirms the screen opened.
-        composeRule.onNodeWithText("General").assertIsDisplayed()
+        // Hub shows category cards; "Editor" is the first card (top bar reads "Settings").
+        composeRule.onNodeWithText("Editor").assertIsDisplayed()
+        // Tapping it opens the Editor detail; "Wrap long lines" is an Editor-only row.
+        composeRule.onNodeWithText("Editor").performClick()
+        composeRule.onNodeWithText("Wrap long lines").assertIsDisplayed()
     }
 }

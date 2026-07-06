@@ -100,12 +100,6 @@
     <string name="cat_files_summary">Encodage, enregistrement, restauration</string>
     <string name="cat_info_title">Infos et assistance</string>
     <string name="cat_info_summary">Version, licences, sauvegarde</string>
-    <string name="settings_general">Général</string>
-    <string name="settings_input">Méthode de saisie</string>
-    <string name="settings_display">Affichage</string>
-    <string name="settings_autosave">Enregistrement automatique</string>
-    <string name="settings_appearance">Apparence</string>
-    <string name="settings_about">À propos</string>
     <string name="set_default_encoding">Encodage du texte</string>
     <string name="set_line_break">Fin de ligne</string>
     <string name="set_indent">Indentation</string>

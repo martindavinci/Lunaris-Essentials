@@ -31,11 +31,18 @@ private fun SettingsContentPreview() {
 private fun SettingsKitPreview() {
     LunarisEditorTheme {
         Column {
-            SettingsSectionHeader("Display")
             SettingsToggleRow("Line numbers", "Show line gutter", checked = true) {}
             SettingsChoiceRow("Font size", "16", onClick = {})
             SettingsNavRow("Licenses", onClick = {})
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SettingsHubPreview() {
+    LunarisEditorTheme {
+        SettingsHub(onOpen = {})
     }
 }
 

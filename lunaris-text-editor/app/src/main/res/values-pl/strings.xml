@@ -100,12 +100,6 @@
     <string name="cat_files_summary">Kodowanie, zapisywanie, przywracanie</string>
     <string name="cat_info_title">Informacje i pomoc</string>
     <string name="cat_info_summary">Wersja, licencje, kopia</string>
-    <string name="settings_general">Ogólne</string>
-    <string name="settings_input">Metoda wprowadzania</string>
-    <string name="settings_display">Wyświetlanie</string>
-    <string name="settings_autosave">Autozapis</string>
-    <string name="settings_appearance">Wygląd</string>
-    <string name="settings_about">Informacje</string>
     <string name="set_default_encoding">Kodowanie tekstu</string>
     <string name="set_line_break">Koniec wiersza</string>
     <string name="set_indent">Wcięcie</string>

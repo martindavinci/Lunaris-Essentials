@@ -121,12 +121,6 @@
     <string name="cat_files_summary">Encoding, saving, restore</string>
     <string name="cat_info_title">Info &amp; support</string>
     <string name="cat_info_summary">Version, licenses, backup</string>
-    <string name="settings_general">General</string>
-    <string name="settings_input">Input method</string>
-    <string name="settings_display">Display</string>
-    <string name="settings_autosave">Autosave</string>
-    <string name="settings_appearance">Appearance</string>
-    <string name="settings_about">About</string>
     <string name="set_default_encoding">Text encoding</string>
     <string name="set_line_break">Line ending</string>
     <string name="set_indent">Indentation</string>
