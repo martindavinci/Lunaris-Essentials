@@ -24,22 +24,24 @@ data class ToolbarConfig(val items: List<ToolbarItem>, val disabled: Set<Toolbar
     }
 
     companion object {
-        // Segmented default: [cursor ◀ ▶ + select] · [# special chars] · [undo redo] · preview.
-        // The rest stay present-but-disabled so users can add them via the config dialog.
+        // Segmented default: [cursor ◀ ▶ + select] · [# special chars] · [undo redo] ·
+        // [gold open + red close] · preview. The rest stay present-but-disabled so users can add
+        // them via the config dialog.
         private val DEFAULT_ORDER = listOf(
             ToolbarItem.CURSOR_LEFT, ToolbarItem.CURSOR_RIGHT, ToolbarItem.SELECT_MODE,
             ToolbarItem.ACCESSORY,
             ToolbarItem.UNDO, ToolbarItem.REDO,
+            ToolbarItem.OPEN, ToolbarItem.CLOSE,
             ToolbarItem.PREVIEW,
-            ToolbarItem.OPEN, ToolbarItem.PASTE, ToolbarItem.SEARCH,
-            ToolbarItem.SAVE, ToolbarItem.CLOSE,
+            ToolbarItem.PASTE, ToolbarItem.SEARCH, ToolbarItem.SAVE,
         )
         // Select mode is present-but-disabled by default: available to add via the config dialog,
         // but off the default bar.
         private val DEFAULT_ENABLED = setOf(
             ToolbarItem.CURSOR_LEFT, ToolbarItem.CURSOR_RIGHT,
             ToolbarItem.ACCESSORY,
-            ToolbarItem.UNDO, ToolbarItem.REDO, ToolbarItem.PREVIEW,
+            ToolbarItem.UNDO, ToolbarItem.REDO,
+            ToolbarItem.OPEN, ToolbarItem.CLOSE, ToolbarItem.PREVIEW,
         )
         val DEFAULT = ToolbarConfig(
             items = DEFAULT_ORDER,

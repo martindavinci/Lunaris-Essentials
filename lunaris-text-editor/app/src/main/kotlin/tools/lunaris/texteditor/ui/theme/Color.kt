@@ -7,3 +7,7 @@ val EditorBackground = Color(0xFF2B2B2B)
 val EditorSurface = Color(0xFF3A3A3A)
 val EditorOnSurface = Color(0xFFE6E6E6)
 val EditorAccent = Color(0xFF1E9BE9)
+
+// Toolbar action accents: gold "open file", red "close file".
+val ToolbarOpenAccent = Color(0xFFD4A017)
+val ToolbarCloseAccent = Color(0xFFE05252)

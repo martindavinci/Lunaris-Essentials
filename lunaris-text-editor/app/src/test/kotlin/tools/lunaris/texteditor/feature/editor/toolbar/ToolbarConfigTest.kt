@@ -8,11 +8,13 @@ class ToolbarConfigTest {
         val c = ToolbarConfig.DEFAULT
         // Every item is still present (config dialog can re-enable any; fromJson append still works).
         assertThat(c.items).containsExactlyElementsIn(ToolbarItem.entries)
-        // Only the segmented default bar is enabled, in this order (select mode is off by default).
+        // Only the segmented default bar is enabled, in this order (select mode is off by default;
+        // open+close form the file group just before preview).
         assertThat(c.enabled).containsExactly(
             ToolbarItem.CURSOR_LEFT, ToolbarItem.CURSOR_RIGHT,
             ToolbarItem.ACCESSORY,
-            ToolbarItem.UNDO, ToolbarItem.REDO, ToolbarItem.PREVIEW,
+            ToolbarItem.UNDO, ToolbarItem.REDO,
+            ToolbarItem.OPEN, ToolbarItem.CLOSE, ToolbarItem.PREVIEW,
         ).inOrder()
     }
     @Test fun toggle_disablesAndEnables() {
