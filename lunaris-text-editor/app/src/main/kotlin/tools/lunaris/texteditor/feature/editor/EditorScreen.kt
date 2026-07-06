@@ -66,7 +66,6 @@ import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleEventEffect
@@ -616,8 +615,6 @@ internal fun SearchField(
 
 private val GroupGap = 10.dp
 private val BarButtonSize = 40.dp
-// Space kept clear at the toolbar's right end for the pinned preview circle (button + breathing gap).
-private val PreviewReserve = 64.dp
 
 @Composable
 internal fun EditorBottomBar(
@@ -645,9 +642,11 @@ internal fun EditorBottomBar(
                 .padding(horizontal = 12.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            // The board fills the width left of the preview circle; its actions spread out evenly.
             Surface(
                 shape = CircleShape,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.10f),
+                modifier = Modifier.weight(1f),
             ) {
                 AdaptiveBarCells(
                     cells = cells,
@@ -655,13 +654,11 @@ internal fun EditorBottomBar(
                     onItem = onItem,
                     isEnabled = isEnabled,
                     toggled = toggled,
-                    // Keep room clear at the row end for the preview circle so the board never grows into it.
-                    reservedEnd = PreviewReserve,
                     modifier = Modifier.padding(horizontal = 4.dp),
                 )
             }
-            Spacer(Modifier.weight(1f))
             if (previewItems.isNotEmpty()) {
+                Spacer(Modifier.width(GroupGap))
                 previewItems.forEach { PreviewButton(it, onItem, isEnabled(it)) }
             }
         }
@@ -683,10 +680,9 @@ private fun groupCells(items: List<ToolbarItem>): List<List<ToolbarItem>> {
 }
 
 /**
- * Lays out the [cells] left-to-right and sizes to their content (the enclosing board hugs them).
- * Any cells that don't fit the available width — plus the always-overflow [secondary] actions —
- * collapse into a trailing "…" button placed right after the last cell. [reservedEnd] keeps space
- * clear at the row end for the preview circle so the board never grows into it.
+ * Fills the given width and spreads the [cells] (+ the "…" button) evenly across it — equal gaps at
+ * both ends and between slots. Any cells that don't fit — plus the always-overflow [secondary]
+ * actions — collapse into the "…" menu. Dividers sit centred in the gaps between adjacent cells.
  */
 @Composable
 private fun AdaptiveBarCells(
@@ -695,7 +691,6 @@ private fun AdaptiveBarCells(
     onItem: (ToolbarItem) -> Unit,
     isEnabled: (ToolbarItem) -> Boolean,
     toggled: (ToolbarItem) -> Boolean,
-    reservedEnd: Dp,
     modifier: Modifier = Modifier,
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -712,17 +707,16 @@ private fun AdaptiveBarCells(
             for (idx in 0 until k) { if (idx > 0) w += gapPx; w += placeables[idx].width }
             return w
         }
-        // Available width for the board = the row's width minus the reserved end (preview circle).
-        // Unbounded width (e.g. previews) just fits everything.
-        val avail = (if (constraints.hasBoundedWidth) constraints.maxWidth else prefixWidth(n) + reservedEnd.roundToPx()) -
-            reservedEnd.roundToPx()
+        // Unbounded width (e.g. previews) fits everything; otherwise fit as many cells as the width
+        // allows, reserving room for the "…" button when it will show.
+        val maxW = if (constraints.hasBoundedWidth) constraints.maxWidth else prefixWidth(n) + overflowWidth
         val alwaysButton = secondary.isNotEmpty()
         var fit = n
-        if (alwaysButton || prefixWidth(n) > avail) {
+        if (alwaysButton || prefixWidth(n) > maxW) {
             fit = 0
             for (k in (if (alwaysButton) n else n - 1) downTo 0) {
                 val lead = if (k > 0) gapPx else 0
-                if (prefixWidth(k) + lead + overflowWidth <= avail) { fit = k; break }
+                if (prefixWidth(k) + lead + overflowWidth <= maxW) { fit = k; break }
             }
         }
         val overflow = cells.drop(fit).flatten() + secondary
@@ -731,28 +725,27 @@ private fun AdaptiveBarCells(
                 OverflowButton(overflow, expanded, { expanded = it }, onItem, isEnabled)
             }.first().measure(loose)
         } else null
-        // One thin divider sits in each gap between adjacent placed cells.
         val dividers = (1 until fit).map { i -> subcompose("div$i") { BarDivider() }.first().measure(loose) }
 
         val placed = placeables.take(fit)
-        var contentW = prefixWidth(fit)
-        if (overflowPlaceable != null) contentW += (if (fit > 0) gapPx else 0) + overflowPlaceable.width
+        // Slots = placed cells + the "…" button. Spread them SpaceEvenly across the width.
+        val slotWidths = placed.map { it.width } + listOfNotNull(overflowPlaceable?.width)
+        val slotCount = slotWidths.size
+        val slotSum = slotWidths.sum()
+        val width = if (constraints.hasBoundedWidth) maxW else slotSum + (slotCount + 1) * gapPx
+        val gap = if (slotCount > 0) ((width - slotSum) / (slotCount + 1)).coerceAtLeast(0) else 0
         val height = (placed.map { it.height } + listOfNotNull(overflowPlaceable?.height)).maxOrNull() ?: 0
-        layout(contentW, height) {
-            var x = 0
+        layout(width, height) {
+            var x = gap
             placed.forEachIndexed { idx, p ->
                 if (idx > 0) {
                     val d = dividers[idx - 1]
-                    d.placeRelative(x + (gapPx - d.width) / 2, (height - d.height) / 2)
-                    x += gapPx
+                    d.placeRelative(x - gap / 2 - d.width / 2, (height - d.height) / 2)
                 }
                 p.placeRelative(x, (height - p.height) / 2)
-                x += p.width
+                x += p.width + gap
             }
-            overflowPlaceable?.let { ov ->
-                if (fit > 0) x += gapPx
-                ov.placeRelative(x, (height - ov.height) / 2)
-            }
+            overflowPlaceable?.placeRelative(x, (height - overflowPlaceable.height) / 2)
         }
     }
 }
