@@ -26,6 +26,13 @@ class SearchEngineTest {
     @Test fun findPrevious_findsBeforeOffset() {
         assertThat(engine.findPrevious("abc abc", "abc", 7, opts)).isEqualTo(MatchRange(4, 7))
     }
+    @Test fun findAll_returnsEveryMatchInOrder() {
+        assertThat(engine.findAll("abc abc abc", "abc", opts))
+            .containsExactly(MatchRange(0, 3), MatchRange(4, 7), MatchRange(8, 11)).inOrder()
+    }
+    @Test fun findAll_emptyQuery_isEmpty() {
+        assertThat(engine.findAll("abc", "", opts)).isEmpty()
+    }
     @Test fun replaceAll_replacesEveryMatch_returnsCount() {
         val r = engine.replaceAll("a a a", "a", "b", opts)
         assertThat(r.text).isEqualTo("b b b")

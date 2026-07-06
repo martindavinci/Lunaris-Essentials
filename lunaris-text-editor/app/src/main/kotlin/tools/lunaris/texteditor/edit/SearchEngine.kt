@@ -11,6 +11,12 @@ class SearchEngine @Inject constructor() {
         return runCatching { Regex(pattern, flags) }.getOrNull()
     }
 
+    /** Every match in [text], in order — used to show the "current/total" count during search. */
+    fun findAll(text: String, query: String, opts: SearchOptions): List<MatchRange> {
+        val re = regexFor(query, opts) ?: return emptyList()
+        return re.findAll(text).map { MatchRange(it.range.first, it.range.last + 1) }.toList()
+    }
+
     fun findNext(text: String, query: String, fromOffset: Int, opts: SearchOptions): MatchRange? {
         val re = regexFor(query, opts) ?: return null
         val start = fromOffset.coerceIn(0, text.length)

@@ -21,6 +21,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import tools.lunaris.texteditor.R
@@ -61,6 +62,7 @@ internal fun EditorScaffold(
     onRequestClose: (String) -> Unit,
     searchActive: Boolean,
     searchQuery: String,
+    searchCountLabel: String,
     onSearchBack: () -> Unit,
     onSearchPrev: () -> Unit,
     onSearchNext: () -> Unit,
@@ -132,14 +134,8 @@ internal fun EditorScaffold(
                 }
             },
             topBar = {
-                if (searchActive) {
-                    SearchTopBar(
-                        query = searchQuery,
-                        onBack = onSearchBack,
-                        onPrev = onSearchPrev,
-                        onNext = onSearchNext,
-                    )
-                } else EditorTopBar(
+                // The header never changes — search lives in a floating card down in the thumb zone.
+                EditorTopBar(
                     title = state.title,
                     subtitle = subtitle,
                     saveEnabled = state.dirty,
@@ -151,22 +147,38 @@ internal fun EditorScaffold(
                 )
             },
             bottomBar = {
-                EditorBottomBar(
-                    config = state.toolbar,
-                    onItem = onToolbarItem,
-                    isEnabled = { item ->
-                        when (item) {
-                            ToolbarItem.UNDO -> canUndo
-                            ToolbarItem.REDO -> canRedo
-                            ToolbarItem.SAVE -> state.dirty
-                            else -> true
-                        }
-                    },
-                    toggled = { item ->
-                        (item == ToolbarItem.ACCESSORY && showAccessory) ||
-                            (item == ToolbarItem.SELECT_MODE && selectMode)
-                    },
-                )
+                Column {
+                    if (searchActive) {
+                        SearchField(
+                            query = searchQuery,
+                            countLabel = searchCountLabel,
+                            onEditQuery = { onMenuAction(EditorMenuAction.SEARCH) },
+                            onPrev = onSearchPrev,
+                            onNext = onSearchNext,
+                            onClose = onSearchBack,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 12.dp)
+                                .padding(bottom = 6.dp),
+                        )
+                    }
+                    EditorBottomBar(
+                        config = state.toolbar,
+                        onItem = onToolbarItem,
+                        isEnabled = { item ->
+                            when (item) {
+                                ToolbarItem.UNDO -> canUndo
+                                ToolbarItem.REDO -> canRedo
+                                ToolbarItem.SAVE -> state.dirty
+                                else -> true
+                            }
+                        },
+                        toggled = { item ->
+                            (item == ToolbarItem.ACCESSORY && showAccessory) ||
+                                (item == ToolbarItem.SELECT_MODE && selectMode)
+                        },
+                    )
+                }
             },
         ) { padding ->
             Column(Modifier.fillMaxSize().padding(padding)) {

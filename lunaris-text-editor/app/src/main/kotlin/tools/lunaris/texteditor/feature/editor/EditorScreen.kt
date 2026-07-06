@@ -10,7 +10,8 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,7 +22,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -31,9 +31,9 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material.icons.filled.MoreVert
@@ -193,10 +193,16 @@ fun EditorScreen(
         else viewModel.closeTab(id, cursor)
     }
 
-    // Search mode: a persistent top bar (back + prev/next) replaces the normal one while a
-    // query is active. A no-match find shows a quick snackbar.
+    // Search mode: a floating card in the thumb zone (query + count + prev/next/close) sits above
+    // the toolbar while a query is active; the header never changes. A no-match find snackbars.
     val scope = rememberCoroutineScope()
     var searchSession by remember { mutableStateOf<SearchSession?>(null) }
+    // All matches for the active query, and the 1-based index of the current one, for the "n/total"
+    // counter. Recomputed as the text or query changes.
+    val searchMatches = remember(searchSession, state.text) {
+        searchSession?.let { searchEngine.findAll(state.text, it.query, it.opts) } ?: emptyList()
+    }
+    var searchIndex by remember { mutableStateOf(0) }
     val noMatchTemplate = stringResource(R.string.search_no_match)
     val runFind: (Boolean) -> Unit = { forward ->
         searchSession?.let { s ->
@@ -205,10 +211,13 @@ fun EditorScreen(
             val sel = editorController.selection()
             val m = if (forward) searchEngine.findNext(state.text, s.query, sel.last, s.opts)
             else searchEngine.findPrevious(state.text, s.query, sel.first, s.opts)
-            if (m != null) editorController.selectRange(m.start, m.end)
-            else scope.launch { snackbar.showSnackbar(String.format(noMatchTemplate, s.query)) }
+            if (m != null) {
+                editorController.selectRange(m.start, m.end)
+                searchIndex = searchMatches.indexOfFirst { it.start == m.start }.let { if (it >= 0) it + 1 else 0 }
+            } else scope.launch { snackbar.showSnackbar(String.format(noMatchTemplate, s.query)) }
         }
     }
+    val searchCountLabel = if (searchSession == null) "" else "$searchIndex/${searchMatches.size}"
     val startSearch: (String, SearchOptions, Boolean) -> Unit = { q, o, forward ->
         if (q.isNotEmpty()) {
             searchSession = SearchSession(q, o)
@@ -354,6 +363,7 @@ fun EditorScreen(
         onRequestClose = requestClose,
         searchActive = searchSession != null,
         searchQuery = searchSession?.query ?: "",
+        searchCountLabel = searchCountLabel,
         onSearchBack = { searchSession = null },
         onSearchPrev = { runFind(false) },
         onSearchNext = { runFind(true) },
@@ -538,38 +548,65 @@ internal fun EditorTopBar(
 /** Active search query + options driving the editor's search mode. */
 data class SearchSession(val query: String, val opts: SearchOptions)
 
-/** Top bar shown while search mode is active: exit + query + previous/next match. */
+/**
+ * Floating search card for the thumb zone (sits above the toolbar while a query is active) — the
+ * header stays untouched. Shows the query, the "n/total" match count, and prev/next/close. Tapping
+ * the query text reopens the search dialog to edit it.
+ */
 @Composable
-internal fun SearchTopBar(
+internal fun SearchField(
     query: String,
-    onBack: () -> Unit,
+    countLabel: String,
+    onEditQuery: () -> Unit,
     onPrev: () -> Unit,
     onNext: () -> Unit,
+    onClose: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = BarElevation) {
+    Surface(
+        shape = RoundedCornerShape(28.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant,
+        tonalElevation = 3.dp,
+        shadowElevation = 6.dp,
+        modifier = modifier,
+    ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .statusBarsPadding()
-                .height(TopBarHeight)
-                .padding(start = 4.dp, end = 4.dp),
+            modifier = Modifier.height(52.dp).padding(start = 14.dp, end = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            IconButton(onClick = onBack) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
-            }
+            Icon(
+                Icons.Filled.Search,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
             Text(
-                text = stringResource(R.string.search_active_title, query),
-                style = MaterialTheme.typography.titleMedium,
+                text = query.ifBlank { stringResource(R.string.menu_search) },
+                style = MaterialTheme.typography.bodyLarge,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f),
+                color = if (query.isBlank()) MaterialTheme.colorScheme.onSurfaceVariant
+                else MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable(onClick = onEditQuery)
+                    .padding(horizontal = 12.dp, vertical = 14.dp),
             )
+            if (countLabel.isNotBlank()) {
+                Text(
+                    text = countLabel,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(end = 4.dp),
+                )
+            }
             IconButton(onClick = onPrev) {
-                Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = stringResource(R.string.search_find_prev))
+                Icon(Icons.Filled.KeyboardArrowUp, contentDescription = stringResource(R.string.search_find_prev))
             }
             IconButton(onClick = onNext) {
-                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = stringResource(R.string.search_find_next))
+                Icon(Icons.Filled.KeyboardArrowDown, contentDescription = stringResource(R.string.search_find_next))
+            }
+            IconButton(onClick = onClose) {
+                Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.action_back))
             }
         }
     }
@@ -667,13 +704,19 @@ private fun AdaptiveBarCells(
                 OverflowButton(overflow, expanded, { expanded = it }, onItem, isEnabled)
             }.first().measure(loose)
         } else null
+        // One thin divider sits in each gap between adjacent placed cells (single homogeneous track).
+        val dividers = (1 until fit).map { i -> subcompose("div$i") { BarDivider() }.first().measure(loose) }
 
         val placed = placeables.take(fit)
         val height = (placed.map { it.height } + listOfNotNull(overflowPlaceable?.height)).maxOrNull() ?: 0
         layout(maxW, height) {
             var x = 0
             placed.forEachIndexed { idx, p ->
-                if (idx > 0) x += gapPx
+                if (idx > 0) {
+                    val d = dividers[idx - 1]
+                    d.placeRelative(x + (gapPx - d.width) / 2, (height - d.height) / 2)
+                    x += gapPx
+                }
                 p.placeRelative(x, (height - p.height) / 2)
                 x += p.width
             }
@@ -682,7 +725,7 @@ private fun AdaptiveBarCells(
     }
 }
 
-/** One cell: a neutral pill for grouped toggles, or a bare icon run for file/solo actions. */
+/** One group of actions, rendered as a flat icon run (no pill) — dividers separate cells. */
 @Composable
 private fun BarCell(
     cell: List<ToolbarItem>,
@@ -690,17 +733,20 @@ private fun BarCell(
     isEnabled: (ToolbarItem) -> Boolean,
     toggled: (ToolbarItem) -> Boolean,
 ) {
-    when (cell.first().barGroup()) {
-        BarGroup.FILE -> Row(
-            horizontalArrangement = Arrangement.spacedBy(GroupGap),
-            verticalAlignment = Alignment.CenterVertically,
-        ) { cell.forEach { AccentIconButton(it, onItem, isEnabled(it)) } }
-        BarGroup.SOLO -> Row(
-            horizontalArrangement = Arrangement.spacedBy(GroupGap),
-            verticalAlignment = Alignment.CenterVertically,
-        ) { cell.forEach { ToolbarIconButton(it, onItem, isEnabled(it)) } }
-        else -> SegmentPill { cell.forEach { PillButton(it, onItem, isEnabled(it), toggled(it)) } }
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        cell.forEach { BarIconButton(it, onItem, isEnabled(it), toggled(it)) }
     }
+}
+
+/** Thin vertical divider between toolbar groups. */
+@Composable
+private fun BarDivider() {
+    Box(
+        Modifier
+            .width(1.dp)
+            .height(24.dp)
+            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f)),
+    )
 }
 
 /** "…" button whose menu lists the overflowed actions as icon + label rows (close in red). */
@@ -744,41 +790,29 @@ private fun ToolbarItem.barGroup(): BarGroup = when (this) {
     else -> BarGroup.SOLO
 }
 
-/** Neutral rounded container holding one group's buttons. */
+/**
+ * Uniform flat toolbar icon — the single treatment for every left-track action. Open/close keep
+ * their yellow/red accents; a live toggle (select mode, special chars) tints to primary; the rest
+ * use the default content colour.
+ */
 @Composable
-private fun SegmentPill(content: @Composable RowScope.() -> Unit) {
-    Surface(
-        shape = RoundedCornerShape(percent = 50),
-        // Neutral grey (not the theme's warm surfaceVariant) to match the design.
-        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f),
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically, content = content)
+private fun BarIconButton(item: ToolbarItem, onItem: (ToolbarItem) -> Unit, enabled: Boolean, active: Boolean) {
+    val tint = when {
+        item == ToolbarItem.OPEN -> ToolbarOpenAccent
+        item == ToolbarItem.CLOSE -> ToolbarCloseAccent
+        active -> MaterialTheme.colorScheme.primary
+        else -> LocalContentColor.current
     }
-}
-
-/** Icon button inside a pill; [active] tints a live toggle (select mode, special chars) to the accent. */
-@Composable
-private fun PillButton(item: ToolbarItem, onItem: (ToolbarItem) -> Unit, enabled: Boolean, active: Boolean) {
-    IconButton(onClick = { onItem(item) }, enabled = enabled, modifier = Modifier.size(40.dp)) {
-        val tint = if (active) MaterialTheme.colorScheme.primary else LocalContentColor.current
+    IconButton(onClick = { onItem(item) }, enabled = enabled, modifier = Modifier.size(BarButtonSize)) {
         Icon(item.icon(), contentDescription = stringResource(item.labelRes()), tint = tint, modifier = Modifier.size(24.dp))
     }
 }
 
-/** Open/close as bare colour-tinted icons (yellow folder / red X) — no bubble; only preview is filled. */
-@Composable
-private fun AccentIconButton(item: ToolbarItem, onItem: (ToolbarItem) -> Unit, enabled: Boolean) {
-    val tint = if (item == ToolbarItem.CLOSE) ToolbarCloseAccent else ToolbarOpenAccent
-    IconButton(onClick = { onItem(item) }, enabled = enabled, modifier = Modifier.size(40.dp)) {
-        Icon(item.icon(), contentDescription = stringResource(item.labelRes()), tint = tint, modifier = Modifier.size(24.dp))
-    }
-}
-
-/** Preview: a filled accent circle with a contrasting eye. */
+/** Preview: the one filled accent circle, pinned to the right of the bar. */
 @Composable
 private fun PreviewButton(item: ToolbarItem, onItem: (ToolbarItem) -> Unit, enabled: Boolean) {
     Surface(shape = CircleShape, color = MaterialTheme.colorScheme.primary) {
-        IconButton(onClick = { onItem(item) }, enabled = enabled, modifier = Modifier.size(40.dp)) {
+        IconButton(onClick = { onItem(item) }, enabled = enabled, modifier = Modifier.size(BarButtonSize)) {
             Icon(
                 item.icon(),
                 contentDescription = stringResource(item.labelRes()),
@@ -786,19 +820,6 @@ private fun PreviewButton(item: ToolbarItem, onItem: (ToolbarItem) -> Unit, enab
                 modifier = Modifier.size(24.dp),
             )
         }
-    }
-}
-
-/** Bare icon button for ungrouped (SOLO) toolbar items. */
-@Composable
-private fun ToolbarIconButton(item: ToolbarItem, onItem: (ToolbarItem) -> Unit, enabled: Boolean) {
-    IconButton(onClick = { onItem(item) }, enabled = enabled, modifier = Modifier.size(40.dp)) {
-        Icon(
-            item.icon(),
-            contentDescription = stringResource(item.labelRes()),
-            tint = LocalContentColor.current,
-            modifier = Modifier.size(24.dp),
-        )
     }
 }
 
