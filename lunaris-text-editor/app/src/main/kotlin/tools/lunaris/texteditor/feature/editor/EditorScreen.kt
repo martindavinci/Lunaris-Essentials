@@ -66,6 +66,7 @@ import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleEventEffect
@@ -615,6 +616,8 @@ internal fun SearchField(
 
 private val GroupGap = 10.dp
 private val BarButtonSize = 40.dp
+// Space kept clear at the toolbar's right end for the pinned preview circle (button + breathing gap).
+private val PreviewReserve = 64.dp
 
 @Composable
 internal fun EditorBottomBar(
@@ -624,12 +627,12 @@ internal fun EditorBottomBar(
     toggled: (ToolbarItem) -> Boolean = { false },
 ) {
     val items = config.enabled
-    // Preview is pinned to the far right; the rest cluster on the left, spilling any that don't
-    // fit into a trailing "…" overflow menu.
+    // Primary actions cluster inside one rounded "board" on the left (content-sized); the preview
+    // circle sits apart at the far right.
     val leftItems = items.filter { it.barGroup() != BarGroup.PREVIEW }
     val previewItems = items.filter { it.barGroup() == BarGroup.PREVIEW }
-    // Open/close live in the "…" overflow menu rather than on the track, so the visible bar stays a
-    // clean primary set (cursor · keys · history) plus the pinned preview circle.
+    // Open/close live in the "…" overflow menu rather than on the track, so the board stays a clean
+    // primary set (cursor · keys · history) plus the "…" button.
     val (secondary, inline) = remember(leftItems) { leftItems.partition { it.overflowOnly() } }
     val cells = remember(inline) { groupCells(inline) }
     Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = BarElevation) {
@@ -642,9 +645,23 @@ internal fun EditorBottomBar(
                 .padding(horizontal = 12.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            AdaptiveBarCells(cells, secondary, onItem, isEnabled, toggled, Modifier.weight(1f))
+            Surface(
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.10f),
+            ) {
+                AdaptiveBarCells(
+                    cells = cells,
+                    secondary = secondary,
+                    onItem = onItem,
+                    isEnabled = isEnabled,
+                    toggled = toggled,
+                    // Keep room clear at the row end for the preview circle so the board never grows into it.
+                    reservedEnd = PreviewReserve,
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                )
+            }
+            Spacer(Modifier.weight(1f))
             if (previewItems.isNotEmpty()) {
-                Spacer(Modifier.width(GroupGap))
                 previewItems.forEach { PreviewButton(it, onItem, isEnabled(it)) }
             }
         }
@@ -666,9 +683,10 @@ private fun groupCells(items: List<ToolbarItem>): List<List<ToolbarItem>> {
 }
 
 /**
- * Lays out the left [cells] left-to-right, measuring each. Any that don't fit — plus the always-
- * overflow [secondary] actions — collapse into a trailing "…" menu pinned to the right edge, so the
- * visible bar never clips or scrolls.
+ * Lays out the [cells] left-to-right and sizes to their content (the enclosing board hugs them).
+ * Any cells that don't fit the available width — plus the always-overflow [secondary] actions —
+ * collapse into a trailing "…" button placed right after the last cell. [reservedEnd] keeps space
+ * clear at the row end for the preview circle so the board never grows into it.
  */
 @Composable
 private fun AdaptiveBarCells(
@@ -677,6 +695,7 @@ private fun AdaptiveBarCells(
     onItem: (ToolbarItem) -> Unit,
     isEnabled: (ToolbarItem) -> Boolean,
     toggled: (ToolbarItem) -> Boolean,
+    reservedEnd: Dp,
     modifier: Modifier = Modifier,
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -693,17 +712,17 @@ private fun AdaptiveBarCells(
             for (idx in 0 until k) { if (idx > 0) w += gapPx; w += placeables[idx].width }
             return w
         }
-        // Unbounded width (e.g. previews) fits everything; otherwise take the largest prefix that
-        // fits. The "…" button is always present when there are [secondary] actions, only conditional
-        // otherwise — either way reserve its width when it will show.
-        val maxW = if (constraints.hasBoundedWidth) constraints.maxWidth else prefixWidth(n)
+        // Available width for the board = the row's width minus the reserved end (preview circle).
+        // Unbounded width (e.g. previews) just fits everything.
+        val avail = (if (constraints.hasBoundedWidth) constraints.maxWidth else prefixWidth(n) + reservedEnd.roundToPx()) -
+            reservedEnd.roundToPx()
         val alwaysButton = secondary.isNotEmpty()
         var fit = n
-        if (alwaysButton || prefixWidth(n) > maxW) {
+        if (alwaysButton || prefixWidth(n) > avail) {
             fit = 0
             for (k in (if (alwaysButton) n else n - 1) downTo 0) {
                 val lead = if (k > 0) gapPx else 0
-                if (prefixWidth(k) + lead + overflowWidth <= maxW) { fit = k; break }
+                if (prefixWidth(k) + lead + overflowWidth <= avail) { fit = k; break }
             }
         }
         val overflow = cells.drop(fit).flatten() + secondary
@@ -712,12 +731,14 @@ private fun AdaptiveBarCells(
                 OverflowButton(overflow, expanded, { expanded = it }, onItem, isEnabled)
             }.first().measure(loose)
         } else null
-        // One thin divider sits in each gap between adjacent placed cells (single homogeneous track).
+        // One thin divider sits in each gap between adjacent placed cells.
         val dividers = (1 until fit).map { i -> subcompose("div$i") { BarDivider() }.first().measure(loose) }
 
         val placed = placeables.take(fit)
+        var contentW = prefixWidth(fit)
+        if (overflowPlaceable != null) contentW += (if (fit > 0) gapPx else 0) + overflowPlaceable.width
         val height = (placed.map { it.height } + listOfNotNull(overflowPlaceable?.height)).maxOrNull() ?: 0
-        layout(maxW, height) {
+        layout(contentW, height) {
             var x = 0
             placed.forEachIndexed { idx, p ->
                 if (idx > 0) {
@@ -728,7 +749,10 @@ private fun AdaptiveBarCells(
                 p.placeRelative(x, (height - p.height) / 2)
                 x += p.width
             }
-            overflowPlaceable?.placeRelative(maxW - overflowPlaceable.width, (height - overflowPlaceable.height) / 2)
+            overflowPlaceable?.let { ov ->
+                if (fit > 0) x += gapPx
+                ov.placeRelative(x, (height - ov.height) / 2)
+            }
         }
     }
 }
