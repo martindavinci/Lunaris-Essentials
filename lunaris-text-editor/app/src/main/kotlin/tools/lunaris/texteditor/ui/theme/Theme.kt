@@ -9,10 +9,16 @@ import tools.lunaris.texteditor.settings.AppTheme
 
 private val DarkColors = darkColorScheme(
     primary = EditorAccent,
+    onPrimary = EditorOnAccent,
+    secondary = EditorAccent,
+    onSecondary = EditorOnAccent,
     background = EditorBackground,
+    onBackground = EditorOnSurface,
     surface = EditorSurface,
     onSurface = EditorOnSurface,
-    onBackground = EditorOnSurface,
+    surfaceVariant = EditorSurfaceVariant,
+    onSurfaceVariant = EditorOnSurfaceVariant,
+    outline = EditorOutline,
 )
 
 private val LightColors = lightColorScheme(
@@ -21,10 +27,17 @@ private val LightColors = lightColorScheme(
 
 private val BlackColors = darkColorScheme(
     primary = EditorAccent,
+    onPrimary = EditorOnAccent,
+    secondary = EditorAccent,
+    onSecondary = EditorOnAccent,
     background = Color.Black,
+    onBackground = EditorOnSurface,
     surface = Color.Black,
     onSurface = EditorOnSurface,
-    onBackground = EditorOnSurface,
+    // Slightly-raised near-black so cards/board/search field stay visible on AMOLED black.
+    surfaceVariant = Color(0xFF16181C),
+    onSurfaceVariant = EditorOnSurfaceVariant,
+    outline = EditorOutline,
 )
 
 @Composable
