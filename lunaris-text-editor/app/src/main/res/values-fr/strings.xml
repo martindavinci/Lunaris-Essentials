@@ -59,7 +59,6 @@
     <string name="search_find">Rechercher</string>
     <string name="search_find_prev">Rechercher le précédent</string>
     <string name="search_find_next">Rechercher le suivant</string>
-    <string name="search_active_title">Rechercher \"%1$s\"</string>
     <string name="search_no_match">Aucune correspondance trouvée pour \"%1$s\".</string>
     <string name="search_replace">Remplacer</string>
     <string name="search_replace_all">Tout remplacer</string>
@@ -153,7 +152,8 @@
     <string name="toolbar_preview">Aperçu</string>
     <string name="toolbar_select_mode">Mode sélection</string>
     <string name="toolbar_keys">Caractères spéciaux</string>
-    <string name="toolbar_more">Plus</string>
+    <string name="toolbar_more">Plus d\'actions</string>
+    <string name="toolbar_in_overflow">Dans le menu ⋯</string>
     <string name="drawer_recents">Récents</string>
     <string name="drawer_folders">Dossiers</string>
     <string name="drawer_extensions">Extensions</string>

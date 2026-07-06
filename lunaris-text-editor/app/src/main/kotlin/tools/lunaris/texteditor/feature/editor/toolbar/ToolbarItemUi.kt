@@ -17,6 +17,9 @@ import androidx.compose.material.icons.filled.Tag
 import androidx.compose.ui.graphics.vector.ImageVector
 import tools.lunaris.texteditor.R
 
+/** Actions that only ever live in the toolbar's "…" overflow menu, never on the visible track. */
+fun ToolbarItem.isOverflowOnly(): Boolean = this == ToolbarItem.OPEN || this == ToolbarItem.CLOSE
+
 @StringRes
 fun ToolbarItem.labelRes(): Int = when (this) {
     ToolbarItem.OPEN -> R.string.toolbar_open

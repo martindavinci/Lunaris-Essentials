@@ -82,6 +82,7 @@ import tools.lunaris.texteditor.feature.editor.action.EditorActionSheet
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfig
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarItem
 import tools.lunaris.texteditor.feature.editor.toolbar.icon
+import tools.lunaris.texteditor.feature.editor.toolbar.isOverflowOnly
 import tools.lunaris.texteditor.feature.editor.toolbar.labelRes
 import tools.lunaris.texteditor.feature.preview.PreviewScreen
 import tools.lunaris.texteditor.feature.settings.SettingsViewModel
@@ -630,7 +631,7 @@ internal fun EditorBottomBar(
     val previewItems = items.filter { it.barGroup() == BarGroup.PREVIEW }
     // Open/close live in the "…" overflow menu rather than on the track, so the board stays a clean
     // primary set (cursor · keys · history) plus the "…" button.
-    val (secondary, inline) = remember(leftItems) { leftItems.partition { it.overflowOnly() } }
+    val (secondary, inline) = remember(leftItems) { leftItems.partition { it.isOverflowOnly() } }
     val cells = remember(inline) { groupCells(inline) }
     Surface(color = MaterialTheme.colorScheme.surface, tonalElevation = BarElevation) {
         Row(
@@ -814,9 +815,6 @@ private fun ToolbarItem.barGroup(): BarGroup = when (this) {
     ToolbarItem.PREVIEW -> BarGroup.PREVIEW
     else -> BarGroup.SOLO
 }
-
-/** Actions kept in the "…" overflow menu rather than on the visible track. */
-private fun ToolbarItem.overflowOnly(): Boolean = this == ToolbarItem.OPEN || this == ToolbarItem.CLOSE
 
 /**
  * Uniform flat toolbar icon — the single treatment for every left-track action. Open/close keep

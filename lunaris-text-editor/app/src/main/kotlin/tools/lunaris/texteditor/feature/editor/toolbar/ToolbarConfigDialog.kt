@@ -13,6 +13,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -46,17 +47,30 @@ fun ToolbarConfigDialog(
         text = {
             Column(Modifier.fillMaxWidth().heightIn(max = 420.dp).verticalScroll(rememberScrollState())) {
                 config.items.forEachIndexed { index, item ->
+                    val overflowOnly = item.isOverflowOnly()
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         Checkbox(
                             checked = item !in config.disabled,
                             onCheckedChange = { on -> config = config.toggled(item, on) },
                         )
-                        Text(stringResource(item.labelRes()), modifier = Modifier.weight(1f))
-                        IconButton(onClick = { if (index > 0) config = config.moved(index, index - 1) }, enabled = index > 0) {
-                            Icon(Icons.Filled.KeyboardArrowUp, contentDescription = stringResource(R.string.toolbar_move_up))
+                        Column(Modifier.weight(1f)) {
+                            Text(stringResource(item.labelRes()))
+                            if (overflowOnly) {
+                                Text(
+                                    stringResource(R.string.toolbar_in_overflow),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
                         }
-                        IconButton(onClick = { if (index < config.items.size - 1) config = config.moved(index, index + 1) }, enabled = index < config.items.size - 1) {
-                            Icon(Icons.Filled.KeyboardArrowDown, contentDescription = stringResource(R.string.toolbar_move_down))
+                        // Overflow-only actions have no on-bar position, so they get no reorder controls.
+                        if (!overflowOnly) {
+                            IconButton(onClick = { if (index > 0) config = config.moved(index, index - 1) }, enabled = index > 0) {
+                                Icon(Icons.Filled.KeyboardArrowUp, contentDescription = stringResource(R.string.toolbar_move_up))
+                            }
+                            IconButton(onClick = { if (index < config.items.size - 1) config = config.moved(index, index + 1) }, enabled = index < config.items.size - 1) {
+                                Icon(Icons.Filled.KeyboardArrowDown, contentDescription = stringResource(R.string.toolbar_move_down))
+                            }
                         }
                     }
                 }

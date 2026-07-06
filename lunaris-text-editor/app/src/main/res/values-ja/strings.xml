@@ -59,7 +59,6 @@
     <string name="search_find">検索</string>
     <string name="search_find_prev">前を検索</string>
     <string name="search_find_next">次を検索</string>
-    <string name="search_active_title">\"%1$s\" を検索</string>
     <string name="search_no_match">\"%1$s\" に一致する項目が見つかりません。</string>
     <string name="search_replace">置換</string>
     <string name="search_replace_all">すべて置換</string>
@@ -153,7 +152,8 @@
     <string name="toolbar_preview">プレビュー</string>
     <string name="toolbar_select_mode">選択モード</string>
     <string name="toolbar_keys">特殊文字</string>
-    <string name="toolbar_more">その他</string>
+    <string name="toolbar_more">その他の操作</string>
+    <string name="toolbar_in_overflow">⋯ メニュー内</string>
     <string name="drawer_recents">最近</string>
     <string name="drawer_folders">フォルダ</string>
     <string name="drawer_extensions">拡張子</string>
