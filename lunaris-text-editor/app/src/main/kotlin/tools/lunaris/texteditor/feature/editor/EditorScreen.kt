@@ -823,13 +823,17 @@ private fun ToolbarItem.barGroup(): BarGroup = when (this) {
  */
 @Composable
 private fun BarIconButton(item: ToolbarItem, onItem: (ToolbarItem) -> Unit, enabled: Boolean, active: Boolean) {
-    val tint = when {
-        item == ToolbarItem.OPEN -> ToolbarOpenAccent
-        item == ToolbarItem.CLOSE -> ToolbarCloseAccent
-        active -> MaterialTheme.colorScheme.primary
-        else -> LocalContentColor.current
-    }
     IconButton(onClick = { onItem(item) }, enabled = enabled, modifier = Modifier.size(BarButtonSize)) {
+        // Read LocalContentColor INSIDE the button so a disabled item inherits the dimmed content
+        // colour IconButton provides — else an explicit full-alpha tint would keep undo/redo/save
+        // looking active while clicks are already blocked. Accents/toggles only apply when enabled.
+        val tint = when {
+            !enabled -> LocalContentColor.current
+            item == ToolbarItem.OPEN -> ToolbarOpenAccent
+            item == ToolbarItem.CLOSE -> ToolbarCloseAccent
+            active -> MaterialTheme.colorScheme.primary
+            else -> LocalContentColor.current
+        }
         Icon(item.icon(), contentDescription = stringResource(item.labelRes()), tint = tint, modifier = Modifier.size(24.dp))
     }
 }

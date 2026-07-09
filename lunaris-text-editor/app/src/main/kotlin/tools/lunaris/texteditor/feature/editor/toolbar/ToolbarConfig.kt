@@ -36,12 +36,14 @@ data class ToolbarConfig(val items: List<ToolbarItem>, val disabled: Set<Toolbar
             ToolbarItem.PASTE, ToolbarItem.SEARCH, ToolbarItem.SAVE,
         )
         // Select mode is present-but-disabled by default: available to add via the config dialog,
-        // but off the default bar.
+        // but off the default bar. Save + Search are on by default but overflow-only, so they land
+        // in the "…" menu (also mirrored in the top bar).
         private val DEFAULT_ENABLED = setOf(
             ToolbarItem.CURSOR_LEFT, ToolbarItem.CURSOR_RIGHT,
             ToolbarItem.ACCESSORY,
             ToolbarItem.UNDO, ToolbarItem.REDO,
             ToolbarItem.OPEN, ToolbarItem.CLOSE, ToolbarItem.PREVIEW,
+            ToolbarItem.SEARCH, ToolbarItem.SAVE,
         )
         val DEFAULT = ToolbarConfig(
             items = DEFAULT_ORDER,

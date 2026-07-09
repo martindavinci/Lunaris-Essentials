@@ -9,12 +9,13 @@ class ToolbarConfigTest {
         // Every item is still present (config dialog can re-enable any; fromJson append still works).
         assertThat(c.items).containsExactlyElementsIn(ToolbarItem.entries)
         // Only the segmented default bar is enabled, in this order (select mode is off by default;
-        // open+close form the file group just before preview).
+        // open+close form the file group just before preview; search+save trail as overflow-only).
         assertThat(c.enabled).containsExactly(
             ToolbarItem.CURSOR_LEFT, ToolbarItem.CURSOR_RIGHT,
             ToolbarItem.ACCESSORY,
             ToolbarItem.UNDO, ToolbarItem.REDO,
             ToolbarItem.OPEN, ToolbarItem.CLOSE, ToolbarItem.PREVIEW,
+            ToolbarItem.SEARCH, ToolbarItem.SAVE,
         ).inOrder()
     }
     @Test fun toggle_disablesAndEnables() {
