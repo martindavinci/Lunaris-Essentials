@@ -1,6 +1,5 @@
 package tools.lunaris.texteditor.feature.preview
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -62,12 +61,13 @@ fun ReadingPane(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(scroll)
-            .padding(16.dp),
+            .padding(ContentPadding),
     )
 }
 
 private const val DIM_ALPHA = 0.45f
 private const val HIGHLIGHT_ALPHA = 0.25f
+private val ContentPadding = 16.dp
 
 @androidx.compose.ui.tooling.preview.Preview(showBackground = true)
 @Composable
