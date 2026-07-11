@@ -25,7 +25,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,17 +50,17 @@ fun PreviewScreen(
     val dark = darkState.value
     val displayTitle = viewModel.title.ifBlank { stringResource(R.string.preview_title) }
     val html = viewModel.html(dark)
-    // JS is needed only by our generated docs (which run the bundled highlight.js and have their
-    // content sanitized). Raw-HTML previews render an untrusted page as-is, so keep JS off there.
     val enableJs = !viewModel.isRawHtmlPreview
-    val isSpeaking by viewModel.isSpeaking.collectAsStateWithLifecycle()
+
+    val readerState by viewModel.readerState.collectAsStateWithLifecycle()
+    val readingText by viewModel.readingText.collectAsStateWithLifecycle()
+    val segments by viewModel.segments.collectAsStateWithLifecycle()
+    val voiceGroups by viewModel.voiceGroups.collectAsStateWithLifecycle()
     val message by viewModel.message.collectAsStateWithLifecycle()
 
-    // Halt playback the moment the screen leaves composition (the engine itself is released in
-    // the ViewModel's onCleared).
-    DisposableEffect(Unit) { onDispose { viewModel.stopSpeaking() } }
+    val offlineLabel = stringResource(R.string.tts_offline)
+    val networkLabel = stringResource(R.string.tts_requires_connection)
 
-    // Surface one-shot messages (e.g. no TTS voice available) then clear them.
     LaunchedEffect(message) {
         message?.let {
             Toast.makeText(context, context.getString(it), Toast.LENGTH_LONG).show()
@@ -75,26 +74,23 @@ fun PreviewScreen(
         onPrint = { printWebView(context, webRef.value, viewModel.title) },
         isDark = dark,
         onToggleTheme = { darkState.value = !darkState.value },
-        isSpeaking = isSpeaking,
+        isReading = readerState.reading,
         canReadAloud = html != null,
-        onReadAloud = viewModel::toggleSpeak,
+        onReadAloud = {
+            if (readerState.reading) viewModel.stopReading()
+            else viewModel.startReading(offlineLabel, networkLabel)
+        },
     ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
-        ) {
-            if (html == null) {
-                Text(
+        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+            when {
+                readerState.reading -> ReadingPane(readingText, segments, readerState.index)
+                html == null -> Text(
                     text = stringResource(R.string.preview_nothing),
                     modifier = Modifier.align(Alignment.Center),
                 )
-            } else {
-                AndroidView(
+                else -> AndroidView(
                     factory = { ctx ->
                         WebView(ctx).apply {
-                            // Sandbox: no network, no file access. JS is toggled per-load below —
-                            // on only for our sanitized docs (highlight.js), off for raw HTML.
                             settings.blockNetworkLoads = true
                             @Suppress("DEPRECATION")
                             settings.allowFileAccess = false
@@ -102,9 +98,6 @@ fun PreviewScreen(
                         }
                     },
                     update = {
-                        // Paint any area the document doesn't cover (e.g. below short inverted HTML,
-                        // where the CSS filter stops the root background reaching the canvas) so no
-                        // white strip shows under a dark page.
                         it.setBackgroundColor(if (dark) android.graphics.Color.BLACK else android.graphics.Color.WHITE)
                         it.settings.javaScriptEnabled = enableJs
                         it.loadDataWithBaseURL(null, html, "text/html", "utf-8", null)
@@ -112,12 +105,24 @@ fun PreviewScreen(
                     modifier = Modifier.fillMaxSize(),
                 )
             }
+            if (readerState.reading) {
+                ReadingController(
+                    state = readerState,
+                    voiceGroups = voiceGroups,
+                    statusVoice = rateLabelFor(readerState.rate),
+                    onPlayPause = viewModel::togglePause,
+                    onPrev = viewModel::previous,
+                    onNext = viewModel::next,
+                    onSelectVoice = viewModel::setVoice,
+                    onRate = viewModel::setRate,
+                )
+            }
         }
     }
 }
 
-/** Stateless preview scaffold (top bar + body slot). The WebView lives in [PreviewScreen];
- *  this chrome is what gets previewed. */
+private fun rateLabelFor(rate: Float): String = String.format(java.util.Locale.US, "%.1f×", rate)
+
 @Composable
 internal fun PreviewChrome(
     title: String,
@@ -125,7 +130,7 @@ internal fun PreviewChrome(
     onPrint: () -> Unit,
     isDark: Boolean = true,
     onToggleTheme: () -> Unit = {},
-    isSpeaking: Boolean = false,
+    isReading: Boolean = false,
     canReadAloud: Boolean = true,
     onReadAloud: () -> Unit = {},
     body: @Composable (androidx.compose.foundation.layout.PaddingValues) -> Unit,
@@ -146,15 +151,13 @@ internal fun PreviewChrome(
                     Text(
                         text = title,
                         style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(start = 8.dp),
+                        modifier = Modifier.weight(1f).padding(start = 8.dp),
                     )
                     IconButton(onClick = onReadAloud, enabled = canReadAloud) {
                         Icon(
-                            imageVector = if (isSpeaking) Icons.Filled.Stop else Icons.Filled.RecordVoiceOver,
+                            imageVector = if (isReading) Icons.Filled.Stop else Icons.Filled.RecordVoiceOver,
                             contentDescription = stringResource(
-                                if (isSpeaking) R.string.preview_stop_reading else R.string.preview_read_aloud,
+                                if (isReading) R.string.action_stop_reading else R.string.preview_read_aloud,
                             ),
                         )
                     }
@@ -165,10 +168,7 @@ internal fun PreviewChrome(
                         )
                     }
                     IconButton(onClick = onPrint) {
-                        Icon(
-                            imageVector = Icons.Filled.Print,
-                            contentDescription = stringResource(R.string.preview_print),
-                        )
+                        Icon(Icons.Filled.Print, stringResource(R.string.preview_print))
                     }
                 }
             }

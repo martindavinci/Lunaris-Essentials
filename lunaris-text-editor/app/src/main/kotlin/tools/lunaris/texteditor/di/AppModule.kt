@@ -7,6 +7,7 @@ import dagger.hilt.components.SingletonComponent
 import tools.lunaris.texteditor.data.ColorSchemeStore
 import tools.lunaris.texteditor.data.EditorPreferences
 import tools.lunaris.texteditor.data.ToolbarStore
+import tools.lunaris.texteditor.data.TtsPrefsStore
 import tools.lunaris.texteditor.file.FileGateway
 import tools.lunaris.texteditor.file.SafFileGateway
 import javax.inject.Singleton
@@ -43,4 +44,8 @@ abstract class AppModule {
 
     @dagger.Binds @javax.inject.Singleton
     abstract fun bindFileFilterStore(impl: tools.lunaris.texteditor.data.EditorPreferences): tools.lunaris.texteditor.data.FileFilterStore
+
+    @Binds
+    @Singleton
+    abstract fun bindTtsPrefsStore(impl: EditorPreferences): TtsPrefsStore
 }

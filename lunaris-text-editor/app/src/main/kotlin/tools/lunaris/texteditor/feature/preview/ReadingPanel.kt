@@ -121,7 +121,7 @@ fun ReadingPanel(
     }
 }
 
-private fun rateLabel(rate: Float): String = String.format("%.1f×", rate)
+private fun rateLabel(rate: Float): String = String.format(java.util.Locale.US, "%.1f×", rate)
 
 @androidx.compose.ui.tooling.preview.Preview(showBackground = true)
 @Composable
