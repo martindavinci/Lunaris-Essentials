@@ -78,4 +78,23 @@ class DocumentReaderTest {
         assertThat(reader.state.value.reading).isFalse()
         assertThat(engine.stopCount).isAtLeast(1)
     }
+
+    @Test fun setVoice_appliesAndReSpeaks() {
+        reader.start(listOf("a"), 1f, null)
+        val before = engine.spoken.size
+        reader.setVoice("it-it-x-itc-local")
+        assertThat(engine.voice).isEqualTo("it-it-x-itc-local")
+        assertThat(reader.state.value.voiceId).isEqualTo("it-it-x-itc-local")
+        assertThat(engine.spoken.size).isEqualTo(before + 1)
+        assertThat(engine.spoken.last()).isEqualTo("a" to "0")
+    }
+
+    @Test fun staleDoneCallback_isIgnored() {
+        reader.start(listOf("a", "b", "c"), 1f, null)
+        reader.next()                       // index -> 1, speaks ("b","1")
+        val sizeAfterNext = engine.spoken.size
+        engine.complete("0")                // stale id from the flushed segment 0
+        assertThat(reader.state.value.index).isEqualTo(1)     // did not advance
+        assertThat(engine.spoken.size).isEqualTo(sizeAfterNext) // did not re-speak
+    }
 }
