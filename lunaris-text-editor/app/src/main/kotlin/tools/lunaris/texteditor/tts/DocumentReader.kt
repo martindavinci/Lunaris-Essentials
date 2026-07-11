@@ -3,11 +3,14 @@ package tools.lunaris.texteditor.tts
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /** Sentence/line playback state machine over a [SpeechEngine]. Advances on each segment's
  *  onSegmentDone; TTS has no native pause, so pause = stop + keep index, resume = re-speak current.
  *  Rate/voice changes re-speak the current segment so they apply immediately. */
-class DocumentReader(private val engine: SpeechEngine) {
+@Singleton
+class DocumentReader @Inject constructor(private val engine: SpeechEngine) {
     private val _state = MutableStateFlow(ReaderState())
     val state: StateFlow<ReaderState> = _state.asStateFlow()
 
