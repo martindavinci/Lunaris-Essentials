@@ -179,4 +179,18 @@
     <string name="assoc_plaintext">プレーンテキスト</string>
     <string name="assoc_remove_title">関連付けを削除しますか？</string>
     <string name="assoc_remove">削除</string>
+    <string name="reading_in_progress">読み上げ中</string>
+    <string name="tts_voice">音声</string>
+    <string name="tts_speed">速度</string>
+    <string name="tts_sentence_progress">%2$d 文中 %1$d 文目</string>
+    <string name="tts_requires_connection">接続が必要</string>
+    <string name="tts_offline">オフライン</string>
+    <string name="tts_play">再生</string>
+    <string name="tts_pause">一時停止</string>
+    <string name="tts_prev_sentence">前の文</string>
+    <string name="tts_next_sentence">次の文</string>
+    <string name="tts_expand">コントロールを展開</string>
+    <string name="tts_collapse">コントロールを折りたたむ</string>
+    <string name="tts_voice_selected">選択中</string>
+    <string name="action_stop_reading">読み上げを停止</string>
 </resources>

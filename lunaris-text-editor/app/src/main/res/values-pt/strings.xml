@@ -179,4 +179,18 @@
     <string name="assoc_plaintext">Texto simples</string>
     <string name="assoc_remove_title">Remover esta associação?</string>
     <string name="assoc_remove">Remover</string>
+    <string name="reading_in_progress">A ler</string>
+    <string name="tts_voice">Voz</string>
+    <string name="tts_speed">Velocidade</string>
+    <string name="tts_sentence_progress">Frase %1$d de %2$d</string>
+    <string name="tts_requires_connection">requer ligação</string>
+    <string name="tts_offline">offline</string>
+    <string name="tts_play">Reproduzir</string>
+    <string name="tts_pause">Pausa</string>
+    <string name="tts_prev_sentence">Frase anterior</string>
+    <string name="tts_next_sentence">Frase seguinte</string>
+    <string name="tts_expand">Expandir controlos</string>
+    <string name="tts_collapse">Recolher controlos</string>
+    <string name="tts_voice_selected">Selecionada</string>
+    <string name="action_stop_reading">Parar leitura</string>
 </resources>

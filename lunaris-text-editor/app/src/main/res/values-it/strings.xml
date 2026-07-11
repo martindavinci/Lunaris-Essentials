@@ -188,4 +188,18 @@
     <string name="time_yesterday">ieri</string>
     <string name="time_days">%d giorni</string>
     <string name="drawer_new_file">Nuovo file</string>
+    <string name="reading_in_progress">Lettura in corso</string>
+    <string name="tts_voice">Voce</string>
+    <string name="tts_speed">Velocità</string>
+    <string name="tts_sentence_progress">Frase %1$d di %2$d</string>
+    <string name="tts_requires_connection">richiede connessione</string>
+    <string name="tts_offline">offline</string>
+    <string name="tts_play">Riproduci</string>
+    <string name="tts_pause">Pausa</string>
+    <string name="tts_prev_sentence">Frase precedente</string>
+    <string name="tts_next_sentence">Frase successiva</string>
+    <string name="tts_expand">Espandi controlli</string>
+    <string name="tts_collapse">Comprimi controlli</string>
+    <string name="tts_voice_selected">Selezionata</string>
+    <string name="action_stop_reading">Interrompi lettura</string>
 </resources>

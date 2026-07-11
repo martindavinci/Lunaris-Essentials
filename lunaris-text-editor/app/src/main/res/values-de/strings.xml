@@ -179,4 +179,18 @@
     <string name="assoc_plaintext">Nur Text</string>
     <string name="assoc_remove_title">Zuordnung entfernen?</string>
     <string name="assoc_remove">Entfernen</string>
+    <string name="reading_in_progress">Wird vorgelesen</string>
+    <string name="tts_voice">Stimme</string>
+    <string name="tts_speed">Geschwindigkeit</string>
+    <string name="tts_sentence_progress">Satz %1$d von %2$d</string>
+    <string name="tts_requires_connection">Verbindung erforderlich</string>
+    <string name="tts_offline">offline</string>
+    <string name="tts_play">Wiedergabe</string>
+    <string name="tts_pause">Pause</string>
+    <string name="tts_prev_sentence">Vorheriger Satz</string>
+    <string name="tts_next_sentence">Nächster Satz</string>
+    <string name="tts_expand">Steuerung ausklappen</string>
+    <string name="tts_collapse">Steuerung einklappen</string>
+    <string name="tts_voice_selected">Ausgewählt</string>
+    <string name="action_stop_reading">Vorlesen beenden</string>
 </resources>

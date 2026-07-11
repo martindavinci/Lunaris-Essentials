@@ -179,4 +179,18 @@
     <string name="assoc_plaintext">Platte tekst</string>
     <string name="assoc_remove_title">Koppeling verwijderen?</string>
     <string name="assoc_remove">Verwijderen</string>
+    <string name="reading_in_progress">Aan het voorlezen</string>
+    <string name="tts_voice">Stem</string>
+    <string name="tts_speed">Snelheid</string>
+    <string name="tts_sentence_progress">Zin %1$d van %2$d</string>
+    <string name="tts_requires_connection">verbinding vereist</string>
+    <string name="tts_offline">offline</string>
+    <string name="tts_play">Afspelen</string>
+    <string name="tts_pause">Pauze</string>
+    <string name="tts_prev_sentence">Vorige zin</string>
+    <string name="tts_next_sentence">Volgende zin</string>
+    <string name="tts_expand">Bediening uitvouwen</string>
+    <string name="tts_collapse">Bediening invouwen</string>
+    <string name="tts_voice_selected">Geselecteerd</string>
+    <string name="action_stop_reading">Voorlezen stoppen</string>
 </resources>
