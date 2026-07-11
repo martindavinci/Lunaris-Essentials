@@ -3,6 +3,7 @@ package tools.lunaris.texteditor.data
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -20,7 +21,7 @@ private val Context.dataStore by preferencesDataStore(name = "editor_prefs")
 @Singleton
 class EditorPreferences @Inject constructor(
     @ApplicationContext private val context: Context,
-) : ColorSchemeStore, RecentsStore, SessionStore, ToolbarStore, AssociationStore, SettingsStore, FileFilterStore {
+) : ColorSchemeStore, RecentsStore, SessionStore, ToolbarStore, AssociationStore, SettingsStore, FileFilterStore, TtsPrefsStore {
 
     override fun colorSchemeId(default: String): Flow<String> =
         context.dataStore.data.map { it[COLOR_SCHEME_KEY] ?: default }
@@ -99,6 +100,21 @@ class EditorPreferences @Inject constructor(
 
     override suspend fun setFileFilter(on: Boolean) { context.dataStore.edit { it[FILE_FILTER_KEY] = on } }
 
+    // TtsPrefsStore
+    override fun ttsRate(): Flow<Float> = context.dataStore.data.map { it[TTS_RATE_KEY] ?: 1f }
+
+    override suspend fun setTtsRate(rate: Float) {
+        context.dataStore.edit { it[TTS_RATE_KEY] = rate }
+    }
+
+    override fun ttsVoiceId(): Flow<String?> = context.dataStore.data.map { it[TTS_VOICE_KEY] }
+
+    override suspend fun setTtsVoiceId(id: String?) {
+        context.dataStore.edit { prefs ->
+            if (id == null) prefs.remove(TTS_VOICE_KEY) else prefs[TTS_VOICE_KEY] = id
+        }
+    }
+
     private companion object {
         val COLOR_SCHEME_KEY = stringPreferencesKey("color_scheme_id")
         val RECENTS_KEY = stringPreferencesKey("recents_json")
@@ -107,5 +123,7 @@ class EditorPreferences @Inject constructor(
         val ASSOC_KEY = stringPreferencesKey("assoc_json")
         val FILE_FILTER_KEY = booleanPreferencesKey("file_filter")
         val SETTINGS_KEY = stringPreferencesKey("settings_json")
+        val TTS_RATE_KEY = floatPreferencesKey("tts_rate")
+        val TTS_VOICE_KEY = stringPreferencesKey("tts_voice_id")
     }
 }
