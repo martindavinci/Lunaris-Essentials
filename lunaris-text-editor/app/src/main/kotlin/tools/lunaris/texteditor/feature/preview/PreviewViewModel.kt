@@ -19,7 +19,6 @@ import tools.lunaris.texteditor.tts.DocumentSegmenter
 import tools.lunaris.texteditor.tts.ReaderState
 import tools.lunaris.texteditor.tts.Segment
 import tools.lunaris.texteditor.tts.SegmentStyle
-import tools.lunaris.texteditor.tts.SpeechEngine
 import tools.lunaris.texteditor.tts.VoiceCatalog
 import tools.lunaris.texteditor.tts.VoiceGroup
 import javax.inject.Inject
@@ -30,7 +29,6 @@ class PreviewViewModel @Inject constructor(
     private val renderer: MarkdownRenderer,
     private val highlight: HighlightAssets,
     private val reader: DocumentReader,
-    private val engine: SpeechEngine,
     private val ttsPrefs: TtsPrefsStore,
 ) : ViewModel() {
 
@@ -74,7 +72,7 @@ class PreviewViewModel @Inject constructor(
         val segs = DocumentSegmenter.segment(text, style)
         _readingText.value = text
         _segments.value = segs
-        _voiceGroups.value = VoiceCatalog.group(engine.voices(), offlineLabel, networkLabel)
+        _voiceGroups.value = VoiceCatalog.group(reader.voices(), offlineLabel, networkLabel)
         viewModelScope.launch {
             val rate = ttsPrefs.ttsRate().first()
             val voiceId = ttsPrefs.ttsVoiceId().first()
