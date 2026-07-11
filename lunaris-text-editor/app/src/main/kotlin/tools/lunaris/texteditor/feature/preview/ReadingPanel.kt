@@ -26,6 +26,10 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -50,6 +54,7 @@ fun ReadingPanel(
     onRate: (Float) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var dragRate by remember(state.rate) { mutableFloatStateOf(state.rate) }
     Surface(tonalElevation = 4.dp, modifier = modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -109,11 +114,12 @@ fun ReadingPanel(
             }
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(stringResource(R.string.tts_speed), style = MaterialTheme.typography.labelMedium, modifier = Modifier.weight(1f))
-                Text(rateLabel(state.rate), style = MaterialTheme.typography.labelMedium, textAlign = TextAlign.End)
+                Text(rateLabel(dragRate), style = MaterialTheme.typography.labelMedium, textAlign = TextAlign.End)
             }
             Slider(
-                value = state.rate.coerceIn(SPEED_RANGE),
-                onValueChange = onRate,
+                value = dragRate.coerceIn(SPEED_RANGE),
+                onValueChange = { dragRate = it },
+                onValueChangeFinished = { onRate(dragRate) },
                 valueRange = SPEED_RANGE,
                 modifier = Modifier.fillMaxWidth(),
             )

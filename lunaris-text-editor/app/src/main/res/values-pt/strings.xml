@@ -149,7 +149,6 @@
     <string name="preview_toggle_theme">Alternar claro/escuro</string>
     <string name="preview_nothing">Nada para pré-visualizar</string>
     <string name="preview_read_aloud">Ler em voz alta</string>
-    <string name="preview_stop_reading">Parar leitura</string>
     <string name="preview_tts_unavailable">Nenhuma voz de conversão de texto em voz disponível. Ative uma nas definições do dispositivo.</string>
     <string name="menu_preview">Pré-visualização</string>
     <string name="toolbar_preview">Pré-visualização</string>

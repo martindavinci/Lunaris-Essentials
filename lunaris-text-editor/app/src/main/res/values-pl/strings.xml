@@ -149,7 +149,6 @@
     <string name="preview_toggle_theme">Przełącz jasny/ciemny</string>
     <string name="preview_nothing">Brak treści do podglądu</string>
     <string name="preview_read_aloud">Czytaj na głos</string>
-    <string name="preview_stop_reading">Zatrzymaj czytanie</string>
     <string name="preview_tts_unavailable">Brak dostępnego głosu syntezatora mowy. Włącz go w ustawieniach urządzenia.</string>
     <string name="menu_preview">Podgląd</string>
     <string name="toolbar_preview">Podgląd</string>
