@@ -169,6 +169,9 @@
     <string name="preview_print">Print</string>
     <string name="preview_toggle_theme">Toggle light/dark</string>
     <string name="preview_nothing">Nothing to preview</string>
+    <string name="preview_read_aloud">Read aloud</string>
+    <string name="preview_stop_reading">Stop reading</string>
+    <string name="preview_tts_unavailable">No text-to-speech voice available. Enable one in your device\'s Settings.</string>
     <string name="menu_preview">Preview</string>
     <string name="toolbar_preview">Preview</string>
     <string name="toolbar_select_mode">Select mode</string>

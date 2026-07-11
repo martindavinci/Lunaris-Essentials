@@ -169,6 +169,9 @@
     <string name="preview_print">Stampa</string>
     <string name="preview_toggle_theme">Tema chiaro/scuro</string>
     <string name="preview_nothing">Niente da visualizzare in anteprima</string>
+    <string name="preview_read_aloud">Leggi ad alta voce</string>
+    <string name="preview_stop_reading">Interrompi lettura</string>
+    <string name="preview_tts_unavailable">Nessuna voce di sintesi vocale disponibile. Attivala nelle Impostazioni del dispositivo.</string>
     <string name="menu_preview">Anteprima</string>
     <string name="toolbar_preview">Anteprima</string>
     <string name="toolbar_select_mode">Modalità selezione</string>

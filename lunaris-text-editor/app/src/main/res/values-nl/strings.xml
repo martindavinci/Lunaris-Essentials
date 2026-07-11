@@ -148,6 +148,9 @@
     <string name="preview_print">Afdrukken</string>
     <string name="preview_toggle_theme">Licht/donker wisselen</string>
     <string name="preview_nothing">Niets om weer te geven</string>
+    <string name="preview_read_aloud">Voorlezen</string>
+    <string name="preview_stop_reading">Voorlezen stoppen</string>
+    <string name="preview_tts_unavailable">Geen tekst-naar-spraakstem beschikbaar. Schakel er een in via de instellingen van je apparaat.</string>
     <string name="menu_preview">Voorbeeld</string>
     <string name="toolbar_preview">Voorbeeld</string>
     <string name="toolbar_select_mode">Selectiemodus</string>

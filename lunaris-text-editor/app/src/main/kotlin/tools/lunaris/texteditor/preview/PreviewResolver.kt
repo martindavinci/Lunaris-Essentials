@@ -29,6 +29,25 @@ object PreviewResolver {
         }
     }
 
+    /**
+     * Plain text to read aloud (TTS). Markdown is stripped to prose via [stripMarkdown]; everything
+     * else (code, plain text, raw HTML) is spoken verbatim. Extension resolution mirrors
+     * [toHtmlDocument], including the untitled-file [languageHint] fallback.
+     */
+    fun toSpeakableText(
+        fileName: String?,
+        text: String,
+        stripMarkdown: (String) -> String,
+        languageHint: String? = null,
+    ): String {
+        val fileExt = fileName?.substringAfterLast('.', "")?.lowercase().orEmpty()
+        val ext = fileExt.ifEmpty { languageHint?.lowercase()?.trim().orEmpty() }
+        return when (ext) {
+            "md", "markdown" -> stripMarkdown(text)
+            else -> text
+        }
+    }
+
     // Extensions (and the no-extension case) treated as prose, never syntax-highlighted.
     private val PLAIN_EXTS = setOf("", "txt", "text", "log")
 

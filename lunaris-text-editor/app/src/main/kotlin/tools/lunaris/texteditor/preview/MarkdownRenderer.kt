@@ -4,6 +4,7 @@ import org.commonmark.ext.gfm.tables.TablesExtension
 import org.commonmark.ext.task.list.items.TaskListItemsExtension
 import org.commonmark.parser.Parser
 import org.commonmark.renderer.html.HtmlRenderer
+import org.commonmark.renderer.text.TextContentRenderer
 import javax.inject.Inject
 
 /** Converts Markdown source to an HTML fragment (offline, no network).
@@ -18,9 +19,17 @@ class MarkdownRenderer @Inject constructor() {
     // (e.g. <script>) embedded in the Markdown source instead of passing it through.
     private val renderer: HtmlRenderer =
         HtmlRenderer.builder().extensions(extensions).escapeHtml(true).build()
+    // Text renderer strips all markup to plain prose (used for read-aloud / TTS). Same extensions
+    // so tables and task-list items degrade to readable text instead of being dropped.
+    private val textRenderer: TextContentRenderer =
+        TextContentRenderer.builder().extensions(extensions).build()
 
     fun toHtml(markdown: String): String =
         if (markdown.isBlank()) "" else renderer.render(parser.parse(separateTables(markdown))).trim()
+
+    /** Strips Markdown markup, leaving plain prose suitable for text-to-speech. */
+    fun toPlainText(markdown: String): String =
+        if (markdown.isBlank()) "" else textRenderer.render(parser.parse(separateTables(markdown))).trim()
 
     /**
      * GFM requires a table to start its own block, i.e. be preceded by a blank line. Many real

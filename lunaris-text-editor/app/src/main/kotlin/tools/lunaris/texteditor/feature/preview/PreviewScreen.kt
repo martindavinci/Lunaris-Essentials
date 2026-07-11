@@ -4,6 +4,7 @@ import android.content.Context
 import android.print.PrintAttributes
 import android.print.PrintManager
 import android.webkit.WebView
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,8 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.Print
+import androidx.compose.material.icons.filled.RecordVoiceOver
+import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -22,8 +25,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -47,6 +54,20 @@ fun PreviewScreen(
     // JS is needed only by our generated docs (which run the bundled highlight.js and have their
     // content sanitized). Raw-HTML previews render an untrusted page as-is, so keep JS off there.
     val enableJs = !viewModel.isRawHtmlPreview
+    val isSpeaking by viewModel.isSpeaking.collectAsStateWithLifecycle()
+    val message by viewModel.message.collectAsStateWithLifecycle()
+
+    // Halt playback the moment the screen leaves composition (the engine itself is released in
+    // the ViewModel's onCleared).
+    DisposableEffect(Unit) { onDispose { viewModel.stopSpeaking() } }
+
+    // Surface one-shot messages (e.g. no TTS voice available) then clear them.
+    LaunchedEffect(message) {
+        message?.let {
+            Toast.makeText(context, context.getString(it), Toast.LENGTH_LONG).show()
+            viewModel.messageShown()
+        }
+    }
 
     PreviewChrome(
         title = displayTitle,
@@ -54,6 +75,9 @@ fun PreviewScreen(
         onPrint = { printWebView(context, webRef.value, viewModel.title) },
         isDark = dark,
         onToggleTheme = { darkState.value = !darkState.value },
+        isSpeaking = isSpeaking,
+        canReadAloud = html != null,
+        onReadAloud = viewModel::toggleSpeak,
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -101,6 +125,9 @@ internal fun PreviewChrome(
     onPrint: () -> Unit,
     isDark: Boolean = true,
     onToggleTheme: () -> Unit = {},
+    isSpeaking: Boolean = false,
+    canReadAloud: Boolean = true,
+    onReadAloud: () -> Unit = {},
     body: @Composable (androidx.compose.foundation.layout.PaddingValues) -> Unit,
 ) {
     Scaffold(
@@ -123,6 +150,14 @@ internal fun PreviewChrome(
                             .weight(1f)
                             .padding(start = 8.dp),
                     )
+                    IconButton(onClick = onReadAloud, enabled = canReadAloud) {
+                        Icon(
+                            imageVector = if (isSpeaking) Icons.Filled.Stop else Icons.Filled.RecordVoiceOver,
+                            contentDescription = stringResource(
+                                if (isSpeaking) R.string.preview_stop_reading else R.string.preview_read_aloud,
+                            ),
+                        )
+                    }
                     IconButton(onClick = onToggleTheme) {
                         Icon(
                             imageVector = if (isDark) Icons.Filled.LightMode else Icons.Filled.DarkMode,

@@ -105,4 +105,25 @@ class PreviewResolverTest {
         assertThat(doc).doesNotContain("hljs.highlightAll()")
         assertThat(doc).doesNotContain("JSDATA")
     }
+
+    // --- toSpeakableText: Markdown is stripped to prose; everything else is spoken verbatim. ---
+    private val strip: (String) -> String = { "STRIPPED" }
+
+    @Test fun speakable_markdown_isStripped() {
+        assertThat(PreviewResolver.toSpeakableText("notes.md", "# x", strip)).isEqualTo("STRIPPED")
+    }
+    @Test fun speakable_code_isRaw() {
+        assertThat(PreviewResolver.toSpeakableText("main.py", "x = 1", strip)).isEqualTo("x = 1")
+    }
+    @Test fun speakable_plainTxt_isRaw() {
+        assertThat(PreviewResolver.toSpeakableText("a.txt", "hello", strip)).isEqualTo("hello")
+    }
+    @Test fun speakable_untitledMarkdownHint_isStripped() {
+        assertThat(PreviewResolver.toSpeakableText("untitled", "# x", strip, languageHint = "markdown"))
+            .isEqualTo("STRIPPED")
+    }
+    @Test fun speakable_realExtension_winsOverHint() {
+        assertThat(PreviewResolver.toSpeakableText("main.py", "x", strip, languageHint = "md"))
+            .isEqualTo("x")
+    }
 }

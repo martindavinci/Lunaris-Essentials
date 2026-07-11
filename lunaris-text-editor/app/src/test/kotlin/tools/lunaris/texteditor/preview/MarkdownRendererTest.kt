@@ -43,4 +43,15 @@ class MarkdownRendererTest {
         assertThat(html).contains("type=\"checkbox\"")
         assertThat(html).contains("checked")
     }
+
+    // --- toPlainText: markup stripped for text-to-speech. ---
+    @Test fun plainText_stripsHeadingMarkup() {
+        assertThat(renderer.toPlainText("# Hello")).isEqualTo("Hello")
+    }
+    @Test fun plainText_stripsBoldMarkup() {
+        val t = renderer.toPlainText("**bold** text")
+        assertThat(t).contains("bold text")
+        assertThat(t).doesNotContain("*")
+    }
+    @Test fun plainText_empty_isEmpty() { assertThat(renderer.toPlainText("")).isEmpty() }
 }

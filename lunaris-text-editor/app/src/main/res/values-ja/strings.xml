@@ -148,6 +148,9 @@
     <string name="preview_print">印刷</string>
     <string name="preview_toggle_theme">ライト/ダークを切り替え</string>
     <string name="preview_nothing">プレビューする内容がありません</string>
+    <string name="preview_read_aloud">読み上げ</string>
+    <string name="preview_stop_reading">読み上げを停止</string>
+    <string name="preview_tts_unavailable">利用可能な音声合成の音声がありません。端末の設定で有効にしてください。</string>
     <string name="menu_preview">プレビュー</string>
     <string name="toolbar_preview">プレビュー</string>
     <string name="toolbar_select_mode">選択モード</string>

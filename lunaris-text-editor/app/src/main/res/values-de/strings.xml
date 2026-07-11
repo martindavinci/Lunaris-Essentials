@@ -148,6 +148,9 @@
     <string name="preview_print">Drucken</string>
     <string name="preview_toggle_theme">Hell/Dunkel umschalten</string>
     <string name="preview_nothing">Nichts zum Anzeigen</string>
+    <string name="preview_read_aloud">Vorlesen</string>
+    <string name="preview_stop_reading">Vorlesen beenden</string>
+    <string name="preview_tts_unavailable">Keine Sprachausgabe-Stimme verfügbar. Aktiviere eine in den Geräteeinstellungen.</string>
     <string name="menu_preview">Vorschau</string>
     <string name="toolbar_preview">Vorschau</string>
     <string name="toolbar_select_mode">Auswahlmodus</string>

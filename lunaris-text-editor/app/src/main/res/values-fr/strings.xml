@@ -148,6 +148,9 @@
     <string name="preview_print">Imprimer</string>
     <string name="preview_toggle_theme">Basculer clair/sombre</string>
     <string name="preview_nothing">Rien à prévisualiser</string>
+    <string name="preview_read_aloud">Lire à voix haute</string>
+    <string name="preview_stop_reading">Arrêter la lecture</string>
+    <string name="preview_tts_unavailable">Aucune voix de synthèse vocale disponible. Activez-en une dans les paramètres de l\'appareil.</string>
     <string name="menu_preview">Aperçu</string>
     <string name="toolbar_preview">Aperçu</string>
     <string name="toolbar_select_mode">Mode sélection</string>
