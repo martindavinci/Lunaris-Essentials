@@ -33,6 +33,7 @@ class SessionManagerTest {
 
     @Test
     fun restore_mapsTabs_activeAndDirty_andAutoSyntax() = runTest {
+        gateway.store["content://1"] = "code".toByteArray()
         val store = FakeSessionStore(
             PersistedSession(
                 "t2",
@@ -51,6 +52,7 @@ class SessionManagerTest {
 
     @Test
     fun restore_badCharsetAndEol_fallBackToDefaults() = runTest {
+        gateway.store["content://1"] = "x".toByteArray()
         val store = FakeSessionStore(
             PersistedSession("t1", listOf(PersistedTab("t1", "content://1", "a.txt", "x", false, "BOGUS", "NOPE", null)))
         )
@@ -88,12 +90,29 @@ class SessionManagerTest {
     }
 
     @Test
-    fun restore_missingFile_fallsBackToPersistedText() = runTest {
+    fun restore_cleanFileTab_thatCannotLoad_isDropped() = runTest {
+        // Clean tabs persist no body: restoring one as "" would show an empty clean tab whose
+        // next save overwrites the real file. Drop it instead (it stays reachable from recents).
         val store = FakeSessionStore(
-            PersistedSession("t1", listOf(PersistedTab("t1", "content://gone", "a.txt", "cached", false, "UTF-8", "LF", null)))
+            PersistedSession(
+                "t1",
+                listOf(
+                    PersistedTab("t1", "content://gone", "a.txt", "", false, "UTF-8", "LF", null),
+                    PersistedTab("t2", null, "draft", "hello", true, "UTF-8", "LF", null),
+                ),
+            )
         )
         val docs = SessionManager(store, resolver, repo).restore()!!
-        assertThat(docs.sessions.first().text).isEqualTo("cached")
+        assertThat(docs.sessions.map { it.id }).containsExactly("t2")
+        assertThat(docs.activeId).isEqualTo("t2")
+    }
+
+    @Test
+    fun restore_onlyUnloadableTabs_returnsNull() = runTest {
+        val store = FakeSessionStore(
+            PersistedSession("t1", listOf(PersistedTab("t1", "content://gone", "a.txt", "", false, "UTF-8", "LF", null)))
+        )
+        assertThat(SessionManager(store, resolver, repo).restore()).isNull()
     }
 
     @Test

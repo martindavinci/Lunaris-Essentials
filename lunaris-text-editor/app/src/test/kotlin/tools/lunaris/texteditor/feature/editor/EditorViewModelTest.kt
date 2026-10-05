@@ -272,6 +272,7 @@ class EditorViewModelTest {
 
     @Test
     fun restoresPersistedTabsOnInit() = runTest {
+        gateway.store["content://1"] = "code".toByteArray()
         val seeded = FakeSessionStore(
             PersistedSession(
                 activeId = "t2",

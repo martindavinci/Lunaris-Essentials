@@ -18,11 +18,11 @@ class SessionManager @Inject constructor(
     private val syntaxResolver: SyntaxResolver,
     private val repository: FileRepository,
 ) {
-    /** Rebuilds open tabs from storage, or null if nothing was persisted. */
+    /** Rebuilds open tabs from storage, or null if nothing (restorable) was persisted. */
     suspend fun restore(): OpenDocuments? {
         val persisted = store.session().first()
-        if (persisted.tabs.isEmpty()) return null
-        val sessions = persisted.tabs.map { toSession(it) }
+        val sessions = persisted.tabs.mapNotNull { toSession(it) }
+        if (sessions.isEmpty()) return null
         val activeId = if (sessions.any { it.id == persisted.activeId }) persisted.activeId else sessions.first().id
         return OpenDocuments(sessions, activeId)
     }
@@ -33,7 +33,9 @@ class SessionManager @Inject constructor(
         )
     }
 
-    private suspend fun toSession(t: PersistedTab): DocumentSession {
+    /** Null for a clean file-backed tab that can't be reloaded (revoked grant, file gone): it
+     *  persisted no body, so restoring it would show an empty clean tab whose save wipes the file. */
+    private suspend fun toSession(t: PersistedTab): DocumentSession? {
         val charset = runCatching { Charset.forName(t.charsetName) }.getOrDefault(StandardCharsets.UTF_8)
         val syntax = t.syntaxId?.let { SyntaxSelection.Explicit(it) } ?: SyntaxSelection.Auto
         val fileRef = t.uri?.let { FileRef(it) }
@@ -44,6 +46,7 @@ class SessionManager @Inject constructor(
         val reloaded = if (fileRef != null && !t.dirty) {
             runCatching { repository.load(fileRef, forced = if (t.hasBom) null else charset) }.getOrNull()
         } else null
+        if (fileRef != null && !t.dirty && reloaded == null) return null
 
         val text = reloaded?.text ?: t.text
         return DocumentSession(
