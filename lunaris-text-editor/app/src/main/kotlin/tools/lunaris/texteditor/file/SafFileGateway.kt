@@ -83,10 +83,16 @@ class SafFileGateway @Inject constructor(
      */
     private fun fileOrNull(ref: FileRef): File? {
         val uri = Uri.parse(ref.uri)
-        return when (uri.scheme) {
+        val file = when (uri.scheme) {
             null -> File(ref.uri)            // bare path: /storage/emulated/0/foo.txt
             "file" -> uri.path?.let(::File)  // file:///storage/emulated/0/foo.txt
             else -> null                      // content://, etc.
-        }
+        } ?: return null
+        // The exported VIEW/EDIT filter accepts file:// from any app: never let one point us at
+        // our own private storage (session text, settings), whatever `..`/symlinks it uses.
+        if (isInsideAny(file, privateRoots)) throw java.io.FileNotFoundException("Not accessible: ${file.name}")
+        return file
     }
+
+    private val privateRoots: List<File> by lazy { listOf(File(context.applicationInfo.dataDir)) }
 }
