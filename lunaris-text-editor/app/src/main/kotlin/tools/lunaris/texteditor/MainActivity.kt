@@ -28,7 +28,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        openRequest.value = requestFromIntent(intent)
+        if (isFreshLaunchIntent(recreated = savedInstanceState != null, flags = intent?.flags ?: 0)) {
+            openRequest.value = requestFromIntent(intent)
+        }
         setContent {
             val settingsVm: SettingsViewModel = hiltViewModel()
             val settings by settingsVm.settings.collectAsStateWithLifecycle()
