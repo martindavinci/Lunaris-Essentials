@@ -202,4 +202,7 @@
     <string name="tts_voice_selected">Selected</string>
     <string name="action_stop_reading">Stop reading</string>
     <string name="notice_saved_as_utf8">Saved as UTF-8 — some characters did not fit the original encoding</string>
+    <string name="reload_confirm_title">Discard unsaved changes?</string>
+    <string name="reload_confirm_message">Reloading replaces your edits with the file as saved on disk.</string>
+    <string name="reload_confirm_discard">Discard and reload</string>
 </resources>

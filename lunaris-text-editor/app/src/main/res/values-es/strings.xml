@@ -193,4 +193,7 @@
     <string name="tts_voice_selected">Seleccionada</string>
     <string name="action_stop_reading">Detener lectura</string>
     <string name="notice_saved_as_utf8">Guardado como UTF-8: algunos caracteres no cabían en la codificación original</string>
+    <string name="reload_confirm_title">¿Descartar los cambios sin guardar?</string>
+    <string name="reload_confirm_message">Al recargar, tus cambios se sustituyen por el archivo guardado en el disco.</string>
+    <string name="reload_confirm_discard">Descartar y recargar</string>
 </resources>

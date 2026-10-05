@@ -117,3 +117,11 @@ private fun ToolbarConfigDialogPreview() {
         )
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+private fun ReloadConfirmDialogPreview() {
+    LunarisEditorTheme {
+        ReloadConfirmDialog(onConfirm = {}, onDismiss = {})
+    }
+}

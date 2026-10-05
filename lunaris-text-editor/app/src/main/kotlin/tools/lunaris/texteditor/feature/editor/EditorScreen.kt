@@ -466,6 +466,13 @@ fun EditorScreen(
         )
     }
 
+    state.pendingReload?.let { charset ->
+        ReloadConfirmDialog(
+            onConfirm = { viewModel.reopenWithEncoding(charset, discardChanges = true) },
+            onDismiss = viewModel::cancelReload,
+        )
+    }
+
     if (showExitConfirm) {
         AlertDialog(
             onDismissRequest = { showExitConfirm = false },

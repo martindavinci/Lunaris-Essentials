@@ -41,4 +41,6 @@ data class EditorUiState(
     val pendingGoToLine: Int? = null,
     /** One-shot caret offset to restore after a document loads (e.g. reopening a closed file). */
     val pendingGoToOffset: Int? = null,
+    /** Reload (in this charset) requested on a dirty tab — the UI asks before discarding edits. */
+    val pendingReload: Charset? = null,
 )

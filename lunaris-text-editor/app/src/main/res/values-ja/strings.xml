@@ -193,4 +193,7 @@
     <string name="tts_voice_selected">選択中</string>
     <string name="action_stop_reading">読み上げを停止</string>
     <string name="notice_saved_as_utf8">UTF-8 で保存しました — 一部の文字が元のエンコーディングで表せませんでした</string>
+    <string name="reload_confirm_title">保存されていない変更を破棄しますか?</string>
+    <string name="reload_confirm_message">再読み込みすると、編集内容はディスク上の保存済みファイルに置き換えられます。</string>
+    <string name="reload_confirm_discard">破棄して再読み込み</string>
 </resources>

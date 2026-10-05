@@ -193,4 +193,7 @@
     <string name="tts_voice_selected">Sélectionnée</string>
     <string name="action_stop_reading">Arrêter la lecture</string>
     <string name="notice_saved_as_utf8">Enregistré en UTF-8 — certains caractères ne tenaient pas dans l’encodage d’origine</string>
+    <string name="reload_confirm_title">Abandonner les modifications non enregistrées ?</string>
+    <string name="reload_confirm_message">Le rechargement remplace vos modifications par le fichier enregistré sur le disque.</string>
+    <string name="reload_confirm_discard">Abandonner et recharger</string>
 </resources>

@@ -193,4 +193,7 @@
     <string name="tts_voice_selected">Wybrany</string>
     <string name="action_stop_reading">Zatrzymaj czytanie</string>
     <string name="notice_saved_as_utf8">Zapisano jako UTF-8 — niektóre znaki nie mieściły się w oryginalnym kodowaniu</string>
+    <string name="reload_confirm_title">Odrzucić niezapisane zmiany?</string>
+    <string name="reload_confirm_message">Ponowne wczytanie zastąpi zmiany plikiem zapisanym na dysku.</string>
+    <string name="reload_confirm_discard">Odrzuć i wczytaj ponownie</string>
 </resources>

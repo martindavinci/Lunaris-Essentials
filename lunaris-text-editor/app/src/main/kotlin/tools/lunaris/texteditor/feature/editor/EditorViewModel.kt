@@ -249,9 +249,16 @@ class EditorViewModel @Inject constructor(
         viewModelScope.launch { runCatching { colorSchemeStore.setColorSchemeId(id) } }
     }
 
-    fun reopenWithEncoding(charset: Charset) {
+    /** Reloads the active file from disk. Unsaved edits are only dropped once [discardChanges]
+     *  confirms it; otherwise the request parks in [EditorUiState.pendingReload] for the UI. */
+    fun reopenWithEncoding(charset: Charset, discardChanges: Boolean = false) {
         val active = docs.value.active ?: return
         val ref = active.fileRef ?: return
+        if (active.dirty && !discardChanges) {
+            _state.update { it.copy(pendingReload = charset) }
+            return
+        }
+        _state.update { it.copy(pendingReload = null) }
         viewModelScope.launch {
             try {
                 val loaded = documentIo.reload(ref, charset)
@@ -273,6 +280,8 @@ class EditorViewModel @Inject constructor(
             }
         }
     }
+
+    fun cancelReload() = _state.update { it.copy(pendingReload = null) }
 
     fun recents() = recentsStore.recents()
 

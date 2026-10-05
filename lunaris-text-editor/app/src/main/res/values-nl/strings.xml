@@ -193,4 +193,7 @@
     <string name="tts_voice_selected">Geselecteerd</string>
     <string name="action_stop_reading">Voorlezen stoppen</string>
     <string name="notice_saved_as_utf8">Opgeslagen als UTF-8 — sommige tekens pasten niet in de oorspronkelijke codering</string>
+    <string name="reload_confirm_title">Niet-opgeslagen wijzigingen verwerpen?</string>
+    <string name="reload_confirm_message">Herladen vervangt je wijzigingen door het opgeslagen bestand op schijf.</string>
+    <string name="reload_confirm_discard">Verwerpen en herladen</string>
 </resources>

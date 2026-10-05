@@ -193,4 +193,7 @@
     <string name="tts_voice_selected">Ausgewählt</string>
     <string name="action_stop_reading">Vorlesen beenden</string>
     <string name="notice_saved_as_utf8">Als UTF-8 gespeichert — einige Zeichen passten nicht in die ursprüngliche Kodierung</string>
+    <string name="reload_confirm_title">Ungespeicherte Änderungen verwerfen?</string>
+    <string name="reload_confirm_message">Beim Neuladen werden deine Änderungen durch die gespeicherte Datei ersetzt.</string>
+    <string name="reload_confirm_discard">Verwerfen und neu laden</string>
 </resources>

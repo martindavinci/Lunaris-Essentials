@@ -521,4 +521,33 @@ class EditorViewModelTest {
         advanceUntilIdle()
         assertThat(vm.state.value.tabs.map { it.title }).containsExactly("t.txt")
     }
+
+    @Test
+    fun reopenWithEncoding_whenDirty_asksBeforeDiscardingEdits() = runTest {
+        val vm = newVm(); advanceUntilIdle()
+        val ref = FileRef("content://doc/reload")
+        gateway.store[ref.uri] = "disk".toByteArray(); gateway.names[ref.uri] = "r.txt"
+        vm.openFile(ref); advanceUntilIdle()
+        vm.onContentChanged("my edits")
+        vm.reopenWithEncoding(StandardCharsets.UTF_8); advanceUntilIdle()
+        assertThat(vm.state.value.text).isEqualTo("my edits")
+        assertThat(vm.state.value.pendingReload).isEqualTo(StandardCharsets.UTF_8)
+
+        vm.reopenWithEncoding(StandardCharsets.UTF_8, discardChanges = true); advanceUntilIdle()
+        assertThat(vm.state.value.text).isEqualTo("disk")
+        assertThat(vm.state.value.pendingReload).isNull()
+    }
+
+    @Test
+    fun cancelReload_keepsEdits_andClearsPrompt() = runTest {
+        val vm = newVm(); advanceUntilIdle()
+        val ref = FileRef("content://doc/reload2")
+        gateway.store[ref.uri] = "disk".toByteArray(); gateway.names[ref.uri] = "r.txt"
+        vm.openFile(ref); advanceUntilIdle()
+        vm.onContentChanged("my edits")
+        vm.reopenWithEncoding(StandardCharsets.UTF_8); advanceUntilIdle()
+        vm.cancelReload()
+        assertThat(vm.state.value.pendingReload).isNull()
+        assertThat(vm.state.value.text).isEqualTo("my edits")
+    }
 }
