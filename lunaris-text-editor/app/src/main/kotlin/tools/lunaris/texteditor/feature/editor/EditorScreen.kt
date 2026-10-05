@@ -238,7 +238,7 @@ fun EditorScreen(
     LaunchedEffect(drawerState.currentValue) {
         if (drawerState.currentValue == DrawerValue.Open) folderTreeVm.start()
     }
-    val recents by viewModel.recents().collectAsStateWithLifecycle(initialValue = emptyList())
+    val recents by viewModel.recents.collectAsStateWithLifecycle()
 
     LifecycleEventEffect(androidx.lifecycle.Lifecycle.Event.ON_STOP) {
         viewModel.snapshotSession()

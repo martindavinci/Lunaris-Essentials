@@ -8,14 +8,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import tools.lunaris.texteditor.data.AssociationStore
 import tools.lunaris.texteditor.data.Associations
 import tools.lunaris.texteditor.data.ColorSchemeStore
+import tools.lunaris.texteditor.data.RecentEntry
 import tools.lunaris.texteditor.data.RecentsStore
 import tools.lunaris.texteditor.data.SessionManager
 import tools.lunaris.texteditor.data.ToolbarStore
@@ -283,7 +286,10 @@ class EditorViewModel @Inject constructor(
 
     fun cancelReload() = _state.update { it.copy(pendingReload = null) }
 
-    fun recents() = recentsStore.recents()
+    /** Recent files, shared (one DataStore subscription) while the editor UI collects it. */
+    val recents: StateFlow<List<RecentEntry>> by lazy {
+        recentsStore.recents().stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), emptyList())
+    }
 
     fun consumeError() = _state.update { it.copy(error = null, errorKind = null) }
 
@@ -329,5 +335,10 @@ class EditorViewModel @Inject constructor(
     override fun onCleared() {
         initScope.cancel()
         super.onCleared()
+    }
+
+    private companion object {
+        /** Keep upstream flows alive briefly across config changes. */
+        const val STOP_TIMEOUT_MS = 5_000L
     }
 }

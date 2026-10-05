@@ -1,6 +1,7 @@
 package tools.lunaris.texteditor.feature.editor
 
 import com.google.common.truth.Truth.assertThat
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Rule
@@ -550,5 +551,17 @@ class EditorViewModelTest {
         vm.cancelReload()
         assertThat(vm.state.value.pendingReload).isNull()
         assertThat(vm.state.value.text).isEqualTo("my edits")
+    }
+
+    @Test
+    fun recents_isOneSharedFlow_thatTracksTheStore() = runTest {
+        val vm = newVm(); advanceUntilIdle()
+        // Same instance every read, so composition doesn't resubscribe DataStore per recomposition.
+        assertThat(vm.recents).isSameInstanceAs(vm.recents)
+        val job = backgroundScope.launch { vm.recents.collect {} }
+        recents.touch(tools.lunaris.texteditor.data.RecentEntry("content://r", "r.txt"))
+        advanceUntilIdle()
+        assertThat(vm.recents.value.map { it.uri }).contains("content://r")
+        job.cancel()
     }
 }
