@@ -196,4 +196,5 @@
     <string name="reload_confirm_title">Descartar alterações não salvas?</string>
     <string name="reload_confirm_message">Recarregar substitui suas edições pelo arquivo salvo no disco.</string>
     <string name="reload_confirm_discard">Descartar e recarregar</string>
+    <string name="search_recent">Pesquisas recentes neste arquivo</string>
 </resources>

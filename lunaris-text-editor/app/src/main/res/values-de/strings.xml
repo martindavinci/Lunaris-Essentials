@@ -196,4 +196,5 @@
     <string name="reload_confirm_title">Ungespeicherte Änderungen verwerfen?</string>
     <string name="reload_confirm_message">Beim Neuladen werden deine Änderungen durch die gespeicherte Datei ersetzt.</string>
     <string name="reload_confirm_discard">Verwerfen und neu laden</string>
+    <string name="search_recent">Letzte Suchen in dieser Datei</string>
 </resources>

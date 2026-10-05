@@ -222,6 +222,7 @@ fun EditorScreen(
     val searchCountLabel = if (searchSession == null) "" else "$searchIndex/$searchTotal"
     val startSearch: (String, SearchOptions, Boolean) -> Unit = { q, o, forward ->
         if (q.isNotEmpty()) {
+            viewModel.recordSearch(q)
             searchSession = SearchSession(q, o)
             runFind(forward)
         }
@@ -241,6 +242,7 @@ fun EditorScreen(
     val recents by viewModel.recents.collectAsStateWithLifecycle()
 
     LifecycleEventEffect(androidx.lifecycle.Lifecycle.Event.ON_STOP) {
+        viewModel.rememberCursor(editorController.cursorOffset())
         viewModel.snapshotSession()
     }
 

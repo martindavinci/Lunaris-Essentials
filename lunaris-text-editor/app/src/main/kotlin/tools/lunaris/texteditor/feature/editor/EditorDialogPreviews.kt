@@ -78,6 +78,7 @@ private fun SearchDialogPreview() {
             onReplace = { _, _, _ -> },
             onReplaceAll = { _, _, _ -> },
             onDismiss = {},
+            history = listOf("TODO", "fun main"),
         )
     }
 }

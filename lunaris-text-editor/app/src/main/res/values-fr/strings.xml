@@ -196,4 +196,5 @@
     <string name="reload_confirm_title">Abandonner les modifications non enregistrées ?</string>
     <string name="reload_confirm_message">Le rechargement remplace vos modifications par le fichier enregistré sur le disque.</string>
     <string name="reload_confirm_discard">Abandonner et recharger</string>
+    <string name="search_recent">Recherches récentes dans ce fichier</string>
 </resources>

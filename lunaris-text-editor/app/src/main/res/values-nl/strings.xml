@@ -196,4 +196,5 @@
     <string name="reload_confirm_title">Niet-opgeslagen wijzigingen verwerpen?</string>
     <string name="reload_confirm_message">Herladen vervangt je wijzigingen door het opgeslagen bestand op schijf.</string>
     <string name="reload_confirm_discard">Verwerpen en herladen</string>
+    <string name="search_recent">Recente zoekopdrachten in dit bestand</string>
 </resources>

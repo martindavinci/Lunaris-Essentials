@@ -9,6 +9,9 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
@@ -18,6 +21,7 @@ import kotlinx.coroutines.launch
 import tools.lunaris.texteditor.data.AssociationStore
 import tools.lunaris.texteditor.data.Associations
 import tools.lunaris.texteditor.data.ColorSchemeStore
+import tools.lunaris.texteditor.data.FileMemoryStore
 import tools.lunaris.texteditor.data.RecentEntry
 import tools.lunaris.texteditor.data.RecentsStore
 import tools.lunaris.texteditor.data.SessionManager
@@ -56,15 +60,16 @@ class EditorViewModel @Inject constructor(
     private val associationStore: AssociationStore,
     private val settingsStore: SettingsStore,
     private val previewHolder: tools.lunaris.texteditor.preview.PreviewHolder,
+    private val fileMemory: FileMemoryStore,
 ) : ViewModel() {
 
     private var colorSchemeId = defaultColorSchemeId
     private var associations = Associations.empty()
     private var currentSettings = EditorSettings()
     private val docs = MutableStateFlow(OpenDocuments.initial(newId()))
-    // Per-uri caret offset, remembered when a file is closed so reopening it (same session) lands
-    // the cursor where it was left. In-memory only — not restored across an app restart.
-    private val cursorMemory = HashMap<String, Int>()
+    // Per-uri caret offset, remembered when a file is left (closed, switched away from, app
+    // stopped) so reopening it — also after a restart — lands the cursor where it was.
+    private val cursors = RememberedCursors(fileMemory)
     private val _state = MutableStateFlow(EditorUiState(colorSchemeId = colorSchemeId))
     val state: StateFlow<EditorUiState> = _state.asStateFlow()
 
@@ -86,7 +91,10 @@ class EditorViewModel @Inject constructor(
                 else colorSchemeCatalog.defaultId
             val s = settingsStore.settings().first()
             currentSettings = s
-            if (s.sessionRestore) restoreSession()
+            if (s.sessionRestore) {
+                restoreSession()
+                restoreActiveCursor()
+            }
             val tb = toolbarStore.toolbar().first()
             _state.update { it.copy(toolbar = tb) }
             associations = associationStore.associations().first()
@@ -138,13 +146,29 @@ class EditorViewModel @Inject constructor(
             DocumentSession(id = newId(), text = text, lineEnding = parseLineEnding(currentSettings.defaultLineEnding)),
         )
     }
-    fun switchTab(id: String) = mutate { it.activated(id) }
+    /** [outgoingCursor] is the caret of the tab being left, remembered for when it's back. */
+    fun switchTab(id: String, outgoingCursor: Int? = null) {
+        if (id == docs.value.activeId) return
+        if (outgoingCursor != null) rememberCursor(outgoingCursor)
+        mutate { it.activated(id) }
+        viewModelScope.launch { restoreActiveCursor() }
+    }
+
+    /** Remembers [offset] as the active file's caret (e.g. when the app goes to background). */
+    fun rememberCursor(offset: Int) {
+        docs.value.active?.fileRef?.uri?.let { cursors.remember(it, offset, viewModelScope) }
+    }
+
+    private suspend fun restoreActiveCursor() {
+        val uri = docs.value.active?.fileRef?.uri ?: return
+        cursors.offsetFor(uri)?.let { offset -> _state.update { it.copy(pendingGoToOffset = offset) } }
+    }
     /** [cursorOffset] is the caret position of the closing tab (when it's the active one), kept so
      *  reopening the same file restores it. */
     fun closeTab(id: String, cursorOffset: Int? = null) {
         if (cursorOffset != null) {
             docs.value.sessions.firstOrNull { it.id == id }?.fileRef?.uri
-                ?.let { cursorMemory[it] = cursorOffset }
+                ?.let { cursors.remember(it, cursorOffset, viewModelScope) }
         }
         mutate { it.closed(id, freshId = newId()) }
     }
@@ -172,7 +196,7 @@ class EditorViewModel @Inject constructor(
                 }
                 publish()
                 // Restore the remembered caret unless the caller asked for a specific line.
-                val restoredOffset = if (gotoLine == null) cursorMemory[ref.uri] else null
+                val restoredOffset = if (gotoLine == null) cursors.offsetFor(ref.uri) else null
                 _state.update {
                     it.copy(pendingGoToLine = gotoLine, pendingGoToOffset = restoredOffset, isLoading = false)
                 }
@@ -282,6 +306,18 @@ class EditorViewModel @Inject constructor(
                 _state.update { it.copy(error = t.message, errorKind = EditorErrorKind.OPEN) }
             }
         }
+    }
+
+    /** Recent searches in the active file, newest first (empty for untitled tabs). */
+    val searchHistory: StateFlow<List<String>> by lazy {
+        combine(state.map { it.fileRef?.uri }.distinctUntilChanged(), fileMemory.memory()) { uri, all ->
+            uri?.let { all[it]?.searches }.orEmpty()
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), emptyList())
+    }
+
+    fun recordSearch(query: String) {
+        val uri = docs.value.active?.fileRef?.uri ?: return
+        viewModelScope.launch { runCatching { fileMemory.rememberSearch(uri, query) } }
     }
 
     fun cancelReload() = _state.update { it.copy(pendingReload = null) }

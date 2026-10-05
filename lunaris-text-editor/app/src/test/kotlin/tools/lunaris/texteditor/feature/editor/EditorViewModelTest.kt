@@ -51,6 +51,7 @@ class EditorViewModelTest {
     private val toolbar = FakeToolbarStore()
     private val assoc = FakeAssociationStore()
     private val settings = FakeSettingsStore()
+    private val fileMemory = tools.lunaris.texteditor.data.FakeFileMemoryStore()
 
     private val documentIo = DocumentIo(repo, recents, resolver)
 
@@ -68,6 +69,7 @@ class EditorViewModelTest {
         associationStore = assoc,
         settingsStore = settings,
         previewHolder = tools.lunaris.texteditor.preview.PreviewHolder(),
+        fileMemory = fileMemory,
     )
 
     @Test
@@ -289,7 +291,7 @@ class EditorViewModelTest {
             DocumentIo(repo, recents, resolver), resolver, "sunburst", catalog,
             ColorSchemeCatalog(emptyList(), ""), CharsetCatalog(),
             FakeColorSchemeStore(), recents, SessionManager(seeded, resolver, repo), toolbar,
-            assoc, settings, tools.lunaris.texteditor.preview.PreviewHolder(),
+            assoc, settings, tools.lunaris.texteditor.preview.PreviewHolder(), fileMemory,
         )
         advanceUntilIdle()
         assertThat(vm.state.value.tabs.map { it.title }).containsExactly("a.kt", "draft.txt")
@@ -307,7 +309,7 @@ class EditorViewModelTest {
             DocumentIo(repo, recents, resolver), resolver, "sunburst", catalog,
             ColorSchemeCatalog(emptyList(), ""), CharsetCatalog(),
             FakeColorSchemeStore(), recents, SessionManager(seeded, resolver, repo), toolbar,
-            assoc, settings, tools.lunaris.texteditor.preview.PreviewHolder(),
+            assoc, settings, tools.lunaris.texteditor.preview.PreviewHolder(), fileMemory,
         )
         advanceUntilIdle()
         // restore is gated off -> the single fresh untitled tab remains
@@ -563,6 +565,60 @@ class EditorViewModelTest {
         recents.touch(tools.lunaris.texteditor.data.RecentEntry("content://r", "r.txt"))
         advanceUntilIdle()
         assertThat(vm.recents.value.map { it.uri }).contains("content://r")
+        job.cancel()
+    }
+
+    private suspend fun kotlinx.coroutines.test.TestScope.openNamed(vm: EditorViewModel, uri: String, name: String, body: String = "a\nb\nc") {
+        gateway.store[uri] = body.toByteArray(); gateway.names[uri] = name
+        vm.openFile(FileRef(uri)); advanceUntilIdle()
+    }
+
+    @Test
+    fun reopeningAClosedFile_inANewSession_restoresItsCaret() = runTest {
+        val vm1 = newVm(); advanceUntilIdle()
+        openNamed(vm1, "content://doc/caret", "c.txt")
+        vm1.closeTab(vm1.state.value.activeTabId, cursorOffset = 3); advanceUntilIdle()
+
+        val vm2 = newVm(); advanceUntilIdle()           // e.g. after an app restart
+        openNamed(vm2, "content://doc/caret", "c.txt")
+        assertThat(vm2.state.value.pendingGoToOffset).isEqualTo(3)
+    }
+
+    @Test
+    fun caretRememberedOnStop_isRestoredForTheActiveTabAfterSessionRestore() = runTest {
+        settings.flow.value = EditorSettings(sessionRestore = true)
+        val vm1 = newVm(); advanceUntilIdle()
+        openNamed(vm1, "content://doc/stop", "s.txt")
+        vm1.rememberCursor(4); vm1.snapshotSession(); advanceUntilIdle()
+
+        val vm2 = newVm(); advanceUntilIdle()
+        assertThat(vm2.state.value.title).isEqualTo("s.txt")
+        assertThat(vm2.state.value.pendingGoToOffset).isEqualTo(4)
+    }
+
+    @Test
+    fun switchingTabs_remembersOutgoingCaret_andRestoresIncoming() = runTest {
+        val vm = newVm(); advanceUntilIdle()
+        openNamed(vm, "content://doc/A", "a.txt")
+        val a = vm.state.value.activeTabId
+        openNamed(vm, "content://doc/B", "b.txt")
+        val b = vm.state.value.activeTabId
+        vm.switchTab(a, outgoingCursor = 2); advanceUntilIdle()
+        vm.consumeGoToOffset()
+        vm.switchTab(b, outgoingCursor = 1); advanceUntilIdle()
+        assertThat(vm.state.value.pendingGoToOffset).isEqualTo(2)
+    }
+
+    @Test
+    fun searchHistory_isPerFile_newestFirst() = runTest {
+        val vm = newVm(); advanceUntilIdle()
+        val job = backgroundScope.launch { vm.searchHistory.collect {} }
+        openNamed(vm, "content://doc/S1", "s1.txt")
+        vm.recordSearch("foo"); vm.recordSearch("bar"); advanceUntilIdle()
+        assertThat(vm.searchHistory.value).containsExactly("bar", "foo").inOrder()
+
+        openNamed(vm, "content://doc/S2", "s2.txt")
+        assertThat(vm.searchHistory.value).isEmpty()
         job.cancel()
     }
 }

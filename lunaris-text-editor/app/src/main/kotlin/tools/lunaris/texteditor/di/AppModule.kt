@@ -48,4 +48,8 @@ abstract class AppModule {
     @Binds
     @Singleton
     abstract fun bindTtsPrefsStore(impl: EditorPreferences): TtsPrefsStore
+
+    @Binds
+    @Singleton
+    abstract fun bindFileMemoryStore(impl: tools.lunaris.texteditor.data.FileMemoryPreferences): tools.lunaris.texteditor.data.FileMemoryStore
 }

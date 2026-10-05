@@ -37,6 +37,8 @@ fun SearchDialog(
     onReplace: (String, String, SearchOptions) -> Unit,
     onReplaceAll: (String, String, SearchOptions) -> Unit,
     onDismiss: () -> Unit,
+    /** Recent queries in this file, newest first. */
+    history: List<String> = emptyList(),
 ) {
     var query by remember { mutableStateOf("") }
     var replacement by remember { mutableStateOf("") }
@@ -59,6 +61,7 @@ fun SearchDialog(
             ) {
                 Text(stringResource(R.string.menu_search), style = MaterialTheme.typography.titleLarge)
                 OutlinedTextField(query, { query = it }, label = { Text(stringResource(R.string.search_query_hint)) }, singleLine = true, modifier = Modifier.fillMaxWidth().padding(top = 12.dp))
+                RecentSearches(history, onPick = { query = it })
                 OutlinedTextField(replacement, { replacement = it }, label = { Text(stringResource(R.string.search_replace_hint)) }, singleLine = true, modifier = Modifier.fillMaxWidth().padding(top = 8.dp))
                 CheckRow(stringResource(R.string.search_case), caseSensitive) { caseSensitive = it }
                 CheckRow(stringResource(R.string.search_regex), regex) { regex = it }

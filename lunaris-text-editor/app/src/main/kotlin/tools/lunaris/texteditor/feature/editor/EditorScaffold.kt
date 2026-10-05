@@ -188,7 +188,7 @@ internal fun EditorScaffold(
                     TabStrip(
                         tabs = state.tabs,
                         activeTabId = state.activeTabId,
-                        onSelect = viewModel::switchTab,
+                        onSelect = { id -> viewModel.switchTab(id, editorController.cursorOffset()) },
                         onClose = onRequestClose,
                         onNew = viewModel::newTab,
                         modifier = Modifier.fillMaxWidth(),

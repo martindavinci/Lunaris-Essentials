@@ -1,6 +1,7 @@
 package tools.lunaris.texteditor.feature.editor
 
 import androidx.compose.runtime.Composable
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import tools.lunaris.texteditor.edit.ColorLiteral
 import tools.lunaris.texteditor.edit.SearchEngine
 import tools.lunaris.texteditor.edit.SearchOptions
@@ -31,6 +32,7 @@ fun EditorDialogs(
         EditorDialog.ENCODING ->
             EncodingPickerDialog(viewModel.charsetCatalog, state.charset, { viewModel.reopenWithEncoding(it) }, onDismiss)
         EditorDialog.SEARCH -> SearchDialog(
+            history = viewModel.searchHistory.collectAsStateWithLifecycle().value,
             onFind = { q, o -> onStartSearch(q, o, true); onDismiss() },
             onFindPrev = { q, o -> onStartSearch(q, o, false); onDismiss() },
             onReplace = { q, r, o ->
