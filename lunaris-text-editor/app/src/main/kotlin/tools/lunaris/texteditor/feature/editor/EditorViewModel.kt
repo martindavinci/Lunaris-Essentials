@@ -66,11 +66,11 @@ class EditorViewModel @Inject constructor(
     val state: StateFlow<EditorUiState> = _state.asStateFlow()
 
     // Custom scope (not viewModelScope): the init read runs at construction time, which in unit
-    // tests is BEFORE MainDispatcherRule installs the test main dispatcher. Unconfined runs the
-    // one-shot read inline without requiring Dispatchers.Main, and — importantly — completes the
-    // hydration synchronously at construction so it can't later clobber an early action (e.g. an
-    // open-with intent's openFile, or a toolbar edit) that lands before an async load would finish.
-    // DataStore reads + JSON parsing already happen on DataStore's own IO dispatcher.
+    // tests is BEFORE MainDispatcherRule installs the test main dispatcher. Unconfined starts the
+    // read inline without requiring Dispatchers.Main. DataStore's first read still suspends, so
+    // hydration can resume on DataStore's thread AFTER early actions (an open-with intent's
+    // openFile, shared text) — the restore therefore merges into [docs] instead of replacing it,
+    // and every [docs] write goes through update{} so the two threads can't lose each other's tabs.
     // Cancelled in onCleared().
     private val initScope = CoroutineScope(SupervisorJob() + Dispatchers.Unconfined)
 
@@ -100,7 +100,7 @@ class EditorViewModel @Inject constructor(
     }
 
     private fun mutate(block: (OpenDocuments) -> OpenDocuments) {
-        docs.value = block(docs.value)
+        docs.update(block)
         publish()
     }
 
@@ -149,7 +149,7 @@ class EditorViewModel @Inject constructor(
     fun openFile(ref: FileRef, gotoLine: Int? = null, readOnly: Boolean = false) {
         val existing = docs.value.sessions.firstOrNull { it.fileRef?.uri == ref.uri }
         if (existing != null) {
-            docs.value = docs.value.activated(existing.id)
+            docs.update { it.activated(existing.id) }
             publish()
             _state.update { it.copy(pendingGoToLine = gotoLine) }
             return
@@ -161,7 +161,12 @@ class EditorViewModel @Inject constructor(
                     .takeIf { it != "Auto" }
                     ?.let { runCatching { Charset.forName(it) }.getOrNull() }
                 val tab = documentIo.openTab(ref, newId(), associations.map, forced = forced)
-                docs.value = docs.value.openedReplacingScratch(tab.copy(readOnly = readOnly))
+                // Re-check under update{}: a second open of the same file (double tap, rotation)
+                // or the session restore may have added it while this load was in flight.
+                docs.update { d ->
+                    d.sessions.firstOrNull { it.fileRef?.uri == ref.uri }?.let { d.activated(it.id) }
+                        ?: d.openedReplacingScratch(tab.copy(readOnly = readOnly))
+                }
                 publish()
                 // Restore the remembered caret unless the caller asked for a specific line.
                 val restoredOffset = if (gotoLine == null) cursorMemory[ref.uri] else null
@@ -195,8 +200,10 @@ class EditorViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val saved = documentIo.persist(ref, written, active.charset, active.lineEnding, active.title, active.hasBom)
-                docs.value = docs.value.replace(active.id) {
-                    it.copy(fileRef = ref, title = saved.name, savedText = written, charset = saved.charset, hasBom = saved.hasBom)
+                docs.update { d ->
+                    d.replace(active.id) {
+                        it.copy(fileRef = ref, title = saved.name, savedText = written, charset = saved.charset, hasBom = saved.hasBom)
+                    }
                 }
                 publish()
                 val notice = if (saved.charsetChanged) EditorErrorKind.SAVED_AS_UTF8 else null
@@ -223,8 +230,8 @@ class EditorViewModel @Inject constructor(
                 val written = tab.text
                 runCatching { documentIo.persist(ref, written, tab.charset, tab.lineEnding, tab.title, tab.hasBom) }
                     .onSuccess { saved ->
-                        docs.value = docs.value.replace(tab.id) {
-                            it.copy(savedText = written, charset = saved.charset, hasBom = saved.hasBom)
+                        docs.update { d ->
+                            d.replace(tab.id) { it.copy(savedText = written, charset = saved.charset, hasBom = saved.hasBom) }
                         }
                     }
             }
@@ -248,14 +255,16 @@ class EditorViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val loaded = documentIo.reload(ref, charset)
-                docs.value = docs.value.replace(active.id) {
-                    it.copy(
-                        text = loaded.text,
-                        savedText = loaded.text,
-                        charset = loaded.charset,
-                        lineEnding = loaded.lineEnding,
-                        hasBom = loaded.hasBom,
-                    )
+                docs.update { d ->
+                    d.replace(active.id) {
+                        it.copy(
+                            text = loaded.text,
+                            savedText = loaded.text,
+                            charset = loaded.charset,
+                            lineEnding = loaded.lineEnding,
+                            hasBom = loaded.hasBom,
+                        )
+                    }
                 }
                 publish()
                 _state.update { it.copy(error = null, errorKind = null) }
@@ -272,7 +281,7 @@ class EditorViewModel @Inject constructor(
     fun consumeReauthorize() = _state.update { it.copy(reauthorizeUri = null) }
 
     private suspend fun restoreSession() {
-        sessionManager.restore()?.let { docs.value = it }
+        sessionManager.restore()?.let { restored -> docs.update { it.mergedWithRestored(restored) } }
     }
 
     fun toggleWordWrap() { _state.update { it.copy(wordWrap = !it.wordWrap) } }

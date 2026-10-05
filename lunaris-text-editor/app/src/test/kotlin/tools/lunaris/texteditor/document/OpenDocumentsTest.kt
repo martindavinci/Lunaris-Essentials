@@ -2,6 +2,7 @@ package tools.lunaris.texteditor.document
 
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
+import tools.lunaris.texteditor.file.FileRef
 
 class OpenDocumentsTest {
 
@@ -86,5 +87,37 @@ class OpenDocumentsTest {
         val s = DocumentSession("a", "f", text = "y", savedText = "x").markSaved()
         assertThat(s.dirty).isFalse()
         assertThat(s.savedText).isEqualTo("y")
+    }
+
+    @Test
+    fun mergedWithRestored_keepsTabOpenedBeforeRestore_andKeepsItActive() {
+        val shared = DocumentSession(id = "s", text = "shared")
+        val current = OpenDocuments.initial("scratch").openedReplacingScratch(shared)
+        val restored = OpenDocuments(listOf(DocumentSession(id = "r", title = "r.txt", text = "old")), "r")
+        val merged = current.mergedWithRestored(restored)
+        assertThat(merged.sessions.map { it.id }).containsExactly("r", "s").inOrder()
+        assertThat(merged.activeId).isEqualTo("s")
+    }
+
+    @Test
+    fun mergedWithRestored_replacesPristineScratch_andActivatesRestored() {
+        val restored = OpenDocuments(
+            listOf(DocumentSession(id = "r1", title = "a"), DocumentSession(id = "r2", title = "b", text = "x")), "r2",
+        )
+        val merged = OpenDocuments.initial("scratch").mergedWithRestored(restored)
+        assertThat(merged.sessions.map { it.id }).containsExactly("r1", "r2").inOrder()
+        assertThat(merged.activeId).isEqualTo("r2")
+    }
+
+    @Test
+    fun mergedWithRestored_sameFile_keepsRestoredTab_andActivatesIt() {
+        val ref = FileRef("content://f")
+        val opened = DocumentSession(id = "o", fileRef = ref, text = "disk", savedText = "disk")
+        val current = OpenDocuments.initial("scratch").openedReplacingScratch(opened)
+        // Restored copy holds unsaved edits — it must win over the fresh open of the same file.
+        val restoredTab = DocumentSession(id = "r", fileRef = ref, text = "edited", savedText = "disk")
+        val merged = current.mergedWithRestored(OpenDocuments(listOf(restoredTab), "r"))
+        assertThat(merged.sessions.map { it.id }).containsExactly("r")
+        assertThat(merged.activeId).isEqualTo("r")
     }
 }

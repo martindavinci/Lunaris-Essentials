@@ -43,6 +43,24 @@ data class OpenDocuments(
         return OpenDocuments(remaining, newActive)
     }
 
+    /**
+     * Folds a session restored from storage into the tabs opened since launch (an open-with or
+     * share intent can land before the async restore finishes). Restored tabs come first and
+     * pristine scratch tabs drop out. A tab for a file the restore also holds yields to the
+     * restored copy, which may carry unsaved edits. Whatever the user had active stays active.
+     */
+    fun mergedWithRestored(restored: OpenDocuments): OpenDocuments {
+        val restoredUris = restored.sessions.mapNotNull { it.fileRef?.uri }.toSet()
+        val kept = sessions.filterNot { s -> s.isBlankScratch || s.fileRef?.uri?.let { it in restoredUris } == true }
+        val current = active
+        val newActive = when {
+            current == null || current.isBlankScratch -> restored.activeId
+            kept.any { it.id == activeId } -> activeId
+            else -> restored.sessions.firstOrNull { it.fileRef?.uri == current.fileRef?.uri }?.id ?: restored.activeId
+        }
+        return OpenDocuments(restored.sessions + kept, newActive)
+    }
+
     companion object {
         fun initial(id: String): OpenDocuments =
             OpenDocuments(listOf(DocumentSession(id = id)), id)

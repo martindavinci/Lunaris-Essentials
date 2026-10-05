@@ -498,4 +498,27 @@ class EditorViewModelTest {
         assertThat(vm.state.value.dirty).isFalse()
         assertThat(vm.state.value.errorKind).isEqualTo(EditorErrorKind.SAVED_AS_UTF8)
     }
+
+    @Test
+    fun slowSessionRestore_doesNotClobberSharedTextOpenedMeanwhile() = runTest {
+        session.flow.value = PersistedSession("t1", listOf(PersistedTab("t1", null, "draft.txt", "old", true, "UTF-8", "LF", null)))
+        session.gate = kotlinx.coroutines.CompletableDeferred()
+        settings.flow.value = EditorSettings(sessionRestore = true)
+        val vm = newVm()
+        vm.newTabWithText("shared")           // intent handled before DataStore answers
+        session.gate!!.complete(Unit)
+        advanceUntilIdle()
+        assertThat(vm.state.value.text).isEqualTo("shared")
+        assertThat(vm.state.value.tabs.map { it.title }).containsExactly("draft.txt", "untitled")
+    }
+
+    @Test
+    fun openFile_twiceBeforeLoadCompletes_opensOneTab() = runTest {
+        val vm = newVm(); advanceUntilIdle()
+        val ref = FileRef("content://doc/twice")
+        gateway.store[ref.uri] = "x".toByteArray(); gateway.names[ref.uri] = "t.txt"
+        vm.openFile(ref); vm.openFile(ref)
+        advanceUntilIdle()
+        assertThat(vm.state.value.tabs.map { it.title }).containsExactly("t.txt")
+    }
 }
