@@ -24,7 +24,11 @@ class LunarisEditorApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        TextMateBootstrap.ensureRegistered(this, languageCatalog, colorSchemeCatalog)
+        TextMateBootstrap.ensureRegistered(this, colorSchemeCatalog)
+        // Grammar parsing is the heaviest startup work: keep it off the main thread.
+        CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
+            TextMateBootstrap.loadGrammars(languageCatalog)
+        }
         // One-shot cleanup of recents that can no longer be opened (expired grants / deleted files).
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
             runCatching { recentsStore.prune { storageAccess.isUsableUri(it) } }

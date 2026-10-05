@@ -7,6 +7,8 @@ import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import io.github.rosemoe.sora.langs.textmate.registry.dsl.languages
 import io.github.rosemoe.sora.langs.textmate.registry.model.ThemeModel
 import io.github.rosemoe.sora.langs.textmate.registry.provider.AssetsFileResolver
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import org.eclipse.tm4e.core.registry.IThemeSource
 
 object TextMateBootstrap {
@@ -15,12 +17,16 @@ object TextMateBootstrap {
     private var schemeCatalog: ColorSchemeCatalog? = null
     private val loadedThemes = mutableSetOf<String>()
 
-    fun ensureRegistered(context: Context, languages: LanguageCatalog, schemes: ColorSchemeCatalog) {
+    private val _grammarsReady = MutableStateFlow(false)
+    /** True once every grammar is registered; until then editors show plain text. */
+    val grammarsReady: StateFlow<Boolean> = _grammarsReady
+
+    /** Cheap setup, safe on the main thread. Grammars load separately via [loadGrammars]. */
+    fun ensureRegistered(context: Context, schemes: ColorSchemeCatalog) {
         if (done) return
         synchronized(this) {
             if (done) return
             FileProviderRegistry.getInstance().addFileProvider(AssetsFileResolver(context.assets))
-            registerGrammars(languages)
             // Themes are loaded lazily (see ensureTheme): parsing all ~25 .tmTheme assets up front
             // slowed cold start; only the theme actually shown needs to be registered.
             schemeCatalog = schemes
@@ -28,15 +34,32 @@ object TextMateBootstrap {
         }
     }
 
-    /** Registers a single theme by id on first use, parsing its asset only then. */
-    fun ensureTheme(id: String) {
-        if (id in loadedThemes) return
+    /**
+     * Parses all grammars (~100 assets, several MB) — call off the main thread at startup.
+     * Holds the same lock as [selectTheme]: GrammarRegistry listens to theme changes, so a theme
+     * switch must never run while grammars are being added.
+     */
+    fun loadGrammars(languages: LanguageCatalog) {
+        if (_grammarsReady.value) return
         synchronized(this) {
-            if (id in loadedThemes) return
-            val scheme = schemeCatalog?.schemes?.firstOrNull { it.id == id } ?: return
-            loadTheme(scheme)
-            loadedThemes.add(id)
+            if (_grammarsReady.value) return
+            registerGrammars(languages)
+            _grammarsReady.value = true
         }
+    }
+
+    /** Loads (first use only) and activates theme [id]. */
+    fun selectTheme(id: String) = synchronized(this) {
+        ensureTheme(id)
+        ThemeRegistry.getInstance().setTheme(id)
+    }
+
+    /** Registers a single theme by id on first use, parsing its asset only then. */
+    private fun ensureTheme(id: String) {
+        if (id in loadedThemes) return
+        val scheme = schemeCatalog?.schemes?.firstOrNull { it.id == id } ?: return
+        loadTheme(scheme)
+        loadedThemes.add(id)
     }
 
     private fun registerGrammars(catalog: LanguageCatalog) {

@@ -2,6 +2,8 @@ package tools.lunaris.texteditor.editor
 
 import android.util.Log
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
@@ -11,6 +13,7 @@ import io.github.rosemoe.sora.langs.textmate.TextMateColorScheme
 import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import io.github.rosemoe.sora.widget.CodeEditor
+import tools.lunaris.texteditor.syntax.TextMateBootstrap
 
 /**
  * Above this many characters, TextMate highlighting is dropped (plain text). Grammar tokenizing a
@@ -41,8 +44,10 @@ fun CodeEditorView(
     val holder = remember { EditorBinding() }
     holder.callback = onTextChange
 
+    // Grammars load in the background at startup: plain text until they're in.
+    val grammarsReady by TextMateBootstrap.grammarsReady.collectAsState()
     // Disable syntax highlighting for very large buffers (keeps the editor responsive).
-    val effectiveScope = scopeName?.takeIf { text.length <= LARGE_FILE_CHARS }
+    val effectiveScope = scopeName?.takeIf { grammarsReady && text.length <= LARGE_FILE_CHARS }
 
     AndroidView(
         modifier = modifier,
@@ -141,12 +146,10 @@ fun CodeEditorView(
 }
 
 private fun applyTheme(editor: CodeEditor, themeId: String) {
-    // Themes are registered lazily; make sure this one is loaded before selecting it.
-    tools.lunaris.texteditor.syntax.TextMateBootstrap.ensureTheme(themeId)
-    val registry = ThemeRegistry.getInstance()
-    runCatching { registry.setTheme(themeId) }
+    // Themes are registered lazily; selectTheme loads this one before activating it.
+    runCatching { TextMateBootstrap.selectTheme(themeId) }
         .onFailure { Log.w("CodeEditorView", "Failed to set theme '$themeId'", it) }
-    editor.colorScheme = TextMateColorScheme.create(registry)
+    editor.colorScheme = TextMateColorScheme.create(ThemeRegistry.getInstance())
 }
 
 private fun applyLanguage(editor: CodeEditor, scopeName: String?) {
