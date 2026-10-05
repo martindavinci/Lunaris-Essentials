@@ -1,17 +1,25 @@
 package tools.lunaris.texteditor.file
 
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import tools.lunaris.texteditor.document.EncodingCodec
 import tools.lunaris.texteditor.document.LineEnding
 import java.nio.charset.Charset
 import javax.inject.Inject
 
-class FileRepository @Inject constructor(
+class FileRepository(
     private val gateway: FileGateway,
     private val codec: EncodingCodec,
+    /** Runs decode/encode; injectable so tests can keep it on their scheduler. */
+    private val cpu: CoroutineDispatcher,
 ) {
+    @Inject constructor(gateway: FileGateway, codec: EncodingCodec) : this(gateway, codec, Dispatchers.Default)
+
     suspend fun load(ref: FileRef, forced: Charset? = null, maxBytes: Long = Long.MAX_VALUE): LoadedDocument {
         val bytes = gateway.readBytes(ref, maxBytes)
-        val decoded = codec.decode(bytes, forced)
+        // Decoding/encoding a multi-MB file is CPU work: keep it off the caller's (main) thread.
+        val decoded = withContext(cpu) { codec.decode(bytes, forced) }
         return LoadedDocument(
             ref = ref,
             name = gateway.displayName(ref),
@@ -23,7 +31,8 @@ class FileRepository @Inject constructor(
     }
 
     suspend fun save(ref: FileRef, text: String, charset: Charset, lineEnding: LineEnding, hasBom: Boolean = false) {
-        gateway.writeBytes(ref, codec.encode(text, charset, lineEnding, hasBom))
+        val bytes = withContext(cpu) { codec.encode(text, charset, lineEnding, hasBom) }
+        gateway.writeBytes(ref, bytes)
     }
 
     fun canEncode(text: String, charset: Charset): Boolean = codec.canEncode(text, charset)

@@ -41,8 +41,12 @@ class EncodingCodec @Inject constructor() {
             hasUtf16BeBom(bytes) -> Triple(StandardCharsets.UTF_16BE, 2, true)
             else -> null
         }
-        val (charset, contentStart, hasBom) = detected ?: autoDetectNoBom(bytes)
-        val raw = String(bytes, contentStart, bytes.size - contentStart, charset)
+        val (charset, raw, hasBom) = if (detected != null) {
+            val (cs, start, bom) = detected
+            Triple(cs, String(bytes, start, bytes.size - start, cs), bom)
+        } else autoDetectNoBom(bytes)
+        // Most files are LF-only: skip the detect/replace passes over the whole text for them.
+        if (raw.indexOf('\r') < 0) return DecodedText(raw, charset, LineEnding.LF, hasBom)
         val lineEnding = LineEnding.detect(raw)
         val normalized = raw.replace("\r\n", "\n").replace("\r", "\n")
         return DecodedText(normalized, charset, lineEnding, hasBom)
@@ -70,16 +74,18 @@ class EncodingCodec @Inject constructor() {
         return if (bom != null) bom + body else body
     }
 
-    /** No BOM and no forced charset: prefer strict UTF-8, fall back to Latin-1 (lossless). */
-    private fun autoDetectNoBom(bytes: ByteArray): Triple<Charset, Int, Boolean> {
+    /**
+     * No BOM and no forced charset: prefer strict UTF-8, fall back to Latin-1 (lossless).
+     * The strict decode's result is the text itself, so valid UTF-8 is decoded only once.
+     */
+    private fun autoDetectNoBom(bytes: ByteArray): Triple<Charset, String, Boolean> {
         val decoder = StandardCharsets.UTF_8.newDecoder()
             .onMalformedInput(CodingErrorAction.REPORT)
             .onUnmappableCharacter(CodingErrorAction.REPORT)
         return try {
-            decoder.decode(ByteBuffer.wrap(bytes))
-            Triple(StandardCharsets.UTF_8, 0, false)
+            Triple(StandardCharsets.UTF_8, decoder.decode(ByteBuffer.wrap(bytes)).toString(), false)
         } catch (_: CharacterCodingException) {
-            Triple(StandardCharsets.ISO_8859_1, 0, false)
+            Triple(StandardCharsets.ISO_8859_1, String(bytes, StandardCharsets.ISO_8859_1), false)
         }
     }
 

@@ -37,7 +37,8 @@ class EditorViewModelTest {
     @get:Rule val mainDispatcherRule = MainDispatcherRule()
 
     private val gateway = FakeFileGateway()
-    private val repo = FileRepository(gateway, EncodingCodec())
+    // Main is the rule's test dispatcher, so decode/encode stay on the test scheduler.
+    private val repo = FileRepository(gateway, EncodingCodec(), kotlinx.coroutines.Dispatchers.Main)
     private val catalog = LanguageCatalog(
         listOf(
             LanguageDefinition("plaintext", "Plain text", null, null, listOf("txt")),
