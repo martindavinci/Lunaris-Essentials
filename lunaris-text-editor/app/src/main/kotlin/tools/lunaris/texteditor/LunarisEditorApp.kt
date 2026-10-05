@@ -7,6 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import tools.lunaris.texteditor.data.RecentsStore
+import tools.lunaris.texteditor.feature.editor.prepareShareDir
 import tools.lunaris.texteditor.files.StorageAccess
 import tools.lunaris.texteditor.syntax.ColorSchemeCatalog
 import tools.lunaris.texteditor.syntax.LanguageCatalog
@@ -27,6 +28,7 @@ class LunarisEditorApp : Application() {
         // One-shot cleanup of recents that can no longer be opened (expired grants / deleted files).
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
             runCatching { recentsStore.prune { storageAccess.isUsableUri(it) } }
+            runCatching { prepareShareDir(cacheDir) }   // drop share copies left from the last run
         }
     }
 }
