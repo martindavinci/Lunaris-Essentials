@@ -201,4 +201,5 @@
     <string name="tts_collapse">Comprimi controlli</string>
     <string name="tts_voice_selected">Selezionata</string>
     <string name="action_stop_reading">Interrompi lettura</string>
+    <string name="notice_saved_as_utf8">Salvato in UTF-8 — alcuni caratteri non rientravano nella codifica originale</string>
 </resources>

@@ -192,4 +192,5 @@
     <string name="tts_collapse">コントロールを折りたたむ</string>
     <string name="tts_voice_selected">選択中</string>
     <string name="action_stop_reading">読み上げを停止</string>
+    <string name="notice_saved_as_utf8">UTF-8 で保存しました — 一部の文字が元のエンコーディングで表せませんでした</string>
 </resources>

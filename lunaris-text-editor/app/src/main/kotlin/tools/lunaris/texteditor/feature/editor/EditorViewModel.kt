@@ -194,12 +194,13 @@ class EditorViewModel @Inject constructor(
         val written = active.text
         viewModelScope.launch {
             try {
-                val name = documentIo.persist(ref, written, active.charset, active.lineEnding, active.title, active.hasBom)
+                val saved = documentIo.persist(ref, written, active.charset, active.lineEnding, active.title, active.hasBom)
                 docs.value = docs.value.replace(active.id) {
-                    it.copy(fileRef = ref, title = name, savedText = written)
+                    it.copy(fileRef = ref, title = saved.name, savedText = written, charset = saved.charset, hasBom = saved.hasBom)
                 }
                 publish()
-                _state.update { it.copy(savedSignal = it.savedSignal + 1, error = null, errorKind = null) }
+                val notice = if (saved.charsetChanged) EditorErrorKind.SAVED_AS_UTF8 else null
+                _state.update { it.copy(savedSignal = it.savedSignal + 1, error = null, errorKind = notice) }
             } catch (t: SecurityException) {
                 requestSaveAs()          // no write grant (e.g. a shared read-only file)
             } catch (t: java.io.FileNotFoundException) {
@@ -221,7 +222,11 @@ class EditorViewModel @Inject constructor(
                 val ref = tab.fileRef ?: return@forEach
                 val written = tab.text
                 runCatching { documentIo.persist(ref, written, tab.charset, tab.lineEnding, tab.title, tab.hasBom) }
-                    .onSuccess { docs.value = docs.value.replace(tab.id) { it.copy(savedText = written) } }
+                    .onSuccess { saved ->
+                        docs.value = docs.value.replace(tab.id) {
+                            it.copy(savedText = written, charset = saved.charset, hasBom = saved.hasBom)
+                        }
+                    }
             }
             publish()
         }

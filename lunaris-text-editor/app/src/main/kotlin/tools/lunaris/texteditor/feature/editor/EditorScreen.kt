@@ -269,12 +269,14 @@ fun EditorScreen(
         (DocumentIo.MAX_OPEN_BYTES / (1024 * 1024)).toInt(),
     )
     val notFoundMsg = stringResource(R.string.error_file_not_found)
+    val savedAsUtf8Msg = stringResource(R.string.notice_saved_as_utf8)
     LaunchedEffect(state.errorKind, state.error) {
         val message = when (state.errorKind) {
             EditorErrorKind.OPEN -> openFailedMsg
             EditorErrorKind.SAVE -> saveFailedMsg
             EditorErrorKind.TOO_LARGE -> tooLargeMsg
             EditorErrorKind.NOT_FOUND -> notFoundMsg
+            EditorErrorKind.SAVED_AS_UTF8 -> savedAsUtf8Msg
             null -> state.error
         }
         if (message != null) {

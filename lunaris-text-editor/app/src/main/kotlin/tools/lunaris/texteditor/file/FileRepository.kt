@@ -26,6 +26,8 @@ class FileRepository @Inject constructor(
         gateway.writeBytes(ref, codec.encode(text, charset, lineEnding, hasBom))
     }
 
+    fun canEncode(text: String, charset: Charset): Boolean = codec.canEncode(text, charset)
+
     suspend fun displayName(ref: FileRef): String? = gateway.displayName(ref)
 
     suspend fun size(ref: FileRef): Long? = gateway.size(ref)

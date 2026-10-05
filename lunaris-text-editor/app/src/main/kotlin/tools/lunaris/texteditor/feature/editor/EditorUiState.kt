@@ -9,7 +9,11 @@ import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
 
 /** Categorizes a transient editor error so the UI can show a localized message. */
-enum class EditorErrorKind { OPEN, SAVE, TOO_LARGE, NOT_FOUND }
+enum class EditorErrorKind {
+    OPEN, SAVE, TOO_LARGE, NOT_FOUND,
+    /** Not a failure: the save succeeded, but switched the file to UTF-8 to keep every character. */
+    SAVED_AS_UTF8,
+}
 
 data class EditorUiState(
     val tabs: List<TabSummary> = emptyList(),

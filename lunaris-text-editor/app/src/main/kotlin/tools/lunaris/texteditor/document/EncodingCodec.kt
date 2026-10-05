@@ -1,6 +1,7 @@
 package tools.lunaris.texteditor.document
 
 import java.nio.ByteBuffer
+import java.nio.CharBuffer
 import java.nio.charset.CharacterCodingException
 import java.nio.charset.Charset
 import java.nio.charset.CodingErrorAction
@@ -47,13 +48,24 @@ class EncodingCodec @Inject constructor() {
         return DecodedText(normalized, charset, lineEnding, hasBom)
     }
 
+    /** True when every character of [text] has a representation in [charset]. */
+    fun canEncode(text: String, charset: Charset): Boolean = charset.newEncoder().canEncode(text)
+
+    /**
+     * Encodes editor text for writing. Throws [CharacterCodingException] rather than silently
+     * substituting '?' for characters [charset] can't represent — check [canEncode] first.
+     */
     fun encode(text: String, charset: Charset, lineEnding: LineEnding, hasBom: Boolean = false): ByteArray {
         val withEndings = when (lineEnding) {
             LineEnding.LF -> text
             LineEnding.CRLF -> text.replace("\n", "\r\n")
             LineEnding.CR -> text.replace("\n", "\r")
         }
-        val body = withEndings.toByteArray(charset)
+        val encoded = charset.newEncoder()
+            .onMalformedInput(CodingErrorAction.REPORT)
+            .onUnmappableCharacter(CodingErrorAction.REPORT)
+            .encode(CharBuffer.wrap(withEndings))
+        val body = ByteArray(encoded.remaining()).also { encoded.get(it) }
         val bom = if (hasBom) bomFor(charset) else null
         return if (bom != null) bom + body else body
     }

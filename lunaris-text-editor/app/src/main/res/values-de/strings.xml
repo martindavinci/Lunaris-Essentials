@@ -192,4 +192,5 @@
     <string name="tts_collapse">Steuerung einklappen</string>
     <string name="tts_voice_selected">Ausgewählt</string>
     <string name="action_stop_reading">Vorlesen beenden</string>
+    <string name="notice_saved_as_utf8">Als UTF-8 gespeichert — einige Zeichen passten nicht in die ursprüngliche Kodierung</string>
 </resources>

@@ -74,9 +74,10 @@ class DocumentIoTest {
     @Test fun persist_writesBytes_returnsName_records() = runTest {
         val ref = FileRef("content://2")
         gateway.names[ref.uri] = "b.txt"
-        val name = io.persist(ref, "data", StandardCharsets.UTF_8, tools.lunaris.texteditor.document.LineEnding.LF, "fallback")
+        val saved = io.persist(ref, "data", StandardCharsets.UTF_8, tools.lunaris.texteditor.document.LineEnding.LF, "fallback")
         assertThat(String(gateway.store[ref.uri]!!, StandardCharsets.UTF_8)).isEqualTo("data")
-        assertThat(name).isEqualTo("b.txt")
+        assertThat(saved.name).isEqualTo("b.txt")
+        assertThat(saved.charset).isEqualTo(StandardCharsets.UTF_8)
         assertThat(recents.flow.value.map { it.uri }).contains(ref.uri)
     }
 
@@ -86,5 +87,15 @@ class DocumentIoTest {
         val loaded = io.reload(ref, StandardCharsets.ISO_8859_1)
         assertThat(loaded.text).isEqualTo("ab")
         assertThat(loaded.charset).isEqualTo(StandardCharsets.ISO_8859_1)
+    }
+
+    @Test fun persist_fallsBackToUtf8_whenTextDoesNotFitCharset() = runTest {
+        val ref = FileRef("content://latin1")
+        val text = "price: €"
+        val saved = io.persist(ref, text, StandardCharsets.ISO_8859_1, tools.lunaris.texteditor.document.LineEnding.LF, "f.txt")
+        // The euro sign can't be written as Latin-1: rather than writing '?', save as UTF-8.
+        assertThat(String(gateway.store[ref.uri]!!, StandardCharsets.UTF_8)).isEqualTo(text)
+        assertThat(saved.charset).isEqualTo(StandardCharsets.UTF_8)
+        assertThat(saved.charsetChanged).isTrue()
     }
 }

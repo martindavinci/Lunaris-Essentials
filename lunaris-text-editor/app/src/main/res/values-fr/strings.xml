@@ -192,4 +192,5 @@
     <string name="tts_collapse">Réduire les commandes</string>
     <string name="tts_voice_selected">Sélectionnée</string>
     <string name="action_stop_reading">Arrêter la lecture</string>
+    <string name="notice_saved_as_utf8">Enregistré en UTF-8 — certains caractères ne tenaient pas dans l’encodage d’origine</string>
 </resources>

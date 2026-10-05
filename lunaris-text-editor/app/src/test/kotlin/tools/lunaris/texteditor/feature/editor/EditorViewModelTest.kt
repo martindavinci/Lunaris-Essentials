@@ -482,4 +482,20 @@ class EditorViewModelTest {
         vm.openFile(ref); advanceUntilIdle()
         assertThat(vm.state.value.charset).isEqualTo(Charsets.UTF_8)
     }
+
+    @Test
+    fun save_switchesTabToUtf8_andNotifies_whenTextDoesNotFitCharset() = runTest {
+        val vm = newVm(); advanceUntilIdle()
+        val ref = FileRef("content://doc/latin1")
+        gateway.store[ref.uri] = byteArrayOf(0x63, 0x61, 0x66, 0xE9.toByte()) // "café" in Latin-1
+        gateway.names[ref.uri] = "l.txt"
+        vm.openFile(ref); advanceUntilIdle()
+        assertThat(vm.state.value.charset).isEqualTo(StandardCharsets.ISO_8859_1)
+        vm.onContentChanged("café €")
+        vm.save(ref); advanceUntilIdle()
+        assertThat(String(gateway.store[ref.uri]!!, StandardCharsets.UTF_8)).isEqualTo("café €")
+        assertThat(vm.state.value.charset).isEqualTo(StandardCharsets.UTF_8)
+        assertThat(vm.state.value.dirty).isFalse()
+        assertThat(vm.state.value.errorKind).isEqualTo(EditorErrorKind.SAVED_AS_UTF8)
+    }
 }

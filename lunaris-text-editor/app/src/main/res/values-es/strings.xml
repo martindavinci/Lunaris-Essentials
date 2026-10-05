@@ -192,4 +192,5 @@
     <string name="tts_collapse">Contraer controles</string>
     <string name="tts_voice_selected">Seleccionada</string>
     <string name="action_stop_reading">Detener lectura</string>
+    <string name="notice_saved_as_utf8">Guardado como UTF-8: algunos caracteres no cabían en la codificación original</string>
 </resources>

@@ -11,7 +11,16 @@ import tools.lunaris.texteditor.file.LoadedDocument
 import tools.lunaris.texteditor.syntax.SyntaxResolver
 import tools.lunaris.texteditor.syntax.SyntaxSelection
 import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 import javax.inject.Inject
+
+/** What [DocumentIo.persist] actually wrote. [charsetChanged] = fell back to UTF-8. */
+data class SavedDocument(
+    val name: String,
+    val charset: Charset,
+    val hasBom: Boolean,
+    val charsetChanged: Boolean,
+)
 
 /** File IO + tab construction for the editor. Returns values; the ViewModel applies state. */
 class DocumentIo @Inject constructor(
@@ -47,11 +56,16 @@ class DocumentIo @Inject constructor(
         lineEnding: LineEnding,
         fallbackName: String,
         hasBom: Boolean = false,
-    ): String {
-        repository.save(ref, text, charset, lineEnding, hasBom)
+    ): SavedDocument {
+        // Text the charset can't hold (e.g. "€" typed into a Latin-1 file) is saved as UTF-8
+        // instead of being written as '?'. Only non-Unicode charsets can hit this, so no BOM.
+        val fits = repository.canEncode(text, charset)
+        val outCharset = if (fits) charset else StandardCharsets.UTF_8
+        val outBom = fits && hasBom
+        repository.save(ref, text, outCharset, lineEnding, outBom)
         val name = repository.displayName(ref) ?: fallbackName
         recentsStore.touch(RecentEntry(ref.uri, name))
-        return name
+        return SavedDocument(name, outCharset, outBom, charsetChanged = !fits)
     }
 
     suspend fun reload(ref: FileRef, charset: Charset): LoadedDocument =

@@ -127,4 +127,15 @@ class EncodingCodecTest {
         assertThat(decoded.text).isEqualTo("a\nb")
         assertThat(decoded.lineEnding).isEqualTo(LineEnding.CR)
     }
+
+    @Test
+    fun canEncode_isFalse_forCharsOutsideCharset() {
+        assertThat(codec.canEncode("café", StandardCharsets.ISO_8859_1)).isTrue()
+        assertThat(codec.canEncode("€", StandardCharsets.ISO_8859_1)).isFalse()
+    }
+
+    @Test(expected = java.nio.charset.CharacterCodingException::class)
+    fun encode_refusesToSilentlyReplaceUnmappableChars() {
+        codec.encode("price: €", StandardCharsets.ISO_8859_1, LineEnding.LF)
+    }
 }
