@@ -25,6 +25,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -60,6 +61,10 @@ fun PreviewScreen(
 
     val offlineLabel = stringResource(R.string.tts_offline)
     val networkLabel = stringResource(R.string.tts_requires_connection)
+
+    // The ViewModel outlives the preview overlay (scoped to the editor entry), so leaving the
+    // preview must stop read-aloud explicitly or the voice keeps going behind the editor.
+    DisposableEffect(viewModel) { onDispose { viewModel.stopReading() } }
 
     LaunchedEffect(message) {
         message?.let {
