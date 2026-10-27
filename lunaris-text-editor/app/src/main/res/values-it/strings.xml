@@ -205,5 +205,4 @@
     <string name="reload_confirm_title">Scartare le modifiche non salvate?</string>
     <string name="reload_confirm_message">Ricaricando, le tue modifiche verranno sostituite dal file salvato sul disco.</string>
     <string name="reload_confirm_discard">Scarta e ricarica</string>
-    <string name="search_recent">Ricerche recenti in questo file</string>
 </resources>

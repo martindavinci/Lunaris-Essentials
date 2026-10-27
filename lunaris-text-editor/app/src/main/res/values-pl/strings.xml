@@ -196,5 +196,4 @@
     <string name="reload_confirm_title">Odrzucić niezapisane zmiany?</string>
     <string name="reload_confirm_message">Ponowne wczytanie zastąpi zmiany plikiem zapisanym na dysku.</string>
     <string name="reload_confirm_discard">Odrzuć i wczytaj ponownie</string>
-    <string name="search_recent">Ostatnie wyszukiwania w tym pliku</string>
 </resources>
