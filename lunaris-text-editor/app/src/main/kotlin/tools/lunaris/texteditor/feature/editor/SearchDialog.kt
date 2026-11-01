@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
@@ -24,6 +25,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -42,6 +45,7 @@ fun SearchDialog(
     history: List<String> = emptyList(),
 ) {
     var query by remember { mutableStateOf(TextFieldValue()) }
+    val hints = rememberSearchHintsState()
     var replacement by remember { mutableStateOf("") }
     var caseSensitive by remember { mutableStateOf(false) }
     var regex by remember { mutableStateOf(false) }
@@ -56,23 +60,33 @@ fun SearchDialog(
             tonalElevation = 6.dp,
             modifier = Modifier.fillMaxWidth(0.96f),
         ) {
-            Column(
-                Modifier.fillMaxWidth().heightIn(max = 460.dp).verticalScroll(rememberScrollState())
-                    .padding(horizontal = 24.dp, vertical = 20.dp),
-            ) {
-                Text(stringResource(R.string.menu_search), style = MaterialTheme.typography.titleLarge)
-                SearchQueryField(query, { query = it }, history, Modifier.padding(top = 12.dp))
-                OutlinedTextField(replacement, { replacement = it }, label = { Text(stringResource(R.string.search_replace_hint)) }, singleLine = true, modifier = Modifier.fillMaxWidth().padding(top = 8.dp))
-                CheckRow(stringResource(R.string.search_case), caseSensitive) { caseSensitive = it }
-                CheckRow(stringResource(R.string.search_regex), regex) { regex = it }
-                CheckRow(stringResource(R.string.search_wrap), wrap) { wrap = it }
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                    TextButton(onClick = { onFindPrev(query.text, opts()) }) { Text(stringResource(R.string.search_find_prev)) }
-                    TextButton(onClick = { onFind(query.text, opts()) }) { Text(stringResource(R.string.search_find)) }
-                }
-                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                    TextButton(onClick = { onReplace(query.text, replacement, opts()) }) { Text(stringResource(R.string.search_replace)) }
-                    TextButton(onClick = { onReplaceAll(query.text, replacement, opts()) }) { Text(stringResource(R.string.search_replace_all)) }
+            SearchHintsBox(hints, history, query.text, onPick = { query = TextFieldValue(it, TextRange(it.length)) }) {
+                Column(
+                    Modifier.fillMaxWidth().heightIn(max = 460.dp).verticalScroll(rememberScrollState())
+                        .padding(horizontal = 24.dp, vertical = 20.dp),
+                ) {
+                    Text(stringResource(R.string.menu_search), style = MaterialTheme.typography.titleLarge)
+                    OutlinedTextField(
+                        query,
+                        { if (it.text != query.text) hints.onTextChanged(); query = it },
+                        label = { Text(stringResource(R.string.search_query_hint)) },
+                        singleLine = true,
+                        // Done drops the keyboard; drop the hints with it so the buttons are back in view.
+                        keyboardActions = KeyboardActions(onDone = { hints.hide(); defaultKeyboardAction(ImeAction.Done) }),
+                        modifier = Modifier.fillMaxWidth().padding(top = 12.dp).searchHintsAnchor(hints),
+                    )
+                    OutlinedTextField(replacement, { replacement = it }, label = { Text(stringResource(R.string.search_replace_hint)) }, singleLine = true, modifier = Modifier.fillMaxWidth().padding(top = 8.dp))
+                    CheckRow(stringResource(R.string.search_case), caseSensitive) { caseSensitive = it }
+                    CheckRow(stringResource(R.string.search_regex), regex) { regex = it }
+                    CheckRow(stringResource(R.string.search_wrap), wrap) { wrap = it }
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                        TextButton(onClick = { onFindPrev(query.text, opts()) }) { Text(stringResource(R.string.search_find_prev)) }
+                        TextButton(onClick = { onFind(query.text, opts()) }) { Text(stringResource(R.string.search_find)) }
+                    }
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+                        TextButton(onClick = { onReplace(query.text, replacement, opts()) }) { Text(stringResource(R.string.search_replace)) }
+                        TextButton(onClick = { onReplaceAll(query.text, replacement, opts()) }) { Text(stringResource(R.string.search_replace_all)) }
+                    }
                 }
             }
         }
