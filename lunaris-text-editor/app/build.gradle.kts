@@ -1,9 +1,28 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
 }
+
+// Release signing. CI passes the keystore through the LUNARIS_KEYSTORE_FILE, LUNARIS_KEYSTORE_PASSWORD,
+// LUNARIS_KEY_ALIAS and LUNARIS_KEY_PASSWORD environment variables; locally it comes from a
+// keystore.properties kept outside the repo (LUNARIS_KEYSTORE_PROPERTIES, default
+// ~/.keys/lunaris/keystore.properties). With neither, release builds fall back to the debug key.
+val releaseKeystore: Properties? = System.getenv("LUNARIS_KEYSTORE_FILE")?.let { storeFile ->
+    fun env(name: String) = requireNotNull(System.getenv(name)) { "$name is not set" }
+    Properties().apply {
+        setProperty("storeFile", storeFile)
+        setProperty("storePassword", env("LUNARIS_KEYSTORE_PASSWORD"))
+        setProperty("keyAlias", env("LUNARIS_KEY_ALIAS"))
+        setProperty("keyPassword", env("LUNARIS_KEY_PASSWORD"))
+    }
+} ?: (System.getenv("LUNARIS_KEYSTORE_PROPERTIES")?.let(::File)
+    ?: File(System.getProperty("user.home"), ".keys/lunaris/keystore.properties"))
+    .takeIf { it.isFile }
+    ?.let { props -> Properties().apply { props.inputStream().use(::load) } }
 
 android {
     namespace = "tools.lunaris.texteditor"
@@ -18,13 +37,22 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        releaseKeystore?.let { props ->
+            create("release") {
+                storeFile = file(props.getProperty("storeFile"))
+                storePassword = props.getProperty("storePassword")
+                keyAlias = props.getProperty("keyAlias")
+                keyPassword = props.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            // Debug signing for now so the optimized build is installable/testable; swap for a real
-            // release keystore before publishing to Play.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -38,6 +66,12 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+    }
+    // No dependency metadata block in the APK: it is encrypted for Google only, and F-Droid and
+    // IzzyOnDroid reject APKs that carry it.
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
     }
 }
 
