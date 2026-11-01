@@ -19,7 +19,13 @@ been: they work offline, show nothing but your work, and stay out of your data.
 <table>
 <tr>
 <td width="96" align="center"><a href="lunaris-text-editor/"><img src="lunaris-text-editor/app/src/main/ic_launcher-playstore.png" width="72" alt="Lunaris Text Editor icon"></a></td>
-<td><b><a href="lunaris-text-editor/">Lunaris Text Editor</a></b><br>A text and code editor: 54 languages highlighted, tabs, search and replace, Markdown and HTML preview, reading aloud. No system permissions at all.</td>
+<td><b><a href="lunaris-text-editor/">Lunaris Text Editor</a></b><br>A text and code editor: 54 languages highlighted, tabs, search and replace, Markdown and HTML preview, reading aloud. No system permissions at all.<br><br>
+<a href="lunaris-text-editor/"><img src="lunaris-text-editor/docs/screenshots/editor.webp" width="104" alt="The editor with a Kotlin file"></a>
+<a href="lunaris-text-editor/"><img src="lunaris-text-editor/docs/screenshots/preview.webp" width="104" alt="A Markdown preview"></a>
+<a href="lunaris-text-editor/"><img src="lunaris-text-editor/docs/screenshots/read-aloud.webp" width="104" alt="Reading a document aloud"></a>
+<a href="lunaris-text-editor/"><img src="lunaris-text-editor/docs/screenshots/search.webp" width="104" alt="Search with recent searches"></a>
+<a href="lunaris-text-editor/"><img src="lunaris-text-editor/docs/screenshots/settings.webp" width="104" alt="The settings"></a>
+</td>
 </tr>
 </table>
 
