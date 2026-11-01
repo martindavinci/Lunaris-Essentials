@@ -1,5 +1,6 @@
 package tools.lunaris.texteditor.feature.settings
 
+import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -38,6 +39,7 @@ import kotlinx.coroutines.launch
 import tools.lunaris.texteditor.R
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfig
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfigDialog
+import tools.lunaris.texteditor.settings.AppLocales
 import tools.lunaris.texteditor.settings.AppTheme
 import tools.lunaris.texteditor.settings.BackupCodec
 import tools.lunaris.texteditor.settings.EditorSettings
@@ -75,15 +77,19 @@ fun SettingsScreen(
     val s by viewModel.settings.collectAsStateWithLifecycle()
     val fileFilterOn by viewModel.fileFilter().collectAsStateWithLifecycle(initialValue = true)
     val toolbarConfig by viewModel.toolbar().collectAsStateWithLifecycle(initialValue = ToolbarConfig.DEFAULT)
+    // A language change restarts the activity, so reading it once is enough.
+    val language = remember { AppLocales.current(context) }
 
     SettingsContent(
         s = s,
+        language = language,
         fileFilterOn = fileFilterOn,
         toolbarConfig = toolbarConfig,
         onBack = onBack,
         onUpdate = viewModel::update,
         onSetFileFilter = viewModel::setFileFilter,
         onSetToolbar = viewModel::setToolbar,
+        onSetLanguage = { tag -> (context as? Activity)?.let { AppLocales.set(it, tag) } },
         onOpenLicenses = onOpenLicenses,
         onBackup = { backupLauncher.launch(context.getString(R.string.backup_default_name)) },
         onRestore = { restoreLauncher.launch(arrayOf("application/json")) },
@@ -95,18 +101,21 @@ fun SettingsScreen(
 @Composable
 internal fun SettingsContent(
     s: EditorSettings,
+    language: String,
     fileFilterOn: Boolean,
     toolbarConfig: ToolbarConfig,
     onBack: () -> Unit,
     onUpdate: ((EditorSettings) -> EditorSettings) -> Unit,
     onSetFileFilter: (Boolean) -> Unit,
     onSetToolbar: (ToolbarConfig) -> Unit,
+    onSetLanguage: (String) -> Unit,
     onOpenLicenses: () -> Unit,
     onBackup: () -> Unit,
     onRestore: () -> Unit,
 ) {
     var openChoice by remember { mutableStateOf<SettingChoice?>(null) }
     var showToolbar by remember { mutableStateOf(false) }
+    var showLanguage by remember { mutableStateOf(false) }
     var openCategory by rememberSaveable { mutableStateOf<SettingsCategory?>(null) }
 
     if (!LocalInspectionMode.current) {
@@ -152,7 +161,9 @@ internal fun SettingsContent(
                 )
                 SettingsCategory.DISPLAY -> DisplayCategory(
                     s = s,
+                    language = language,
                     onUpdate = onUpdate,
+                    onLanguageClick = { showLanguage = true },
                     onThemeClick = { openChoice = SettingChoice.THEME },
                     onFontTypeClick = { openChoice = SettingChoice.FONT_TYPE },
                     onFontSizeClick = { openChoice = SettingChoice.FONT_SIZE },
@@ -186,6 +197,10 @@ internal fun SettingsContent(
         onUpdate = onUpdate,
         onDismiss = { openChoice = null },
     )
+
+    if (showLanguage) {
+        LanguageDialog(current = language, onSelect = onSetLanguage, onDismiss = { showLanguage = false })
+    }
 
     if (showToolbar) {
         ToolbarConfigDialog(

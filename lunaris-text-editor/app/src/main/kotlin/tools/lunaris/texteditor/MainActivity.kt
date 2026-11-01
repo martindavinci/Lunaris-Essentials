@@ -1,5 +1,6 @@
 package tools.lunaris.texteditor
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -13,6 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import tools.lunaris.texteditor.feature.AppNavHost
 import tools.lunaris.texteditor.feature.OpenRequest
 import tools.lunaris.texteditor.feature.settings.SettingsViewModel
+import tools.lunaris.texteditor.settings.AppLocales
 import tools.lunaris.texteditor.ui.theme.LunarisEditorTheme
 
 @AndroidEntryPoint
@@ -24,6 +26,11 @@ class MainActivity : ComponentActivity() {
     // Bumped per VIEW/EDIT intent so re-opening the same file (open-with, app already running)
     // produces a distinct OpenRequest and re-triggers the editor's open effect.
     private var intentNonce = 0
+
+    // Below Android 13 the in-app language is applied here; above, the system does it.
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(AppLocales.wrap(newBase))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -49,6 +49,14 @@
     <string name="menu_input_method">Eingabemethode</string>
     <string name="menu_file">Datei</string>
     <string name="menu_edit">Bearbeiten</string>
+    <string name="menu_group_file">DATEI</string>
+    <string name="menu_group_edit">BEARBEITEN</string>
+    <string name="menu_group_tools">WERKZEUGE</string>
+    <string name="menu_group_view">ANSICHT</string>
+    <string name="sheet_search_hint">Aktion suchen…</string>
+    <string name="sheet_no_match">Keine Aktionen</string>
+    <string name="syntax_plain">Nur Text</string>
+    <string name="unsaved">nicht gespeichert</string>
     <string name="menu_word_wrap">Zeilenumbruch</string>
     <string name="menu_read_only">Schreibgeschützt</string>
     <string name="search_query_hint">Suchen</string>
@@ -92,7 +100,7 @@
     <string name="cat_editor_title">Editor</string>
     <string name="cat_editor_summary">Umbruch, Einrückung, Zeilenenden, Rückgängig</string>
     <string name="cat_display_title">Darstellung</string>
-    <string name="cat_display_summary">Design, Zeilennummern, Schrift</string>
+    <string name="cat_display_summary">Sprache, Design, Schrift</string>
     <string name="cat_keyboard_title">Tastatur</string>
     <string name="cat_keyboard_summary">Vorschläge, Großschreibung, Tasten</string>
     <string name="cat_files_title">Dateien &amp; Sitzung</string>
@@ -118,6 +126,7 @@
     <string name="set_line_spacing">Zeilenabstand</string>
     <string name="set_autosave">Automatisches Speichern</string>
     <string name="set_autosave_interval">Speichern alle</string>
+    <string name="set_language">Sprache</string>
     <string name="set_theme">Design</string>
     <string name="set_fullscreen">Vollbild</string>
     <string name="set_version">Version</string>
@@ -133,6 +142,7 @@
     <string name="theme_light">Hell</string>
     <string name="theme_dark">Dunkel</string>
     <string name="theme_black">Schwarz</string>
+    <string name="language_system">Systemstandard</string>
     <string name="suggestions_on">Ein</string>
     <string name="suggestions_off">Aus</string>
     <string name="suggestions_off_aggressive">Aus (aggressiv)</string>

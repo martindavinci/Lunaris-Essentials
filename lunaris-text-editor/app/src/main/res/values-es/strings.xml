@@ -49,6 +49,14 @@
     <string name="menu_input_method">Método de entrada</string>
     <string name="menu_file">Archivo</string>
     <string name="menu_edit">Editar</string>
+    <string name="menu_group_file">ARCHIVO</string>
+    <string name="menu_group_edit">EDITAR</string>
+    <string name="menu_group_tools">HERRAMIENTAS</string>
+    <string name="menu_group_view">VER</string>
+    <string name="sheet_search_hint">Buscar una acción…</string>
+    <string name="sheet_no_match">No hay acciones</string>
+    <string name="syntax_plain">Texto sin formato</string>
+    <string name="unsaved">sin guardar</string>
     <string name="menu_word_wrap">Ajuste de línea</string>
     <string name="menu_read_only">Solo lectura</string>
     <string name="search_query_hint">Buscar</string>
@@ -92,7 +100,7 @@
     <string name="cat_editor_title">Editor</string>
     <string name="cat_editor_summary">Ajuste, sangría, saltos de línea, deshacer</string>
     <string name="cat_display_title">Apariencia</string>
-    <string name="cat_display_summary">Tema, números de línea, fuente</string>
+    <string name="cat_display_summary">Idioma, tema, fuente</string>
     <string name="cat_keyboard_title">Teclado</string>
     <string name="cat_keyboard_summary">Sugerencias, mayúsculas, teclas</string>
     <string name="cat_files_title">Archivos y sesión</string>
@@ -118,6 +126,7 @@
     <string name="set_line_spacing">Interlineado</string>
     <string name="set_autosave">Guardado automático</string>
     <string name="set_autosave_interval">Guardar cada</string>
+    <string name="set_language">Idioma</string>
     <string name="set_theme">Tema</string>
     <string name="set_fullscreen">Pantalla completa</string>
     <string name="set_version">Versión</string>
@@ -133,6 +142,7 @@
     <string name="theme_light">Claro</string>
     <string name="theme_dark">Oscuro</string>
     <string name="theme_black">Negro</string>
+    <string name="language_system">Predeterminado del sistema</string>
     <string name="suggestions_on">Activadas</string>
     <string name="suggestions_off">Desactivadas</string>
     <string name="suggestions_off_aggressive">Desactivadas (agresivo)</string>

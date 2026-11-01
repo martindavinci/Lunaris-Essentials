@@ -57,7 +57,7 @@
     <string name="sheet_no_match">No actions</string>
     <string name="syntax_plain">Plain text</string>
     <string name="unsaved">not saved</string>
-    <string name="subtitle_dirty">%1$s · %2$s</string>
+    <string name="subtitle_dirty" translatable="false">%1$s · %2$s</string>
     <string name="menu_word_wrap">Word wrap</string>
     <string name="menu_read_only">Read only</string>
     <string name="search_query_hint">Find</string>
@@ -113,7 +113,7 @@
     <string name="cat_editor_title">Editor</string>
     <string name="cat_editor_summary">Wrapping, indent, line breaks, undo</string>
     <string name="cat_display_title">Appearance</string>
-    <string name="cat_display_summary">Theme, line numbers, font</string>
+    <string name="cat_display_summary">Language, theme, font</string>
     <string name="cat_keyboard_title">Keyboard</string>
     <string name="cat_keyboard_summary">Suggestions, capitalization, keys</string>
     <string name="cat_files_title">Files &amp; session</string>
@@ -139,6 +139,7 @@
     <string name="set_line_spacing">Line spacing</string>
     <string name="set_autosave">Autosave</string>
     <string name="set_autosave_interval">Save every</string>
+    <string name="set_language">Language</string>
     <string name="set_theme">Theme</string>
     <string name="set_fullscreen">Fullscreen</string>
     <string name="set_version">Version</string>
@@ -154,6 +155,7 @@
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
     <string name="theme_black">Black</string>
+    <string name="language_system">System default</string>
     <string name="suggestions_on">On</string>
     <string name="suggestions_off">Off</string>
     <string name="suggestions_off_aggressive">Off (aggressive)</string>

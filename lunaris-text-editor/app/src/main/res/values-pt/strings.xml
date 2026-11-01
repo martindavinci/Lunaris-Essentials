@@ -49,6 +49,14 @@
     <string name="menu_input_method">Método de introdução</string>
     <string name="menu_file">Ficheiro</string>
     <string name="menu_edit">Editar</string>
+    <string name="menu_group_file">FICHEIRO</string>
+    <string name="menu_group_edit">EDITAR</string>
+    <string name="menu_group_tools">FERRAMENTAS</string>
+    <string name="menu_group_view">VER</string>
+    <string name="sheet_search_hint">Procurar uma ação…</string>
+    <string name="sheet_no_match">Sem ações</string>
+    <string name="syntax_plain">Texto simples</string>
+    <string name="unsaved">não guardado</string>
     <string name="menu_word_wrap">Translineação</string>
     <string name="menu_read_only">Apenas leitura</string>
     <string name="search_query_hint">Localizar</string>
@@ -92,7 +100,7 @@
     <string name="cat_editor_title">Editor</string>
     <string name="cat_editor_summary">Translineação, indentação, fins de linha, desfazer</string>
     <string name="cat_display_title">Aparência</string>
-    <string name="cat_display_summary">Tema, números de linha, letra</string>
+    <string name="cat_display_summary">Idioma, tema, letra</string>
     <string name="cat_keyboard_title">Teclado</string>
     <string name="cat_keyboard_summary">Sugestões, maiúsculas, teclas</string>
     <string name="cat_files_title">Ficheiros e sessão</string>
@@ -118,6 +126,7 @@
     <string name="set_line_spacing">Espaçamento entre linhas</string>
     <string name="set_autosave">Guardar automaticamente</string>
     <string name="set_autosave_interval">Guardar a cada</string>
+    <string name="set_language">Idioma</string>
     <string name="set_theme">Tema</string>
     <string name="set_fullscreen">Ecrã inteiro</string>
     <string name="set_version">Versão</string>
@@ -133,6 +142,7 @@
     <string name="theme_light">Claro</string>
     <string name="theme_dark">Escuro</string>
     <string name="theme_black">Preto</string>
+    <string name="language_system">Predefinição do sistema</string>
     <string name="suggestions_on">Ativado</string>
     <string name="suggestions_off">Desativado</string>
     <string name="suggestions_off_aggressive">Desativado (agressivo)</string>

@@ -73,6 +73,12 @@ android {
         includeInApk = false
         includeInBundle = false
     }
+    // The language can be switched in the app, so every translation must ship with it.
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
 }
 
 kotlin {

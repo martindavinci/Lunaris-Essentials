@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import tools.lunaris.texteditor.feature.editor.toolbar.ToolbarConfig
+import tools.lunaris.texteditor.settings.AppLanguage
 import tools.lunaris.texteditor.settings.EditorSettings
 import tools.lunaris.texteditor.ui.theme.LunarisEditorTheme
 
@@ -13,12 +14,14 @@ private fun SettingsContentPreview() {
     LunarisEditorTheme {
         SettingsContent(
             s = EditorSettings(),
+            language = AppLanguage.SYSTEM,
             fileFilterOn = true,
             toolbarConfig = ToolbarConfig.DEFAULT,
             onBack = {},
             onUpdate = {},
             onSetFileFilter = {},
             onSetToolbar = {},
+            onSetLanguage = {},
             onOpenLicenses = {},
             onBackup = {},
             onRestore = {},

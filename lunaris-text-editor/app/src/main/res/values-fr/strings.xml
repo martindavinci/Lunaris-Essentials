@@ -49,6 +49,14 @@
     <string name="menu_input_method">Méthode de saisie</string>
     <string name="menu_file">Fichier</string>
     <string name="menu_edit">Édition</string>
+    <string name="menu_group_file">FICHIER</string>
+    <string name="menu_group_edit">ÉDITION</string>
+    <string name="menu_group_tools">OUTILS</string>
+    <string name="menu_group_view">AFFICHAGE</string>
+    <string name="sheet_search_hint">Rechercher une action…</string>
+    <string name="sheet_no_match">Aucune action</string>
+    <string name="syntax_plain">Texte brut</string>
+    <string name="unsaved">non enregistré</string>
     <string name="menu_word_wrap">Retour à la ligne</string>
     <string name="menu_read_only">Lecture seule</string>
     <string name="search_query_hint">Rechercher</string>
@@ -92,7 +100,7 @@
     <string name="cat_editor_title">Éditeur</string>
     <string name="cat_editor_summary">Retour à la ligne, indentation, fins de ligne, annuler</string>
     <string name="cat_display_title">Apparence</string>
-    <string name="cat_display_summary">Thème, numéros de ligne, police</string>
+    <string name="cat_display_summary">Langue, thème, police</string>
     <string name="cat_keyboard_title">Clavier</string>
     <string name="cat_keyboard_summary">Suggestions, majuscules, touches</string>
     <string name="cat_files_title">Fichiers et session</string>
@@ -118,6 +126,7 @@
     <string name="set_line_spacing">Interligne</string>
     <string name="set_autosave">Enregistrement automatique</string>
     <string name="set_autosave_interval">Enregistrer toutes les</string>
+    <string name="set_language">Langue</string>
     <string name="set_theme">Thème</string>
     <string name="set_fullscreen">Plein écran</string>
     <string name="set_version">Version</string>
@@ -133,6 +142,7 @@
     <string name="theme_light">Clair</string>
     <string name="theme_dark">Sombre</string>
     <string name="theme_black">Noir</string>
+    <string name="language_system">Langue du système</string>
     <string name="suggestions_on">Activées</string>
     <string name="suggestions_off">Désactivées</string>
     <string name="suggestions_off_aggressive">Désactivées (agressif)</string>

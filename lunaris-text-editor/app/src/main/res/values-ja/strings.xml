@@ -49,6 +49,14 @@
     <string name="menu_input_method">入力方式</string>
     <string name="menu_file">ファイル</string>
     <string name="menu_edit">編集</string>
+    <string name="menu_group_file">ファイル</string>
+    <string name="menu_group_edit">編集</string>
+    <string name="menu_group_tools">ツール</string>
+    <string name="menu_group_view">表示</string>
+    <string name="sheet_search_hint">操作を検索…</string>
+    <string name="sheet_no_match">操作が見つかりません</string>
+    <string name="syntax_plain">プレーンテキスト</string>
+    <string name="unsaved">未保存</string>
     <string name="menu_word_wrap">折り返し</string>
     <string name="menu_read_only">読み取り専用</string>
     <string name="search_query_hint">検索</string>
@@ -92,7 +100,7 @@
     <string name="cat_editor_title">エディタ</string>
     <string name="cat_editor_summary">折り返し・字下げ・改行・取り消し</string>
     <string name="cat_display_title">表示</string>
-    <string name="cat_display_summary">テーマ・行番号・フォント</string>
+    <string name="cat_display_summary">言語・テーマ・フォント</string>
     <string name="cat_keyboard_title">キーボード</string>
     <string name="cat_keyboard_summary">予測・大文字・キー</string>
     <string name="cat_files_title">ファイルとセッション</string>
@@ -118,6 +126,7 @@
     <string name="set_line_spacing">行間</string>
     <string name="set_autosave">自動保存</string>
     <string name="set_autosave_interval">保存間隔</string>
+    <string name="set_language">言語</string>
     <string name="set_theme">テーマ</string>
     <string name="set_fullscreen">全画面表示</string>
     <string name="set_version">バージョン</string>
@@ -133,6 +142,7 @@
     <string name="theme_light">ライト</string>
     <string name="theme_dark">ダーク</string>
     <string name="theme_black">ブラック</string>
+    <string name="language_system">システムのデフォルト</string>
     <string name="suggestions_on">オン</string>
     <string name="suggestions_off">オフ</string>
     <string name="suggestions_off_aggressive">オフ（強制）</string>

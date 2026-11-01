@@ -27,12 +27,15 @@ internal fun EditorCategory(
 @Composable
 internal fun DisplayCategory(
     s: EditorSettings,
+    language: String,
     onUpdate: ((EditorSettings) -> EditorSettings) -> Unit,
+    onLanguageClick: () -> Unit,
     onThemeClick: () -> Unit,
     onFontTypeClick: () -> Unit,
     onFontSizeClick: () -> Unit,
     onLineSpacingClick: () -> Unit,
 ) {
+    SettingsChoiceRow(stringResource(R.string.set_language), languageLabel(language), onLanguageClick)
     SettingsChoiceRow(stringResource(R.string.set_theme), themeLabel(s.appTheme), onThemeClick)
     SettingsToggleRow(stringResource(R.string.set_line_numbers), null, s.lineNumbers) { onUpdate { it.copy(lineNumbers = !it.lineNumbers) } }
     SettingsChoiceRow(

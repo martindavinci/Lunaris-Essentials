@@ -61,7 +61,8 @@ since other Lunaris apps publish their releases here too.
 **Settings**
 - Font, size, line spacing, line numbers, indentation, default encoding and line ending, fullscreen and more
 - Back up all settings to a file and restore them on another phone
-- In English, Italian, German, Spanish, French, Portuguese, Polish, Dutch and Japanese
+- In English, Italian, German, Spanish, French, Portuguese, Polish, Dutch, Japanese, Korean and Simplified
+  Chinese: it follows the phone's language, or you pick one in Settings
 
 ## Privacy
 

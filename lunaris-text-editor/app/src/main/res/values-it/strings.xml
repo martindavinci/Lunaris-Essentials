@@ -113,7 +113,7 @@
     <string name="cat_editor_title">Editor</string>
     <string name="cat_editor_summary">A capo, rientro, fine riga, annulla</string>
     <string name="cat_display_title">Aspetto</string>
-    <string name="cat_display_summary">Tema, numeri di riga, carattere</string>
+    <string name="cat_display_summary">Lingua, tema, carattere</string>
     <string name="cat_keyboard_title">Tastiera</string>
     <string name="cat_keyboard_summary">Suggerimenti, maiuscole, tasti</string>
     <string name="cat_files_title">File e sessione</string>
@@ -139,6 +139,7 @@
     <string name="set_line_spacing">Spaziatura righe</string>
     <string name="set_autosave">Salvataggio automatico</string>
     <string name="set_autosave_interval">Salva ogni</string>
+    <string name="set_language">Lingua</string>
     <string name="set_theme">Tema</string>
     <string name="set_fullscreen">Schermo intero</string>
     <string name="set_version">Versione</string>
@@ -154,6 +155,7 @@
     <string name="theme_light">Chiaro</string>
     <string name="theme_dark">Scuro</string>
     <string name="theme_black">Nero</string>
+    <string name="language_system">Predefinita di sistema</string>
     <string name="suggestions_on">Attivi</string>
     <string name="suggestions_off">Disattivi</string>
     <string name="suggestions_off_aggressive">Disattivi (aggressivo)</string>

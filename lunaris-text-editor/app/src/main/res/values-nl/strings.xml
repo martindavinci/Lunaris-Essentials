@@ -49,6 +49,14 @@
     <string name="menu_input_method">Invoermethode</string>
     <string name="menu_file">Bestand</string>
     <string name="menu_edit">Bewerken</string>
+    <string name="menu_group_file">BESTAND</string>
+    <string name="menu_group_edit">BEWERKEN</string>
+    <string name="menu_group_tools">HULPMIDDELEN</string>
+    <string name="menu_group_view">WEERGAVE</string>
+    <string name="sheet_search_hint">Actie zoeken…</string>
+    <string name="sheet_no_match">Geen acties</string>
+    <string name="syntax_plain">Platte tekst</string>
+    <string name="unsaved">niet opgeslagen</string>
     <string name="menu_word_wrap">Tekstterugloop</string>
     <string name="menu_read_only">Alleen-lezen</string>
     <string name="search_query_hint">Zoeken</string>
@@ -92,7 +100,7 @@
     <string name="cat_editor_title">Editor</string>
     <string name="cat_editor_summary">Terugloop, inspringen, regeleinden, ongedaan maken</string>
     <string name="cat_display_title">Weergave</string>
-    <string name="cat_display_summary">Thema, regelnummers, lettertype</string>
+    <string name="cat_display_summary">Taal, thema, lettertype</string>
     <string name="cat_keyboard_title">Toetsenbord</string>
     <string name="cat_keyboard_summary">Suggesties, hoofdletters, toetsen</string>
     <string name="cat_files_title">Bestanden en sessie</string>
@@ -118,6 +126,7 @@
     <string name="set_line_spacing">Regelafstand</string>
     <string name="set_autosave">Automatisch opslaan</string>
     <string name="set_autosave_interval">Opslaan elke</string>
+    <string name="set_language">Taal</string>
     <string name="set_theme">Thema</string>
     <string name="set_fullscreen">Volledig scherm</string>
     <string name="set_version">Versie</string>
@@ -133,6 +142,7 @@
     <string name="theme_light">Licht</string>
     <string name="theme_dark">Donker</string>
     <string name="theme_black">Zwart</string>
+    <string name="language_system">Systeemstandaard</string>
     <string name="suggestions_on">Aan</string>
     <string name="suggestions_off">Uit</string>
     <string name="suggestions_off_aggressive">Uit (agressief)</string>

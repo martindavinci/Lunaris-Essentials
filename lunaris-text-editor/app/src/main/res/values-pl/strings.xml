@@ -49,6 +49,14 @@
     <string name="menu_input_method">Metoda wprowadzania</string>
     <string name="menu_file">Plik</string>
     <string name="menu_edit">Edytuj</string>
+    <string name="menu_group_file">PLIK</string>
+    <string name="menu_group_edit">EDYCJA</string>
+    <string name="menu_group_tools">NARZĘDZIA</string>
+    <string name="menu_group_view">WIDOK</string>
+    <string name="sheet_search_hint">Szukaj akcji…</string>
+    <string name="sheet_no_match">Brak akcji</string>
+    <string name="syntax_plain">Zwykły tekst</string>
+    <string name="unsaved">nie zapisano</string>
     <string name="menu_word_wrap">Zawijanie wierszy</string>
     <string name="menu_read_only">Tylko do odczytu</string>
     <string name="search_query_hint">Znajdź</string>
@@ -92,7 +100,7 @@
     <string name="cat_editor_title">Edytor</string>
     <string name="cat_editor_summary">Zawijanie, wcięcia, końce wierszy, cofanie</string>
     <string name="cat_display_title">Wygląd</string>
-    <string name="cat_display_summary">Motyw, numery wierszy, czcionka</string>
+    <string name="cat_display_summary">Język, motyw, czcionka</string>
     <string name="cat_keyboard_title">Klawiatura</string>
     <string name="cat_keyboard_summary">Podpowiedzi, wielkie litery, klawisze</string>
     <string name="cat_files_title">Pliki i sesja</string>
@@ -118,6 +126,7 @@
     <string name="set_line_spacing">Odstęp między wierszami</string>
     <string name="set_autosave">Autozapis</string>
     <string name="set_autosave_interval">Zapisuj co</string>
+    <string name="set_language">Język</string>
     <string name="set_theme">Motyw</string>
     <string name="set_fullscreen">Pełny ekran</string>
     <string name="set_version">Wersja</string>
@@ -133,6 +142,7 @@
     <string name="theme_light">Jasny</string>
     <string name="theme_dark">Ciemny</string>
     <string name="theme_black">Czarny</string>
+    <string name="language_system">Język systemu</string>
     <string name="suggestions_on">Włączone</string>
     <string name="suggestions_off">Wyłączone</string>
     <string name="suggestions_off_aggressive">Wyłączone (agresywnie)</string>
