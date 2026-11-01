@@ -22,7 +22,7 @@ $sdk = "$env:LOCALAPPDATA\Android\Sdk"
 $adb = "$sdk\platform-tools\adb.exe"
 $emulator = "$sdk\emulator\emulator.exe"
 $avd = "lunaris_api36"
-$pkg = "tools.lunaris.texteditor"
+$pkg = "io.github.martindavinci.lunaris.texteditor"
 
 function Get-BootedDevice {
     $line = (& $adb devices | Select-String -Pattern "^emulator-\d+\s+device").Line

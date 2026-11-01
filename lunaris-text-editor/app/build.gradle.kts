@@ -10,7 +10,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "tools.lunaris.texteditor"
+        applicationId = "io.github.martindavinci.lunaris.texteditor"
         minSdk = 26
         targetSdk = 36
         versionCode = 18
