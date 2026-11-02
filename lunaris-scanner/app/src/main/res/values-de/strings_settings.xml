@@ -16,6 +16,7 @@
     <string name="settings_clear_history_confirm">Löschen</string>
     <string name="settings_clear_history_keep">Behalten</string>
     <string name="settings_about_version">Version %1$s</string>
+    <string name="settings_about_author">Von Martin DaVinci</string>
     <string name="settings_about_tagline">Die alltäglichen Android-Apps, ohne Werbung.</string>
     <string name="settings_about_permissions">Benötigt nur die Kameraberechtigung.</string>
     <string name="settings_licenses">Lizenzen</string>

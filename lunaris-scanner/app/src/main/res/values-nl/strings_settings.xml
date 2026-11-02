@@ -17,6 +17,7 @@
     <string name="settings_clear_history_confirm">Wissen</string>
     <string name="settings_clear_history_keep">Bewaren</string>
     <string name="settings_about_version">Versie %1$s</string>
+    <string name="settings_about_author">Door Martin DaVinci</string>
     <string name="settings_about_tagline">De alledaagse Android-hulpmiddelen, zonder advertenties.</string>
     <string name="settings_about_permissions">Heeft alleen de cameramachtiging nodig.</string>
     <string name="settings_licenses">Licenties</string>

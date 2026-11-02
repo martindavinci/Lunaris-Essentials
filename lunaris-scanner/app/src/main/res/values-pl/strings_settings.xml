@@ -17,6 +17,7 @@
     <string name="settings_clear_history_confirm">Wyczyść</string>
     <string name="settings_clear_history_keep">Zachowaj</string>
     <string name="settings_about_version">Wersja %1$s</string>
+    <string name="settings_about_author">Autor: Martin DaVinci</string>
     <string name="settings_about_tagline">Codzienne narzędzia na Androida, bez reklam.</string>
     <string name="settings_about_permissions">Wymaga tylko uprawnienia do aparatu.</string>
     <string name="settings_licenses">Licencje</string>

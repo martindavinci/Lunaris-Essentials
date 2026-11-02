@@ -16,6 +16,7 @@
     <string name="settings_clear_history_confirm">Cancella</string>
     <string name="settings_clear_history_keep">Conserva</string>
     <string name="settings_about_version">Versione %1$s</string>
+    <string name="settings_about_author">Di Martin DaVinci</string>
     <string name="settings_about_tagline">Le utility Android di ogni giorno, senza pubblicità.</string>
     <string name="settings_about_permissions">Richiede solo l\'autorizzazione per la fotocamera.</string>
     <string name="settings_licenses">Licenze</string>

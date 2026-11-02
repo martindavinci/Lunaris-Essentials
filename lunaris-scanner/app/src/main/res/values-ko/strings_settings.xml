@@ -17,6 +17,7 @@
     <string name="settings_clear_history_confirm">지우기</string>
     <string name="settings_clear_history_keep">유지</string>
     <string name="settings_about_version">버전 %1$s</string>
+    <string name="settings_about_author">개발: Martin DaVinci</string>
     <string name="settings_about_tagline">광고 없는 일상의 Android 유틸리티.</string>
     <string name="settings_about_permissions">카메라 권한만 필요합니다.</string>
     <string name="settings_licenses">라이선스</string>

@@ -26,6 +26,11 @@ internal fun AboutSummary() {
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
+        Text(
+            text = stringResource(R.string.settings_about_author),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
         Spacer(Modifier.height(AboutSpacing))
         Text(stringResource(R.string.settings_about_tagline), style = MaterialTheme.typography.bodyMedium)
         Text(

@@ -17,6 +17,7 @@
     <string name="settings_clear_history_confirm">消去</string>
     <string name="settings_clear_history_keep">残す</string>
     <string name="settings_about_version">バージョン %1$s</string>
+    <string name="settings_about_author">開発: Martin DaVinci</string>
     <string name="settings_about_tagline">毎日使う Android ユーティリティを、広告なしで。</string>
     <string name="settings_about_permissions">必要な権限はカメラのみです。</string>
     <string name="settings_licenses">ライセンス</string>

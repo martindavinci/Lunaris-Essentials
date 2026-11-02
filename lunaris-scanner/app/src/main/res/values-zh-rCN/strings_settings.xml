@@ -17,6 +17,7 @@
     <string name="settings_clear_history_confirm">清除</string>
     <string name="settings_clear_history_keep">保留</string>
     <string name="settings_about_version">版本 %1$s</string>
+    <string name="settings_about_author">作者：Martin DaVinci</string>
     <string name="settings_about_tagline">日常必备的 Android 工具，没有广告。</string>
     <string name="settings_about_permissions">仅需要相机权限。</string>
     <string name="settings_licenses">许可</string>

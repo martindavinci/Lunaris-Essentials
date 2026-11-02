@@ -17,6 +17,7 @@
     <string name="settings_clear_history_confirm">Borrar</string>
     <string name="settings_clear_history_keep">Conservar</string>
     <string name="settings_about_version">Versión %1$s</string>
+    <string name="settings_about_author">Por Martin DaVinci</string>
     <string name="settings_about_tagline">Las utilidades de Android de cada día, sin anuncios.</string>
     <string name="settings_about_permissions">Solo necesita el permiso de la cámara.</string>
     <string name="settings_licenses">Licencias</string>
