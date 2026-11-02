@@ -33,7 +33,13 @@ been: they work offline, show nothing but your work, and stay out of your data.
 </tr>
 <tr>
 <td width="96" align="center"><a href="lunaris-scanner/"><img src="lunaris-scanner/app/src/main/ic_launcher-playstore.png" width="72" alt="Lunaris Scanner icon"></a></td>
-<td><b><a href="lunaris-scanner/">Lunaris Scanner</a></b><br>A QR code and barcode scanner and generator: 16 formats read from an image, 15 of them from the camera too, warnings on suspicious links, a history that stays on the phone. The camera is the only system permission.</td>
+<td><b><a href="lunaris-scanner/">Lunaris Scanner</a></b><br>A QR code and barcode scanner and generator: 16 formats read from an image, 15 of them from the camera too, warnings on suspicious links, a history that stays on the phone. The camera is the only system permission.<br><br>
+<a href="lunaris-scanner/"><img src="lunaris-scanner/docs/screenshots/link-warning.webp" width="104" alt="A link with its warnings"></a>
+<a href="lunaris-scanner/"><img src="lunaris-scanner/docs/screenshots/wifi.webp" width="104" alt="A Wi-Fi network from a code"></a>
+<a href="lunaris-scanner/"><img src="lunaris-scanner/docs/screenshots/contact.webp" width="104" alt="A contact from a code"></a>
+<a href="lunaris-scanner/"><img src="lunaris-scanner/docs/screenshots/history.webp" width="104" alt="The history of scans"></a>
+<a href="lunaris-scanner/"><img src="lunaris-scanner/docs/screenshots/create.webp" width="104" alt="Creating a QR code"></a>
+</td>
 </tr>
 </table>
 

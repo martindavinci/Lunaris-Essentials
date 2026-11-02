@@ -14,6 +14,17 @@
   <a href="../LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0--or--later-blue" alt="License: GPL-3.0-or-later"></a>
 </p>
 
+<p align="center">
+  <img src="docs/screenshots/link-warning.webp" width="32%" alt="A link with its warnings: not encrypted, and a bare IP number instead of a site name">
+  <img src="docs/screenshots/wifi.webp" width="32%" alt="A Wi-Fi network from a code, with the password hidden and a Connect button">
+  <img src="docs/screenshots/contact.webp" width="32%" alt="A contact from a code, with its fields, Add to contacts and the raw content">
+</p>
+<p align="center">
+  <img src="docs/screenshots/history.webp" width="32%" alt="The history of scans, with a search field, a type icon and the format of each code">
+  <img src="docs/screenshots/create.webp" width="32%" alt="Creating a QR code from a web address, with Save PNG, Share and Copy">
+  <img src="docs/screenshots/settings.webp" width="32%" alt="The settings: appearance, scanning and about">
+</p>
+
 ## Download
 
 <p>
