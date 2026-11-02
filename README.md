@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/icon.webp" alt="Lunaris Essentials: a Leonardo-style machine turning a crescent moon" width="240">
+</p>
+
 <h1 align="center">Lunaris Essentials</h1>
 
 <p align="center"><b>The everyday Android utilities, without the ads.</b></p>
