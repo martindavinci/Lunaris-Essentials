@@ -6,6 +6,8 @@
 
 <p align="center"><b>A QR code and barcode scanner and generator for Android that works offline and shows no ads.</b></p>
 
+<p align="center">by <a href="https://github.com/martindavinci">Martin DaVinci</a></p>
+
 <p align="center">
   <a href="https://github.com/martindavinci/lunaris-essentials/releases?q=lunaris-scanner&expanded=true"><img src="https://img.shields.io/github/v/release/martindavinci/lunaris-essentials?filter=lunaris-scanner-*&label=release" alt="Latest release"></a>
   <img src="https://img.shields.io/badge/Android-8.0%2B-3DDC84" alt="Android 8.0+">
@@ -31,6 +33,9 @@ since other Lunaris apps publish their releases here too.
 - 2D codes: QR Code, Aztec, Data Matrix, PDF417, MaxiCode
 - Barcodes: EAN-13, EAN-8, UPC-A, UPC-E, Code 128, Code 39, Code 93, Codabar, ITF, RSS-14, RSS Expanded
 - Reads from the live camera, from an image you pick from the gallery, or from an image shared from another app
+- With the camera, only what the viewfinder window shows is read, so a code next to the one you want stays out
+- Barcodes with a weak check must read the same across several rows and two frames in a row, which keeps QR codes and
+  pieces of other barcodes from passing for them; a Code 39 shorter than 3 characters is not accepted
 - MaxiCode is the exception: it is read only from a clean image that the symbol fills, not from the camera or a photo
 - Also reads inverted codes, light on a dark background
 
@@ -48,7 +53,7 @@ since other Lunaris apps publish their releases here too.
 **History and settings**
 - Keeps your last 500 scans on the phone, newest first; you can delete single entries, clear them all or turn the
   history off
-- Light, dark or system theme, and vibration on scan that you can turn off
+- Light, dark or system theme, 11 languages, and vibration on scan that you can turn off
 
 ## Privacy
 
