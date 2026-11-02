@@ -69,7 +69,9 @@ jobs:
           apk="dist/lunaris-text-editor-$VERSION.apk"
           mkdir -p dist
           cp app/build/outputs/apk/release/app-release.apk "$apk"
-          signer="$("$apksigner" verify --print-certs "$apk" | sed -n 's/^Signer #1 certificate SHA-256 digest: //p')"
+          # apksigner words these lines differently between versions ("Signer #1 certificate", "V2 Signer: certificate").
+          # sort -u leaves one line only if every signer found has the same certificate.
+          signer="$("$apksigner" verify --print-certs "$apk" | sed -n 's/.*certificate SHA-256 digest: //p' | sort -u)"
           if [ "$signer" != "$CERT_SHA256" ]; then
             echo "::error::APK signed with $signer, expected $CERT_SHA256"
             exit 1
