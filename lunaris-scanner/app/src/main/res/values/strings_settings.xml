@@ -1,0 +1,22 @@
+<resources>
+    <string name="settings_section_appearance">Appearance</string>
+    <string name="settings_section_scanning">Scanning</string>
+    <string name="settings_section_about">About</string>
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_system">System default</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_language">Language</string>
+    <string name="settings_language_system">System default</string>
+    <string name="settings_keep_history">Keep history</string>
+    <string name="settings_keep_history_summary">Save scanned codes on this device</string>
+    <string name="settings_vibrate_on_scan">Vibrate on scan</string>
+    <string name="settings_clear_history_title">Clear history?</string>
+    <string name="settings_clear_history_message">New scans will not be saved. The codes already in your history stay there until you clear them.</string>
+    <string name="settings_clear_history_confirm">Clear</string>
+    <string name="settings_clear_history_keep">Keep</string>
+    <string name="settings_about_version">Version %1$s</string>
+    <string name="settings_about_tagline">The everyday Android utilities, without the ads.</string>
+    <string name="settings_about_permissions">Needs only the camera permission.</string>
+    <string name="settings_licenses">Licenses</string>
+</resources>

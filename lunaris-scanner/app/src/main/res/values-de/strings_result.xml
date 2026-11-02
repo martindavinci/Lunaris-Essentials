@@ -1,0 +1,72 @@
+<resources>
+    <string name="result_no_app">Keine App auf diesem Telefon kann das</string>
+    <string name="result_copied">Kopiert</string>
+    <string name="result_clip_label">Gescannter Code</string>
+    <string name="result_wifi_join_by_hand">Passwort kopiert. Wähle das Netzwerk in den Wi-Fi-Einstellungen aus und füge es ein.</string>
+    <string name="result_yes">Ja</string>
+
+    <string name="result_raw_title">Originalinhalt</string>
+    <string name="result_raw_hidden">Ausgeblendet, weil das Passwort enthalten ist. Zeige das Passwort an, um den Inhalt zu sehen.</string>
+    <string name="result_password_show">Passwort anzeigen</string>
+    <string name="result_password_hide">Passwort ausblenden</string>
+
+    <string name="result_warning_title">Prüfe diesen Link vor dem Öffnen</string>
+    <string name="result_warning_blocked">Diese App öffnet nur http- und https-Links. Du kannst diesen Link aber kopieren.</string>
+    <string name="result_warning_not_https">Nicht verschlüsselt: Der Link verwendet kein HTTPS.</string>
+    <string name="result_warning_punycode">Die Adresse verwendet Punycode, womit sich der Name einer bekannten Website nachahmen lässt.</string>
+    <string name="result_warning_non_ascii_host">Die Adresse enthält ungewöhnliche Zeichen, die den Namen einer bekannten Website nachahmen können.</string>
+    <string name="result_warning_ip_address_host">Die Adresse ist eine reine IP-Nummer, kein Website-Name.</string>
+    <string name="result_warning_embedded_credentials">Der Link enthält einen Benutzernamen oder ein Passwort, was die echte Adresse verschleiern kann.</string>
+    <string name="result_warning_unusual_port">Der Link verwendet einen ungewöhnlichen Port.</string>
+
+    <string name="result_action_open_url">Link öffnen</string>
+    <string name="result_action_connect_wifi">Verbinden</string>
+    <string name="result_action_copy_password">Passwort kopieren</string>
+    <string name="result_action_add_contact">Zu Kontakten hinzufügen</string>
+    <string name="result_action_send_email">E-Mail schreiben</string>
+    <string name="result_action_dial">In Telefon-App öffnen</string>
+    <string name="result_action_send_sms">Nachricht schreiben</string>
+    <string name="result_action_view_map">Auf Karte anzeigen</string>
+    <string name="result_action_add_event">Zum Kalender hinzufügen</string>
+    <string name="result_action_web_search">Im Web suchen</string>
+
+    <string name="result_kind_url">Link</string>
+    <string name="result_kind_wifi">Wi-Fi-Netzwerk</string>
+    <string name="result_kind_contact">Kontakt</string>
+    <string name="result_kind_email">E-Mail</string>
+    <string name="result_kind_phone">Telefonnummer</string>
+    <string name="result_kind_sms">SMS</string>
+    <string name="result_kind_geo">Standort</string>
+    <string name="result_kind_event">Kalendertermin</string>
+    <string name="result_kind_product">Produktcode</string>
+    <string name="result_kind_text">Text</string>
+
+    <string name="result_field_url">Adresse</string>
+    <string name="result_field_ssid">Netzwerkname</string>
+    <string name="result_field_password">Passwort</string>
+    <string name="result_field_security">Sicherheit</string>
+    <string name="result_field_hidden_network">Verborgenes Netzwerk</string>
+    <string name="result_field_name">Name</string>
+    <string name="result_field_organization">Organisation</string>
+    <string name="result_field_job_title">Berufsbezeichnung</string>
+    <string name="result_field_phone">Telefon</string>
+    <string name="result_field_email">E-Mail</string>
+    <string name="result_field_address">Postanschrift</string>
+    <string name="result_field_website">Website</string>
+    <string name="result_field_note">Notiz</string>
+    <string name="result_field_to">An</string>
+    <string name="result_field_subject">Betreff</string>
+    <string name="result_field_body">Nachricht</string>
+    <string name="result_field_number">Nummer</string>
+    <string name="result_field_message">Nachricht</string>
+    <string name="result_field_coordinates">Koordinaten</string>
+    <string name="result_field_query">Ort</string>
+    <string name="result_field_summary">Titel</string>
+    <string name="result_field_start">Beginn</string>
+    <string name="result_field_end">Ende</string>
+    <string name="result_field_location">Ort</string>
+    <string name="result_field_description">Beschreibung</string>
+    <string name="result_field_code">Code</string>
+
+    <string name="result_wifi_security_none">Keine (offenes Netzwerk)</string>
+</resources>

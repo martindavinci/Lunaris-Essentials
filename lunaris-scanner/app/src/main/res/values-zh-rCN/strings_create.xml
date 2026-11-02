@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_type_text">文本</string>
+    <string name="create_type_url">网址</string>
+    <string name="create_type_wifi">Wi-Fi</string>
+    <string name="create_type_contact">联系人</string>
+    <string name="create_type_email">电子邮件</string>
+    <string name="create_type_phone">电话</string>
+    <string name="create_type_sms">短信</string>
+    <string name="create_type_barcode">条形码</string>
+    <string name="create_field_text">文本</string>
+    <string name="create_field_url">网址</string>
+    <string name="create_field_ssid">网络名称</string>
+    <string name="create_field_password">密码</string>
+    <string name="create_field_hidden">隐藏网络</string>
+    <string name="create_field_name">姓名</string>
+    <string name="create_field_organization">单位</string>
+    <string name="create_field_job_title">职位</string>
+    <string name="create_field_phone">电话号码</string>
+    <string name="create_field_email">电子邮件地址</string>
+    <string name="create_field_address">地址</string>
+    <string name="create_field_website">网站</string>
+    <string name="create_field_note">备注</string>
+    <string name="create_field_to">收件人</string>
+    <string name="create_field_subject">主题</string>
+    <string name="create_field_message">内容</string>
+    <string name="create_field_barcode">条形码内容</string>
+    <string name="create_wifi_security_none">开放</string>
+    <string name="create_format_title">格式</string>
+    <string name="create_format_locked">此内容只能生成 QR 码</string>
+    <string name="create_error_empty">请输入内容</string>
+    <string name="create_error_too_long">内容过长，超出此格式的限制</string>
+    <string name="create_error_bad_characters">此格式不支持其中的某些字符</string>
+    <string name="create_error_bad_length">字符数不符合此格式的要求</string>
+    <string name="create_error_bad_check_digit">校验位有误</string>
+    <string name="create_error_encode">无法用此格式编码该内容</string>
+    <string name="create_preview_description">生成的代码预览</string>
+    <string name="create_preview_placeholder">您的代码将显示在这里</string>
+    <string name="create_save">保存 PNG</string>
+    <string name="create_message_saved">图片已保存</string>
+    <string name="create_message_save_failed">无法保存图片</string>
+    <string name="create_message_share_failed">无法分享图片</string>
+    <string name="create_message_copied">已复制</string>
+</resources>

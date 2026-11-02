@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_section_appearance">外观</string>
+    <string name="settings_section_scanning">扫描</string>
+    <string name="settings_section_about">关于</string>
+    <string name="settings_theme">主题</string>
+    <string name="settings_theme_system">跟随系统</string>
+    <string name="settings_theme_light">浅色</string>
+    <string name="settings_theme_dark">深色</string>
+    <string name="settings_language">语言</string>
+    <string name="settings_language_system">跟随系统</string>
+    <string name="settings_keep_history">保留历史记录</string>
+    <string name="settings_keep_history_summary">将扫描的代码保存在此设备上</string>
+    <string name="settings_vibrate_on_scan">扫描时振动</string>
+    <string name="settings_clear_history_title">要清除历史记录吗？</string>
+    <string name="settings_clear_history_message">新的扫描将不会被保存。历史记录中已有的代码会一直保留，直到您清除。</string>
+    <string name="settings_clear_history_confirm">清除</string>
+    <string name="settings_clear_history_keep">保留</string>
+    <string name="settings_about_version">版本 %1$s</string>
+    <string name="settings_about_tagline">日常必备的 Android 工具，没有广告。</string>
+    <string name="settings_about_permissions">仅需要相机权限。</string>
+    <string name="settings_licenses">许可</string>
+</resources>

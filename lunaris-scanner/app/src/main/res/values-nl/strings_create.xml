@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_type_text">Tekst</string>
+    <string name="create_type_url">URL</string>
+    <string name="create_type_wifi">Wi-Fi</string>
+    <string name="create_type_contact">Contact</string>
+    <string name="create_type_email">E-mail</string>
+    <string name="create_type_phone">Telefoon</string>
+    <string name="create_type_sms">Sms</string>
+    <string name="create_type_barcode">Barcode</string>
+
+    <string name="create_field_text">Tekst</string>
+    <string name="create_field_url">Webadres</string>
+    <string name="create_field_ssid">Netwerknaam</string>
+    <string name="create_field_password">Wachtwoord</string>
+    <string name="create_field_hidden">Verborgen netwerk</string>
+    <string name="create_field_name">Naam</string>
+    <string name="create_field_organization">Organisatie</string>
+    <string name="create_field_job_title">Functie</string>
+    <string name="create_field_phone">Telefoonnummer</string>
+    <string name="create_field_email">E-mailadres</string>
+    <string name="create_field_address">Adres</string>
+    <string name="create_field_website">Website</string>
+    <string name="create_field_note">Notitie</string>
+    <string name="create_field_to">Aan</string>
+    <string name="create_field_subject">Onderwerp</string>
+    <string name="create_field_message">Bericht</string>
+    <string name="create_field_barcode">Inhoud van de barcode</string>
+
+    <string name="create_wifi_security_none">Open</string>
+
+    <string name="create_format_title">Formaat</string>
+    <string name="create_format_locked">Deze inhoud is altijd een QR-code</string>
+
+    <string name="create_error_empty">Voer inhoud in</string>
+    <string name="create_error_too_long">Te lang voor dit formaat</string>
+    <string name="create_error_bad_characters">Dit formaat staat sommige van deze tekens niet toe</string>
+    <string name="create_error_bad_length">Onjuist aantal tekens voor dit formaat</string>
+    <string name="create_error_bad_check_digit">Het controlecijfer klopt niet</string>
+    <string name="create_error_encode">Deze inhoud kan niet in dit formaat worden gecodeerd</string>
+
+    <string name="create_preview_description">Voorbeeld van de gemaakte code</string>
+    <string name="create_preview_placeholder">Je code verschijnt hier</string>
+    <string name="create_save">PNG opslaan</string>
+
+    <string name="create_message_saved">Afbeelding opgeslagen</string>
+    <string name="create_message_save_failed">Kan de afbeelding niet opslaan</string>
+    <string name="create_message_share_failed">Kan de afbeelding niet delen</string>
+    <string name="create_message_copied">Gekopieerd</string>
+</resources>

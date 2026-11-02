@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="history_search_hint">Geschiedenis doorzoeken</string>
+    <string name="history_search_clear">Zoekopdracht wissen</string>
+    <string name="history_no_results">Niets gevonden</string>
+    <string name="history_more_options">Meer opties</string>
+    <string name="history_clear_all">Geschiedenis wissen</string>
+    <string name="history_clear_title">Geschiedenis wissen?</string>
+    <string name="history_clear_message">Alle opgeslagen scans worden verwijderd. Dit kan niet ongedaan worden gemaakt.</string>
+    <string name="history_empty_title">Nog geen scans</string>
+    <string name="history_empty_body">De codes die je scant, verschijnen hier.</string>
+    <string name="history_off_title">Geschiedenis staat uit</string>
+    <string name="history_off_body">Nieuwe scans worden niet opgeslagen. Je kunt de geschiedenis inschakelen bij Instellingen.</string>
+
+    <string name="history_kind_url">Link</string>
+    <string name="history_kind_wifi">Wi-Fi-netwerk</string>
+    <string name="history_kind_contact">Contact</string>
+    <string name="history_kind_email">E-mail</string>
+    <string name="history_kind_phone">Telefoonnummer</string>
+    <string name="history_kind_sms">Sms-bericht</string>
+    <string name="history_kind_geo">Locatie</string>
+    <string name="history_kind_event">Afspraak</string>
+    <string name="history_kind_product">Product</string>
+    <string name="history_kind_text">Tekst</string>
+
+    <string name="history_time_now">nu</string>
+    <string name="history_time_minutes">%d min geleden</string>
+    <string name="history_time_hours">%d uur geleden</string>
+    <string name="history_time_yesterday">gisteren</string>
+    <string name="history_time_days">%d dagen geleden</string>
+</resources>

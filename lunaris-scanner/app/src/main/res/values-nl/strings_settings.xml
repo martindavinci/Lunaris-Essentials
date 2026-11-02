@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_section_appearance">Weergave</string>
+    <string name="settings_section_scanning">Scannen</string>
+    <string name="settings_section_about">Over</string>
+    <string name="settings_theme">Thema</string>
+    <string name="settings_theme_system">Systeemstandaard</string>
+    <string name="settings_theme_light">Licht</string>
+    <string name="settings_theme_dark">Donker</string>
+    <string name="settings_language">Taal</string>
+    <string name="settings_language_system">Systeemstandaard</string>
+    <string name="settings_keep_history">Geschiedenis bewaren</string>
+    <string name="settings_keep_history_summary">Gescande codes op dit apparaat opslaan</string>
+    <string name="settings_vibrate_on_scan">Trillen bij scannen</string>
+    <string name="settings_clear_history_title">Geschiedenis wissen?</string>
+    <string name="settings_clear_history_message">Nieuwe scans worden niet opgeslagen. De codes in je geschiedenis blijven staan totdat je ze wist.</string>
+    <string name="settings_clear_history_confirm">Wissen</string>
+    <string name="settings_clear_history_keep">Bewaren</string>
+    <string name="settings_about_version">Versie %1$s</string>
+    <string name="settings_about_tagline">De alledaagse Android-hulpmiddelen, zonder advertenties.</string>
+    <string name="settings_about_permissions">Heeft alleen de cameramachtiging nodig.</string>
+    <string name="settings_licenses">Licenties</string>
+</resources>

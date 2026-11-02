@@ -1,0 +1,67 @@
+<resources>
+    <string name="create_type_text">Text</string>
+    <string name="create_type_url">URL</string>
+    <string name="create_type_wifi">Wi-Fi</string>
+    <string name="create_type_contact">Contact</string>
+    <string name="create_type_email">Email</string>
+    <string name="create_type_phone">Phone</string>
+    <string name="create_type_sms">SMS</string>
+    <string name="create_type_barcode">Barcode</string>
+
+    <string name="create_field_text">Text</string>
+    <string name="create_field_url">Web address</string>
+    <string name="create_field_ssid">Network name</string>
+    <string name="create_field_password">Password</string>
+    <string name="create_field_hidden">Hidden network</string>
+    <string name="create_field_name">Name</string>
+    <string name="create_field_organization">Organization</string>
+    <string name="create_field_job_title">Job title</string>
+    <string name="create_field_phone">Phone number</string>
+    <string name="create_field_email">Email address</string>
+    <string name="create_field_address">Address</string>
+    <string name="create_field_website">Website</string>
+    <string name="create_field_note">Note</string>
+    <string name="create_field_to">To</string>
+    <string name="create_field_subject">Subject</string>
+    <string name="create_field_message">Message</string>
+    <string name="create_field_barcode">Barcode content</string>
+
+    <string name="create_wifi_security_none">Open</string>
+    <string name="create_wifi_security_wep" translatable="false">WEP</string>
+    <string name="create_wifi_security_wpa" translatable="false">WPA/WPA2/WPA3</string>
+
+    <string name="create_format_title">Format</string>
+    <string name="create_format_locked">This content is always a QR code</string>
+    <string name="create_format_qr_code" translatable="false">QR Code</string>
+    <string name="create_format_aztec" translatable="false">Aztec</string>
+    <string name="create_format_data_matrix" translatable="false">Data Matrix</string>
+    <string name="create_format_pdf_417" translatable="false">PDF417</string>
+    <string name="create_format_maxicode" translatable="false">MaxiCode</string>
+    <string name="create_format_ean_13" translatable="false">EAN-13</string>
+    <string name="create_format_ean_8" translatable="false">EAN-8</string>
+    <string name="create_format_upc_a" translatable="false">UPC-A</string>
+    <string name="create_format_upc_e" translatable="false">UPC-E</string>
+    <string name="create_format_code_128" translatable="false">Code 128</string>
+    <string name="create_format_code_39" translatable="false">Code 39</string>
+    <string name="create_format_code_93" translatable="false">Code 93</string>
+    <string name="create_format_codabar" translatable="false">Codabar</string>
+    <string name="create_format_itf" translatable="false">ITF</string>
+    <string name="create_format_rss_14" translatable="false">RSS-14</string>
+    <string name="create_format_rss_expanded" translatable="false">RSS Expanded</string>
+
+    <string name="create_error_empty">Enter some content</string>
+    <string name="create_error_too_long">Too long for this format</string>
+    <string name="create_error_bad_characters">This format does not allow some of these characters</string>
+    <string name="create_error_bad_length">Wrong number of characters for this format</string>
+    <string name="create_error_bad_check_digit">The check digit is wrong</string>
+    <string name="create_error_encode">This content cannot be encoded in this format</string>
+
+    <string name="create_preview_description">Preview of the generated code</string>
+    <string name="create_preview_placeholder">Your code will appear here</string>
+    <string name="create_save">Save PNG</string>
+
+    <string name="create_message_saved">Image saved</string>
+    <string name="create_message_save_failed">Could not save the image</string>
+    <string name="create_message_share_failed">Could not share the image</string>
+    <string name="create_message_copied">Copied</string>
+</resources>

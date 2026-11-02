@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="history_search_hint">Search history</string>
+    <string name="history_search_clear">Clear search</string>
+    <string name="history_no_results">Nothing matches your search</string>
+    <string name="history_more_options">More options</string>
+    <string name="history_clear_all">Clear history</string>
+    <string name="history_clear_title">Clear history?</string>
+    <string name="history_clear_message">Every saved scan will be deleted. This cannot be undone.</string>
+    <string name="history_empty_title">No scans yet</string>
+    <string name="history_empty_body">The codes you scan will appear here.</string>
+    <string name="history_off_title">History is off</string>
+    <string name="history_off_body">New scans are not saved. You can turn history on in Settings.</string>
+    <string name="history_row_details" translatable="false">%1$s · %2$s</string>
+
+    <string name="history_kind_url">Link</string>
+    <string name="history_kind_wifi">Wi-Fi network</string>
+    <string name="history_kind_contact">Contact</string>
+    <string name="history_kind_email">Email</string>
+    <string name="history_kind_phone">Phone number</string>
+    <string name="history_kind_sms">Text message</string>
+    <string name="history_kind_geo">Location</string>
+    <string name="history_kind_event">Event</string>
+    <string name="history_kind_product">Product</string>
+    <string name="history_kind_text">Text</string>
+
+    <string name="history_time_now">now</string>
+    <string name="history_time_minutes">%d min ago</string>
+    <string name="history_time_hours">%d h ago</string>
+    <string name="history_time_yesterday">yesterday</string>
+    <string name="history_time_days">%d days ago</string>
+
+    <string name="history_format_qr_code" translatable="false">QR Code</string>
+    <string name="history_format_aztec" translatable="false">Aztec</string>
+    <string name="history_format_data_matrix" translatable="false">Data Matrix</string>
+    <string name="history_format_pdf_417" translatable="false">PDF417</string>
+    <string name="history_format_maxicode" translatable="false">MaxiCode</string>
+    <string name="history_format_ean_13" translatable="false">EAN-13</string>
+    <string name="history_format_ean_8" translatable="false">EAN-8</string>
+    <string name="history_format_upc_a" translatable="false">UPC-A</string>
+    <string name="history_format_upc_e" translatable="false">UPC-E</string>
+    <string name="history_format_code_128" translatable="false">Code 128</string>
+    <string name="history_format_code_39" translatable="false">Code 39</string>
+    <string name="history_format_code_93" translatable="false">Code 93</string>
+    <string name="history_format_codabar" translatable="false">Codabar</string>
+    <string name="history_format_itf" translatable="false">ITF</string>
+    <string name="history_format_rss_14" translatable="false">GS1 DataBar</string>
+    <string name="history_format_rss_expanded" translatable="false">GS1 DataBar Expanded</string>
+</resources>

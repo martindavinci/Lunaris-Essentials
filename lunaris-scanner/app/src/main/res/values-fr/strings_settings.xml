@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_section_appearance">Apparence</string>
+    <string name="settings_section_scanning">Scan</string>
+    <string name="settings_section_about">À propos</string>
+    <string name="settings_theme">Thème</string>
+    <string name="settings_theme_system">Valeur par défaut du système</string>
+    <string name="settings_theme_light">Clair</string>
+    <string name="settings_theme_dark">Sombre</string>
+    <string name="settings_language">Langue</string>
+    <string name="settings_language_system">Valeur par défaut du système</string>
+    <string name="settings_keep_history">Conserver l\'historique</string>
+    <string name="settings_keep_history_summary">Enregistrer les codes scannés sur cet appareil</string>
+    <string name="settings_vibrate_on_scan">Vibrer lors du scan</string>
+    <string name="settings_clear_history_title">Effacer l\'historique ?</string>
+    <string name="settings_clear_history_message">Les nouveaux scans ne seront pas enregistrés. Les codes déjà présents dans l\'historique y restent jusqu\'à ce que vous les effaciez.</string>
+    <string name="settings_clear_history_confirm">Effacer</string>
+    <string name="settings_clear_history_keep">Conserver</string>
+    <string name="settings_about_version">Version %1$s</string>
+    <string name="settings_about_tagline">Les utilitaires Android du quotidien, sans publicité.</string>
+    <string name="settings_about_permissions">Nécessite uniquement l\'autorisation de l\'appareil photo.</string>
+    <string name="settings_licenses">Licences</string>
+</resources>

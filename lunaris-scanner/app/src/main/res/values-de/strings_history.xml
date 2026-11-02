@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="history_search_hint">Verlauf durchsuchen</string>
+    <string name="history_search_clear">Suche löschen</string>
+    <string name="history_no_results">Keine Treffer für deine Suche</string>
+    <string name="history_more_options">Weitere Optionen</string>
+    <string name="history_clear_all">Verlauf löschen</string>
+    <string name="history_clear_title">Verlauf löschen?</string>
+    <string name="history_clear_message">Alle gespeicherten Scans werden gelöscht. Das kann nicht rückgängig gemacht werden.</string>
+    <string name="history_empty_title">Noch keine Scans</string>
+    <string name="history_empty_body">Gescannte Codes erscheinen hier.</string>
+    <string name="history_off_title">Verlauf ist deaktiviert</string>
+    <string name="history_off_body">Neue Scans werden nicht gespeichert. Du kannst den Verlauf in den Einstellungen aktivieren.</string>
+
+    <string name="history_kind_url">Link</string>
+    <string name="history_kind_wifi">Wi-Fi-Netzwerk</string>
+    <string name="history_kind_contact">Kontakt</string>
+    <string name="history_kind_email">E-Mail</string>
+    <string name="history_kind_phone">Telefonnummer</string>
+    <string name="history_kind_sms">SMS</string>
+    <string name="history_kind_geo">Standort</string>
+    <string name="history_kind_event">Termin</string>
+    <string name="history_kind_product">Produkt</string>
+    <string name="history_kind_text">Text</string>
+
+    <string name="history_time_now">jetzt</string>
+    <string name="history_time_minutes">vor %d Min.</string>
+    <string name="history_time_hours">vor %d Std.</string>
+    <string name="history_time_yesterday">gestern</string>
+    <string name="history_time_days">vor %d Tagen</string>
+</resources>

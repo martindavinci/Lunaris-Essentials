@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_section_appearance">Aspeto</string>
+    <string name="settings_section_scanning">Leitura</string>
+    <string name="settings_section_about">Acerca de</string>
+    <string name="settings_theme">Tema</string>
+    <string name="settings_theme_system">Predefinição do sistema</string>
+    <string name="settings_theme_light">Claro</string>
+    <string name="settings_theme_dark">Escuro</string>
+    <string name="settings_language">Idioma</string>
+    <string name="settings_language_system">Predefinição do sistema</string>
+    <string name="settings_keep_history">Manter histórico</string>
+    <string name="settings_keep_history_summary">Guardar os códigos lidos neste dispositivo</string>
+    <string name="settings_vibrate_on_scan">Vibrar ao ler</string>
+    <string name="settings_clear_history_title">Limpar histórico?</string>
+    <string name="settings_clear_history_message">As novas leituras não serão guardadas. Os códigos já no histórico ficam lá até os limpar.</string>
+    <string name="settings_clear_history_confirm">Limpar</string>
+    <string name="settings_clear_history_keep">Manter</string>
+    <string name="settings_about_version">Versão %1$s</string>
+    <string name="settings_about_tagline">As utilidades Android de todos os dias, sem anúncios.</string>
+    <string name="settings_about_permissions">Só precisa da permissão da câmara.</string>
+    <string name="settings_licenses">Licenças</string>
+</resources>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="result_no_app">この操作に対応するアプリがありません</string>
+    <string name="result_copied">コピーしました</string>
+    <string name="result_clip_label">スキャンしたコード</string>
+    <string name="result_wifi_join_by_hand">パスワードをコピーしました。Wi-Fi 設定でネットワークを選び、貼り付けてください。</string>
+    <string name="result_yes">はい</string>
+
+    <string name="result_raw_title">元のデータ</string>
+    <string name="result_raw_hidden">パスワードを含むため非表示です。パスワードを表示すると確認できます。</string>
+    <string name="result_password_show">パスワードを表示</string>
+    <string name="result_password_hide">パスワードを非表示</string>
+
+    <string name="result_warning_title">開く前にこのリンクを確認してください</string>
+    <string name="result_warning_blocked">このアプリで開けるのは http と https のリンクのみです。コピーは可能です。</string>
+    <string name="result_warning_not_https">HTTPS を使用していないため、暗号化されていません。</string>
+    <string name="result_warning_punycode">このアドレスは Punycode を使用しており、有名なサイトの名前を装っている可能性があります。</string>
+    <string name="result_warning_non_ascii_host">このアドレスには、有名なサイトの名前を装える特殊な文字が含まれています。</string>
+    <string name="result_warning_ip_address_host">このアドレスはサイト名ではなく IP アドレスです。</string>
+    <string name="result_warning_embedded_credentials">このリンクにはユーザー名またはパスワードが含まれており、本当のアドレスが隠されている可能性があります。</string>
+    <string name="result_warning_unusual_port">このリンクは一般的でないポートを使用しています。</string>
+
+    <string name="result_action_open_url">リンクを開く</string>
+    <string name="result_action_connect_wifi">接続</string>
+    <string name="result_action_copy_password">パスワードをコピー</string>
+    <string name="result_action_add_contact">連絡先に追加</string>
+    <string name="result_action_send_email">メールを作成</string>
+    <string name="result_action_dial">電話アプリで開く</string>
+    <string name="result_action_send_sms">メッセージを作成</string>
+    <string name="result_action_view_map">地図で表示</string>
+    <string name="result_action_add_event">カレンダーに追加</string>
+    <string name="result_action_web_search">ウェブで検索</string>
+
+    <string name="result_kind_url">リンク</string>
+    <string name="result_kind_wifi">Wi-Fi ネットワーク</string>
+    <string name="result_kind_contact">連絡先</string>
+    <string name="result_kind_email">メール</string>
+    <string name="result_kind_phone">電話番号</string>
+    <string name="result_kind_sms">テキストメッセージ</string>
+    <string name="result_kind_geo">位置情報</string>
+    <string name="result_kind_event">カレンダーの予定</string>
+    <string name="result_kind_product">商品コード</string>
+    <string name="result_kind_text">テキスト</string>
+
+    <string name="result_field_url">アドレス</string>
+    <string name="result_field_ssid">ネットワーク名</string>
+    <string name="result_field_password">パスワード</string>
+    <string name="result_field_security">セキュリティ</string>
+    <string name="result_field_hidden_network">非公開ネットワーク</string>
+    <string name="result_field_name">名前</string>
+    <string name="result_field_organization">組織</string>
+    <string name="result_field_job_title">役職</string>
+    <string name="result_field_phone">電話</string>
+    <string name="result_field_email">メール</string>
+    <string name="result_field_address">住所</string>
+    <string name="result_field_website">ウェブサイト</string>
+    <string name="result_field_note">メモ</string>
+    <string name="result_field_to">宛先</string>
+    <string name="result_field_subject">件名</string>
+    <string name="result_field_body">本文</string>
+    <string name="result_field_number">番号</string>
+    <string name="result_field_message">メッセージ</string>
+    <string name="result_field_coordinates">座標</string>
+    <string name="result_field_query">場所</string>
+    <string name="result_field_summary">タイトル</string>
+    <string name="result_field_start">開始</string>
+    <string name="result_field_end">終了</string>
+    <string name="result_field_location">場所</string>
+    <string name="result_field_description">説明</string>
+    <string name="result_field_code">コード</string>
+
+    <string name="result_wifi_security_none">なし（オープンネットワーク）</string>
+</resources>

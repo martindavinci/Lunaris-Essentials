@@ -31,6 +31,10 @@ been: they work offline, show nothing but your work, and stay out of your data.
 <a href="lunaris-text-editor/"><img src="lunaris-text-editor/docs/screenshots/settings.webp" width="104" alt="The settings"></a>
 </td>
 </tr>
+<tr>
+<td width="96" align="center"><a href="lunaris-scanner/"><img src="lunaris-scanner/app/src/main/ic_launcher-playstore.png" width="72" alt="Lunaris Scanner icon"></a></td>
+<td><b><a href="lunaris-scanner/">Lunaris Scanner</a></b><br>A QR code and barcode scanner and generator: 16 formats read from an image, 15 of them from the camera too, warnings on suspicious links, a history that stays on the phone. The camera is the only system permission.</td>
+</tr>
 </table>
 
 More everyday tools will join, one at a time.

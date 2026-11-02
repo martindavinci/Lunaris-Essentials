@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_section_appearance">화면 스타일</string>
+    <string name="settings_section_scanning">스캔</string>
+    <string name="settings_section_about">정보</string>
+    <string name="settings_theme">테마</string>
+    <string name="settings_theme_system">시스템 기본값</string>
+    <string name="settings_theme_light">라이트</string>
+    <string name="settings_theme_dark">다크</string>
+    <string name="settings_language">언어</string>
+    <string name="settings_language_system">시스템 기본값</string>
+    <string name="settings_keep_history">기록 보관</string>
+    <string name="settings_keep_history_summary">스캔한 코드를 이 기기에 저장합니다</string>
+    <string name="settings_vibrate_on_scan">스캔 시 진동</string>
+    <string name="settings_clear_history_title">기록을 지울까요?</string>
+    <string name="settings_clear_history_message">새 스캔은 저장되지 않습니다. 기록에 있는 코드는 지울 때까지 남아 있습니다.</string>
+    <string name="settings_clear_history_confirm">지우기</string>
+    <string name="settings_clear_history_keep">유지</string>
+    <string name="settings_about_version">버전 %1$s</string>
+    <string name="settings_about_tagline">광고 없는 일상의 Android 유틸리티.</string>
+    <string name="settings_about_permissions">카메라 권한만 필요합니다.</string>
+    <string name="settings_licenses">라이선스</string>
+</resources>

@@ -1,0 +1,49 @@
+<resources>
+    <string name="create_type_text">Text</string>
+    <string name="create_type_url">URL</string>
+    <string name="create_type_wifi">Wi-Fi</string>
+    <string name="create_type_contact">Kontakt</string>
+    <string name="create_type_email">E-Mail</string>
+    <string name="create_type_phone">Telefon</string>
+    <string name="create_type_sms">SMS</string>
+    <string name="create_type_barcode">Barcode</string>
+
+    <string name="create_field_text">Text</string>
+    <string name="create_field_url">Webadresse</string>
+    <string name="create_field_ssid">Netzwerkname</string>
+    <string name="create_field_password">Passwort</string>
+    <string name="create_field_hidden">Verborgenes Netzwerk</string>
+    <string name="create_field_name">Name</string>
+    <string name="create_field_organization">Organisation</string>
+    <string name="create_field_job_title">Berufsbezeichnung</string>
+    <string name="create_field_phone">Telefonnummer</string>
+    <string name="create_field_email">E-Mail-Adresse</string>
+    <string name="create_field_address">Adresse</string>
+    <string name="create_field_website">Website</string>
+    <string name="create_field_note">Notiz</string>
+    <string name="create_field_to">An</string>
+    <string name="create_field_subject">Betreff</string>
+    <string name="create_field_message">Nachricht</string>
+    <string name="create_field_barcode">Barcode-Inhalt</string>
+
+    <string name="create_wifi_security_none">Offen</string>
+
+    <string name="create_format_title">Format</string>
+    <string name="create_format_locked">Dieser Inhalt ist immer ein QR-Code</string>
+
+    <string name="create_error_empty">Gib einen Inhalt ein</string>
+    <string name="create_error_too_long">Zu lang für dieses Format</string>
+    <string name="create_error_bad_characters">Einige dieser Zeichen sind in diesem Format nicht erlaubt</string>
+    <string name="create_error_bad_length">Falsche Zeichenanzahl für dieses Format</string>
+    <string name="create_error_bad_check_digit">Die Prüfziffer ist falsch</string>
+    <string name="create_error_encode">Dieser Inhalt lässt sich in diesem Format nicht codieren</string>
+
+    <string name="create_preview_description">Vorschau des erstellten Codes</string>
+    <string name="create_preview_placeholder">Dein Code erscheint hier</string>
+    <string name="create_save">PNG speichern</string>
+
+    <string name="create_message_saved">Bild gespeichert</string>
+    <string name="create_message_save_failed">Bild konnte nicht gespeichert werden</string>
+    <string name="create_message_share_failed">Bild konnte nicht geteilt werden</string>
+    <string name="create_message_copied">Kopiert</string>
+</resources>

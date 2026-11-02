@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_type_text">テキスト</string>
+    <string name="create_type_url">URL</string>
+    <string name="create_type_wifi">Wi-Fi</string>
+    <string name="create_type_contact">連絡先</string>
+    <string name="create_type_email">メール</string>
+    <string name="create_type_phone">電話</string>
+    <string name="create_type_sms">SMS</string>
+    <string name="create_type_barcode">バーコード</string>
+
+    <string name="create_field_text">テキスト</string>
+    <string name="create_field_url">ウェブアドレス</string>
+    <string name="create_field_ssid">ネットワーク名</string>
+    <string name="create_field_password">パスワード</string>
+    <string name="create_field_hidden">非公開ネットワーク</string>
+    <string name="create_field_name">名前</string>
+    <string name="create_field_organization">組織</string>
+    <string name="create_field_job_title">役職</string>
+    <string name="create_field_phone">電話番号</string>
+    <string name="create_field_email">メールアドレス</string>
+    <string name="create_field_address">住所</string>
+    <string name="create_field_website">ウェブサイト</string>
+    <string name="create_field_note">メモ</string>
+    <string name="create_field_to">宛先</string>
+    <string name="create_field_subject">件名</string>
+    <string name="create_field_message">本文</string>
+    <string name="create_field_barcode">バーコードの内容</string>
+
+    <string name="create_wifi_security_none">なし</string>
+
+    <string name="create_format_title">形式</string>
+    <string name="create_format_locked">この内容は常に QR コードになります</string>
+
+    <string name="create_error_empty">内容を入力してください</string>
+    <string name="create_error_too_long">この形式には長すぎます</string>
+    <string name="create_error_bad_characters">この形式で使えない文字が含まれています</string>
+    <string name="create_error_bad_length">この形式の文字数と一致しません</string>
+    <string name="create_error_bad_check_digit">チェックディジットが正しくありません</string>
+    <string name="create_error_encode">この内容はこの形式でコード化できません</string>
+
+    <string name="create_preview_description">生成されたコードのプレビュー</string>
+    <string name="create_preview_placeholder">ここにコードが表示されます</string>
+    <string name="create_save">PNG を保存</string>
+
+    <string name="create_message_saved">画像を保存しました</string>
+    <string name="create_message_save_failed">画像を保存できませんでした</string>
+    <string name="create_message_share_failed">画像を共有できませんでした</string>
+    <string name="create_message_copied">コピーしました</string>
+</resources>

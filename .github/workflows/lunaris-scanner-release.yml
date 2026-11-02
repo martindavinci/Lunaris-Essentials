@@ -1,0 +1,119 @@
+name: Lunaris Scanner release
+
+# A tag lunaris-scanner-vX.Y.Z builds the signed APK and drafts a GitHub release for it.
+# Manual runs only build the APK (an artifact); they never publish.
+# Needs the secrets LUNARIS_KEYSTORE_BASE64, LUNARIS_KEYSTORE_PASSWORD, LUNARIS_KEY_ALIAS and
+# LUNARIS_KEY_PASSWORD.
+on:
+  push:
+    tags: ['lunaris-scanner-v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  # SHA-256 of the release certificate (CN=Martin DaVinci): an APK signed with anything else fails.
+  CERT_SHA256: 5c5322171687d3e93800df21003835e8cfc75a1b61ab5d14acc525ed56cb0770
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lunaris-scanner
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Read the version
+        id: version
+        run: echo "version=$(sed -n 's/^ *versionName = "\(.*\)"$/\1/p' app/build.gradle.kts)" >> "$GITHUB_OUTPUT"
+      - name: Tag matches the version
+        if: github.event_name == 'push'
+        env:
+          TAG: ${{ github.ref_name }}
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          if [ "$TAG" != "lunaris-scanner-v$VERSION" ]; then
+            echo "::error::tag $TAG does not match versionName $VERSION"
+            exit 1
+          fi
+      - name: Decode the keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.LUNARIS_KEYSTORE_BASE64 }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "::error::the LUNARIS_KEYSTORE_BASE64 secret is not set"
+            exit 1
+          fi
+          echo "$KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/lunaris-release.jks"
+      - name: Test and build the signed APK
+        env:
+          LUNARIS_KEYSTORE_FILE: ${{ runner.temp }}/lunaris-release.jks
+          LUNARIS_KEYSTORE_PASSWORD: ${{ secrets.LUNARIS_KEYSTORE_PASSWORD }}
+          LUNARIS_KEY_ALIAS: ${{ secrets.LUNARIS_KEY_ALIAS }}
+          LUNARIS_KEY_PASSWORD: ${{ secrets.LUNARIS_KEY_PASSWORD }}
+        run: ./gradlew --no-daemon :app:testDebugUnitTest :app:assembleRelease
+      - name: Check the signature and name the APK
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          rm -f "$RUNNER_TEMP/lunaris-release.jks"
+          apksigner="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -n 1)/apksigner"
+          apk="dist/lunaris-scanner-$VERSION.apk"
+          mkdir -p dist
+          cp app/build/outputs/apk/release/app-release.apk "$apk"
+          # apksigner words these lines differently between versions ("Signer #1 certificate", "V2 Signer: certificate").
+          # sort -u leaves one line only if every signer found has the same certificate.
+          signer="$("$apksigner" verify --print-certs "$apk" | sed -n 's/.*certificate SHA-256 digest: //p' | sort -u)"
+          if [ "$signer" != "$CERT_SHA256" ]; then
+            echo "::error::APK signed with $signer, expected $CERT_SHA256"
+            exit 1
+          fi
+          (cd dist && sha256sum "$(basename "$apk")" > "$(basename "$apk").sha256")
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lunaris-scanner-${{ steps.version.outputs.version }}
+          path: lunaris-scanner/dist/*
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          name: lunaris-scanner-${{ needs.build.outputs.version }}
+          path: dist
+      - name: Draft the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+          VERSION: ${{ needs.build.outputs.version }}
+        run: |
+          previous="$(git describe --tags --abbrev=0 --match 'lunaris-scanner-v*' "$TAG^" 2>/dev/null || true)"
+          range="${previous:+$previous..}$TAG"
+          {
+            echo "## Changes"
+            echo
+            git log --no-merges --format='- %s' "$range" -- lunaris-scanner
+            echo
+            echo "## Verify"
+            echo
+            echo "SHA-256 of the APK: \`$(cut -d ' ' -f 1 "dist/lunaris-scanner-$VERSION.apk.sha256")\`"
+            echo
+            echo "Signing certificate (CN=Martin DaVinci), SHA-256: \`$CERT_SHA256\`"
+          } > notes.md
+          gh release create "$TAG" dist/* --draft --title "Lunaris Scanner v$VERSION" --notes-file notes.md

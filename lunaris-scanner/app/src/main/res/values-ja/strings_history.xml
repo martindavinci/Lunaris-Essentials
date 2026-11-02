@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="history_search_hint">履歴を検索</string>
+    <string name="history_search_clear">検索をクリア</string>
+    <string name="history_no_results">一致する項目はありません</string>
+    <string name="history_more_options">その他のオプション</string>
+    <string name="history_clear_all">履歴を消去</string>
+    <string name="history_clear_title">履歴を消去しますか？</string>
+    <string name="history_clear_message">保存したスキャンがすべて削除されます。元に戻すことはできません。</string>
+    <string name="history_empty_title">スキャンはまだありません</string>
+    <string name="history_empty_body">スキャンしたコードがここに表示されます。</string>
+    <string name="history_off_title">履歴はオフです</string>
+    <string name="history_off_body">新しいスキャンは保存されません。履歴は設定でオンにできます。</string>
+
+    <string name="history_kind_url">リンク</string>
+    <string name="history_kind_wifi">Wi-Fi ネットワーク</string>
+    <string name="history_kind_contact">連絡先</string>
+    <string name="history_kind_email">メール</string>
+    <string name="history_kind_phone">電話番号</string>
+    <string name="history_kind_sms">テキストメッセージ</string>
+    <string name="history_kind_geo">位置情報</string>
+    <string name="history_kind_event">予定</string>
+    <string name="history_kind_product">商品</string>
+    <string name="history_kind_text">テキスト</string>
+
+    <string name="history_time_now">たった今</string>
+    <string name="history_time_minutes">%d 分前</string>
+    <string name="history_time_hours">%d 時間前</string>
+    <string name="history_time_yesterday">昨日</string>
+    <string name="history_time_days">%d 日前</string>
+</resources>

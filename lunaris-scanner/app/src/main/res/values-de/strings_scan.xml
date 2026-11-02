@@ -1,0 +1,12 @@
+<resources>
+    <string name="scan_hint">Richte die Kamera auf einen Code</string>
+    <string name="scan_pick_image">Bild scannen</string>
+    <string name="scan_no_code_found">Kein Code in diesem Bild gefunden</string>
+    <string name="scan_torch_on">Taschenlampe einschalten</string>
+    <string name="scan_torch_off">Taschenlampe ausschalten</string>
+    <string name="scan_permission_rationale">Die Kamera dient nur zum Lesen von Codes, und nichts davon verlässt dein Telefon. Du kannst einen Code auch aus einem Bild scannen.</string>
+    <string name="scan_permission_allow">Kamera erlauben</string>
+    <string name="scan_permission_denied">Der Kamerazugriff ist deaktiviert. Aktiviere ihn in den App-Einstellungen, um mit der Kamera zu scannen, oder scanne einen Code aus einem Bild.</string>
+    <string name="scan_permission_settings">Einstellungen öffnen</string>
+    <string name="scan_camera_unavailable">Die Kamera ist nicht verfügbar. Du kannst aber einen Code aus einem Bild scannen.</string>
+</resources>

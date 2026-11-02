@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="scan_hint">Richt de camera op een code</string>
+    <string name="scan_pick_image">Afbeelding scannen</string>
+    <string name="scan_no_code_found">Geen code gevonden in deze afbeelding</string>
+    <string name="scan_torch_on">Zaklamp inschakelen</string>
+    <string name="scan_torch_off">Zaklamp uitschakelen</string>
+    <string name="scan_permission_rationale">De camera wordt alleen gebruikt om codes te lezen en niets van wat hij ziet verlaat je telefoon. Je kunt ook een code uit een afbeelding scannen.</string>
+    <string name="scan_permission_allow">Camera toestaan</string>
+    <string name="scan_permission_denied">Cameratoegang staat uit. Schakel die in bij de app-instellingen om met de camera te scannen, of scan een code uit een afbeelding.</string>
+    <string name="scan_permission_settings">Instellingen openen</string>
+    <string name="scan_camera_unavailable">De camera is niet beschikbaar. Je kunt wel een code uit een afbeelding scannen.</string>
+</resources>

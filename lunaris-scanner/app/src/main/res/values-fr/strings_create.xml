@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_type_text">Texte</string>
+    <string name="create_type_url">URL</string>
+    <string name="create_type_wifi">Wi-Fi</string>
+    <string name="create_type_contact">Contact</string>
+    <string name="create_type_email">E-mail</string>
+    <string name="create_type_phone">Téléphone</string>
+    <string name="create_type_sms">SMS</string>
+    <string name="create_type_barcode">Code-barres</string>
+    <string name="create_field_text">Texte</string>
+    <string name="create_field_url">Adresse web</string>
+    <string name="create_field_ssid">Nom du réseau</string>
+    <string name="create_field_password">Mot de passe</string>
+    <string name="create_field_hidden">Réseau masqué</string>
+    <string name="create_field_name">Nom</string>
+    <string name="create_field_organization">Organisation</string>
+    <string name="create_field_job_title">Fonction</string>
+    <string name="create_field_phone">Numéro de téléphone</string>
+    <string name="create_field_email">Adresse e-mail</string>
+    <string name="create_field_address">Adresse</string>
+    <string name="create_field_website">Site web</string>
+    <string name="create_field_note">Note</string>
+    <string name="create_field_to">À</string>
+    <string name="create_field_subject">Objet</string>
+    <string name="create_field_message">Message</string>
+    <string name="create_field_barcode">Contenu du code-barres</string>
+    <string name="create_wifi_security_none">Ouvert</string>
+    <string name="create_format_title">Format</string>
+    <string name="create_format_locked">Ce contenu est toujours un code QR</string>
+    <string name="create_error_empty">Saisissez un contenu</string>
+    <string name="create_error_too_long">Trop long pour ce format</string>
+    <string name="create_error_bad_characters">Ce format n\'accepte pas certains de ces caractères</string>
+    <string name="create_error_bad_length">Nombre de caractères incorrect pour ce format</string>
+    <string name="create_error_bad_check_digit">Le chiffre de contrôle est incorrect</string>
+    <string name="create_error_encode">Ce contenu ne peut pas être encodé dans ce format</string>
+    <string name="create_preview_description">Aperçu du code généré</string>
+    <string name="create_preview_placeholder">Votre code apparaîtra ici</string>
+    <string name="create_save">Enregistrer en PNG</string>
+    <string name="create_message_saved">Image enregistrée</string>
+    <string name="create_message_save_failed">Impossible d\'enregistrer l\'image</string>
+    <string name="create_message_share_failed">Impossible de partager l\'image</string>
+    <string name="create_message_copied">Copié</string>
+</resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="scan_hint">Apunta la cámara a un código</string>
+    <string name="scan_pick_image">Escanear una imagen</string>
+    <string name="scan_no_code_found">No se ha encontrado ningún código en esta imagen</string>
+    <string name="scan_torch_on">Encender la linterna</string>
+    <string name="scan_torch_off">Apagar la linterna</string>
+    <string name="scan_permission_rationale">La cámara solo se usa para leer códigos y nada de lo que ve sale de tu teléfono. También puedes escanear un código desde una imagen.</string>
+    <string name="scan_permission_allow">Permitir la cámara</string>
+    <string name="scan_permission_denied">El acceso a la cámara está desactivado. Actívalo en los ajustes de la aplicación para escanear con la cámara, o escanea un código desde una imagen.</string>
+    <string name="scan_permission_settings">Abrir ajustes</string>
+    <string name="scan_camera_unavailable">La cámara no está disponible. Aun así, puedes escanear un código desde una imagen.</string>
+</resources>

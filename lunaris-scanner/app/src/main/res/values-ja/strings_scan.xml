@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="scan_hint">カメラをコードに向けてください</string>
+    <string name="scan_pick_image">画像をスキャン</string>
+    <string name="scan_no_code_found">この画像にコードが見つかりません</string>
+    <string name="scan_torch_on">ライトをオン</string>
+    <string name="scan_torch_off">ライトをオフ</string>
+    <string name="scan_permission_rationale">カメラはコードの読み取りにのみ使用され、映像が端末の外に送られることはありません。画像からスキャンすることもできます。</string>
+    <string name="scan_permission_allow">カメラを許可</string>
+    <string name="scan_permission_denied">カメラへのアクセスがオフになっています。カメラでスキャンするにはアプリの設定でオンにするか、画像からスキャンしてください。</string>
+    <string name="scan_permission_settings">設定を開く</string>
+    <string name="scan_camera_unavailable">カメラを使用できません。画像からのスキャンは可能です。</string>
+</resources>

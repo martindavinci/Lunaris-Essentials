@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_section_appearance">外観</string>
+    <string name="settings_section_scanning">スキャン</string>
+    <string name="settings_section_about">このアプリについて</string>
+    <string name="settings_theme">テーマ</string>
+    <string name="settings_theme_system">システムのデフォルト</string>
+    <string name="settings_theme_light">ライト</string>
+    <string name="settings_theme_dark">ダーク</string>
+    <string name="settings_language">言語</string>
+    <string name="settings_language_system">システムのデフォルト</string>
+    <string name="settings_keep_history">履歴を保存</string>
+    <string name="settings_keep_history_summary">スキャンしたコードをこの端末に保存します</string>
+    <string name="settings_vibrate_on_scan">スキャン時に振動</string>
+    <string name="settings_clear_history_title">履歴を消去しますか？</string>
+    <string name="settings_clear_history_message">新しいスキャンは保存されなくなります。履歴内のコードは消去するまで残ります。</string>
+    <string name="settings_clear_history_confirm">消去</string>
+    <string name="settings_clear_history_keep">残す</string>
+    <string name="settings_about_version">バージョン %1$s</string>
+    <string name="settings_about_tagline">毎日使う Android ユーティリティを、広告なしで。</string>
+    <string name="settings_about_permissions">必要な権限はカメラのみです。</string>
+    <string name="settings_licenses">ライセンス</string>
+</resources>

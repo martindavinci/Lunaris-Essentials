@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Lunaris Scanner</string>
+    <string name="nav_scan">スキャン</string>
+    <string name="nav_history">履歴</string>
+    <string name="nav_create">作成</string>
+    <string name="nav_settings">設定</string>
+    <string name="ok">OK</string>
+    <string name="cancel">キャンセル</string>
+    <string name="back">戻る</string>
+    <string name="copy">コピー</string>
+    <string name="share">共有</string>
+    <string name="delete">削除</string>
+    <string name="shared_image_no_code">この画像にコードが見つかりません</string>
+</resources>

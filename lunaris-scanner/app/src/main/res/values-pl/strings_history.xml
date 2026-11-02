@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="history_search_hint">Szukaj w historii</string>
+    <string name="history_search_clear">Wyczyść wyszukiwanie</string>
+    <string name="history_no_results">Brak wyników</string>
+    <string name="history_more_options">Więcej opcji</string>
+    <string name="history_clear_all">Wyczyść historię</string>
+    <string name="history_clear_title">Wyczyścić historię?</string>
+    <string name="history_clear_message">Wszystkie zapisane skany zostaną usunięte. Tej operacji nie można cofnąć.</string>
+    <string name="history_empty_title">Brak skanów</string>
+    <string name="history_empty_body">Tutaj pojawią się zeskanowane kody.</string>
+    <string name="history_off_title">Historia jest wyłączona</string>
+    <string name="history_off_body">Nowe skany nie są zapisywane. Historię możesz włączyć w Ustawieniach.</string>
+
+    <string name="history_kind_url">Link</string>
+    <string name="history_kind_wifi">Sieć Wi-Fi</string>
+    <string name="history_kind_contact">Kontakt</string>
+    <string name="history_kind_email">E-mail</string>
+    <string name="history_kind_phone">Numer telefonu</string>
+    <string name="history_kind_sms">SMS</string>
+    <string name="history_kind_geo">Lokalizacja</string>
+    <string name="history_kind_event">Wydarzenie</string>
+    <string name="history_kind_product">Produkt</string>
+    <string name="history_kind_text">Tekst</string>
+
+    <string name="history_time_now">teraz</string>
+    <string name="history_time_minutes">%d min temu</string>
+    <string name="history_time_hours">%d godz. temu</string>
+    <string name="history_time_yesterday">wczoraj</string>
+    <string name="history_time_days">%d dni temu</string>
+</resources>

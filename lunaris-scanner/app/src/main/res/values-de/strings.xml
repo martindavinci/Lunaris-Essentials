@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Lunaris Scanner</string>
+    <string name="nav_scan">Scannen</string>
+    <string name="nav_history">Verlauf</string>
+    <string name="nav_create">Erstellen</string>
+    <string name="nav_settings">Einstellungen</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="back">Zurück</string>
+    <string name="copy">Kopieren</string>
+    <string name="share">Teilen</string>
+    <string name="delete">Löschen</string>
+    <string name="shared_image_no_code">Kein Code in diesem Bild gefunden</string>
+</resources>

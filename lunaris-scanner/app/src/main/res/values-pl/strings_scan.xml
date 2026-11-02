@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="scan_hint">Skieruj aparat na kod</string>
+    <string name="scan_pick_image">Skanuj obraz</string>
+    <string name="scan_no_code_found">Nie znaleziono kodu na tym obrazie</string>
+    <string name="scan_torch_on">Włącz latarkę</string>
+    <string name="scan_torch_off">Wyłącz latarkę</string>
+    <string name="scan_permission_rationale">Aparat służy tylko do odczytu kodów, a nic z tego, co widzi, nie opuszcza telefonu. Możesz też zeskanować kod z obrazu.</string>
+    <string name="scan_permission_allow">Zezwól na aparat</string>
+    <string name="scan_permission_denied">Dostęp do aparatu jest wyłączony. Włącz go w ustawieniach aplikacji, aby skanować aparatem, lub zeskanuj kod z obrazu.</string>
+    <string name="scan_permission_settings">Otwórz ustawienia</string>
+    <string name="scan_camera_unavailable">Aparat jest niedostępny. Nadal możesz zeskanować kod z obrazu.</string>
+</resources>

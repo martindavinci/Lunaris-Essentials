@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="history_search_hint">Cerca nella cronologia</string>
+    <string name="history_search_clear">Cancella ricerca</string>
+    <string name="history_no_results">Nessun risultato per la ricerca</string>
+    <string name="history_more_options">Altre opzioni</string>
+    <string name="history_clear_all">Cancella cronologia</string>
+    <string name="history_clear_title">Cancellare la cronologia?</string>
+    <string name="history_clear_message">Tutte le scansioni salvate verranno eliminate. L\'operazione è irreversibile.</string>
+    <string name="history_empty_title">Ancora nessuna scansione</string>
+    <string name="history_empty_body">I codici che scansioni appariranno qui.</string>
+    <string name="history_off_title">Cronologia disattivata</string>
+    <string name="history_off_body">Le nuove scansioni non vengono salvate. Puoi attivare la cronologia nelle Impostazioni.</string>
+
+    <string name="history_kind_url">Link</string>
+    <string name="history_kind_wifi">Rete Wi-Fi</string>
+    <string name="history_kind_contact">Contatto</string>
+    <string name="history_kind_email">Email</string>
+    <string name="history_kind_phone">Numero di telefono</string>
+    <string name="history_kind_sms">SMS</string>
+    <string name="history_kind_geo">Posizione</string>
+    <string name="history_kind_event">Evento</string>
+    <string name="history_kind_product">Prodotto</string>
+    <string name="history_kind_text">Testo</string>
+
+    <string name="history_time_now">ora</string>
+    <string name="history_time_minutes">%d min fa</string>
+    <string name="history_time_hours">%d h fa</string>
+    <string name="history_time_yesterday">ieri</string>
+    <string name="history_time_days">%d giorni fa</string>
+</resources>

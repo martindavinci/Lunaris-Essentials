@@ -1,0 +1,22 @@
+<resources>
+    <string name="settings_section_appearance">Aspetto</string>
+    <string name="settings_section_scanning">Scansione</string>
+    <string name="settings_section_about">Informazioni</string>
+    <string name="settings_theme">Tema</string>
+    <string name="settings_theme_system">Predefinito di sistema</string>
+    <string name="settings_theme_light">Chiaro</string>
+    <string name="settings_theme_dark">Scuro</string>
+    <string name="settings_language">Lingua</string>
+    <string name="settings_language_system">Predefinita di sistema</string>
+    <string name="settings_keep_history">Conserva cronologia</string>
+    <string name="settings_keep_history_summary">Salva i codici scansionati su questo dispositivo</string>
+    <string name="settings_vibrate_on_scan">Vibra alla scansione</string>
+    <string name="settings_clear_history_title">Cancellare la cronologia?</string>
+    <string name="settings_clear_history_message">Le nuove scansioni non verranno salvate. I codici già in cronologia restano finché non li cancelli.</string>
+    <string name="settings_clear_history_confirm">Cancella</string>
+    <string name="settings_clear_history_keep">Conserva</string>
+    <string name="settings_about_version">Versione %1$s</string>
+    <string name="settings_about_tagline">Le utility Android di ogni giorno, senza pubblicità.</string>
+    <string name="settings_about_permissions">Richiede solo l\'autorizzazione per la fotocamera.</string>
+    <string name="settings_licenses">Licenze</string>
+</resources>

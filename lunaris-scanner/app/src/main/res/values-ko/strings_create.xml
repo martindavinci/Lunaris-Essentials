@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_type_text">텍스트</string>
+    <string name="create_type_url">URL</string>
+    <string name="create_type_wifi">Wi-Fi</string>
+    <string name="create_type_contact">연락처</string>
+    <string name="create_type_email">이메일</string>
+    <string name="create_type_phone">전화</string>
+    <string name="create_type_sms">SMS</string>
+    <string name="create_type_barcode">바코드</string>
+
+    <string name="create_field_text">텍스트</string>
+    <string name="create_field_url">웹 주소</string>
+    <string name="create_field_ssid">네트워크 이름</string>
+    <string name="create_field_password">비밀번호</string>
+    <string name="create_field_hidden">숨겨진 네트워크</string>
+    <string name="create_field_name">이름</string>
+    <string name="create_field_organization">조직</string>
+    <string name="create_field_job_title">직책</string>
+    <string name="create_field_phone">전화번호</string>
+    <string name="create_field_email">이메일 주소</string>
+    <string name="create_field_address">주소</string>
+    <string name="create_field_website">웹사이트</string>
+    <string name="create_field_note">메모</string>
+    <string name="create_field_to">받는 사람</string>
+    <string name="create_field_subject">제목</string>
+    <string name="create_field_message">내용</string>
+    <string name="create_field_barcode">바코드 내용</string>
+
+    <string name="create_wifi_security_none">개방형</string>
+
+    <string name="create_format_title">형식</string>
+    <string name="create_format_locked">이 내용은 항상 QR 코드로 만들어집니다</string>
+
+    <string name="create_error_empty">내용을 입력하세요</string>
+    <string name="create_error_too_long">이 형식에 비해 너무 깁니다</string>
+    <string name="create_error_bad_characters">이 형식에서 허용되지 않는 문자가 있습니다</string>
+    <string name="create_error_bad_length">이 형식의 문자 수와 맞지 않습니다</string>
+    <string name="create_error_bad_check_digit">체크 디지트가 올바르지 않습니다</string>
+    <string name="create_error_encode">이 내용은 이 형식으로 인코딩할 수 없습니다</string>
+
+    <string name="create_preview_description">생성된 코드 미리보기</string>
+    <string name="create_preview_placeholder">여기에 코드가 표시됩니다</string>
+    <string name="create_save">PNG 저장</string>
+
+    <string name="create_message_saved">이미지를 저장했습니다</string>
+    <string name="create_message_save_failed">이미지를 저장할 수 없습니다</string>
+    <string name="create_message_share_failed">이미지를 공유할 수 없습니다</string>
+    <string name="create_message_copied">복사했습니다</string>
+</resources>

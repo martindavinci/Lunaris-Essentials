@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="result_no_app">Geen app op deze telefoon kan dit doen</string>
+    <string name="result_copied">Gekopieerd</string>
+    <string name="result_clip_label">Gescande code</string>
+    <string name="result_wifi_join_by_hand">Wachtwoord gekopieerd. Kies het netwerk in de Wi-Fi-instellingen en plak het.</string>
+    <string name="result_yes">Ja</string>
+
+    <string name="result_raw_title">Onbewerkte inhoud</string>
+    <string name="result_raw_hidden">Verborgen omdat het wachtwoord erin staat. Toon het wachtwoord om dit te zien.</string>
+    <string name="result_password_show">Wachtwoord tonen</string>
+    <string name="result_password_hide">Wachtwoord verbergen</string>
+
+    <string name="result_warning_title">Controleer deze link voordat je hem opent</string>
+    <string name="result_warning_blocked">Deze app opent alleen http- en https-links. Je kunt deze link wel kopiëren.</string>
+    <string name="result_warning_not_https">Niet versleuteld: de link gebruikt geen HTTPS.</string>
+    <string name="result_warning_punycode">Het adres gebruikt Punycode, waarmee de naam van een bekende site kan worden nagebootst.</string>
+    <string name="result_warning_non_ascii_host">Het adres bevat ongebruikelijke tekens die de naam van een bekende site kunnen nabootsen.</string>
+    <string name="result_warning_ip_address_host">Het adres is een kaal IP-nummer, geen sitenaam.</string>
+    <string name="result_warning_embedded_credentials">De link bevat een gebruikersnaam of wachtwoord, wat het echte adres kan verbergen.</string>
+    <string name="result_warning_unusual_port">De link gebruikt een ongebruikelijke poort.</string>
+
+    <string name="result_action_open_url">Link openen</string>
+    <string name="result_action_connect_wifi">Verbinden</string>
+    <string name="result_action_copy_password">Wachtwoord kopiëren</string>
+    <string name="result_action_add_contact">Aan contacten toevoegen</string>
+    <string name="result_action_send_email">E-mail schrijven</string>
+    <string name="result_action_dial">Openen in telefoon-app</string>
+    <string name="result_action_send_sms">Bericht schrijven</string>
+    <string name="result_action_view_map">Op kaart tonen</string>
+    <string name="result_action_add_event">Aan agenda toevoegen</string>
+    <string name="result_action_web_search">Zoeken op internet</string>
+
+    <string name="result_kind_url">Link</string>
+    <string name="result_kind_wifi">Wi-Fi-netwerk</string>
+    <string name="result_kind_contact">Contact</string>
+    <string name="result_kind_email">E-mail</string>
+    <string name="result_kind_phone">Telefoonnummer</string>
+    <string name="result_kind_sms">Sms-bericht</string>
+    <string name="result_kind_geo">Locatie</string>
+    <string name="result_kind_event">Agenda-afspraak</string>
+    <string name="result_kind_product">Productcode</string>
+    <string name="result_kind_text">Tekst</string>
+
+    <string name="result_field_url">Adres</string>
+    <string name="result_field_ssid">Netwerknaam</string>
+    <string name="result_field_password">Wachtwoord</string>
+    <string name="result_field_security">Beveiliging</string>
+    <string name="result_field_hidden_network">Verborgen netwerk</string>
+    <string name="result_field_name">Naam</string>
+    <string name="result_field_organization">Organisatie</string>
+    <string name="result_field_job_title">Functie</string>
+    <string name="result_field_phone">Telefoon</string>
+    <string name="result_field_email">E-mail</string>
+    <string name="result_field_address">Postadres</string>
+    <string name="result_field_website">Website</string>
+    <string name="result_field_note">Notitie</string>
+    <string name="result_field_to">Aan</string>
+    <string name="result_field_subject">Onderwerp</string>
+    <string name="result_field_body">Bericht</string>
+    <string name="result_field_number">Nummer</string>
+    <string name="result_field_message">Bericht</string>
+    <string name="result_field_coordinates">Coördinaten</string>
+    <string name="result_field_query">Plaats</string>
+    <string name="result_field_summary">Titel</string>
+    <string name="result_field_start">Begint</string>
+    <string name="result_field_end">Eindigt</string>
+    <string name="result_field_location">Locatie</string>
+    <string name="result_field_description">Beschrijving</string>
+    <string name="result_field_code">Code</string>
+
+    <string name="result_wifi_security_none">Geen (open netwerk)</string>
+</resources>

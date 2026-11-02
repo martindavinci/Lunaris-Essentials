@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="result_no_app">Żadna aplikacja na tym telefonie nie może tego zrobić</string>
+    <string name="result_copied">Skopiowano</string>
+    <string name="result_clip_label">Zeskanowany kod</string>
+    <string name="result_wifi_join_by_hand">Skopiowano hasło. Wybierz sieć w ustawieniach Wi-Fi i wklej je.</string>
+    <string name="result_yes">Tak</string>
+
+    <string name="result_raw_title">Surowa zawartość</string>
+    <string name="result_raw_hidden">Ukryto, ponieważ zawiera hasło. Pokaż hasło, aby to zobaczyć.</string>
+    <string name="result_password_show">Pokaż hasło</string>
+    <string name="result_password_hide">Ukryj hasło</string>
+
+    <string name="result_warning_title">Sprawdź ten link przed otwarciem</string>
+    <string name="result_warning_blocked">Ta aplikacja otwiera tylko linki http i https. Nadal możesz skopiować ten link.</string>
+    <string name="result_warning_not_https">Brak szyfrowania: link nie używa HTTPS.</string>
+    <string name="result_warning_punycode">Adres używa Punycode, który może naśladować nazwę znanej strony.</string>
+    <string name="result_warning_non_ascii_host">Adres zawiera nietypowe znaki, które mogą naśladować nazwę znanej strony.</string>
+    <string name="result_warning_ip_address_host">Adres to sam numer IP, a nie nazwa strony.</string>
+    <string name="result_warning_embedded_credentials">Link zawiera nazwę użytkownika lub hasło, co może ukrywać prawdziwy adres.</string>
+    <string name="result_warning_unusual_port">Link używa nietypowego portu.</string>
+
+    <string name="result_action_open_url">Otwórz link</string>
+    <string name="result_action_connect_wifi">Połącz</string>
+    <string name="result_action_copy_password">Kopiuj hasło</string>
+    <string name="result_action_add_contact">Dodaj do kontaktów</string>
+    <string name="result_action_send_email">Napisz e-mail</string>
+    <string name="result_action_dial">Otwórz w aplikacji Telefon</string>
+    <string name="result_action_send_sms">Napisz wiadomość</string>
+    <string name="result_action_view_map">Pokaż na mapie</string>
+    <string name="result_action_add_event">Dodaj do kalendarza</string>
+    <string name="result_action_web_search">Szukaj w internecie</string>
+
+    <string name="result_kind_url">Link</string>
+    <string name="result_kind_wifi">Sieć Wi-Fi</string>
+    <string name="result_kind_contact">Kontakt</string>
+    <string name="result_kind_email">E-mail</string>
+    <string name="result_kind_phone">Numer telefonu</string>
+    <string name="result_kind_sms">SMS</string>
+    <string name="result_kind_geo">Lokalizacja</string>
+    <string name="result_kind_event">Wydarzenie w kalendarzu</string>
+    <string name="result_kind_product">Kod produktu</string>
+    <string name="result_kind_text">Tekst</string>
+
+    <string name="result_field_url">Adres</string>
+    <string name="result_field_ssid">Nazwa sieci</string>
+    <string name="result_field_password">Hasło</string>
+    <string name="result_field_security">Zabezpieczenia</string>
+    <string name="result_field_hidden_network">Sieć ukryta</string>
+    <string name="result_field_name">Imię i nazwisko</string>
+    <string name="result_field_organization">Organizacja</string>
+    <string name="result_field_job_title">Stanowisko</string>
+    <string name="result_field_phone">Telefon</string>
+    <string name="result_field_email">E-mail</string>
+    <string name="result_field_address">Adres pocztowy</string>
+    <string name="result_field_website">Strona internetowa</string>
+    <string name="result_field_note">Notatka</string>
+    <string name="result_field_to">Do</string>
+    <string name="result_field_subject">Temat</string>
+    <string name="result_field_body">Wiadomość</string>
+    <string name="result_field_number">Numer</string>
+    <string name="result_field_message">Wiadomość</string>
+    <string name="result_field_coordinates">Współrzędne</string>
+    <string name="result_field_query">Miejsce</string>
+    <string name="result_field_summary">Tytuł</string>
+    <string name="result_field_start">Początek</string>
+    <string name="result_field_end">Koniec</string>
+    <string name="result_field_location">Lokalizacja</string>
+    <string name="result_field_description">Opis</string>
+    <string name="result_field_code">Kod</string>
+
+    <string name="result_wifi_security_none">Brak (sieć otwarta)</string>
+</resources>

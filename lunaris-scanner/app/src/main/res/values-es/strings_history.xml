@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="history_search_hint">Buscar en el historial</string>
+    <string name="history_search_clear">Borrar búsqueda</string>
+    <string name="history_no_results">Ningún resultado para tu búsqueda</string>
+    <string name="history_more_options">Más opciones</string>
+    <string name="history_clear_all">Borrar historial</string>
+    <string name="history_clear_title">¿Borrar el historial?</string>
+    <string name="history_clear_message">Se eliminarán todos los escaneos guardados. Esta acción no se puede deshacer.</string>
+    <string name="history_empty_title">Aún no hay escaneos</string>
+    <string name="history_empty_body">Los códigos que escanees aparecerán aquí.</string>
+    <string name="history_off_title">El historial está desactivado</string>
+    <string name="history_off_body">Los nuevos escaneos no se guardan. Puedes activar el historial en Ajustes.</string>
+    <string name="history_kind_url">Enlace</string>
+    <string name="history_kind_wifi">Red Wi-Fi</string>
+    <string name="history_kind_contact">Contacto</string>
+    <string name="history_kind_email">Correo</string>
+    <string name="history_kind_phone">Número de teléfono</string>
+    <string name="history_kind_sms">Mensaje de texto</string>
+    <string name="history_kind_geo">Ubicación</string>
+    <string name="history_kind_event">Evento</string>
+    <string name="history_kind_product">Producto</string>
+    <string name="history_kind_text">Texto</string>
+    <string name="history_time_now">ahora</string>
+    <string name="history_time_minutes">hace %d min</string>
+    <string name="history_time_hours">hace %d h</string>
+    <string name="history_time_yesterday">ayer</string>
+    <string name="history_time_days">hace %d días</string>
+</resources>

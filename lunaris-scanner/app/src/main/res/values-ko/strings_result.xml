@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="result_no_app">이 작업을 수행할 수 있는 앱이 없습니다</string>
+    <string name="result_copied">복사했습니다</string>
+    <string name="result_clip_label">스캔한 코드</string>
+    <string name="result_wifi_join_by_hand">비밀번호를 복사했습니다. Wi-Fi 설정에서 네트워크를 선택한 후 붙여넣으세요.</string>
+    <string name="result_yes">예</string>
+
+    <string name="result_raw_title">원본 내용</string>
+    <string name="result_raw_hidden">비밀번호가 포함되어 있어 숨겨졌습니다. 비밀번호를 표시하면 볼 수 있습니다.</string>
+    <string name="result_password_show">비밀번호 표시</string>
+    <string name="result_password_hide">비밀번호 숨기기</string>
+
+    <string name="result_warning_title">열기 전에 이 링크를 확인하세요</string>
+    <string name="result_warning_blocked">이 앱은 http 및 https 링크만 엽니다. 이 링크는 복사할 수 있습니다.</string>
+    <string name="result_warning_not_https">HTTPS를 사용하지 않아 암호화되지 않습니다.</string>
+    <string name="result_warning_punycode">이 주소는 Punycode를 사용하며, 유명 사이트의 이름을 흉내 낼 수 있습니다.</string>
+    <string name="result_warning_non_ascii_host">이 주소에는 유명 사이트의 이름을 흉내 낼 수 있는 특수 문자가 있습니다.</string>
+    <string name="result_warning_ip_address_host">이 주소는 사이트 이름이 아닌 IP 주소입니다.</string>
+    <string name="result_warning_embedded_credentials">이 링크에는 사용자 이름이나 비밀번호가 포함되어 있어 실제 주소가 가려질 수 있습니다.</string>
+    <string name="result_warning_unusual_port">이 링크는 흔히 쓰이지 않는 포트를 사용합니다.</string>
+
+    <string name="result_action_open_url">링크 열기</string>
+    <string name="result_action_connect_wifi">연결</string>
+    <string name="result_action_copy_password">비밀번호 복사</string>
+    <string name="result_action_add_contact">연락처에 추가</string>
+    <string name="result_action_send_email">이메일 쓰기</string>
+    <string name="result_action_dial">전화 앱에서 열기</string>
+    <string name="result_action_send_sms">메시지 쓰기</string>
+    <string name="result_action_view_map">지도에서 보기</string>
+    <string name="result_action_add_event">캘린더에 추가</string>
+    <string name="result_action_web_search">웹에서 검색</string>
+
+    <string name="result_kind_url">링크</string>
+    <string name="result_kind_wifi">Wi-Fi 네트워크</string>
+    <string name="result_kind_contact">연락처</string>
+    <string name="result_kind_email">이메일</string>
+    <string name="result_kind_phone">전화번호</string>
+    <string name="result_kind_sms">문자 메시지</string>
+    <string name="result_kind_geo">위치</string>
+    <string name="result_kind_event">캘린더 일정</string>
+    <string name="result_kind_product">제품 코드</string>
+    <string name="result_kind_text">텍스트</string>
+
+    <string name="result_field_url">주소</string>
+    <string name="result_field_ssid">네트워크 이름</string>
+    <string name="result_field_password">비밀번호</string>
+    <string name="result_field_security">보안</string>
+    <string name="result_field_hidden_network">숨겨진 네트워크</string>
+    <string name="result_field_name">이름</string>
+    <string name="result_field_organization">조직</string>
+    <string name="result_field_job_title">직책</string>
+    <string name="result_field_phone">전화</string>
+    <string name="result_field_email">이메일</string>
+    <string name="result_field_address">우편 주소</string>
+    <string name="result_field_website">웹사이트</string>
+    <string name="result_field_note">메모</string>
+    <string name="result_field_to">받는 사람</string>
+    <string name="result_field_subject">제목</string>
+    <string name="result_field_body">내용</string>
+    <string name="result_field_number">번호</string>
+    <string name="result_field_message">메시지</string>
+    <string name="result_field_coordinates">좌표</string>
+    <string name="result_field_query">장소</string>
+    <string name="result_field_summary">제목</string>
+    <string name="result_field_start">시작</string>
+    <string name="result_field_end">종료</string>
+    <string name="result_field_location">위치</string>
+    <string name="result_field_description">설명</string>
+    <string name="result_field_code">코드</string>
+
+    <string name="result_wifi_security_none">없음(개방형 네트워크)</string>
+</resources>
