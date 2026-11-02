@@ -54,6 +54,20 @@ foreach ($id in $embeds) {
     catch { Write-Warning "MISSING embed grammar: $id" }
 }
 
+# Upstream xml.json nests "end" and "name" of its <%-- rule inside "captures". tm4e casts every
+# capture to a rule and throws, leaving XML and every grammar that includes it without highlighting.
+function Repair-XmlGrammar([string]$text) {
+    $broken = '("begin": "<%--",\s*"captures": \{\s*"0": \{\s*"name": "punctuation\.definition\.comment\.xml"\s*\}),\s*"end": "--%>",\s*"name": "comment\.block\.xml"(\s*)\}'
+    $text -replace $broken, '$1$2},$2"end": "--%>",$2"name": "comment.block.xml"'
+}
+$xmlGrammar = Join-Path $gDir "xml.json"
+if (Test-Path $xmlGrammar) {
+    $original = [IO.File]::ReadAllText($xmlGrammar)
+    $repaired = Repair-XmlGrammar $original
+    if ($repaired -ceq $original) { Write-Warning "xml.json: the <%-- rule was not repaired" }
+    [IO.File]::WriteAllText($xmlGrammar, $repaired)
+}
+
 # Themes: base16 + classics.
 $b = $manifest.base16ThemeSource
 $themeCatalog = @()
