@@ -4,7 +4,8 @@ import android.graphics.Bitmap
 import android.graphics.Paint
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -63,12 +64,19 @@ internal fun SignaturePad(onDone: (ByteArray) -> Unit, onCancel: () -> Unit) {
                     .height(PadHeight)
                     .background(Color.White, PadShape)
                     .pointerInput(Unit) {
-                        detectDragGestures(
-                            onDragStart = { strokes = strokes + listOf(listOf(it.asPoint())) },
-                            onDrag = { change, _ ->
-                                strokes = strokes.dropLast(1) + listOf(strokes.last() + change.position.asPoint())
-                            },
-                        )
+                        // From the first touch: a drag gesture would begin only after the finger has moved a little.
+                        awaitEachGesture {
+                            val down = awaitFirstDown()
+                            down.consume()
+                            strokes = strokes + listOf(listOf(down.position.asPoint()))
+                            do {
+                                val event = awaitPointerEvent()
+                                event.changes.firstOrNull { it.id == down.id }?.let { change ->
+                                    change.consume()
+                                    strokes = strokes.dropLast(1) + listOf(strokes.last() + change.position.asPoint())
+                                }
+                            } while (event.changes.any { it.id == down.id && it.pressed })
+                        }
                     },
             ) {
                 strokes.forEach { stroke ->

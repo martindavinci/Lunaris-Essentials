@@ -17,6 +17,9 @@ interface EditedDocuments {
 
     /** A uri to read the whole file from, or null if it is not [size] bytes long. */
     suspend fun finish(size: Long): String?
+
+    /** Nothing of the document stays here: it may hold what the user would not leave lying around. */
+    suspend fun clear()
 }
 
 /** One file at a time, in the app's own cache: the next save replaces it. */
@@ -60,6 +63,13 @@ class EditedFileStore(private val directory: File) : EditedDocuments {
         close()
         val made = file?.takeIf { it.length() == size }
         made?.let { it.toURI().toString() }
+    }
+
+    override suspend fun clear() = onDisk {
+        close()
+        directory.deleteRecursively()
+        file = null
+        nextIndex = 0
     }
 
     private fun fail() {

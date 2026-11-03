@@ -69,6 +69,10 @@ class ReaderViewModelTest {
 
     private class FakeEdited : EditedDocuments {
         var began = 0
+        var cleared = 0
+        override suspend fun clear() {
+            cleared++
+        }
         val pieces = mutableListOf<Pair<Int, Int>>()
         var result: String? = "file:///cache/edited.pdf"
         var acceptPieces = true
@@ -876,6 +880,21 @@ class ReaderViewModelTest {
         vm.onAction(EditAction.SaveTo("content://x/copy.pdf"))
         exportSucceeds()
         assertThat(vm.state.value.closeReader).isTrue()
+    }
+
+    @Test fun openingTheReader_clearsAnOldEditedFile() {
+        viewModel()
+        assertThat(edited.cleared).isEqualTo(1)
+    }
+
+    @Test fun aSavedFile_doesNotStayBehind() {
+        val vm = editing()
+        edited.cleared = 0
+        vm.onAction(EditAction.Finish)
+        emit(ViewerEvent.EditsSettled(2, 1, signed = false))
+        vm.onAction(EditAction.SaveTo("content://x/copy.pdf"))
+        exportSucceeds()
+        assertThat(edited.cleared).isEqualTo(1)
     }
 
     @Test fun aFailedExport_saysSoAndLosesNothing() {

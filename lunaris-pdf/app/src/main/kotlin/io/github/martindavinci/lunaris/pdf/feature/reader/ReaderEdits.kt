@@ -29,6 +29,10 @@ internal class ReaderEdits(
     private var leaveAfter = false
     private val export = ReaderExport(scope, viewer, editedFiles, update)
 
+    init {
+        scope.launch { editedFiles.clear() }
+    }
+
     fun onAction(action: EditAction) {
         when (action) {
             EditAction.StartAnnotating -> start()
@@ -181,6 +185,7 @@ internal class ReaderEdits(
                 update { it.copy(notice = ReaderNotice.SAVE_FAILED) }
                 return@launch
             }
+            editedFiles.clear()
             viewer.send(ViewerCommand.MarkSaved)
             endEditing()
             update { it.copy(notice = ReaderNotice.SAVED, closeReader = leave) }

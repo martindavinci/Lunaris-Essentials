@@ -46,6 +46,20 @@ class EditedFileStoreTest {
         assertThat(old.length()).isEqualTo(0)
     }
 
+    @Test fun clearing_leavesNothing() = runBlocking {
+        store.begin()
+        store.append(0, one)
+        val made = fileOf(checkNotNull(store.finish(3)))
+        store.clear()
+        assertThat(made.exists()).isFalse()
+        assertThat(store.append(0, one)).isFalse()
+    }
+
+    @Test fun clearing_withNothingThere_isFine() = runBlocking {
+        store.clear()
+        assertThat(store.finish(0)).isNull()
+    }
+
     @Test fun nothingBegun_acceptsNothing() = runBlocking {
         assertThat(store.append(0, one)).isFalse()
         assertThat(store.finish(0)).isNull()
