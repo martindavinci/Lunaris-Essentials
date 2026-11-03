@@ -1,0 +1,15 @@
+<resources>
+    <string name="settings_title">Ustawienia</string>
+    <string name="settings_section_appearance">Wygląd</string>
+    <string name="settings_section_reading">Czytanie</string>
+    <string name="settings_section_about">Informacje</string>
+    <string name="settings_theme">Motyw</string>
+    <string name="settings_theme_system">Domyślny systemowy</string>
+    <string name="settings_theme_light">Jasny</string>
+    <string name="settings_theme_dark">Ciemny</string>
+    <string name="settings_night_pages_summary">Pokazuj strony z odwróconymi kolorami</string>
+    <string name="settings_about_version">Wersja %1$s</string>
+    <string name="settings_about_author">Autor: Martin DaVinci</string>
+    <string name="settings_about_tagline">Codzienne narzędzia na Androida, bez reklam.</string>
+    <string name="settings_about_permissions">Nie wymaga uprawnień systemowych.</string>
+</resources>

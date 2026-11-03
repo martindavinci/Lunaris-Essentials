@@ -1,0 +1,17 @@
+<resources>
+    <string name="action_print">Drucken</string>
+    <string name="action_share">Teilen</string>
+    <string name="action_share_failed">Die Datei konnte nicht geteilt werden</string>
+    <string name="action_save_copy">Kopie speichern</string>
+    <string name="action_saved">Kopie gespeichert</string>
+    <string name="action_save_failed">Die Kopie konnte nicht gespeichert werden</string>
+    <string name="read_aloud">Vorlesen</string>
+    <string name="read_aloud_page">Seite %1$d wird gelesen</string>
+    <string name="read_aloud_pause">Pause</string>
+    <string name="read_aloud_resume">Fortsetzen</string>
+    <string name="read_aloud_next">Nächste Seite</string>
+    <string name="read_aloud_previous">Vorherige Seite</string>
+    <string name="read_aloud_stop">Vorlesen beenden</string>
+    <string name="read_aloud_no_text">Diese Seiten enthalten keinen Text zum Vorlesen. Meist ist das ein gescanntes Dokument.</string>
+    <string name="read_aloud_unavailable">Auf diesem Telefon ist keine Sprachausgabe einsatzbereit.</string>
+</resources>

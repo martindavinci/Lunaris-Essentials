@@ -1,0 +1,17 @@
+<resources>
+    <string name="action_print">Print</string>
+    <string name="action_share">Share</string>
+    <string name="action_share_failed">The file could not be shared</string>
+    <string name="action_save_copy">Save a copy</string>
+    <string name="action_saved">Copy saved</string>
+    <string name="action_save_failed">The copy could not be saved</string>
+    <string name="read_aloud">Read aloud</string>
+    <string name="read_aloud_page">Reading page %1$d</string>
+    <string name="read_aloud_pause">Pause</string>
+    <string name="read_aloud_resume">Continue</string>
+    <string name="read_aloud_next">Next page</string>
+    <string name="read_aloud_previous">Previous page</string>
+    <string name="read_aloud_stop">Stop reading</string>
+    <string name="read_aloud_no_text">These pages have no text to read. This is usually a scanned document.</string>
+    <string name="read_aloud_unavailable">This phone has no text to speech engine ready to use.</string>
+</resources>

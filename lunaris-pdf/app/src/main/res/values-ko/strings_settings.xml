@@ -1,0 +1,15 @@
+<resources>
+    <string name="settings_title">설정</string>
+    <string name="settings_section_appearance">화면 스타일</string>
+    <string name="settings_section_reading">읽기</string>
+    <string name="settings_section_about">정보</string>
+    <string name="settings_theme">테마</string>
+    <string name="settings_theme_system">시스템 기본값</string>
+    <string name="settings_theme_light">라이트</string>
+    <string name="settings_theme_dark">다크</string>
+    <string name="settings_night_pages_summary">페이지 색상을 반전하여 표시</string>
+    <string name="settings_about_version">버전 %1$s</string>
+    <string name="settings_about_author">개발: Martin DaVinci</string>
+    <string name="settings_about_tagline">광고 없는 일상의 Android 유틸리티.</string>
+    <string name="settings_about_permissions">시스템 권한이 필요하지 않습니다.</string>
+</resources>

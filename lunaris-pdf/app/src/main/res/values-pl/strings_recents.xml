@@ -1,0 +1,11 @@
+<resources>
+    <string name="recents_empty">Brak dokumentów</string>
+    <string name="recents_open">Otwórz plik PDF</string>
+    <string name="recents_page">Strona %1$d</string>
+    <string name="recents_entry_gone">Ten plik nie jest już dostępny, więc usunięto go z listy.</string>
+    <string name="recents_no_picker">Żadna aplikacja na tym telefonie nie umożliwia wybierania plików</string>
+    <string name="recents_clear_title">Wyczyść listę</string>
+    <string name="recents_clear_message">Lista zostanie opróżniona. Same pliki nie zostaną zmienione.</string>
+    <string name="recents_clear_confirm">Wyczyść</string>
+    <string name="document_no_name">Dokument</string>
+</resources>

@@ -1,0 +1,11 @@
+<resources>
+    <string name="recents_empty">Nog geen documenten</string>
+    <string name="recents_open">Een PDF openen</string>
+    <string name="recents_page">Pagina %1$d</string>
+    <string name="recents_entry_gone">Dit bestand is niet meer beschikbaar en is uit de lijst verwijderd.</string>
+    <string name="recents_no_picker">Geen app op deze telefoon kan bestanden kiezen</string>
+    <string name="recents_clear_title">Lijst wissen</string>
+    <string name="recents_clear_message">De lijst wordt leeggemaakt. De bestanden zelf blijven ongemoeid.</string>
+    <string name="recents_clear_confirm">Wissen</string>
+    <string name="document_no_name">Document</string>
+</resources>

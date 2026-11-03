@@ -1,0 +1,15 @@
+<resources>
+    <string name="settings_title">Paramètres</string>
+    <string name="settings_section_appearance">Apparence</string>
+    <string name="settings_section_reading">Lecture</string>
+    <string name="settings_section_about">À propos</string>
+    <string name="settings_theme">Thème</string>
+    <string name="settings_theme_system">Valeur par défaut du système</string>
+    <string name="settings_theme_light">Clair</string>
+    <string name="settings_theme_dark">Sombre</string>
+    <string name="settings_night_pages_summary">Afficher les pages avec les couleurs inversées</string>
+    <string name="settings_about_version">Version %1$s</string>
+    <string name="settings_about_author">Par Martin DaVinci</string>
+    <string name="settings_about_tagline">Les utilitaires Android du quotidien, sans publicité.</string>
+    <string name="settings_about_permissions">Ne nécessite aucune autorisation système.</string>
+</resources>

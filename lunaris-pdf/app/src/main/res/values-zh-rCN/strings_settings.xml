@@ -1,0 +1,15 @@
+<resources>
+    <string name="settings_title">设置</string>
+    <string name="settings_section_appearance">外观</string>
+    <string name="settings_section_reading">阅读</string>
+    <string name="settings_section_about">关于</string>
+    <string name="settings_theme">主题</string>
+    <string name="settings_theme_system">跟随系统</string>
+    <string name="settings_theme_light">浅色</string>
+    <string name="settings_theme_dark">深色</string>
+    <string name="settings_night_pages_summary">以反色显示页面</string>
+    <string name="settings_about_version">版本 %1$s</string>
+    <string name="settings_about_author">作者：Martin DaVinci</string>
+    <string name="settings_about_tagline">日常必备的 Android 工具，没有广告。</string>
+    <string name="settings_about_permissions">无需系统权限。</string>
+</resources>

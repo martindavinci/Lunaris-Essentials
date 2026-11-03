@@ -1,0 +1,11 @@
+<resources>
+    <string name="recents_empty">아직 문서가 없습니다</string>
+    <string name="recents_open">PDF 열기</string>
+    <string name="recents_page">%1$d페이지</string>
+    <string name="recents_entry_gone">이 파일을 더 이상 사용할 수 없어 목록에서 삭제했습니다.</string>
+    <string name="recents_no_picker">이 휴대전화에는 파일을 선택할 수 있는 앱이 없습니다</string>
+    <string name="recents_clear_title">목록 비우기</string>
+    <string name="recents_clear_message">목록을 비웁니다. 파일 자체는 변경되지 않습니다.</string>
+    <string name="recents_clear_confirm">비우기</string>
+    <string name="document_no_name">문서</string>
+</resources>

@@ -1,0 +1,30 @@
+<resources>
+    <string name="reader_back_to_top">Zurück zur ersten Seite</string>
+    <string name="reader_cannot_open">Diese Datei kann nicht geöffnet werden. Sie ist möglicherweise beschädigt, keine PDF-Datei oder nicht mehr verfügbar.</string>
+    <string name="reader_go_back">Zurück</string>
+    <string name="reader_search">Suchen</string>
+    <string name="reader_close_search">Suche schließen</string>
+    <string name="reader_find_next">Nächster Treffer</string>
+    <string name="reader_find_previous">Vorheriger Treffer</string>
+    <string name="reader_search_count">%1$d/%2$d</string>
+    <string name="reader_more">Mehr</string>
+    <string name="reader_go_to_page">Zur Seite gehen</string>
+    <string name="reader_go_to_page_range">Seite, bis %1$d</string>
+    <string name="reader_night_pages">Nachtseiten</string>
+    <string name="reader_page_of">Seite %1$d von %2$d</string>
+    <string name="reader_outline">Inhalt</string>
+    <string name="reader_password_title">Diese PDF-Datei ist passwortgeschützt</string>
+    <string name="reader_password_label">Passwort</string>
+    <string name="reader_password_wrong">Das Passwort hat nicht funktioniert.</string>
+    <string name="reader_link_title">Diesen Link öffnen?</string>
+    <string name="reader_link_open">Öffnen</string>
+    <string name="reader_link_copy">Kopieren</string>
+    <string name="reader_link_blocked">Diese App öffnet nur http- und https-Links. Du kannst diesen Link aber kopieren.</string>
+    <string name="reader_link_no_app">Keine App kann diesen Link öffnen</string>
+    <string name="reader_warning_not_https">Nicht verschlüsselt: Der Link verwendet kein HTTPS.</string>
+    <string name="reader_warning_punycode">Die Adresse verwendet Punycode, womit sich der Name einer bekannten Website nachahmen lässt.</string>
+    <string name="reader_warning_non_ascii_host">Die Adresse enthält ungewöhnliche Zeichen, die den Namen einer bekannten Website nachahmen können.</string>
+    <string name="reader_warning_ip_address_host">Die Adresse ist eine reine IP-Nummer, kein Website-Name.</string>
+    <string name="reader_warning_embedded_credentials">Der Link enthält einen Benutzernamen oder ein Passwort, was die echte Adresse verschleiern kann.</string>
+    <string name="reader_warning_unusual_port">Der Link verwendet einen ungewöhnlichen Port.</string>
+</resources>

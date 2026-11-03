@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ok">OK</string>
+    <string name="cancel">Anuluj</string>
+    <string name="back">Wstecz</string>
+    <string name="settings_language">Język</string>
+    <string name="settings_language_system">Domyślny systemowy</string>
+    <string name="settings_licenses">Licencje</string>
+</resources>

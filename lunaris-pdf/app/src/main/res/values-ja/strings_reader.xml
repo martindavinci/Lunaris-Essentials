@@ -1,0 +1,30 @@
+<resources>
+    <string name="reader_back_to_top">最初のページに戻る</string>
+    <string name="reader_cannot_open">このファイルを開けません。破損しているか、PDF ではないか、すでに利用できない可能性があります。</string>
+    <string name="reader_go_back">戻る</string>
+    <string name="reader_search">検索</string>
+    <string name="reader_close_search">検索を閉じる</string>
+    <string name="reader_find_next">次の一致</string>
+    <string name="reader_find_previous">前の一致</string>
+    <string name="reader_search_count">%1$d/%2$d</string>
+    <string name="reader_more">その他</string>
+    <string name="reader_go_to_page">ページへ移動</string>
+    <string name="reader_go_to_page_range">ページ番号 (最大 %1$d)</string>
+    <string name="reader_night_pages">ナイトページ</string>
+    <string name="reader_page_of">%2$d ページ中 %1$d ページ</string>
+    <string name="reader_outline">目次</string>
+    <string name="reader_password_title">この PDF にはパスワードが設定されています</string>
+    <string name="reader_password_label">パスワード</string>
+    <string name="reader_password_wrong">パスワードが正しくありません。</string>
+    <string name="reader_link_title">このリンクを開きますか？</string>
+    <string name="reader_link_open">開く</string>
+    <string name="reader_link_copy">コピー</string>
+    <string name="reader_link_blocked">このアプリで開けるのは http と https のリンクのみです。コピーは可能です。</string>
+    <string name="reader_link_no_app">このリンクを開けるアプリがありません</string>
+    <string name="reader_warning_not_https">HTTPS を使用していないため、暗号化されていません。</string>
+    <string name="reader_warning_punycode">このアドレスは Punycode を使用しており、有名なサイトの名前を装っている可能性があります。</string>
+    <string name="reader_warning_non_ascii_host">このアドレスには、有名なサイトの名前を装える特殊な文字が含まれています。</string>
+    <string name="reader_warning_ip_address_host">このアドレスはサイト名ではなく IP アドレスです。</string>
+    <string name="reader_warning_embedded_credentials">このリンクにはユーザー名またはパスワードが含まれており、本当のアドレスが隠されている可能性があります。</string>
+    <string name="reader_warning_unusual_port">このリンクは一般的でないポートを使用しています。</string>
+</resources>

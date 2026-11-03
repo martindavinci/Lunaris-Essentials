@@ -1,0 +1,11 @@
+<resources>
+    <string name="recents_empty">Noch keine Dokumente</string>
+    <string name="recents_open">PDF öffnen</string>
+    <string name="recents_page">Seite %1$d</string>
+    <string name="recents_entry_gone">Diese Datei ist nicht mehr verfügbar und wurde aus der Liste entfernt.</string>
+    <string name="recents_no_picker">Keine App auf diesem Telefon kann Dateien auswählen</string>
+    <string name="recents_clear_title">Liste leeren</string>
+    <string name="recents_clear_message">Die Liste wird geleert. Die Dateien selbst bleiben unverändert.</string>
+    <string name="recents_clear_confirm">Leeren</string>
+    <string name="document_no_name">Dokument</string>
+</resources>

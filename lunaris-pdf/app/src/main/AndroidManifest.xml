@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Lets the app find the device's text to speech engine. Grants nothing. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE" />
+        </intent>
+    </queries>
+
+    <!-- No cloud backup and no device transfer: from Android 12 allowBackup covers only the cloud. -->
+    <application
+        android:name=".LunarisPdfApp"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="false"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="@string/app_name"
+        android:localeConfig="@xml/locales_config"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.LunarisPdf"
+        tools:targetApi="33">
+
+        <!-- Rotating keeps the WebView, so a big document is not read and laid out again. -->
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboard|keyboardHidden|uiMode"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="content" />
+                <data android:scheme="file" />
+                <data android:mimeType="application/pdf" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/pdf" />
+            </intent-filter>
+        </activity>
+
+        <!-- Hands out the copy being shared from the private cache. No storage permissions needed. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+</manifest>

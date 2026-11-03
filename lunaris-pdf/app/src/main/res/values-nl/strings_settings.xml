@@ -1,0 +1,15 @@
+<resources>
+    <string name="settings_title">Instellingen</string>
+    <string name="settings_section_appearance">Weergave</string>
+    <string name="settings_section_reading">Lezen</string>
+    <string name="settings_section_about">Over</string>
+    <string name="settings_theme">Thema</string>
+    <string name="settings_theme_system">Systeemstandaard</string>
+    <string name="settings_theme_light">Licht</string>
+    <string name="settings_theme_dark">Donker</string>
+    <string name="settings_night_pages_summary">Pagina\'s met omgekeerde kleuren tonen</string>
+    <string name="settings_about_version">Versie %1$s</string>
+    <string name="settings_about_author">Door Martin DaVinci</string>
+    <string name="settings_about_tagline">De alledaagse Android-hulpmiddelen, zonder advertenties.</string>
+    <string name="settings_about_permissions">Heeft geen systeemmachtigingen nodig.</string>
+</resources>

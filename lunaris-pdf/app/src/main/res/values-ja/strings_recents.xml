@@ -1,0 +1,11 @@
+<resources>
+    <string name="recents_empty">まだドキュメントがありません</string>
+    <string name="recents_open">PDF を開く</string>
+    <string name="recents_page">%1$d ページ</string>
+    <string name="recents_entry_gone">このファイルは利用できなくなったため、リストから削除されました。</string>
+    <string name="recents_no_picker">この端末にはファイルを選択できるアプリがありません</string>
+    <string name="recents_clear_title">リストを消去</string>
+    <string name="recents_clear_message">リストを空にします。ファイル自体は変更されません。</string>
+    <string name="recents_clear_confirm">消去</string>
+    <string name="document_no_name">ドキュメント</string>
+</resources>

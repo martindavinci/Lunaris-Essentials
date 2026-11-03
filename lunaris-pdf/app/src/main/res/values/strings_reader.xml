@@ -1,0 +1,30 @@
+<resources>
+    <string name="reader_back_to_top">Back to the first page</string>
+    <string name="reader_cannot_open">This file cannot be opened. It may be damaged, may not be a PDF, or may no longer be available.</string>
+    <string name="reader_go_back">Go back</string>
+    <string name="reader_search">Search</string>
+    <string name="reader_close_search">Close search</string>
+    <string name="reader_find_next">Next match</string>
+    <string name="reader_find_previous">Previous match</string>
+    <string name="reader_search_count">%1$d/%2$d</string>
+    <string name="reader_more">More</string>
+    <string name="reader_go_to_page">Go to page</string>
+    <string name="reader_go_to_page_range">Page, up to %1$d</string>
+    <string name="reader_night_pages">Night pages</string>
+    <string name="reader_page_of">Page %1$d of %2$d</string>
+    <string name="reader_outline">Contents</string>
+    <string name="reader_password_title">This PDF has a password</string>
+    <string name="reader_password_label">Password</string>
+    <string name="reader_password_wrong">That password did not work.</string>
+    <string name="reader_link_title">Open this link?</string>
+    <string name="reader_link_open">Open</string>
+    <string name="reader_link_copy">Copy</string>
+    <string name="reader_link_blocked">This app only opens http and https links. You can still copy this one.</string>
+    <string name="reader_link_no_app">No app can open this link</string>
+    <string name="reader_warning_not_https">Not encrypted: it does not use HTTPS.</string>
+    <string name="reader_warning_punycode">The address uses Punycode, which can imitate the name of a known site.</string>
+    <string name="reader_warning_non_ascii_host">The address has unusual characters that can imitate the name of a known site.</string>
+    <string name="reader_warning_ip_address_host">The address is a bare IP number, not a site name.</string>
+    <string name="reader_warning_embedded_credentials">The link has a user name or password in it, which can hide the real address.</string>
+    <string name="reader_warning_unusual_port">The link uses an unusual port.</string>
+</resources>

@@ -1,0 +1,17 @@
+<resources>
+    <string name="action_print">Afdrukken</string>
+    <string name="action_share">Delen</string>
+    <string name="action_share_failed">Het bestand kon niet worden gedeeld</string>
+    <string name="action_save_copy">Kopie opslaan</string>
+    <string name="action_saved">Kopie opgeslagen</string>
+    <string name="action_save_failed">De kopie kon niet worden opgeslagen</string>
+    <string name="read_aloud">Voorlezen</string>
+    <string name="read_aloud_page">Pagina %1$d wordt voorgelezen</string>
+    <string name="read_aloud_pause">Pauze</string>
+    <string name="read_aloud_resume">Hervatten</string>
+    <string name="read_aloud_next">Volgende pagina</string>
+    <string name="read_aloud_previous">Vorige pagina</string>
+    <string name="read_aloud_stop">Stoppen met voorlezen</string>
+    <string name="read_aloud_no_text">Deze pagina\'s bevatten geen tekst om voor te lezen. Vaak is dit een gescand document.</string>
+    <string name="read_aloud_unavailable">Deze telefoon heeft geen tekst-naar-spraakengine die klaarstaat.</string>
+</resources>

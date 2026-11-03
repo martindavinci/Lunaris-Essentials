@@ -1,0 +1,11 @@
+<resources>
+    <string name="recents_empty">还没有文档</string>
+    <string name="recents_open">打开 PDF</string>
+    <string name="recents_page">第 %1$d 页</string>
+    <string name="recents_entry_gone">此文件已不可用，因此已从列表中移除。</string>
+    <string name="recents_no_picker">此手机上没有可以选择文件的应用</string>
+    <string name="recents_clear_title">清空列表</string>
+    <string name="recents_clear_message">列表将被清空。文件本身不会受到影响。</string>
+    <string name="recents_clear_confirm">清空</string>
+    <string name="document_no_name">文档</string>
+</resources>

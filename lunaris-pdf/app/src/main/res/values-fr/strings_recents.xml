@@ -1,0 +1,11 @@
+<resources>
+    <string name="recents_empty">Aucun document pour le moment</string>
+    <string name="recents_open">Ouvrir un PDF</string>
+    <string name="recents_page">Page %1$d</string>
+    <string name="recents_entry_gone">Ce fichier n\'est plus disponible, il a donc été retiré de la liste.</string>
+    <string name="recents_no_picker">Aucune application de ce téléphone ne permet de choisir des fichiers</string>
+    <string name="recents_clear_title">Vider la liste</string>
+    <string name="recents_clear_message">La liste sera vidée. Les fichiers eux-mêmes ne sont pas modifiés.</string>
+    <string name="recents_clear_confirm">Vider</string>
+    <string name="document_no_name">Document</string>
+</resources>

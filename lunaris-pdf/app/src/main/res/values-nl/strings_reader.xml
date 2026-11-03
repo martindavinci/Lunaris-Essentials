@@ -1,0 +1,30 @@
+<resources>
+    <string name="reader_back_to_top">Terug naar de eerste pagina</string>
+    <string name="reader_cannot_open">Dit bestand kan niet worden geopend. Het is mogelijk beschadigd, geen PDF of niet meer beschikbaar.</string>
+    <string name="reader_go_back">Terug</string>
+    <string name="reader_search">Zoeken</string>
+    <string name="reader_close_search">Zoeken sluiten</string>
+    <string name="reader_find_next">Volgende resultaat</string>
+    <string name="reader_find_previous">Vorige resultaat</string>
+    <string name="reader_search_count">%1$d/%2$d</string>
+    <string name="reader_more">Meer</string>
+    <string name="reader_go_to_page">Naar pagina gaan</string>
+    <string name="reader_go_to_page_range">Pagina, tot %1$d</string>
+    <string name="reader_night_pages">Nachtpagina\'s</string>
+    <string name="reader_page_of">Pagina %1$d van %2$d</string>
+    <string name="reader_outline">Inhoud</string>
+    <string name="reader_password_title">Deze PDF heeft een wachtwoord</string>
+    <string name="reader_password_label">Wachtwoord</string>
+    <string name="reader_password_wrong">Dat wachtwoord werkte niet.</string>
+    <string name="reader_link_title">Deze link openen?</string>
+    <string name="reader_link_open">Openen</string>
+    <string name="reader_link_copy">Kopiëren</string>
+    <string name="reader_link_blocked">Deze app opent alleen http- en https-links. Je kunt deze link wel kopiëren.</string>
+    <string name="reader_link_no_app">Geen app kan deze link openen</string>
+    <string name="reader_warning_not_https">Niet versleuteld: de link gebruikt geen HTTPS.</string>
+    <string name="reader_warning_punycode">Het adres gebruikt Punycode, waarmee de naam van een bekende site kan worden nagebootst.</string>
+    <string name="reader_warning_non_ascii_host">Het adres bevat ongebruikelijke tekens die de naam van een bekende site kunnen nabootsen.</string>
+    <string name="reader_warning_ip_address_host">Het adres is een kaal IP-nummer, geen sitenaam.</string>
+    <string name="reader_warning_embedded_credentials">De link bevat een gebruikersnaam of wachtwoord, wat het echte adres kan verbergen.</string>
+    <string name="reader_warning_unusual_port">De link gebruikt een ongebruikelijke poort.</string>
+</resources>

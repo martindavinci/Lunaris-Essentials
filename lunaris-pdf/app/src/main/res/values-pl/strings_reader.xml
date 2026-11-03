@@ -1,0 +1,30 @@
+<resources>
+    <string name="reader_back_to_top">Wróć do pierwszej strony</string>
+    <string name="reader_cannot_open">Nie można otworzyć tego pliku. Może być uszkodzony, nie być plikiem PDF albo być już niedostępny.</string>
+    <string name="reader_go_back">Wstecz</string>
+    <string name="reader_search">Szukaj</string>
+    <string name="reader_close_search">Zamknij wyszukiwanie</string>
+    <string name="reader_find_next">Następne trafienie</string>
+    <string name="reader_find_previous">Poprzednie trafienie</string>
+    <string name="reader_search_count">%1$d/%2$d</string>
+    <string name="reader_more">Więcej</string>
+    <string name="reader_go_to_page">Przejdź do strony</string>
+    <string name="reader_go_to_page_range">Strona, do %1$d</string>
+    <string name="reader_night_pages">Strony nocne</string>
+    <string name="reader_page_of">Strona %1$d z %2$d</string>
+    <string name="reader_outline">Spis treści</string>
+    <string name="reader_password_title">Ten plik PDF jest chroniony hasłem</string>
+    <string name="reader_password_label">Hasło</string>
+    <string name="reader_password_wrong">To hasło nie zadziałało.</string>
+    <string name="reader_link_title">Otworzyć ten link?</string>
+    <string name="reader_link_open">Otwórz</string>
+    <string name="reader_link_copy">Kopiuj</string>
+    <string name="reader_link_blocked">Ta aplikacja otwiera tylko linki http i https. Nadal możesz skopiować ten link.</string>
+    <string name="reader_link_no_app">Żadna aplikacja nie może otworzyć tego linku</string>
+    <string name="reader_warning_not_https">Brak szyfrowania: link nie używa HTTPS.</string>
+    <string name="reader_warning_punycode">Adres używa Punycode, który może naśladować nazwę znanej strony.</string>
+    <string name="reader_warning_non_ascii_host">Adres zawiera nietypowe znaki, które mogą naśladować nazwę znanej strony.</string>
+    <string name="reader_warning_ip_address_host">Adres to sam numer IP, a nie nazwa strony.</string>
+    <string name="reader_warning_embedded_credentials">Link zawiera nazwę użytkownika lub hasło, co może ukrywać prawdziwy adres.</string>
+    <string name="reader_warning_unusual_port">Link używa nietypowego portu.</string>
+</resources>

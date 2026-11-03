@@ -1,0 +1,30 @@
+<resources>
+    <string name="reader_back_to_top">返回第一页</string>
+    <string name="reader_cannot_open">无法打开此文件。文件可能已损坏、不是 PDF，或已不可用。</string>
+    <string name="reader_go_back">返回</string>
+    <string name="reader_search">搜索</string>
+    <string name="reader_close_search">关闭搜索</string>
+    <string name="reader_find_next">下一个匹配项</string>
+    <string name="reader_find_previous">上一个匹配项</string>
+    <string name="reader_search_count">%1$d/%2$d</string>
+    <string name="reader_more">更多</string>
+    <string name="reader_go_to_page">转到页面</string>
+    <string name="reader_go_to_page_range">页码，最大 %1$d</string>
+    <string name="reader_night_pages">夜间页面</string>
+    <string name="reader_page_of">第 %1$d 页，共 %2$d 页</string>
+    <string name="reader_outline">目录</string>
+    <string name="reader_password_title">此 PDF 需要密码</string>
+    <string name="reader_password_label">密码</string>
+    <string name="reader_password_wrong">密码不正确。</string>
+    <string name="reader_link_title">要打开此链接吗？</string>
+    <string name="reader_link_open">打开</string>
+    <string name="reader_link_copy">复制</string>
+    <string name="reader_link_blocked">此应用只能打开 http 和 https 链接，但您仍可复制此链接。</string>
+    <string name="reader_link_no_app">没有应用可以打开此链接</string>
+    <string name="reader_warning_not_https">未加密：未使用 HTTPS。</string>
+    <string name="reader_warning_punycode">此地址使用 Punycode，可能仿冒知名网站的名称。</string>
+    <string name="reader_warning_non_ascii_host">此地址含有异常字符，可能仿冒知名网站的名称。</string>
+    <string name="reader_warning_ip_address_host">此地址只是 IP 数字，而不是网站名称。</string>
+    <string name="reader_warning_embedded_credentials">此链接含有用户名或密码，可能隐藏真实地址。</string>
+    <string name="reader_warning_unusual_port">此链接使用了不常见的端口。</string>
+</resources>

@@ -1,0 +1,17 @@
+<resources>
+    <string name="action_print">Imprimer</string>
+    <string name="action_share">Partager</string>
+    <string name="action_share_failed">Le fichier n\'a pas pu être partagé</string>
+    <string name="action_save_copy">Enregistrer une copie</string>
+    <string name="action_saved">Copie enregistrée</string>
+    <string name="action_save_failed">La copie n\'a pas pu être enregistrée</string>
+    <string name="read_aloud">Lire à voix haute</string>
+    <string name="read_aloud_page">Lecture de la page %1$d</string>
+    <string name="read_aloud_pause">Pause</string>
+    <string name="read_aloud_resume">Reprendre</string>
+    <string name="read_aloud_next">Page suivante</string>
+    <string name="read_aloud_previous">Page précédente</string>
+    <string name="read_aloud_stop">Arrêter la lecture</string>
+    <string name="read_aloud_no_text">Ces pages ne contiennent pas de texte à lire. C\'est souvent un document numérisé.</string>
+    <string name="read_aloud_unavailable">Ce téléphone n\'a aucun moteur de synthèse vocale prêt à l\'emploi.</string>
+</resources>

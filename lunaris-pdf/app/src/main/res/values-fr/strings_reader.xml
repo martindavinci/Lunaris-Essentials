@@ -1,0 +1,30 @@
+<resources>
+    <string name="reader_back_to_top">Retour à la première page</string>
+    <string name="reader_cannot_open">Impossible d\'ouvrir ce fichier. Il est peut-être endommagé, ce n\'est peut-être pas un PDF, ou il n\'est plus disponible.</string>
+    <string name="reader_go_back">Retour</string>
+    <string name="reader_search">Rechercher</string>
+    <string name="reader_close_search">Fermer la recherche</string>
+    <string name="reader_find_next">Résultat suivant</string>
+    <string name="reader_find_previous">Résultat précédent</string>
+    <string name="reader_search_count">%1$d/%2$d</string>
+    <string name="reader_more">Plus</string>
+    <string name="reader_go_to_page">Aller à la page</string>
+    <string name="reader_go_to_page_range">Page, jusqu\'à %1$d</string>
+    <string name="reader_night_pages">Pages de nuit</string>
+    <string name="reader_page_of">Page %1$d sur %2$d</string>
+    <string name="reader_outline">Sommaire</string>
+    <string name="reader_password_title">Ce PDF est protégé par un mot de passe</string>
+    <string name="reader_password_label">Mot de passe</string>
+    <string name="reader_password_wrong">Ce mot de passe n\'a pas fonctionné.</string>
+    <string name="reader_link_title">Ouvrir ce lien ?</string>
+    <string name="reader_link_open">Ouvrir</string>
+    <string name="reader_link_copy">Copier</string>
+    <string name="reader_link_blocked">Cette application n\'ouvre que les liens http et https. Vous pouvez quand même copier celui-ci.</string>
+    <string name="reader_link_no_app">Aucune application ne peut ouvrir ce lien</string>
+    <string name="reader_warning_not_https">Non chiffré : il n\'utilise pas HTTPS.</string>
+    <string name="reader_warning_punycode">L\'adresse utilise Punycode, qui peut imiter le nom d\'un site connu.</string>
+    <string name="reader_warning_non_ascii_host">L\'adresse contient des caractères inhabituels qui peuvent imiter le nom d\'un site connu.</string>
+    <string name="reader_warning_ip_address_host">L\'adresse est un simple numéro IP, pas un nom de site.</string>
+    <string name="reader_warning_embedded_credentials">Le lien contient un nom d\'utilisateur ou un mot de passe, ce qui peut masquer l\'adresse réelle.</string>
+    <string name="reader_warning_unusual_port">Le lien utilise un port inhabituel.</string>
+</resources>

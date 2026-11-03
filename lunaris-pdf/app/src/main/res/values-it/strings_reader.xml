@@ -1,0 +1,30 @@
+<resources>
+    <string name="reader_back_to_top">Torna alla prima pagina</string>
+    <string name="reader_cannot_open">Impossibile aprire questo file. Potrebbe essere danneggiato, non essere un PDF o non essere più disponibile.</string>
+    <string name="reader_go_back">Indietro</string>
+    <string name="reader_search">Cerca</string>
+    <string name="reader_close_search">Chiudi ricerca</string>
+    <string name="reader_find_next">Risultato successivo</string>
+    <string name="reader_find_previous">Risultato precedente</string>
+    <string name="reader_search_count">%1$d/%2$d</string>
+    <string name="reader_more">Altro</string>
+    <string name="reader_go_to_page">Vai alla pagina</string>
+    <string name="reader_go_to_page_range">Pagina, fino a %1$d</string>
+    <string name="reader_night_pages">Pagine notturne</string>
+    <string name="reader_page_of">Pagina %1$d di %2$d</string>
+    <string name="reader_outline">Indice</string>
+    <string name="reader_password_title">Questo PDF ha una password</string>
+    <string name="reader_password_label">Password</string>
+    <string name="reader_password_wrong">Quella password non ha funzionato.</string>
+    <string name="reader_link_title">Aprire questo link?</string>
+    <string name="reader_link_open">Apri</string>
+    <string name="reader_link_copy">Copia</string>
+    <string name="reader_link_blocked">Questa app apre solo link http e https. Puoi comunque copiare questo.</string>
+    <string name="reader_link_no_app">Nessuna app può aprire questo link</string>
+    <string name="reader_warning_not_https">Non cifrato: non usa HTTPS.</string>
+    <string name="reader_warning_punycode">L\'indirizzo usa Punycode, che può imitare il nome di un sito noto.</string>
+    <string name="reader_warning_non_ascii_host">L\'indirizzo contiene caratteri insoliti che possono imitare il nome di un sito noto.</string>
+    <string name="reader_warning_ip_address_host">L\'indirizzo è un semplice numero IP, non il nome di un sito.</string>
+    <string name="reader_warning_embedded_credentials">Il link contiene un nome utente o una password, che possono nascondere l\'indirizzo reale.</string>
+    <string name="reader_warning_unusual_port">Il link usa una porta insolita.</string>
+</resources>
