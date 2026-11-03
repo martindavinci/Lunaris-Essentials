@@ -6,10 +6,10 @@
     <string name="reader_close_search">Close search</string>
     <string name="reader_find_next">Next match</string>
     <string name="reader_find_previous">Previous match</string>
-    <string name="reader_search_count">%1$d/%2$d</string>
+    <string name="reader_search_count">%1$d of %2$d</string>
     <string name="reader_more">More</string>
     <string name="reader_go_to_page">Go to page</string>
-    <string name="reader_go_to_page_range">Page, up to %1$d</string>
+    <string name="reader_go_to_page_range">Choose a page from 1 to %1$d.</string>
     <string name="reader_night_pages">Night pages</string>
     <string name="reader_page_of">Page %1$d of %2$d</string>
     <string name="reader_outline">Contents</string>
@@ -27,4 +27,24 @@
     <string name="reader_warning_ip_address_host">The address is a bare IP number, not a site name.</string>
     <string name="reader_warning_embedded_credentials">The link has a user name or password in it, which can hide the real address.</string>
     <string name="reader_warning_unusual_port">The link uses an unusual port.</string>
+    <string name="reader_search_where">Page %1$d · %2$d on this page</string>
+    <string name="reader_search_none">No results</string>
+    <string name="reader_search_hint">Type at least 2 letters</string>
+    <string name="reader_searching">Searching…</string>
+    <string name="reader_clear_search">Clear</string>
+    <string name="reader_match_case">Match case</string>
+    <string name="reader_whole_words">Whole words</string>
+    <string name="reader_go">Go</string>
+    <string name="reader_of_pages">of %1$d</string>
+    <string name="reader_outline_none">This PDF has no contents list.</string>
+    <string name="reader_outline_here">You’re here · %1$d</string>
+    <string name="reader_jump_back">Back to page %1$d</string>
+    <string name="reader_jump_forward">Forward to page %1$d</string>
+    <string name="reader_password_message">%1$s is protected. The password is used to open it once and is never saved.</string>
+    <string name="reader_password_show">Show password</string>
+    <string name="reader_password_hide">Hide password</string>
+    <string name="reader_link_check">Check this link before opening it</string>
+    <string name="reader_link_address">Full address</string>
+    <string name="reader_link_open_anyway">Open anyway</string>
+    <string name="reader_page_short" translatable="false">%1$d / %2$d</string>
 </resources>

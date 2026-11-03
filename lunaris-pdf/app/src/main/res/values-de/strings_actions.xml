@@ -14,4 +14,6 @@
     <string name="read_aloud_stop">Vorlesen beenden</string>
     <string name="read_aloud_no_text">Diese Seiten enthalten keinen Text zum Vorlesen. Meist ist das ein gescanntes Dokument.</string>
     <string name="read_aloud_unavailable">Auf diesem Telefon ist keine Sprachausgabe einsatzbereit.</string>
+    <string name="read_aloud_paused">Pausiert auf Seite %1$d</string>
+    <string name="read_aloud_sentence">Satz %1$d von %2$d</string>
 </resources>

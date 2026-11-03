@@ -1,5 +1,4 @@
 <resources>
-    <string name="recents_empty">Nog geen documenten</string>
     <string name="recents_open">Een PDF openen</string>
     <string name="recents_page">Pagina %1$d</string>
     <string name="recents_entry_gone">Dit bestand is niet meer beschikbaar en is uit de lijst verwijderd.</string>
@@ -8,4 +7,23 @@
     <string name="recents_clear_message">De lijst wordt leeggemaakt. De bestanden zelf blijven ongemoeid.</string>
     <string name="recents_clear_confirm">Wissen</string>
     <string name="document_no_name">Document</string>
+    <string name="recents_empty_title">Nog niets om te lezen</string>
+    <string name="recents_empty_message">Open hier een pdf, of vanuit elke app met Openen met. De volgende keer gaat hij verder op de pagina waar je stopte.</string>
+    <string name="recents_continue">Verder lezen</string>
+    <string name="recents_pinned">Vastgezet</string>
+    <string name="recents_today">Vandaag</string>
+    <string name="recents_this_week">Deze week</string>
+    <string name="recents_earlier">Eerder</string>
+    <string name="recents_yesterday">Gisteren</string>
+    <string name="recents_search">Zoeken in recente bestanden</string>
+    <string name="recents_results">Resultaten</string>
+    <string name="recents_all">Alle recente bestanden</string>
+    <string name="recents_no_match">Geen recent bestand komt overeen met “%1$s”.</string>
+    <string name="recents_pin">Bovenaan vastzetten</string>
+    <string name="recents_unpin">Losmaken</string>
+    <string name="recents_pin_limit">Je kunt maximaal 3 bestanden vastzetten.</string>
+    <string name="recents_remove">Uit recente bestanden verwijderen</string>
+    <string name="recents_removed">Uit recente bestanden verwijderd. Het bestand blijft ongemoeid.</string>
+    <string name="recents_undo">Ongedaan maken</string>
+    <string name="recents_locked">Met wachtwoord</string>
 </resources>

@@ -14,4 +14,6 @@
     <string name="read_aloud_stop">Parar a leitura</string>
     <string name="read_aloud_no_text">Estas páginas não têm texto para ler. Normalmente é um documento digitalizado.</string>
     <string name="read_aloud_unavailable">Este telemóvel não tem nenhum motor de conversão de texto em voz pronto a usar.</string>
+    <string name="read_aloud_paused">Em pausa na página %1$d</string>
+    <string name="read_aloud_sentence">Frase %1$d de %2$d</string>
 </resources>

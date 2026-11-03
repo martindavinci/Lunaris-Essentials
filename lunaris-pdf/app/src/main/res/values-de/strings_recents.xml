@@ -1,5 +1,4 @@
 <resources>
-    <string name="recents_empty">Noch keine Dokumente</string>
     <string name="recents_open">PDF öffnen</string>
     <string name="recents_page">Seite %1$d</string>
     <string name="recents_entry_gone">Diese Datei ist nicht mehr verfügbar und wurde aus der Liste entfernt.</string>
@@ -8,4 +7,23 @@
     <string name="recents_clear_message">Die Liste wird geleert. Die Dateien selbst bleiben unverändert.</string>
     <string name="recents_clear_confirm">Leeren</string>
     <string name="document_no_name">Dokument</string>
+    <string name="recents_empty_title">Noch nichts zu lesen</string>
+    <string name="recents_empty_message">Öffne hier ein PDF oder aus jeder App mit „Öffnen mit“. Beim nächsten Mal geht es auf der Seite weiter, auf der du aufgehört hast.</string>
+    <string name="recents_continue">Weiterlesen</string>
+    <string name="recents_pinned">Angeheftet</string>
+    <string name="recents_today">Heute</string>
+    <string name="recents_this_week">Diese Woche</string>
+    <string name="recents_earlier">Früher</string>
+    <string name="recents_yesterday">Gestern</string>
+    <string name="recents_search">Letzte Dateien durchsuchen</string>
+    <string name="recents_results">Ergebnisse</string>
+    <string name="recents_all">Alle letzten Dateien</string>
+    <string name="recents_no_match">Keine letzte Datei passt zu „%1$s“.</string>
+    <string name="recents_pin">Oben anheften</string>
+    <string name="recents_unpin">Loslösen</string>
+    <string name="recents_pin_limit">Es können höchstens 3 Dateien angeheftet werden.</string>
+    <string name="recents_remove">Aus der Liste entfernen</string>
+    <string name="recents_removed">Aus der Liste entfernt. Die Datei bleibt unberührt.</string>
+    <string name="recents_undo">Rückgängig</string>
+    <string name="recents_locked">Mit Passwort</string>
 </resources>

@@ -8,7 +8,7 @@ const FIT_SCALES = ['page-width', 'page-fit', 'page-actual', 'auto'];
 const distance = (a, b) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
 const middle = (a, b) => [(a.clientX + b.clientX) / 2, (a.clientY + b.clientY) / 2];
 
-export function installGestures({ container, viewer, viewerElement, goToPage, onTap, onLink }) {
+export function installGestures({ container, viewer, viewerElement, goToPage, onTap, onLink, onInternalLink }) {
   let pinch = null;
   let tapStart = null;
   let tapTimer = 0;
@@ -65,7 +65,10 @@ export function installGestures({ container, viewer, viewerElement, goToPage, on
   container.addEventListener('click', (event) => {
     const link = event.target.closest?.('a');
     if (link) {
-      if (link.classList.contains('internalLink')) return;
+      if (link.classList.contains('internalLink')) {
+        onInternalLink();
+        return;
+      }
       event.preventDefault();
       event.stopPropagation();
       if (link.href) onLink(link.href);

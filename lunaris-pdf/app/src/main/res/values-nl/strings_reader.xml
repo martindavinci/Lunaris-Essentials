@@ -6,10 +6,10 @@
     <string name="reader_close_search">Zoeken sluiten</string>
     <string name="reader_find_next">Volgende resultaat</string>
     <string name="reader_find_previous">Vorige resultaat</string>
-    <string name="reader_search_count">%1$d/%2$d</string>
+    <string name="reader_search_count">%1$d van %2$d</string>
     <string name="reader_more">Meer</string>
     <string name="reader_go_to_page">Naar pagina gaan</string>
-    <string name="reader_go_to_page_range">Pagina, tot %1$d</string>
+    <string name="reader_go_to_page_range">Kies een pagina van 1 tot %1$d.</string>
     <string name="reader_night_pages">Nachtpagina\'s</string>
     <string name="reader_page_of">Pagina %1$d van %2$d</string>
     <string name="reader_outline">Inhoud</string>
@@ -27,4 +27,23 @@
     <string name="reader_warning_ip_address_host">Het adres is een kaal IP-nummer, geen sitenaam.</string>
     <string name="reader_warning_embedded_credentials">De link bevat een gebruikersnaam of wachtwoord, wat het echte adres kan verbergen.</string>
     <string name="reader_warning_unusual_port">De link gebruikt een ongebruikelijke poort.</string>
+    <string name="reader_search_where">Pagina %1$d · %2$d op deze pagina</string>
+    <string name="reader_search_none">Geen resultaten</string>
+    <string name="reader_search_hint">Typ minstens 2 letters</string>
+    <string name="reader_searching">Zoeken…</string>
+    <string name="reader_clear_search">Wissen</string>
+    <string name="reader_match_case">Hoofdlettergevoelig</string>
+    <string name="reader_whole_words">Hele woorden</string>
+    <string name="reader_go">Ga</string>
+    <string name="reader_of_pages">van %1$d</string>
+    <string name="reader_outline_none">Deze pdf heeft geen inhoudsopgave.</string>
+    <string name="reader_outline_here">Je bent hier · %1$d</string>
+    <string name="reader_jump_back">Terug naar pagina %1$d</string>
+    <string name="reader_jump_forward">Verder naar pagina %1$d</string>
+    <string name="reader_password_message">%1$s is beveiligd. Het wachtwoord wordt één keer gebruikt om te openen en nooit bewaard.</string>
+    <string name="reader_password_show">Wachtwoord tonen</string>
+    <string name="reader_password_hide">Wachtwoord verbergen</string>
+    <string name="reader_link_check">Controleer deze link voordat je hem opent</string>
+    <string name="reader_link_address">Volledig adres</string>
+    <string name="reader_link_open_anyway">Toch openen</string>
 </resources>

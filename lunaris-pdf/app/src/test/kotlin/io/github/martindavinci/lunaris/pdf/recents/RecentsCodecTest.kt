@@ -4,7 +4,17 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
 class RecentsCodecTest {
-    private val entry = RecentEntry("content://a/1", "one.pdf", page = 4, scale = "1.5", lastOpenedMillis = 99L)
+    private val entry = RecentEntry(
+        "content://a/1",
+        "one.pdf",
+        page = 4,
+        scale = "1.5",
+        lastOpenedMillis = 99L,
+        pages = 30,
+        chapter = "Two",
+        locked = true,
+        pinned = true,
+    )
 
     @Test fun entries_surviveTheRoundTrip() {
         assertThat(RecentsCodec.fromJson(RecentsCodec.toJson(listOf(entry)))).containsExactly(entry)
@@ -32,6 +42,10 @@ class RecentsCodecTest {
         assertThat(single.page).isEqualTo(1)
         assertThat(single.name).isEqualTo("")
         assertThat(single.scale).isEqualTo("page-width")
+        assertThat(single.pages).isEqualTo(0)
+        assertThat(single.chapter).isEmpty()
+        assertThat(single.locked).isFalse()
+        assertThat(single.pinned).isFalse()
     }
 
     @Test fun repeatedUri_keepsTheFirst() {

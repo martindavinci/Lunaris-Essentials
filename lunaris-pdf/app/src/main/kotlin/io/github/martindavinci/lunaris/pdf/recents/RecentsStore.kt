@@ -15,7 +15,10 @@ import kotlinx.coroutines.flow.map
 
 /** Newest first, at most [RecentsList.MAX_ENTRIES] entries. */
 @Singleton
-class RecentsStore @Inject constructor(private val dataStore: DataStore<Preferences>) {
+class RecentsStore @Inject constructor(
+    private val dataStore: DataStore<Preferences>,
+    private val thumbnails: ThumbnailStore,
+) {
 
     val entries: Flow<List<RecentEntry>> = dataStore.dataOrEmpty()
         .map { it[ENTRIES].orEmpty() }
@@ -23,26 +26,48 @@ class RecentsStore @Inject constructor(private val dataStore: DataStore<Preferen
         .map(RecentsCodec::fromJson)
         .flowOn(Dispatchers.Default)
 
-    suspend fun touch(uri: String, name: String) {
-        update { RecentsList.touch(it, uri, name, System.currentTimeMillis()) }
+    suspend fun touch(visit: RecentVisit) {
+        update { RecentsList.touch(it, visit, System.currentTimeMillis()) }?.let { list ->
+            thumbnails.retain(list.map { it.uri })
+        }
     }
 
-    suspend fun savePosition(uri: String, page: Int, scale: String) {
-        update { RecentsList.savePosition(it, uri, page, scale) }
+    suspend fun savePosition(spot: ReadingSpot) {
+        update { RecentsList.savePosition(it, spot.uri, spot.page, spot.scale, spot.chapter) }
     }
 
     suspend fun remove(uri: String) {
         update { RecentsList.remove(it, uri) }
+        thumbnails.remove(uri)
+    }
+
+    /** False when there are as many pins as allowed already. */
+    suspend fun setPinned(uri: String, on: Boolean): Boolean {
+        var done = true
+        update { list ->
+            RecentsList.setPinned(list, uri, on) ?: list.also { done = false }
+        }
+        return done
+    }
+
+    suspend fun restore(entry: RecentEntry) {
+        update { RecentsList.restore(it, entry) }
     }
 
     suspend fun clear() {
         dataStore.editIfPossible { it.remove(ENTRIES) }
+        thumbnails.clear()
     }
 
-    private suspend fun update(transform: (List<RecentEntry>) -> List<RecentEntry>) {
+    /** The new list, or null if it could not be written. */
+    private suspend fun update(transform: (List<RecentEntry>) -> List<RecentEntry>): List<RecentEntry>? {
+        var written: List<RecentEntry>? = null
         dataStore.editIfPossible { prefs ->
-            prefs[ENTRIES] = RecentsCodec.toJson(transform(RecentsCodec.fromJson(prefs[ENTRIES].orEmpty())))
+            val list = transform(RecentsCodec.fromJson(prefs[ENTRIES].orEmpty()))
+            prefs[ENTRIES] = RecentsCodec.toJson(list)
+            written = list
         }
+        return written
     }
 
     private companion object {

@@ -6,11 +6,16 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.martindavinci.lunaris.pdf.actions.DocumentActions
 import io.github.martindavinci.lunaris.pdf.actions.DocumentCopier
+import io.github.martindavinci.lunaris.pdf.recents.DocumentThumbnails
+import io.github.martindavinci.lunaris.pdf.recents.ReadingSpot
+import io.github.martindavinci.lunaris.pdf.recents.RecentVisit
 import io.github.martindavinci.lunaris.pdf.recents.RecentsStore
+import io.github.martindavinci.lunaris.pdf.recents.ThumbnailStore
 import io.github.martindavinci.lunaris.pdf.session.CurrentDocument
 import io.github.martindavinci.lunaris.pdf.settings.SettingsStore
 import io.github.martindavinci.lunaris.pdf.tts.ReadAloudState
 import io.github.martindavinci.lunaris.pdf.tts.SpeechEngine
+import io.github.martindavinci.lunaris.pdf.tts.SpokenSentence
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerChannel
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerCommand
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerEngine
@@ -27,7 +32,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/** Takes the night setting as a flow and a function, so tests do not need a real store. */
+/** Takes the stores as flows and functions, so tests do not need real ones. */
 @HiltViewModel
 class ReaderViewModel internal constructor(
     val viewer: ViewerChannel,
@@ -36,8 +41,9 @@ class ReaderViewModel internal constructor(
     nightPages: Flow<Boolean>,
     private val setNightPages: suspend (Boolean) -> Unit,
     topButtonEnabled: Flow<Boolean>,
-    private val touchRecent: suspend (String, String) -> Unit,
-    savePosition: suspend (String, Int, String) -> Unit,
+    touchRecent: suspend (RecentVisit) -> Unit,
+    savePosition: suspend (ReadingSpot) -> Unit,
+    thumbnails: DocumentThumbnails,
     speechEngine: () -> SpeechEngine,
     documents: DocumentActions,
 ) : ViewModel() {
@@ -49,6 +55,7 @@ class ReaderViewModel internal constructor(
         savedState: SavedStateHandle,
         settingsStore: SettingsStore,
         recents: RecentsStore,
+        thumbnails: ThumbnailStore,
         speechEngine: Provider<SpeechEngine>,
         documents: DocumentCopier,
     ) : this(
@@ -60,6 +67,7 @@ class ReaderViewModel internal constructor(
         settingsStore.settings.map { it.topButton }.distinctUntilChanged(),
         recents::touch,
         recents::savePosition,
+        thumbnails,
         speechEngine::get,
         documents,
     )
@@ -71,9 +79,14 @@ class ReaderViewModel internal constructor(
     /** Kept in memory only, to reopen the document if the page reloads. Never stored. */
     private var password: String? = null
     private var pageReady = false
-    private var joinedRecents = false
+    private var barSpace: ViewerCommand.SetBarSpace? = null
     private val files = ReaderFiles(viewModelScope, documents) { change -> mutableState.update(change) }
-    private val speech = ReaderSpeech(viewModelScope, viewer, speechEngine, ::onReadAloud)
+    private val speech = ReaderSpeech(viewModelScope, viewer, speechEngine, ::onReadAloud, ::onSentence)
+    private val search = ReaderSearch(viewer, { state.value }) { change -> mutableState.update(change) }
+    private val jumps = ReaderJumps(viewer, { state.value }) { change -> mutableState.update(change) }
+    private val recents = ReaderRecents(viewModelScope, touchRecent, thumbnails) {
+        viewer.send(ViewerCommand.MakeThumbnail)
+    }
 
     init {
         viewModelScope.launch { viewer.events.collect(::onEvent) }
@@ -89,16 +102,17 @@ class ReaderViewModel internal constructor(
 
     fun onAction(action: ReaderAction) {
         when (action) {
-            ReaderAction.BackToTop -> viewer.send(ViewerCommand.GoToPage(1))
-            is ReaderAction.GoToPage -> viewer.send(ViewerCommand.GoToPage(clampPage(action.page)))
-            ReaderAction.OpenSearch -> mutableState.update { it.copy(search = SearchState(), chromeVisible = true) }
-            ReaderAction.CloseSearch -> {
-                mutableState.update { it.copy(search = null) }
-                viewer.send(ViewerCommand.CloseFind)
-            }
-            is ReaderAction.SubmitSearch -> submitSearch(action.query)
-            ReaderAction.FindNext -> find(previous = false)
-            ReaderAction.FindPrevious -> find(previous = true)
+            ReaderAction.BackToTop -> jumps.goTo(1)
+            is ReaderAction.GoToPage -> jumps.goTo(clampPage(action.page))
+            ReaderAction.ReturnFromJump -> jumps.goBack()
+            ReaderAction.OpenSearch -> search.open()
+            ReaderAction.CloseSearch -> search.close()
+            is ReaderAction.SubmitSearch -> search.submit(action.query)
+            ReaderAction.FindNext -> search.find(previous = false)
+            ReaderAction.FindPrevious -> search.find(previous = true)
+            ReaderAction.ToggleMatchCase -> search.toggleMatchCase()
+            ReaderAction.ToggleWholeWords -> search.toggleWholeWords()
+            is ReaderAction.SetBarSpace -> setBarSpace(ViewerCommand.SetBarSpace(action.top, action.bottom))
             is ReaderAction.SubmitPassword -> submitPassword(action.password)
             ReaderAction.DismissLink -> mutableState.update { it.copy(pendingLink = null) }
             ReaderAction.ToggleNight -> viewModelScope.launch { setNightPages(!state.value.night) }
@@ -108,6 +122,7 @@ class ReaderViewModel internal constructor(
             ReaderAction.NextReadAloudPage -> speech.next()
             ReaderAction.PreviousReadAloudPage -> speech.previous()
             ReaderAction.StopReadAloud -> speech.stop()
+            ReaderAction.NextReadAloudRate -> mutableState.update { it.copy(readAloudRate = speech.nextRate()) }
             is ReaderAction.SaveCopyTo -> state.value.uri?.let { files.saveCopy(it, action.uri) }
             ReaderAction.Share -> state.value.uri?.let { files.share(it, state.value.name) }
             ReaderAction.ShareStarted -> mutableState.update { it.copy(shareUri = null) }
@@ -131,13 +146,13 @@ class ReaderViewModel internal constructor(
                 speech.stop()
                 mutableState.update { it.copy(loading = true, viewRevision = it.viewRevision + 1) }
             }
-            is ViewerEvent.FindResult -> mutableState.update { state ->
-                state.copy(
-                    search = state.search?.copy(current = event.current, total = event.total, searching = !event.done),
-                )
-            }
+            is ViewerEvent.FindResult -> search.onResult(event)
             is ViewerEvent.LinkTapped -> mutableState.update { it.copy(pendingLink = PendingLink.of(event.url)) }
             is ViewerEvent.PageText -> speech.onPageText(event)
+            is ViewerEvent.ScrollChanged -> mutableState.update { it.copy(scrolling = event.moving, scrollingDown = event.down) }
+            is ViewerEvent.Jumped -> jumps.moved(event.from, event.to)
+            ViewerEvent.ChapterCrossed -> mutableState.update { it.copy(chapterTicks = it.chapterTicks + 1) }
+            is ViewerEvent.Thumbnail -> if (password == null) recents.onThumbnail(state.value.uri, event.jpeg)
             ViewerEvent.Tapped -> mutableState.update {
                 if (it.search != null) it else it.copy(chromeVisible = !it.chromeVisible)
             }
@@ -148,23 +163,31 @@ class ReaderViewModel internal constructor(
         pageReady = true
         viewer.send(ViewerCommand.Open(password, state.value.page, position.scale))
         viewer.send(ViewerCommand.SetNight(state.value.night))
+        barSpace?.let(viewer::send)
     }
 
-    /** Only a file that really opened joins the recents. */
     private fun onLoaded(event: ViewerEvent.Loaded) {
+        val outlineArrived = event.outline.isNotEmpty() && event.outline != state.value.outline
         mutableState.update {
             it.copy(pages = event.pages, loading = false, outline = event.outline.ifEmpty { it.outline })
         }
-        val uri = state.value.uri
-        if (!joinedRecents && uri != null) {
-            joinedRecents = true
-            viewModelScope.launch { touchRecent(uri, state.value.name) }
-        }
+        state.value.uri?.let { recents.onLoaded(RecentVisit(it, state.value.name, event.pages, password != null)) }
+        if (outlineArrived) savePosition(position.scale)
     }
 
     private fun onPageChanged(event: ViewerEvent.PageChanged) {
-        mutableState.update { it.copy(page = event.page) }
-        position.onPageChanged(state.value.uri, event.page, event.scale)
+        mutableState.update { it.copy(page = event.page, jump = jumps.whileReading(it.jump, event.page)) }
+        savePosition(event.scale)
+    }
+
+    private fun savePosition(scale: String) {
+        val chapter = state.value.chapter?.takeIf { password == null }.orEmpty()
+        position.onPageChanged(state.value.uri, state.value.page, scale, chapter)
+    }
+
+    private fun setBarSpace(space: ViewerCommand.SetBarSpace) {
+        barSpace = space
+        if (pageReady) viewer.send(space)
     }
 
     private fun onNight(on: Boolean) {
@@ -178,23 +201,17 @@ class ReaderViewModel internal constructor(
         viewer.send(ViewerCommand.Open(value, state.value.page, position.scale))
     }
 
-    private fun submitSearch(query: String) {
-        mutableState.update { it.copy(search = (it.search ?: SearchState()).copy(query = query)) }
-        find(previous = false)
-    }
-
-    private fun find(previous: Boolean) {
-        val query = state.value.search?.query?.takeIf { it.isNotBlank() } ?: return
-        mutableState.update { it.copy(search = it.search?.copy(searching = true)) }
-        viewer.send(ViewerCommand.Find(query, previous))
-    }
-
     /** The document follows the voice. */
     private fun onReadAloud(value: ReadAloudState) {
         mutableState.update { it.copy(readAloud = value) }
         if (value is ReadAloudState.Reading && value.page != state.value.page) {
             viewer.send(ViewerCommand.GoToPage(value.page))
         }
+    }
+
+    private fun onSentence(sentence: SpokenSentence?) {
+        mutableState.update { it.copy(spoken = sentence) }
+        viewer.send(sentence?.let { ViewerCommand.MarkSentence(it.page, it.text) } ?: ViewerCommand.ClearMark)
     }
 
     override fun onCleared() {

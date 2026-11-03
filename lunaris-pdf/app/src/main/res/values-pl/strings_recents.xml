@@ -1,5 +1,4 @@
 <resources>
-    <string name="recents_empty">Brak dokumentów</string>
     <string name="recents_open">Otwórz plik PDF</string>
     <string name="recents_page">Strona %1$d</string>
     <string name="recents_entry_gone">Ten plik nie jest już dostępny, więc usunięto go z listy.</string>
@@ -8,4 +7,23 @@
     <string name="recents_clear_message">Lista zostanie opróżniona. Same pliki nie zostaną zmienione.</string>
     <string name="recents_clear_confirm">Wyczyść</string>
     <string name="document_no_name">Dokument</string>
+    <string name="recents_empty_title">Nie ma jeszcze nic do czytania</string>
+    <string name="recents_empty_message">Otwórz PDF tutaj lub z dowolnej aplikacji przez Otwórz za pomocą. Następnym razem otworzy się na stronie, na której skończyłeś.</string>
+    <string name="recents_continue">Czytaj dalej</string>
+    <string name="recents_pinned">Przypięte</string>
+    <string name="recents_today">Dzisiaj</string>
+    <string name="recents_this_week">W tym tygodniu</string>
+    <string name="recents_earlier">Wcześniej</string>
+    <string name="recents_yesterday">Wczoraj</string>
+    <string name="recents_search">Szukaj w ostatnich</string>
+    <string name="recents_results">Wyniki</string>
+    <string name="recents_all">Wszystkie ostatnie pliki</string>
+    <string name="recents_no_match">Żaden ostatni plik nie pasuje do „%1$s”.</string>
+    <string name="recents_pin">Przypnij na górze</string>
+    <string name="recents_unpin">Odepnij</string>
+    <string name="recents_pin_limit">Można przypiąć maksymalnie 3 pliki.</string>
+    <string name="recents_remove">Usuń z ostatnich</string>
+    <string name="recents_removed">Usunięto z ostatnich. Plik pozostaje nietknięty.</string>
+    <string name="recents_undo">Cofnij</string>
+    <string name="recents_locked">Chroniony hasłem</string>
 </resources>

@@ -1,5 +1,4 @@
 <resources>
-    <string name="recents_empty">Aún no hay documentos</string>
     <string name="recents_open">Abrir un PDF</string>
     <string name="recents_page">Página %1$d</string>
     <string name="recents_entry_gone">Este archivo ya no está disponible, así que se ha quitado de la lista.</string>
@@ -8,4 +7,23 @@
     <string name="recents_clear_message">Se vaciará la lista. Los archivos no se modifican.</string>
     <string name="recents_clear_confirm">Vaciar</string>
     <string name="document_no_name">Documento</string>
+    <string name="recents_empty_title">Aún no hay nada que leer</string>
+    <string name="recents_empty_message">Abre un PDF aquí o desde cualquier app con Abrir con. La próxima vez se reabre en la página donde lo dejaste.</string>
+    <string name="recents_continue">Seguir leyendo</string>
+    <string name="recents_pinned">Fijados</string>
+    <string name="recents_today">Hoy</string>
+    <string name="recents_this_week">Esta semana</string>
+    <string name="recents_earlier">Antes</string>
+    <string name="recents_yesterday">Ayer</string>
+    <string name="recents_search">Buscar en recientes</string>
+    <string name="recents_results">Resultados</string>
+    <string name="recents_all">Todos los archivos recientes</string>
+    <string name="recents_no_match">Ningún archivo reciente coincide con «%1$s».</string>
+    <string name="recents_pin">Fijar arriba</string>
+    <string name="recents_unpin">Dejar de fijar</string>
+    <string name="recents_pin_limit">Se pueden fijar hasta 3 archivos.</string>
+    <string name="recents_remove">Quitar de recientes</string>
+    <string name="recents_removed">Quitado de recientes. El archivo no se toca.</string>
+    <string name="recents_undo">Deshacer</string>
+    <string name="recents_locked">Con contraseña</string>
 </resources>

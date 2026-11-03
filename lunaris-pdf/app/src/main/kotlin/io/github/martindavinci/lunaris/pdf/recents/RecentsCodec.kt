@@ -11,6 +11,10 @@ object RecentsCodec {
     private const val KEY_PAGE = "page"
     private const val KEY_SCALE = "scale"
     private const val KEY_LAST_OPENED = "lastOpenedMillis"
+    private const val KEY_PAGES = "pages"
+    private const val KEY_CHAPTER = "chapter"
+    private const val KEY_LOCKED = "locked"
+    private const val KEY_PINNED = "pinned"
 
     fun toJson(entries: List<RecentEntry>): String {
         val array = JSONArray()
@@ -21,7 +25,11 @@ object RecentsCodec {
                     .put(KEY_NAME, entry.name)
                     .put(KEY_PAGE, entry.page)
                     .put(KEY_SCALE, entry.scale)
-                    .put(KEY_LAST_OPENED, entry.lastOpenedMillis),
+                    .put(KEY_LAST_OPENED, entry.lastOpenedMillis)
+                    .put(KEY_PAGES, entry.pages)
+                    .put(KEY_CHAPTER, entry.chapter)
+                    .put(KEY_LOCKED, entry.locked)
+                    .put(KEY_PINNED, entry.pinned),
             )
         }
         return array.toString()
@@ -43,6 +51,10 @@ object RecentsCodec {
             page = optInt(KEY_PAGE, 1).coerceAtLeast(1),
             scale = opt(KEY_SCALE) as? String ?: OpenDocument.DEFAULT_SCALE,
             lastOpenedMillis = optLong(KEY_LAST_OPENED, 0),
+            pages = optInt(KEY_PAGES, 0).coerceAtLeast(0),
+            chapter = opt(KEY_CHAPTER) as? String ?: "",
+            locked = optBoolean(KEY_LOCKED, false),
+            pinned = optBoolean(KEY_PINNED, false),
         )
     }
 }

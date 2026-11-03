@@ -2,6 +2,7 @@ package io.github.martindavinci.lunaris.pdf.feature.recents
 
 import androidx.lifecycle.viewModelScope
 import com.google.common.truth.Truth.assertThat
+import io.github.martindavinci.lunaris.pdf.actions.DocumentActions
 import io.github.martindavinci.lunaris.pdf.recents.RecentEntry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,6 +21,12 @@ class RecentsViewModelTest {
     private val entries = MutableStateFlow(listOf(one))
     private val opened = mutableListOf<String>()
     private var readable = true
+    private var pinResult = true
+    private val documents = object : DocumentActions {
+        var shared: String? = "content://share/one.pdf"
+        override suspend fun saveCopy(from: String, to: String) = true
+        override suspend fun prepareShare(from: String, name: String) = shared
+    }
 
     @Before fun setUp() = Dispatchers.setMain(UnconfinedTestDispatcher())
 
@@ -30,6 +37,13 @@ class RecentsViewModelTest {
         remove = { uri -> entries.value = entries.value.filterNot { it.uri == uri } },
         clear = { entries.value = emptyList() },
         openNew = { opened += it },
+        setPinned = { uri, on ->
+            pinResult.also { if (it) entries.value = entries.value.map { e -> if (e.uri == uri) e.copy(pinned = on) else e } }
+        },
+        restore = { entries.value = entries.value + it },
+        documents = documents,
+        thumbnail = { null },
+        now = { 1_000L },
         openRecent = {
             opened += it.uri
             readable
@@ -76,5 +90,58 @@ class RecentsViewModelTest {
         val vm = viewModel()
         vm.onAction(RecentsAction.ClearAll)
         assertThat(vm.state.value.entries).isEmpty()
+    }
+
+    @Test fun home_isBuiltFromTheEntries() {
+        assertThat(viewModel().state.value.home.resume).isEqualTo(one)
+    }
+
+    @Test fun query_filtersTheHome() {
+        val vm = viewModel()
+        vm.onAction(RecentsAction.OpenSearch)
+        vm.onAction(RecentsAction.SetQuery("zzz"))
+        assertThat(vm.state.value.home.results).isEmpty()
+        vm.onAction(RecentsAction.SetQuery("one"))
+        assertThat(vm.state.value.home.results).containsExactly(one)
+        vm.onAction(RecentsAction.CloseSearch)
+        assertThat(vm.state.value.home.results).isNull()
+    }
+
+    @Test fun pin_changesTheEntry() {
+        val vm = viewModel()
+        vm.onAction(RecentsAction.SetPinned(one, true))
+        assertThat(vm.state.value.entries.single().pinned).isTrue()
+        assertThat(vm.state.value.notice).isNull()
+    }
+
+    @Test fun pinOverTheLimit_saysSo() {
+        pinResult = false
+        val vm = viewModel()
+        vm.onAction(RecentsAction.SetPinned(one, true))
+        assertThat(vm.state.value.notice).isEqualTo(RecentsNotice.PinLimit)
+    }
+
+    @Test fun removing_canBeUndone() {
+        val vm = viewModel()
+        vm.onAction(RecentsAction.RemoveEntry(one))
+        assertThat(vm.state.value.entries).isEmpty()
+        assertThat(vm.state.value.notice).isEqualTo(RecentsNotice.Removed(one))
+        vm.onAction(RecentsAction.UndoRemove(one))
+        assertThat(vm.state.value.entries).containsExactly(one)
+    }
+
+    @Test fun sharing_handsOverACopy() {
+        val vm = viewModel()
+        vm.onAction(RecentsAction.ShareEntry(one))
+        assertThat(vm.state.value.shareUri).isEqualTo("content://share/one.pdf")
+        vm.onAction(RecentsAction.ShareStarted)
+        assertThat(vm.state.value.shareUri).isNull()
+    }
+
+    @Test fun sharingAFileThatIsGone_saysSo() {
+        documents.shared = null
+        val vm = viewModel()
+        vm.onAction(RecentsAction.ShareEntry(one))
+        assertThat(vm.state.value.notice).isEqualTo(RecentsNotice.ShareFailed)
     }
 }

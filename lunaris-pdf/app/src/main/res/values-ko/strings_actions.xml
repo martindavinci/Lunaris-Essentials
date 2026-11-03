@@ -14,4 +14,6 @@
     <string name="read_aloud_stop">읽기 중지</string>
     <string name="read_aloud_no_text">이 페이지에는 읽을 텍스트가 없습니다. 주로 스캔한 문서에서 나타납니다.</string>
     <string name="read_aloud_unavailable">이 휴대전화에는 사용할 수 있는 음성 합성 엔진이 없습니다.</string>
+    <string name="read_aloud_paused">%1$d페이지에서 일시 중지됨</string>
+    <string name="read_aloud_sentence">%1$d / %2$d 문장</string>
 </resources>

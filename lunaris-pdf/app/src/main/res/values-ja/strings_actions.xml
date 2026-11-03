@@ -14,4 +14,6 @@
     <string name="read_aloud_stop">読み上げを停止</string>
     <string name="read_aloud_no_text">これらのページには読み上げるテキストがありません。スキャンした文書によくあります。</string>
     <string name="read_aloud_unavailable">この端末には使用できる音声合成エンジンがありません。</string>
+    <string name="read_aloud_paused">%1$dページで一時停止中</string>
+    <string name="read_aloud_sentence">%1$d / %2$d 文</string>
 </resources>

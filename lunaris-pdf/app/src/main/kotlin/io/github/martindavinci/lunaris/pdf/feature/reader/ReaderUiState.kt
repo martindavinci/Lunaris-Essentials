@@ -1,9 +1,12 @@
 package io.github.martindavinci.lunaris.pdf.feature.reader
 
 import io.github.martindavinci.lunaris.pdf.tts.ReadAloudState
+import io.github.martindavinci.lunaris.pdf.tts.SpeechRates
+import io.github.martindavinci.lunaris.pdf.tts.SpokenSentence
 import io.github.martindavinci.lunaris.pdf.url.UrlSafety
 import io.github.martindavinci.lunaris.pdf.url.UrlWarning
 import io.github.martindavinci.lunaris.pdf.url.withVisibleBidiControls
+import io.github.martindavinci.lunaris.pdf.viewer.DocumentChapters
 import io.github.martindavinci.lunaris.pdf.viewer.OutlineItem
 
 /** A new [viewRevision] asks for a new WebView, after the system took the old one's process. */
@@ -26,8 +29,28 @@ data class ReaderUiState(
     val canPrint: Boolean = true,
     val viewRevision: Int = 0,
     val topButtonEnabled: Boolean = true,
+    val scrolling: Boolean = false,
+    val scrollingDown: Boolean = false,
+    val jump: PageJump? = null,
+    val spoken: SpokenSentence? = null,
+    val readAloudRate: Float = SpeechRates.NORMAL,
+    val chapterTicks: Int = 0,
 ) {
-    val showTopButton: Boolean get() = topButtonEnabled && page > 1
+    /** Past the first pages, when the way back is worth a button. Never in the way of going on. */
+    val showTopButton: Boolean
+        get() = topButtonEnabled && page >= TOP_BUTTON_FROM_PAGE && !scrollingDown &&
+            readAloud == ReadAloudState.Idle && search == null
+
+    val showPageIndicator: Boolean get() = !chromeVisible && scrolling && pages > 0
+
+    val showJump: Boolean get() = jump != null && search == null && readAloud == ReadAloudState.Idle
+
+    /** The chapter being read, when the document has contents. */
+    val chapter: String? get() = DocumentChapters.chapterAt(outline, page)?.title
+
+    private companion object {
+        const val TOP_BUTTON_FROM_PAGE = 3
+    }
 }
 
 enum class ReaderError { CANNOT_OPEN }
@@ -40,6 +63,13 @@ data class SearchState(
     val current: Int = 0,
     val total: Int = 0,
     val searching: Boolean = false,
+    val caseSensitive: Boolean = false,
+    val wholeWords: Boolean = false,
+    /** The page of the current match, and how many matches it has. */
+    val page: Int = 0,
+    val onPage: Int = 0,
+    /** Where reading was when the search opened. */
+    val startPage: Int = 1,
 )
 
 /** [wrong]: the last password did not open the document. */
@@ -70,6 +100,10 @@ sealed interface ReaderAction {
     data class SubmitSearch(val query: String) : ReaderAction
     data object FindNext : ReaderAction
     data object FindPrevious : ReaderAction
+    data object ToggleMatchCase : ReaderAction
+    data object ToggleWholeWords : ReaderAction
+    data object ReturnFromJump : ReaderAction
+    data class SetBarSpace(val top: Int, val bottom: Int) : ReaderAction
     data class SubmitPassword(val password: String) : ReaderAction
     data object DismissLink : ReaderAction
     data object ToggleNight : ReaderAction
@@ -79,6 +113,7 @@ sealed interface ReaderAction {
     data object NextReadAloudPage : ReaderAction
     data object PreviousReadAloudPage : ReaderAction
     data object StopReadAloud : ReaderAction
+    data object NextReadAloudRate : ReaderAction
     data class SaveCopyTo(val uri: String) : ReaderAction
     data object Share : ReaderAction
     data object ShareStarted : ReaderAction

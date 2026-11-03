@@ -8,10 +8,21 @@ import org.json.JSONObject
 sealed interface ViewerCommand {
     data class Open(val password: String?, val page: Int, val scale: String) : ViewerCommand
     data class GoToPage(val page: Int) : ViewerCommand
-    data class Find(val query: String, val previous: Boolean) : ViewerCommand
+    data class Find(
+        val query: String,
+        val previous: Boolean,
+        val caseSensitive: Boolean = false,
+        val wholeWords: Boolean = false,
+    ) : ViewerCommand
     data object CloseFind : ViewerCommand
     data class SetNight(val on: Boolean) : ViewerCommand
     data class ReadPageText(val page: Int) : ViewerCommand
+
+    /** How much of the top and bottom the app's bars cover, in dp. */
+    data class SetBarSpace(val top: Int, val bottom: Int) : ViewerCommand
+    data object MakeThumbnail : ViewerCommand
+    data class MarkSentence(val page: Int, val text: String) : ViewerCommand
+    data object ClearMark : ViewerCommand
 }
 
 /** What the viewer page tells the app. It renders untrusted files, so nothing here is taken on trust. */
@@ -25,16 +36,35 @@ sealed interface ViewerEvent {
 
     /** The system took the page's process back to free memory, as it can while the app is in the background. */
     data object RendererKilled : ViewerEvent
-    data class FindResult(val current: Int, val total: Int, val done: Boolean) : ViewerEvent
+
+    /** [page] holds the current match, and [onPage] is how many matches that page has. */
+    data class FindResult(
+        val current: Int,
+        val total: Int,
+        val done: Boolean,
+        val page: Int = 0,
+        val onPage: Int = 0,
+    ) : ViewerEvent
     data class LinkTapped(val url: String) : ViewerEvent
     data class PageText(val page: Int, val text: String) : ViewerEvent
     data object Tapped : ViewerEvent
+
+    /** [moving]: scrolled a moment ago. [down]: towards the end, or dragging the scroller. */
+    data class ScrollChanged(val moving: Boolean, val down: Boolean) : ViewerEvent
+
+    /** The page moved through the scroller or a link inside the document. */
+    data class Jumped(val from: Int, val to: Int) : ViewerEvent
+    data object ChapterCrossed : ViewerEvent
+
+    /** The first page as a base64 JPEG. */
+    data class Thumbnail(val jpeg: String) : ViewerEvent
 }
 
 /** [page] is null when the entry does not lead to a page of this document. */
 data class OutlineItem(val title: String, val page: Int?, val depth: Int)
 
 object ViewerProtocol {
+    const val MAX_THUMBNAIL_CHARS = 2_000_000
     private const val MIN_SCALE = 0.1
     private const val MAX_SCALE = 25.0
     private val NAMED_SCALES = setOf("page-width", "page-fit", "page-actual", "auto")
@@ -50,9 +80,16 @@ object ViewerProtocol {
             is ViewerCommand.GoToPage -> JSONObject().put("type", "goToPage").put("page", command.page)
             is ViewerCommand.Find -> JSONObject().put("type", "find").put("query", command.query)
                 .put("previous", command.previous)
+                .put("caseSensitive", command.caseSensitive).put("wholeWords", command.wholeWords)
             ViewerCommand.CloseFind -> JSONObject().put("type", "closeFind")
             is ViewerCommand.SetNight -> JSONObject().put("type", "setNight").put("on", command.on)
             is ViewerCommand.ReadPageText -> JSONObject().put("type", "readPageText").put("page", command.page)
+            is ViewerCommand.SetBarSpace -> JSONObject().put("type", "setBarSpace")
+                .put("top", command.top).put("bottom", command.bottom)
+            ViewerCommand.MakeThumbnail -> JSONObject().put("type", "makeThumbnail")
+            is ViewerCommand.MarkSentence -> JSONObject().put("type", "markSentence")
+                .put("page", command.page).put("text", command.text)
+            ViewerCommand.ClearMark -> JSONObject().put("type", "clearMark")
         }
         val safe = payload.toString()
             .replace("'", "\\u0027")
@@ -76,14 +113,26 @@ object ViewerProtocol {
                 message.getInt("current"),
                 message.getInt("total"),
                 message.getBoolean("done"),
+                message.optInt("page", 0),
+                message.optInt("onPage", 0),
             )
             "linkTapped" -> ViewerEvent.LinkTapped(message.getString("url"))
             "pageText" -> message.getInt("page").takeIf { it > 0 }
                 ?.let { ViewerEvent.PageText(it, message.getString("text")) }
+            "scrollChanged" -> ViewerEvent.ScrollChanged(message.getBoolean("moving"), message.getBoolean("down"))
+            "chapterCrossed" -> ViewerEvent.ChapterCrossed
+            "jumped" -> jumped(message)
+            "thumbnail" -> message.getString("jpeg").takeIf { it.length <= MAX_THUMBNAIL_CHARS }?.let(ViewerEvent::Thumbnail)
             else -> null
         }
     } catch (_: JSONException) {
         null
+    }
+
+    private fun jumped(message: JSONObject): ViewerEvent? {
+        val from = message.getInt("from")
+        val to = message.getInt("to")
+        return if (from > 0 && to > 0) ViewerEvent.Jumped(from, to) else null
     }
 
     private fun loaded(message: JSONObject): ViewerEvent? {

@@ -1,5 +1,4 @@
 <resources>
-    <string name="recents_empty">아직 문서가 없습니다</string>
     <string name="recents_open">PDF 열기</string>
     <string name="recents_page">%1$d페이지</string>
     <string name="recents_entry_gone">이 파일을 더 이상 사용할 수 없어 목록에서 삭제했습니다.</string>
@@ -8,4 +7,23 @@
     <string name="recents_clear_message">목록을 비웁니다. 파일 자체는 변경되지 않습니다.</string>
     <string name="recents_clear_confirm">비우기</string>
     <string name="document_no_name">문서</string>
+    <string name="recents_empty_title">아직 읽을 문서가 없습니다</string>
+    <string name="recents_empty_message">여기에서 또는 다른 앱의 연결 프로그램으로 PDF를 여세요. 다음에는 멈춘 페이지부터 다시 열립니다.</string>
+    <string name="recents_continue">이어서 읽기</string>
+    <string name="recents_pinned">고정됨</string>
+    <string name="recents_today">오늘</string>
+    <string name="recents_this_week">이번 주</string>
+    <string name="recents_earlier">이전</string>
+    <string name="recents_yesterday">어제</string>
+    <string name="recents_search">최근 파일 검색</string>
+    <string name="recents_results">검색 결과</string>
+    <string name="recents_all">모든 최근 파일</string>
+    <string name="recents_no_match">“%1$s”와(과) 일치하는 최근 파일이 없습니다.</string>
+    <string name="recents_pin">맨 위에 고정</string>
+    <string name="recents_unpin">고정 해제</string>
+    <string name="recents_pin_limit">최대 3개까지 고정할 수 있습니다.</string>
+    <string name="recents_remove">최근 파일에서 제거</string>
+    <string name="recents_removed">최근 파일에서 제거했습니다. 파일 자체는 변경되지 않습니다.</string>
+    <string name="recents_undo">실행 취소</string>
+    <string name="recents_locked">비밀번호 있음</string>
 </resources>

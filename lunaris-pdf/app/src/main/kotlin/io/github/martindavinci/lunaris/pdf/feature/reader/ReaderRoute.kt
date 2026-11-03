@@ -1,21 +1,28 @@
 package io.github.martindavinci.lunaris.pdf.feature.reader
 
+import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.print.PrintManager
+import android.view.HapticFeedbackConstants
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.core.net.toUri
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.martindavinci.lunaris.pdf.R
@@ -33,6 +40,12 @@ fun ReaderRoute(onBack: () -> Unit) {
     }
 
     BackHandler(enabled = state.search != null) { viewModel.onAction(ReaderAction.CloseSearch) }
+
+    val view = LocalView.current
+    LaunchedEffect(state.chapterTicks) {
+        if (state.chapterTicks > 0) view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+    }
+    StatusBar(visible = state.chromeVisible || state.search != null || state.error != null)
 
     LaunchedEffect(state.shareUri) {
         state.shareUri?.let { uri ->
@@ -68,6 +81,22 @@ fun ReaderRoute(onBack: () -> Unit) {
             }
         },
     )
+}
+
+/**
+ * A tap on the document leaves it alone on the screen, but for the navigation bar: hiding that makes
+ * Android show its own "Viewing full screen" popup.
+ */
+@Composable
+private fun StatusBar(visible: Boolean) {
+    val view = LocalView.current
+    val window = (view.context as? Activity)?.window ?: return
+    DisposableEffect(window, visible) {
+        val controller = WindowCompat.getInsetsController(window, view)
+        controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        if (visible) controller.show(WindowInsetsCompat.Type.statusBars()) else controller.hide(WindowInsetsCompat.Type.statusBars())
+        onDispose { controller.show(WindowInsetsCompat.Type.statusBars()) }
+    }
 }
 
 private val ReaderNotice.messageRes: Int

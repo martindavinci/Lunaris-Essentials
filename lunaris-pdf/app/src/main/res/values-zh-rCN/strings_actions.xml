@@ -14,4 +14,6 @@
     <string name="read_aloud_stop">停止朗读</string>
     <string name="read_aloud_no_text">这些页面没有可朗读的文字。通常是扫描的文档。</string>
     <string name="read_aloud_unavailable">此手机上没有可用的文字转语音引擎。</string>
+    <string name="read_aloud_paused">已暂停在第 %1$d 页</string>
+    <string name="read_aloud_sentence">第 %1$d / %2$d 句</string>
 </resources>

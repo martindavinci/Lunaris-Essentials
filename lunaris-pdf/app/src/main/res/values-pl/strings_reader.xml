@@ -6,10 +6,10 @@
     <string name="reader_close_search">Zamknij wyszukiwanie</string>
     <string name="reader_find_next">Następne trafienie</string>
     <string name="reader_find_previous">Poprzednie trafienie</string>
-    <string name="reader_search_count">%1$d/%2$d</string>
+    <string name="reader_search_count">%1$d z %2$d</string>
     <string name="reader_more">Więcej</string>
     <string name="reader_go_to_page">Przejdź do strony</string>
-    <string name="reader_go_to_page_range">Strona, do %1$d</string>
+    <string name="reader_go_to_page_range">Wybierz stronę od 1 do %1$d.</string>
     <string name="reader_night_pages">Strony nocne</string>
     <string name="reader_page_of">Strona %1$d z %2$d</string>
     <string name="reader_outline">Spis treści</string>
@@ -27,4 +27,23 @@
     <string name="reader_warning_ip_address_host">Adres to sam numer IP, a nie nazwa strony.</string>
     <string name="reader_warning_embedded_credentials">Link zawiera nazwę użytkownika lub hasło, co może ukrywać prawdziwy adres.</string>
     <string name="reader_warning_unusual_port">Link używa nietypowego portu.</string>
+    <string name="reader_search_where">Strona %1$d · %2$d na tej stronie</string>
+    <string name="reader_search_none">Brak wyników</string>
+    <string name="reader_search_hint">Wpisz co najmniej 2 litery</string>
+    <string name="reader_searching">Szukanie…</string>
+    <string name="reader_clear_search">Wyczyść</string>
+    <string name="reader_match_case">Wielkość liter</string>
+    <string name="reader_whole_words">Całe słowa</string>
+    <string name="reader_go">Idź</string>
+    <string name="reader_of_pages">z %1$d</string>
+    <string name="reader_outline_none">Ten PDF nie ma spisu treści.</string>
+    <string name="reader_outline_here">Jesteś tutaj · %1$d</string>
+    <string name="reader_jump_back">Wróć do strony %1$d</string>
+    <string name="reader_jump_forward">Dalej do strony %1$d</string>
+    <string name="reader_password_message">%1$s jest chroniony. Hasło służy do jednorazowego otwarcia i nigdy nie jest zapisywane.</string>
+    <string name="reader_password_show">Pokaż hasło</string>
+    <string name="reader_password_hide">Ukryj hasło</string>
+    <string name="reader_link_check">Sprawdź ten link przed otwarciem</string>
+    <string name="reader_link_address">Pełny adres</string>
+    <string name="reader_link_open_anyway">Otwórz mimo to</string>
 </resources>

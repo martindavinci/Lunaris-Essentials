@@ -3,6 +3,7 @@ package io.github.martindavinci.lunaris.pdf.feature.reader
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import io.github.martindavinci.lunaris.pdf.tts.ReadAloudState
+import io.github.martindavinci.lunaris.pdf.tts.SpokenSentence
 import io.github.martindavinci.lunaris.pdf.ui.theme.LunarisPdfTheme
 import io.github.martindavinci.lunaris.pdf.url.UrlWarning
 import io.github.martindavinci.lunaris.pdf.viewer.OutlineItem
@@ -57,7 +58,7 @@ private fun ReaderErrorPreview() {
 @Composable
 private fun ReaderReadAloudPreview() {
     LunarisPdfTheme {
-        ReadAloudBar(ReadAloudState.Reading(12), onAction = {})
+        ReadAloudBar(ReadAloudState.Reading(12), SpokenSentence(12, "The Moon.", 2, 6), rate = 1f, onAction = {})
     }
 }
 
@@ -76,6 +77,6 @@ private fun ReaderLinkPreview() {
 @Composable
 private fun ReaderPasswordPreview() {
     LunarisPdfTheme {
-        PasswordDialog(PasswordPrompt(wrong = true), onSubmit = {}, onCancel = {})
+        PasswordDialog(PasswordPrompt(wrong = true), "Codex Leicester.pdf", onSubmit = {}, onCancel = {})
     }
 }

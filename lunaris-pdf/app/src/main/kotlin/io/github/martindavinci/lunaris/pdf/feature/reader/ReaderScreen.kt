@@ -1,6 +1,10 @@
 package io.github.martindavinci.lunaris.pdf.feature.reader
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,43 +13,40 @@ import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.VerticalAlignTop
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FloatingActionButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.martindavinci.lunaris.pdf.R
 import io.github.martindavinci.lunaris.pdf.tts.ReadAloudState
+import kotlin.math.roundToInt
 
-/** The grey around the pages; the same in viewer.css, so nothing flashes while the page loads. */
-internal val PageBackground = Color(0xFF2B2D30)
+/** The dark around the pages; the same in viewer.css, so nothing flashes while the page loads. */
+internal val PageBackground = Color(0xFF15171C)
 
-/** Keeps the button clear of the side scroller, which is 44 dp wide. */
-private val TopButtonEndInset = 52.dp
-/** Neutral and translucent: the page stays the only colour on screen, and shows through. */
-private val TopButtonBackground = Color(0x8C3C3C3C)
-private val TopButtonBottomInset = 72.dp
-private val TopButtonBottomInsetNoBars = 16.dp
 private val MessagePadding = 24.dp
 private val MessageSpacing = 12.dp
 
-/** Stateless Reader UI. [document] is a slot, so a preview needs no WebView. */
+/**
+ * Stateless Reader UI. [document] is a slot, so a preview needs no WebView. It fills the screen and
+ * keeps its size when the bars come and go, so that the pages never move under the reader.
+ */
 @Composable
 internal fun ReaderScreen(
     state: ReaderUiState,
@@ -57,62 +58,87 @@ internal fun ReaderScreen(
 ) {
     var showGoToPage by rememberSaveable { mutableStateOf(false) }
     var showOutline by rememberSaveable { mutableStateOf(false) }
+    var topHeight by remember { mutableIntStateOf(0) }
+    var bottomHeight by remember { mutableIntStateOf(0) }
+    val density = LocalDensity.current
 
-    Box(Modifier.fillMaxSize().background(PageBackground).systemBarsPadding().displayCutoutPadding()) {
+    LaunchedEffect(topHeight, bottomHeight) {
+        if (topHeight > 0 && bottomHeight > 0) {
+            onAction(
+                ReaderAction.SetBarSpace(
+                    top = (topHeight / density.density).roundToInt(),
+                    bottom = (bottomHeight / density.density).roundToInt(),
+                ),
+            )
+        }
+    }
+
+    Box(Modifier.fillMaxSize().background(PageBackground).displayCutoutPadding()) {
         document()
 
         if (state.loading) CircularProgressIndicator(Modifier.align(Alignment.Center))
         state.error?.let { ReaderErrorMessage(onBack, Modifier.align(Alignment.Center)) }
 
-        val barsVisible = state.chromeVisible && state.error == null
-        AnimatedVisibility(visible = barsVisible, modifier = Modifier.align(Alignment.TopCenter)) {
+        val barsVisible = (state.chromeVisible || state.search != null) && state.error == null
+        AnimatedVisibility(
+            visible = barsVisible,
+            enter = slideInVertically { -it } + fadeIn(),
+            exit = slideOutVertically { -it } + fadeOut(),
+            modifier = Modifier.align(Alignment.TopCenter),
+        ) {
             if (state.search != null) {
                 ReaderSearchBar(state.search, onAction)
             } else {
-                ReaderTopBar(
-                    name = state.name,
-                    night = state.night,
-                    onBack = onBack,
-                    canPrint = state.canPrint,
-                    onAction = onAction,
-                    onGoToPage = { showGoToPage = true },
-                    onPrint = onPrint,
-                    onSaveCopy = onSaveCopy,
-                )
+                Box(Modifier.onSizeChanged { topHeight = it.height }) {
+                    ReaderTopBar(
+                        name = state.name,
+                        chapter = state.chapter,
+                        night = state.night,
+                        onBack = onBack,
+                        canPrint = state.canPrint,
+                        onAction = onAction,
+                        onGoToPage = { showGoToPage = true },
+                        onPrint = onPrint,
+                        onSaveCopy = onSaveCopy,
+                    )
+                }
             }
         }
         val readingAloud = state.readAloud != ReadAloudState.Idle
-        val bottomBarVisible = readingAloud || (barsVisible && state.pages > 0)
-        AnimatedVisibility(visible = bottomBarVisible, modifier = Modifier.align(Alignment.BottomCenter)) {
-            if (readingAloud) {
-                ReadAloudBar(state.readAloud, onAction)
-            } else {
-                ReaderBottomBar(
-                    page = state.page,
-                    pages = state.pages,
-                    hasOutline = state.outline.isNotEmpty(),
-                    onGoToPage = { showGoToPage = true },
-                    onOutline = { showOutline = true },
-                )
+        val bottomVisible = readingAloud || state.search != null || (barsVisible && state.pages > 0)
+        AnimatedVisibility(
+            visible = bottomVisible,
+            enter = slideInVertically { it } + fadeIn(),
+            exit = slideOutVertically { it } + fadeOut(),
+            modifier = Modifier.align(Alignment.BottomCenter),
+        ) {
+            when {
+                state.search != null -> ReaderSearchNav(state.search, onAction)
+                readingAloud -> ReadAloudBar(state.readAloud, state.spoken, state.readAloudRate, onAction)
+                else -> Box(Modifier.onSizeChanged { bottomHeight = it.height }) {
+                    ReaderBottomBar(
+                        page = state.page,
+                        pages = state.pages,
+                        night = state.night,
+                        onAction = onAction,
+                        onGoToPage = { showGoToPage = true },
+                        onOutline = { showOutline = true },
+                    )
+                }
             }
         }
-        if (state.showTopButton && state.error == null) {
-            SmallFloatingActionButton(
-                onClick = { onAction(ReaderAction.BackToTop) },
-                containerColor = TopButtonBackground,
-                contentColor = Color.White,
-                elevation = FloatingActionButtonDefaults.elevation(defaultElevation = 0.dp, pressedElevation = 0.dp),
-                modifier = Modifier.align(Alignment.BottomEnd).padding(
-                    end = TopButtonEndInset,
-                    bottom = if (bottomBarVisible) TopButtonBottomInset else TopButtonBottomInsetNoBars,
-                ),
-            ) {
-                Icon(Icons.Filled.VerticalAlignTop, contentDescription = stringResource(R.string.reader_back_to_top))
-            }
+        if (state.error == null) {
+            ReaderOverlays(
+                state = state,
+                bottomSpace = with(density) { if (barsVisible) bottomHeight.toDp() else 0.dp },
+                onAction = onAction,
+            )
         }
         if (showOutline) {
             OutlinePanel(
                 items = state.outline,
+                page = state.page,
+                pages = state.pages,
                 onSelect = { page ->
                     showOutline = false
                     onAction(ReaderAction.GoToPage(page))
@@ -125,6 +151,7 @@ internal fun ReaderScreen(
     state.passwordPrompt?.let { prompt ->
         PasswordDialog(
             prompt = prompt,
+            name = state.name,
             onSubmit = { onAction(ReaderAction.SubmitPassword(it)) },
             onCancel = onBack,
         )

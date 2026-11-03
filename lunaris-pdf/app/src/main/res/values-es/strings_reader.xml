@@ -6,10 +6,10 @@
     <string name="reader_close_search">Cerrar búsqueda</string>
     <string name="reader_find_next">Siguiente resultado</string>
     <string name="reader_find_previous">Resultado anterior</string>
-    <string name="reader_search_count">%1$d/%2$d</string>
+    <string name="reader_search_count">%1$d de %2$d</string>
     <string name="reader_more">Más</string>
     <string name="reader_go_to_page">Ir a la página</string>
-    <string name="reader_go_to_page_range">Página, hasta %1$d</string>
+    <string name="reader_go_to_page_range">Elige una página del 1 al %1$d.</string>
     <string name="reader_night_pages">Páginas nocturnas</string>
     <string name="reader_page_of">Página %1$d de %2$d</string>
     <string name="reader_outline">Contenido</string>
@@ -27,4 +27,23 @@
     <string name="reader_warning_ip_address_host">La dirección es un número IP, no el nombre de un sitio.</string>
     <string name="reader_warning_embedded_credentials">El enlace incluye un nombre de usuario o una contraseña, lo que puede ocultar la dirección real.</string>
     <string name="reader_warning_unusual_port">El enlace usa un puerto inusual.</string>
+    <string name="reader_search_where">Página %1$d · %2$d en esta página</string>
+    <string name="reader_search_none">Sin resultados</string>
+    <string name="reader_search_hint">Escribe al menos 2 letras</string>
+    <string name="reader_searching">Buscando…</string>
+    <string name="reader_clear_search">Borrar</string>
+    <string name="reader_match_case">Mayúsculas</string>
+    <string name="reader_whole_words">Palabras completas</string>
+    <string name="reader_go">Ir</string>
+    <string name="reader_of_pages">de %1$d</string>
+    <string name="reader_outline_none">Este PDF no tiene índice.</string>
+    <string name="reader_outline_here">Estás aquí · %1$d</string>
+    <string name="reader_jump_back">Volver a la página %1$d</string>
+    <string name="reader_jump_forward">Avanzar a la página %1$d</string>
+    <string name="reader_password_message">%1$s está protegido. La contraseña se usa para abrirlo una vez y nunca se guarda.</string>
+    <string name="reader_password_show">Mostrar contraseña</string>
+    <string name="reader_password_hide">Ocultar contraseña</string>
+    <string name="reader_link_check">Comprueba este enlace antes de abrirlo</string>
+    <string name="reader_link_address">Dirección completa</string>
+    <string name="reader_link_open_anyway">Abrir de todos modos</string>
 </resources>

@@ -19,10 +19,15 @@ class ReadAloudController(
     private val mutableState = MutableStateFlow<ReadAloudState>(ReadAloudState.Idle)
     val state: StateFlow<ReadAloudState> = mutableState.asStateFlow()
 
+    private val mutableSentence = MutableStateFlow<SpokenSentence?>(null)
+
+    /** What the voice is saying, or null while it has nothing to say. */
+    val sentence: StateFlow<SpokenSentence?> = mutableSentence.asStateFlow()
+
     private var pages = 0
     private var page = 1
     private var sentences = emptyList<String>()
-    private var sentence = 0
+    private var current = 0
     private var utterance = 0
     private var spokeSomething = false
     private var loading: Job? = null
@@ -65,6 +70,7 @@ class ReadAloudController(
 
     fun stop() {
         silence()
+        mutableSentence.value = null
         mutableState.value = ReadAloudState.Idle
     }
 
@@ -77,6 +83,7 @@ class ReadAloudController(
         silence()
         page = target
         sentences = emptyList()
+        mutableSentence.value = null
         mutableState.value = ReadAloudState.Reading(target)
         loading = scope.launch { mutableState.value = readFrom(target) ?: return@launch }
     }
@@ -89,7 +96,7 @@ class ReadAloudController(
             if (found.isNotEmpty()) {
                 page = candidate
                 sentences = found
-                sentence = 0
+                current = 0
                 spokeSomething = true
                 mutableState.value = ReadAloudState.Reading(candidate)
                 speak()
@@ -103,7 +110,8 @@ class ReadAloudController(
 
     private fun speak() {
         utterance++
-        engine.speak(sentences[sentence], utterance.toString())
+        mutableSentence.value = SpokenSentence(page, sentences[current], current, sentences.size)
+        engine.speak(sentences[current], utterance.toString())
     }
 
     private fun silence() {
@@ -115,12 +123,15 @@ class ReadAloudController(
     private fun onSegmentDone(id: String) {
         if (id != utterance.toString() || state.value !is ReadAloudState.Reading) return
         when {
-            sentence < sentences.lastIndex -> {
-                sentence++
+            current < sentences.lastIndex -> {
+                current++
                 speak()
             }
             page < pages -> load(page + 1)
-            else -> mutableState.value = ReadAloudState.Idle
+            else -> {
+                mutableSentence.value = null
+                mutableState.value = ReadAloudState.Idle
+            }
         }
     }
 

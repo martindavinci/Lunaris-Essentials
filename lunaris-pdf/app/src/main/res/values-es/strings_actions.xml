@@ -14,4 +14,6 @@
     <string name="read_aloud_stop">Dejar de leer</string>
     <string name="read_aloud_no_text">Estas páginas no tienen texto que leer. Suele ser un documento escaneado.</string>
     <string name="read_aloud_unavailable">Este teléfono no tiene ningún motor de síntesis de voz listo para usar.</string>
+    <string name="read_aloud_paused">En pausa en la página %1$d</string>
+    <string name="read_aloud_sentence">Frase %1$d de %2$d</string>
 </resources>

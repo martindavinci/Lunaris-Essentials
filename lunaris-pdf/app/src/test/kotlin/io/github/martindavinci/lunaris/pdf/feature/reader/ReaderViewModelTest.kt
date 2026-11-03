@@ -5,8 +5,12 @@ import androidx.lifecycle.SavedStateHandle
 import com.google.common.truth.Truth.assertThat
 import io.github.martindavinci.lunaris.pdf.actions.DocumentActions
 import io.github.martindavinci.lunaris.pdf.model.OpenDocument
+import io.github.martindavinci.lunaris.pdf.recents.DocumentThumbnails
+import io.github.martindavinci.lunaris.pdf.recents.ReadingSpot
+import io.github.martindavinci.lunaris.pdf.recents.RecentVisit
 import io.github.martindavinci.lunaris.pdf.session.CurrentDocument
 import io.github.martindavinci.lunaris.pdf.tts.ReadAloudState
+import io.github.martindavinci.lunaris.pdf.tts.SpokenSentence
 import io.github.martindavinci.lunaris.pdf.tts.SpeechEngine
 import io.github.martindavinci.lunaris.pdf.tts.VoiceInfo
 import io.github.martindavinci.lunaris.pdf.url.UrlWarning
@@ -74,12 +78,24 @@ class ReaderViewModelTest {
         override suspend fun prepareShare(from: String, name: String): String? = shareUri
     }
 
+    private class FakeThumbnails : DocumentThumbnails {
+        var exists = false
+        val saved = mutableListOf<Pair<String, Int>>()
+        override suspend fun has(uri: String) = exists
+        override suspend fun save(uri: String, jpeg: ByteArray) {
+            saved += uri to jpeg.size
+        }
+    }
+
     private val channel = FakeChannel()
     private val current = CurrentDocument()
     private val savedState = SavedStateHandle()
     private val night = MutableStateFlow(false)
     private val topButton = MutableStateFlow(true)
     private val touched = mutableListOf<Pair<String, String>>()
+    private val visits = mutableListOf<RecentVisit>()
+    private val spots = mutableListOf<ReadingSpot>()
+    private val thumbnails = FakeThumbnails()
     private val positions = mutableListOf<Triple<String, Int, String>>()
     private var enginesMade = 0
     private val engine = FakeSpeech()
@@ -101,8 +117,15 @@ class ReaderViewModelTest {
         nightPages = night,
         setNightPages = { night.value = it },
         topButtonEnabled = topButton,
-        touchRecent = { uri, name -> touched += uri to name },
-        savePosition = { uri, page, scale -> positions += Triple(uri, page, scale) },
+        touchRecent = { visit ->
+            touched += visit.uri to visit.name
+            visits += visit
+        },
+        savePosition = { spot ->
+            positions += Triple(spot.uri, spot.page, spot.scale)
+            spots += spot
+        },
+        thumbnails = thumbnails,
         speechEngine = {
             enginesMade++
             engine
@@ -129,6 +152,8 @@ class ReaderViewModelTest {
         val vm = viewModel()
         ready()
         emit(ViewerEvent.PageChanged(2, "page-width"))
+        assertThat(vm.state.value.showTopButton).isFalse()
+        emit(ViewerEvent.PageChanged(3, "page-width"))
         assertThat(vm.state.value.showTopButton).isTrue()
         vm.onAction(ReaderAction.BackToTop)
         assertThat(channel.sent).contains(ViewerCommand.GoToPage(1))
@@ -517,5 +542,213 @@ class ReaderViewModelTest {
         emit(ViewerEvent.RendererKilled)
         emit(ViewerEvent.Ready)
         assertThat(channel.sent).contains(ViewerCommand.Open("luna", 1, OpenDocument.DEFAULT_SCALE))
+    }
+
+    private val chapters = listOf(OutlineItem("One", 1, 0), OutlineItem("Part", 2, 1), OutlineItem("Two", 8, 0))
+
+    @Test fun topButton_hidesWhileGoingDown_andWhileReadingAloud() {
+        val vm = viewModel()
+        ready()
+        emit(ViewerEvent.PageChanged(5, "page-width"))
+        emit(ViewerEvent.ScrollChanged(moving = true, down = true))
+        assertThat(vm.state.value.showTopButton).isFalse()
+        emit(ViewerEvent.ScrollChanged(moving = false, down = false))
+        assertThat(vm.state.value.showTopButton).isTrue()
+        vm.onAction(ReaderAction.StartReadAloud)
+        assertThat(vm.state.value.showTopButton).isFalse()
+    }
+
+    @Test fun pageIndicator_showsOnlyWhenTheBarsAreHiddenAndThePageMoves() {
+        val vm = viewModel()
+        ready()
+        emit(ViewerEvent.ScrollChanged(moving = true, down = true))
+        assertThat(vm.state.value.showPageIndicator).isFalse()
+        emit(ViewerEvent.Tapped)
+        assertThat(vm.state.value.showPageIndicator).isTrue()
+        emit(ViewerEvent.ScrollChanged(moving = false, down = false))
+        assertThat(vm.state.value.showPageIndicator).isFalse()
+    }
+
+    @Test fun chapter_followsThePage() {
+        val vm = viewModel()
+        emit(ViewerEvent.Ready)
+        emit(ViewerEvent.Loaded(10, chapters))
+        emit(ViewerEvent.PageChanged(9, "page-width"))
+        assertThat(vm.state.value.chapter).isEqualTo("Two")
+        emit(ViewerEvent.PageChanged(3, "page-width"))
+        assertThat(vm.state.value.chapter).isEqualTo("One")
+    }
+
+    @Test fun recents_hearTheLengthAndTheChapter() {
+        val dispatcherScheduler = dispatcher.scheduler
+        val vm = viewModel()
+        emit(ViewerEvent.Ready)
+        emit(ViewerEvent.Loaded(10, chapters))
+        emit(ViewerEvent.PageChanged(9, "page-width"))
+        dispatcherScheduler.advanceTimeBy(ReaderViewModel.SAVE_POSITION_DELAY_MILLIS + 1)
+        assertThat(visits.single().pages).isEqualTo(10)
+        assertThat(visits.single().locked).isFalse()
+        assertThat(spots.last().chapter).isEqualTo("Two")
+        assertThat(vm.state.value.page).isEqualTo(9)
+    }
+
+    @Test fun anOutlineArrivingLate_stillReachesTheRecents() {
+        val vm = viewModel()
+        emit(ViewerEvent.Ready)
+        emit(ViewerEvent.PageChanged(9, "page-width"))
+        emit(ViewerEvent.Loaded(10, emptyList()))
+        emit(ViewerEvent.Loaded(10, chapters))
+        dispatcher.scheduler.advanceTimeBy(ReaderViewModel.SAVE_POSITION_DELAY_MILLIS + 1)
+        assertThat(spots.last().chapter).isEqualTo("Two")
+        assertThat(vm.state.value.outline).isEqualTo(chapters)
+    }
+
+    @Test fun aFileWithAPassword_keepsItsContentOutOfTheRecents() {
+        val vm = viewModel()
+        emit(ViewerEvent.Ready)
+        emit(ViewerEvent.PasswordNeeded(wrong = false))
+        vm.onAction(ReaderAction.SubmitPassword("secret-word"))
+        emit(ViewerEvent.Loaded(10, chapters))
+        emit(ViewerEvent.PageChanged(9, "page-width"))
+        dispatcher.scheduler.advanceTimeBy(ReaderViewModel.SAVE_POSITION_DELAY_MILLIS + 1)
+        assertThat(visits.single().locked).isTrue()
+        assertThat(spots.last().chapter).isEmpty()
+        assertThat(channel.sent).doesNotContain(ViewerCommand.MakeThumbnail)
+    }
+
+    @Test fun thumbnail_isAskedOnceWhenMissing_andSaved() {
+        viewModel()
+        emit(ViewerEvent.Ready)
+        emit(ViewerEvent.Loaded(10, emptyList()))
+        emit(ViewerEvent.Loaded(10, chapters))
+        assertThat(channel.sent.count { it == ViewerCommand.MakeThumbnail }).isEqualTo(1)
+        emit(ViewerEvent.Thumbnail("/9j/4A=="))
+        assertThat(thumbnails.saved.single().first).isEqualTo("content://x/a.pdf")
+    }
+
+    @Test fun thumbnail_thatExists_isNotMadeAgain() {
+        thumbnails.exists = true
+        viewModel()
+        ready()
+        assertThat(channel.sent).doesNotContain(ViewerCommand.MakeThumbnail)
+    }
+
+    @Test fun thumbnail_thatIsNotBase64_isIgnored() {
+        viewModel()
+        ready()
+        emit(ViewerEvent.Thumbnail("not base64 at all!"))
+        assertThat(thumbnails.saved).isEmpty()
+    }
+
+    @Test fun farGoToPage_offersTheWayBack() {
+        val vm = viewModel()
+        ready(pages = 30)
+        emit(ViewerEvent.PageChanged(12, "page-width"))
+        vm.onAction(ReaderAction.GoToPage(20))
+        assertThat(vm.state.value.jump).isEqualTo(PageJump(12, 20))
+        vm.onAction(ReaderAction.ReturnFromJump)
+        assertThat(channel.sent.last()).isEqualTo(ViewerCommand.GoToPage(12))
+        assertThat(vm.state.value.jump).isEqualTo(PageJump(20, 12, forward = true))
+    }
+
+    @Test fun nearGoToPage_offersNothing() {
+        val vm = viewModel()
+        ready(pages = 30)
+        emit(ViewerEvent.PageChanged(12, "page-width"))
+        vm.onAction(ReaderAction.GoToPage(13))
+        assertThat(vm.state.value.jump).isNull()
+    }
+
+    @Test fun readingOn_endsTheWayBack() {
+        val vm = viewModel()
+        ready(pages = 30)
+        emit(ViewerEvent.PageChanged(12, "page-width"))
+        vm.onAction(ReaderAction.GoToPage(20))
+        emit(ViewerEvent.PageChanged(20, "page-width"))
+        assertThat(vm.state.value.jump).isNotNull()
+        emit(ViewerEvent.PageChanged(23, "page-width"))
+        assertThat(vm.state.value.jump).isNull()
+    }
+
+    @Test fun backToTop_andTheScroller_offerTheWayBack() {
+        val vm = viewModel()
+        ready(pages = 30)
+        emit(ViewerEvent.PageChanged(12, "page-width"))
+        vm.onAction(ReaderAction.BackToTop)
+        assertThat(vm.state.value.jump).isEqualTo(PageJump(12, 1))
+        emit(ViewerEvent.Jumped(1, 25))
+        assertThat(vm.state.value.jump).isEqualTo(PageJump(1, 25))
+    }
+
+    @Test fun closingASearchThatMovedFar_offersTheWayBack() {
+        val vm = viewModel()
+        ready(pages = 30)
+        emit(ViewerEvent.PageChanged(2, "page-width"))
+        vm.onAction(ReaderAction.OpenSearch)
+        emit(ViewerEvent.PageChanged(14, "page-width"))
+        vm.onAction(ReaderAction.CloseSearch)
+        assertThat(vm.state.value.jump).isEqualTo(PageJump(2, 14))
+    }
+
+    @Test fun search_runsWithTwoLetters_andTheOptions() {
+        val vm = viewModel()
+        ready()
+        vm.onAction(ReaderAction.OpenSearch)
+        vm.onAction(ReaderAction.SubmitSearch("m"))
+        assertThat(channel.sent.filterIsInstance<ViewerCommand.Find>()).isEmpty()
+        vm.onAction(ReaderAction.SubmitSearch("mo"))
+        vm.onAction(ReaderAction.ToggleMatchCase)
+        vm.onAction(ReaderAction.ToggleWholeWords)
+        assertThat(channel.sent.filterIsInstance<ViewerCommand.Find>()).containsExactly(
+            ViewerCommand.Find("mo", false),
+            ViewerCommand.Find("mo", false, caseSensitive = true),
+            ViewerCommand.Find("mo", false, caseSensitive = true, wholeWords = true),
+        ).inOrder()
+    }
+
+    @Test fun shorteningTheQuery_clearsTheMatches() {
+        val vm = viewModel()
+        ready()
+        vm.onAction(ReaderAction.OpenSearch)
+        vm.onAction(ReaderAction.SubmitSearch("mo"))
+        emit(ViewerEvent.FindResult(1, 9, done = true, page = 4, onPage = 2))
+        assertThat(vm.state.value.search?.page).isEqualTo(4)
+        vm.onAction(ReaderAction.SubmitSearch("m"))
+        assertThat(channel.sent.last()).isEqualTo(ViewerCommand.CloseFind)
+        assertThat(vm.state.value.search?.total).isEqualTo(0)
+    }
+
+    @Test fun barSpace_reachesThePage_alsoWhenItIsNotReadyYet() {
+        val vm = viewModel()
+        vm.onAction(ReaderAction.SetBarSpace(90, 80))
+        emit(ViewerEvent.Ready)
+        assertThat(channel.sent).contains(ViewerCommand.SetBarSpace(90, 80))
+    }
+
+    @Test fun passingAChapter_asksForATick() {
+        val vm = viewModel()
+        ready()
+        val before = vm.state.value.chapterTicks
+        emit(ViewerEvent.ChapterCrossed)
+        assertThat(vm.state.value.chapterTicks).isEqualTo(before + 1)
+    }
+
+    @Test fun readAloud_marksTheSentence_andShowsTheProgress() {
+        val vm = viewModel()
+        ready()
+        vm.onAction(ReaderAction.StartReadAloud)
+        emit(ViewerEvent.PageText(1, "One. Two."))
+        assertThat(vm.state.value.spoken).isEqualTo(SpokenSentence(1, "One.", index = 0, total = 2))
+        assertThat(channel.sent).contains(ViewerCommand.MarkSentence(1, "One."))
+        vm.onAction(ReaderAction.StopReadAloud)
+        assertThat(channel.sent.last()).isEqualTo(ViewerCommand.ClearMark)
+    }
+
+    @Test fun readAloudSpeed_goesRound() {
+        val vm = viewModel()
+        ready()
+        vm.onAction(ReaderAction.StartReadAloud)
+        vm.onAction(ReaderAction.NextReadAloudRate)
+        assertThat(vm.state.value.readAloudRate).isEqualTo(1.25f)
     }
 }

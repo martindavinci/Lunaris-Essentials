@@ -187,4 +187,25 @@ class ReadAloudControllerTest {
         waiting.complete(Unit)
         assertThat(controller.state.value).isEqualTo(ReadAloudState.Reading(2))
     }
+
+    @Test fun sentence_followsTheVoice() {
+        pages[1] = "One. Two."
+        controller.start(1, 1)
+        assertThat(controller.sentence.value).isEqualTo(SpokenSentence(1, "One.", index = 0, total = 2))
+        engine.finishSegment()
+        assertThat(controller.sentence.value).isEqualTo(SpokenSentence(1, "Two.", index = 1, total = 2))
+    }
+
+    @Test fun stopping_clearsTheSentence() {
+        pages[1] = "One. Two."
+        controller.start(1, 1)
+        controller.stop()
+        assertThat(controller.sentence.value).isNull()
+    }
+
+    @Test fun rates_goRoundAndComeBack() {
+        val seen = generateSequence(SpeechRates.next(1f)) { SpeechRates.next(it) }.take(4).toList()
+        assertThat(seen).containsExactly(1.25f, 1.5f, 0.75f, 1f).inOrder()
+        assertThat(SpeechRates.next(3f)).isEqualTo(1f)
+    }
 }

@@ -1,5 +1,4 @@
 <resources>
-    <string name="recents_empty">No documents yet</string>
     <string name="recents_open">Open a PDF</string>
     <string name="recents_page">Page %1$d</string>
     <string name="recents_entry_gone">This file is no longer available, so it was removed from the list.</string>
@@ -8,4 +7,23 @@
     <string name="recents_clear_message">The list is emptied. The files themselves are not touched.</string>
     <string name="recents_clear_confirm">Clear</string>
     <string name="document_no_name">Document</string>
+    <string name="recents_empty_title">Nothing to read yet</string>
+    <string name="recents_empty_message">Open a PDF here, or from any app with Open with. Next time it reopens at the page where you stopped.</string>
+    <string name="recents_continue">Continue reading</string>
+    <string name="recents_pinned">Pinned</string>
+    <string name="recents_today">Today</string>
+    <string name="recents_this_week">This week</string>
+    <string name="recents_earlier">Earlier</string>
+    <string name="recents_yesterday">Yesterday</string>
+    <string name="recents_search">Search recents</string>
+    <string name="recents_results">Results</string>
+    <string name="recents_all">All recent files</string>
+    <string name="recents_no_match">No recent file matches “%1$s”.</string>
+    <string name="recents_pin">Pin to top</string>
+    <string name="recents_unpin">Unpin</string>
+    <string name="recents_pin_limit">Up to 3 files can be pinned.</string>
+    <string name="recents_remove">Remove from recents</string>
+    <string name="recents_removed">Removed from recents. The file is not touched.</string>
+    <string name="recents_undo">Undo</string>
+    <string name="recents_locked">Has a password</string>
 </resources>

@@ -1,6 +1,7 @@
 package io.github.martindavinci.lunaris.pdf.feature.recents
 
 import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -8,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.martindavinci.lunaris.pdf.R
@@ -23,6 +25,20 @@ fun RecentsRoute(onOpenReader: () -> Unit, onOpenSettings: () -> Unit) {
         uri?.let { viewModel.onAction(RecentsAction.OpenPicked(it.toString())) }
     }
 
+    LaunchedEffect(state.shareUri) {
+        state.shareUri?.let { uri ->
+            viewModel.onAction(RecentsAction.ShareStarted)
+            val send = Intent(Intent.ACTION_SEND)
+                .setType(PDF_MIME)
+                .putExtra(Intent.EXTRA_STREAM, uri.toUri())
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            try {
+                context.startActivity(Intent.createChooser(send, null))
+            } catch (_: ActivityNotFoundException) {
+                Toast.makeText(context, R.string.action_share_failed, Toast.LENGTH_LONG).show()
+            }
+        }
+    }
     LaunchedEffect(state.openReader) {
         if (state.openReader) {
             viewModel.onAction(RecentsAction.ReaderOpened)
@@ -41,5 +57,6 @@ fun RecentsRoute(onOpenReader: () -> Unit, onOpenSettings: () -> Unit) {
                 Toast.makeText(context, R.string.recents_no_picker, Toast.LENGTH_LONG).show()
             }
         },
+        thumbnail = viewModel::thumbnailOf,
     )
 }

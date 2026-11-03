@@ -3,6 +3,8 @@ package io.github.martindavinci.lunaris.pdf.feature.reader
 import io.github.martindavinci.lunaris.pdf.tts.ReadAloudController
 import io.github.martindavinci.lunaris.pdf.tts.ReadAloudState
 import io.github.martindavinci.lunaris.pdf.tts.SpeechEngine
+import io.github.martindavinci.lunaris.pdf.tts.SpeechRates
+import io.github.martindavinci.lunaris.pdf.tts.SpokenSentence
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerChannel
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerCommand
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerEvent
@@ -16,14 +18,18 @@ internal class ReaderSpeech(
     private val viewer: ViewerChannel,
     private val speechEngine: () -> SpeechEngine,
     private val onState: (ReadAloudState) -> Unit,
+    private val onSentence: (SpokenSentence?) -> Unit,
 ) {
+    private var engine: SpeechEngine? = null
+    private var rate = SpeechRates.NORMAL
     private var controller: ReadAloudController? = null
     private val waiting = mutableMapOf<Int, CompletableDeferred<String>>()
 
     fun start(page: Int, pages: Int) {
-        val current = controller ?: ReadAloudController(speechEngine(), ::fetchPage, scope).also { made ->
+        val current = controller ?: ReadAloudController(madeEngine(), ::fetchPage, scope).also { made ->
             controller = made
             scope.launch { made.state.collect(onState) }
+            scope.launch { made.sentence.collect(onSentence) }
         }
         current.start(page, pages)
     }
@@ -33,6 +39,19 @@ internal class ReaderSpeech(
     fun next() = controller?.next()
     fun previous() = controller?.previous()
     fun stop() = controller?.stop()
+
+    /** Takes effect from the next sentence. */
+    fun nextRate(): Float {
+        rate = SpeechRates.next(rate)
+        engine?.setRate(rate)
+        return rate
+    }
+
+    private fun madeEngine(): SpeechEngine = speechEngine().also {
+        it.setRate(rate)
+        engine = it
+    }
+
     fun shutdown() = controller?.shutdown()
 
     fun onPageText(event: ViewerEvent.PageText) {

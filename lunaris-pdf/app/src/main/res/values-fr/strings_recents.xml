@@ -1,5 +1,4 @@
 <resources>
-    <string name="recents_empty">Aucun document pour le moment</string>
     <string name="recents_open">Ouvrir un PDF</string>
     <string name="recents_page">Page %1$d</string>
     <string name="recents_entry_gone">Ce fichier n\'est plus disponible, il a donc été retiré de la liste.</string>
@@ -8,4 +7,23 @@
     <string name="recents_clear_message">La liste sera vidée. Les fichiers eux-mêmes ne sont pas modifiés.</string>
     <string name="recents_clear_confirm">Vider</string>
     <string name="document_no_name">Document</string>
+    <string name="recents_empty_title">Rien à lire pour le moment</string>
+    <string name="recents_empty_message">Ouvrez un PDF ici, ou depuis n\'importe quelle app avec Ouvrir avec. La prochaine fois, il reprend à la page où vous vous êtes arrêté.</string>
+    <string name="recents_continue">Continuer la lecture</string>
+    <string name="recents_pinned">Épinglés</string>
+    <string name="recents_today">Aujourd\'hui</string>
+    <string name="recents_this_week">Cette semaine</string>
+    <string name="recents_earlier">Plus tôt</string>
+    <string name="recents_yesterday">Hier</string>
+    <string name="recents_search">Rechercher dans les récents</string>
+    <string name="recents_results">Résultats</string>
+    <string name="recents_all">Tous les fichiers récents</string>
+    <string name="recents_no_match">Aucun fichier récent ne correspond à « %1$s ».</string>
+    <string name="recents_pin">Épingler en haut</string>
+    <string name="recents_unpin">Détacher</string>
+    <string name="recents_pin_limit">Vous pouvez épingler jusqu\'à 3 fichiers.</string>
+    <string name="recents_remove">Retirer des récents</string>
+    <string name="recents_removed">Retiré des récents. Le fichier n\'est pas touché.</string>
+    <string name="recents_undo">Annuler</string>
+    <string name="recents_locked">Protégé par mot de passe</string>
 </resources>

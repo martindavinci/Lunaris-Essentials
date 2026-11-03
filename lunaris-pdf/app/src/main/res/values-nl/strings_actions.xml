@@ -14,4 +14,6 @@
     <string name="read_aloud_stop">Stoppen met voorlezen</string>
     <string name="read_aloud_no_text">Deze pagina\'s bevatten geen tekst om voor te lezen. Vaak is dit een gescand document.</string>
     <string name="read_aloud_unavailable">Deze telefoon heeft geen tekst-naar-spraakengine die klaarstaat.</string>
+    <string name="read_aloud_paused">Gepauzeerd op pagina %1$d</string>
+    <string name="read_aloud_sentence">Zin %1$d van %2$d</string>
 </resources>

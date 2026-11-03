@@ -6,10 +6,10 @@
     <string name="reader_close_search">关闭搜索</string>
     <string name="reader_find_next">下一个匹配项</string>
     <string name="reader_find_previous">上一个匹配项</string>
-    <string name="reader_search_count">%1$d/%2$d</string>
+    <string name="reader_search_count">%1$d / %2$d</string>
     <string name="reader_more">更多</string>
     <string name="reader_go_to_page">转到页面</string>
-    <string name="reader_go_to_page_range">页码，最大 %1$d</string>
+    <string name="reader_go_to_page_range">请选择第 1 至 %1$d 页。</string>
     <string name="reader_night_pages">夜间页面</string>
     <string name="reader_page_of">第 %1$d 页，共 %2$d 页</string>
     <string name="reader_outline">目录</string>
@@ -27,4 +27,23 @@
     <string name="reader_warning_ip_address_host">此地址只是 IP 数字，而不是网站名称。</string>
     <string name="reader_warning_embedded_credentials">此链接含有用户名或密码，可能隐藏真实地址。</string>
     <string name="reader_warning_unusual_port">此链接使用了不常见的端口。</string>
+    <string name="reader_search_where">第 %1$d 页 · 本页 %2$d 处</string>
+    <string name="reader_search_none">无结果</string>
+    <string name="reader_search_hint">请至少输入 2 个字</string>
+    <string name="reader_searching">正在搜索…</string>
+    <string name="reader_clear_search">清除</string>
+    <string name="reader_match_case">区分大小写</string>
+    <string name="reader_whole_words">全字匹配</string>
+    <string name="reader_go">前往</string>
+    <string name="reader_of_pages">/ %1$d</string>
+    <string name="reader_outline_none">此 PDF 没有目录。</string>
+    <string name="reader_outline_here">当前位置 · %1$d</string>
+    <string name="reader_jump_back">返回第 %1$d 页</string>
+    <string name="reader_jump_forward">前进到第 %1$d 页</string>
+    <string name="reader_password_message">%1$s 受保护。密码仅用于打开一次，绝不会保存。</string>
+    <string name="reader_password_show">显示密码</string>
+    <string name="reader_password_hide">隐藏密码</string>
+    <string name="reader_link_check">打开前请检查此链接</string>
+    <string name="reader_link_address">完整地址</string>
+    <string name="reader_link_open_anyway">仍要打开</string>
 </resources>

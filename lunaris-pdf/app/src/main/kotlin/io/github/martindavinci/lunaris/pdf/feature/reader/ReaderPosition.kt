@@ -2,6 +2,7 @@ package io.github.martindavinci.lunaris.pdf.feature.reader
 
 import androidx.lifecycle.SavedStateHandle
 import io.github.martindavinci.lunaris.pdf.model.OpenDocument
+import io.github.martindavinci.lunaris.pdf.recents.ReadingSpot
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerProtocol
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -12,7 +13,7 @@ import kotlinx.coroutines.launch
 internal class ReaderPosition(
     private val savedState: SavedStateHandle,
     private val scope: CoroutineScope,
-    private val savePosition: suspend (String, Int, String) -> Unit,
+    private val savePosition: suspend (ReadingSpot) -> Unit,
     private val saveDelayMillis: Long,
 ) {
     private var saving: Job? = null
@@ -32,14 +33,14 @@ internal class ReaderPosition(
         return ReaderUiState(uri = uri, name = name, page = page)
     }
 
-    fun onPageChanged(uri: String?, page: Int, newScale: String) {
+    fun onPageChanged(uri: String?, page: Int, newScale: String, chapter: String) {
         savedState[KEY_PAGE] = page
         savedState[KEY_SCALE] = newScale
         uri ?: return
         saving?.cancel()
         saving = scope.launch {
             delay(saveDelayMillis)
-            savePosition(uri, page, newScale)
+            savePosition(ReadingSpot(uri, page, newScale, chapter))
         }
     }
 

@@ -6,10 +6,10 @@
     <string name="reader_close_search">検索を閉じる</string>
     <string name="reader_find_next">次の一致</string>
     <string name="reader_find_previous">前の一致</string>
-    <string name="reader_search_count">%1$d/%2$d</string>
+    <string name="reader_search_count">%1$d / %2$d</string>
     <string name="reader_more">その他</string>
     <string name="reader_go_to_page">ページへ移動</string>
-    <string name="reader_go_to_page_range">ページ番号 (最大 %1$d)</string>
+    <string name="reader_go_to_page_range">1〜%1$dのページを選んでください。</string>
     <string name="reader_night_pages">ナイトページ</string>
     <string name="reader_page_of">%2$d ページ中 %1$d ページ</string>
     <string name="reader_outline">目次</string>
@@ -27,4 +27,23 @@
     <string name="reader_warning_ip_address_host">このアドレスはサイト名ではなく IP アドレスです。</string>
     <string name="reader_warning_embedded_credentials">このリンクにはユーザー名またはパスワードが含まれており、本当のアドレスが隠されている可能性があります。</string>
     <string name="reader_warning_unusual_port">このリンクは一般的でないポートを使用しています。</string>
+    <string name="reader_search_where">%1$dページ · このページに%2$d件</string>
+    <string name="reader_search_none">結果なし</string>
+    <string name="reader_search_hint">2文字以上入力してください</string>
+    <string name="reader_searching">検索中…</string>
+    <string name="reader_clear_search">消去</string>
+    <string name="reader_match_case">大文字と小文字</string>
+    <string name="reader_whole_words">単語全体</string>
+    <string name="reader_go">移動</string>
+    <string name="reader_of_pages">/ %1$d</string>
+    <string name="reader_outline_none">このPDFには目次がありません。</string>
+    <string name="reader_outline_here">現在地 · %1$d</string>
+    <string name="reader_jump_back">%1$dページに戻る</string>
+    <string name="reader_jump_forward">%1$dページに進む</string>
+    <string name="reader_password_message">%1$sは保護されています。パスワードは一度開くためだけに使われ、保存されません。</string>
+    <string name="reader_password_show">パスワードを表示</string>
+    <string name="reader_password_hide">パスワードを非表示</string>
+    <string name="reader_link_check">開く前にこのリンクを確認してください</string>
+    <string name="reader_link_address">完全なアドレス</string>
+    <string name="reader_link_open_anyway">それでも開く</string>
 </resources>

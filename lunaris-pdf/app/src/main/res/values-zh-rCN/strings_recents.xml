@@ -1,5 +1,4 @@
 <resources>
-    <string name="recents_empty">还没有文档</string>
     <string name="recents_open">打开 PDF</string>
     <string name="recents_page">第 %1$d 页</string>
     <string name="recents_entry_gone">此文件已不可用，因此已从列表中移除。</string>
@@ -8,4 +7,23 @@
     <string name="recents_clear_message">列表将被清空。文件本身不会受到影响。</string>
     <string name="recents_clear_confirm">清空</string>
     <string name="document_no_name">文档</string>
+    <string name="recents_empty_title">还没有可读的内容</string>
+    <string name="recents_empty_message">在这里打开 PDF，或在其他应用中使用“打开方式”。下次会从你停下的页面继续。</string>
+    <string name="recents_continue">继续阅读</string>
+    <string name="recents_pinned">已固定</string>
+    <string name="recents_today">今天</string>
+    <string name="recents_this_week">本周</string>
+    <string name="recents_earlier">更早</string>
+    <string name="recents_yesterday">昨天</string>
+    <string name="recents_search">搜索最近的文件</string>
+    <string name="recents_results">结果</string>
+    <string name="recents_all">所有最近的文件</string>
+    <string name="recents_no_match">没有与“%1$s”匹配的最近文件。</string>
+    <string name="recents_pin">固定到顶部</string>
+    <string name="recents_unpin">取消固定</string>
+    <string name="recents_pin_limit">最多可固定 3 个文件。</string>
+    <string name="recents_remove">从最近文件中移除</string>
+    <string name="recents_removed">已从最近文件中移除，不会改动文件。</string>
+    <string name="recents_undo">撤销</string>
+    <string name="recents_locked">有密码</string>
 </resources>

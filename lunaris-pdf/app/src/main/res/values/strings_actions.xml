@@ -14,4 +14,7 @@
     <string name="read_aloud_stop">Stop reading</string>
     <string name="read_aloud_no_text">These pages have no text to read. This is usually a scanned document.</string>
     <string name="read_aloud_unavailable">This phone has no text to speech engine ready to use.</string>
+    <string name="read_aloud_paused">Paused on page %1$d</string>
+    <string name="read_aloud_sentence">Sentence %1$d of %2$d</string>
+    <string name="read_aloud_rate" translatable="false">%1$s×</string>
 </resources>

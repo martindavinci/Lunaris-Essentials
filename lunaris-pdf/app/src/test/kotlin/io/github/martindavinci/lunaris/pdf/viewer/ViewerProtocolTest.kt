@@ -105,4 +105,40 @@ class ViewerProtocolTest {
         assertThat(ViewerProtocol.isScale("0.5")).isTrue()
         assertThat(ViewerProtocol.isScale("nonsense")).isFalse()
     }
+
+    @Test fun find_carriesItsOptions() {
+        val payload = payloadOf(ViewerProtocol.encode(ViewerCommand.Find("a", false, caseSensitive = true, wholeWords = true)))
+        assertThat(payload.getBoolean("caseSensitive")).isTrue()
+        assertThat(payload.getBoolean("wholeWords")).isTrue()
+    }
+
+    @Test fun findResult_saysWhereTheMatchIs() {
+        assertThat(ViewerProtocol.decode("""{"type":"findResult","current":2,"total":9,"done":true,"page":14,"onPage":3}"""))
+            .isEqualTo(ViewerEvent.FindResult(2, 9, true, page = 14, onPage = 3))
+    }
+
+    @Test fun newCommands_nameTheirType() {
+        mapOf(
+            ViewerCommand.SetBarSpace(80, 90) to "setBarSpace",
+            ViewerCommand.MakeThumbnail to "makeThumbnail",
+            ViewerCommand.MarkSentence(2, "text") to "markSentence",
+            ViewerCommand.ClearMark to "clearMark",
+        ).forEach { (command, type) ->
+            assertThat(payloadOf(ViewerProtocol.encode(command)).getString("type")).isEqualTo(type)
+        }
+    }
+
+    @Test fun scrollAndJumpEvents_decode() {
+        assertThat(ViewerProtocol.decode("""{"type":"scrollChanged","moving":true,"down":false}"""))
+            .isEqualTo(ViewerEvent.ScrollChanged(moving = true, down = false))
+        assertThat(ViewerProtocol.decode("""{"type":"jumped","from":3,"to":20}""")).isEqualTo(ViewerEvent.Jumped(3, 20))
+        assertThat(ViewerProtocol.decode("""{"type":"jumped","from":0,"to":20}""")).isNull()
+        assertThat(ViewerProtocol.decode("""{"type":"chapterCrossed"}""")).isEqualTo(ViewerEvent.ChapterCrossed)
+    }
+
+    @Test fun thumbnail_decodesWithinItsLimit() {
+        assertThat(ViewerProtocol.decode("""{"type":"thumbnail","jpeg":"AAAA"}""")).isEqualTo(ViewerEvent.Thumbnail("AAAA"))
+        val huge = "A".repeat(ViewerProtocol.MAX_THUMBNAIL_CHARS + 1)
+        assertThat(ViewerProtocol.decode("""{"type":"thumbnail","jpeg":"$huge"}""")).isNull()
+    }
 }

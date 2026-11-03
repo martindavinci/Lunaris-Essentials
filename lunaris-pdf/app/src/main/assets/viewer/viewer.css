@@ -2,7 +2,17 @@ html, body {
   margin: 0;
   height: 100%;
   overflow: hidden;
-  background: #2b2d30;
+  background: #15171c;
+  --bar-top: 96px;
+  --bar-bottom: 88px;
+  --thumb: rgb(105 110 118 / 0.55);
+  --thumb-dragging: rgb(95 100 110 / 0.88);
+}
+
+/* On a black page the grey lightens to stay visible. Never red, never azure. */
+body.night {
+  --thumb: rgb(150 155 163 / 0.6);
+  --thumb-dragging: rgb(150 155 163 / 0.88);
 }
 
 #container {
@@ -15,7 +25,7 @@ html, body {
 
 /* Room for the app's bars, so the first and last page can be read in full with the bars showing. */
 #viewer {
-  padding: 64px 0 88px;
+  padding: var(--bar-top) 0 var(--bar-bottom);
   transform-origin: 0 0;
 }
 
@@ -23,47 +33,120 @@ html, body {
   filter: invert(1) hue-rotate(180deg);
 }
 
-/* The strip only catches touches while the thumb shows: a page scrolled near the edge stays a page. */
+/* The marks of the text layer are multiplied with the page below, so the text stays as dark as it was. */
+.textLayer {
+  mix-blend-mode: multiply;
+}
+
+/* Search: the other matches in yellow, the current one in azure with an outline. */
+.textLayer .highlight {
+  background-color: #ffe27a;
+}
+
+.textLayer .highlight.selected {
+  background-color: #a9d3f0;
+  outline: 1.5px solid #2e9be0;
+}
+
+/* The sentence being read aloud. */
+.textLayer span.speaking {
+  background-color: #d4e8f8;
+}
+
+/* Only the thumb catches touches: a page scrolled near the edge stays a page. */
 #scroller {
   position: absolute;
-  top: 0;
+  top: var(--bar-top);
   right: 0;
-  bottom: 0;
-  width: 44px;
-  touch-action: none;
+  bottom: var(--bar-bottom);
+  width: 48px;
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.2s;
 }
 
 #scroller.visible {
-  pointer-events: auto;
   opacity: 1;
 }
 
 #thumb {
   position: absolute;
   right: 4px;
-  width: 8px;
-  height: 64px;
-  border-radius: 4px;
-  background: rgba(120, 120, 120, 0.7);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.45);
+  width: 6px;
+  height: 44px;
+  border-radius: 3px;
+  background: var(--thumb);
+  transition: width 0.12s, height 0.12s;
 }
 
 #scroller.dragging #thumb {
-  width: 14px;
-  border-radius: 7px;
+  width: 10px;
+  height: 56px;
+  border-radius: 5px;
+  background: var(--thumb-dragging);
+}
+
+#thumb-hit {
+  position: absolute;
+  right: 0;
+  width: 48px;
+  height: 64px;
+  touch-action: none;
+}
+
+#scroller.visible #thumb-hit {
+  pointer-events: auto;
+}
+
+#track {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 8px;
+  bottom: 0;
+  width: 2px;
+  background: var(--thumb);
+}
+
+#scroller.dragging #track {
+  display: block;
+}
+
+.tick {
+  position: absolute;
+  right: -4px;
+  width: 10px;
+  height: 2px;
+  background: var(--thumb-dragging);
 }
 
 #scroll-label {
   display: none;
   position: absolute;
-  right: 52px;
-  padding: 6px 12px;
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.8);
-  color: #fff;
-  font: 600 16px sans-serif;
+  right: 28px;
+  max-width: 70%;
+  box-sizing: border-box;
+  padding: 8px 14px;
+  border-radius: 16px;
+  background: #1e2127;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.35);
+  color: #eceef1;
+  font-family: sans-serif;
   white-space: nowrap;
+}
+
+#scroll-label-page {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+#scroll-label-chapter {
+  overflow: hidden;
+  color: #aab0b9;
+  font-size: 13px;
+  text-overflow: ellipsis;
+}
+
+#scroll-label-chapter:empty {
+  display: none;
 }

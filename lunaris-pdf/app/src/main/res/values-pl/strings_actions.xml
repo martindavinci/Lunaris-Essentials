@@ -14,4 +14,6 @@
     <string name="read_aloud_stop">Przestań czytać</string>
     <string name="read_aloud_no_text">Te strony nie mają tekstu do przeczytania. Zwykle jest to zeskanowany dokument.</string>
     <string name="read_aloud_unavailable">Ten telefon nie ma gotowego do użycia syntezatora mowy.</string>
+    <string name="read_aloud_paused">Wstrzymano na stronie %1$d</string>
+    <string name="read_aloud_sentence">Zdanie %1$d z %2$d</string>
 </resources>
