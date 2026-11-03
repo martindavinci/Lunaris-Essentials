@@ -34,8 +34,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.martindavinci.lunaris.pdf.R
 import io.github.martindavinci.lunaris.pdf.recents.RecentEntry
-import io.github.martindavinci.lunaris.pdf.recents.RecentsGroup
 
+/** The document in the card is in the list too, which keys its rows by uri. */
+private const val RESUME_KEY = "resume"
 private val ListBottomPadding = 96.dp
 private val EmptyPadding = 32.dp
 private val EmptySpacing = 16.dp
@@ -101,8 +102,8 @@ internal fun RecentsList(
         }
     }
     val pinned = stringResource(R.string.recents_pinned)
-    val results = stringResource(if (state.query.isNullOrBlank()) R.string.recents_all else R.string.recents_results)
-    val titles = RecentsGroup.entries.associateWith { stringResource(it.titleRes) }
+    val all = stringResource(R.string.recents_all)
+    val results = if (state.query.isNullOrBlank()) all else stringResource(R.string.recents_results)
     val nothing = home.results?.isEmpty() == true
     if (nothing) {
         Text(
@@ -118,15 +119,8 @@ internal fun RecentsList(
         home.results?.let { section(results, it) }
         if (home.pinned.isNotEmpty()) section(pinned, home.pinned)
         home.resume?.let { entry ->
-            item(key = entry.uri) { ResumeCard(entry, thumbnail, onClick = { onAction(RecentsAction.OpenEntry(entry)) }) }
+            item(key = RESUME_KEY) { ResumeCard(entry, thumbnail, onClick = { onAction(RecentsAction.OpenEntry(entry)) }) }
         }
-        home.sections.forEach { section(titles.getValue(it.group), it.entries) }
+        if (home.all.isNotEmpty()) section(all, home.all)
     }
 }
-
-private val RecentsGroup.titleRes: Int
-    get() = when (this) {
-        RecentsGroup.TODAY -> R.string.recents_today
-        RecentsGroup.THIS_WEEK -> R.string.recents_this_week
-        RecentsGroup.EARLIER -> R.string.recents_earlier
-    }

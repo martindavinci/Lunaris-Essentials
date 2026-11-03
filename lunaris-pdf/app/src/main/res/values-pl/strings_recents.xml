@@ -11,9 +11,6 @@
     <string name="recents_empty_message">Otwórz PDF tutaj lub z dowolnej aplikacji przez Otwórz za pomocą. Następnym razem otworzy się na stronie, na której skończyłeś.</string>
     <string name="recents_continue">Czytaj dalej</string>
     <string name="recents_pinned">Przypięte</string>
-    <string name="recents_today">Dzisiaj</string>
-    <string name="recents_this_week">W tym tygodniu</string>
-    <string name="recents_earlier">Wcześniej</string>
     <string name="recents_yesterday">Wczoraj</string>
     <string name="recents_search">Szukaj w ostatnich</string>
     <string name="recents_results">Wyniki</string>

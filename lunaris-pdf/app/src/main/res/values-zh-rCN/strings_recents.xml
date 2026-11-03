@@ -11,9 +11,6 @@
     <string name="recents_empty_message">在这里打开 PDF，或在其他应用中使用“打开方式”。下次会从你停下的页面继续。</string>
     <string name="recents_continue">继续阅读</string>
     <string name="recents_pinned">已固定</string>
-    <string name="recents_today">今天</string>
-    <string name="recents_this_week">本周</string>
-    <string name="recents_earlier">更早</string>
     <string name="recents_yesterday">昨天</string>
     <string name="recents_search">搜索最近的文件</string>
     <string name="recents_results">结果</string>

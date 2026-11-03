@@ -14,7 +14,6 @@ import io.github.martindavinci.lunaris.pdf.recents.RecentsHome
 import io.github.martindavinci.lunaris.pdf.recents.RecentsStore
 import io.github.martindavinci.lunaris.pdf.recents.ThumbnailStore
 import java.io.File
-import java.time.ZoneId
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -39,7 +38,6 @@ class RecentsViewModel internal constructor(
     private val restore: suspend (RecentEntry) -> Unit,
     private val documents: DocumentActions,
     private val thumbnail: suspend (String) -> ImageBitmap?,
-    private val now: () -> Long,
 ) : ViewModel() {
 
     @Inject
@@ -58,13 +56,12 @@ class RecentsViewModel internal constructor(
         store::restore,
         documents,
         { uri -> loadThumbnail(thumbnails.fileOf(uri)) },
-        System::currentTimeMillis,
     )
 
     private val flags = MutableStateFlow(RecentsUiState())
 
     val state: StateFlow<RecentsUiState> = combine(entries, flags) { list, current ->
-        current.copy(entries = list, home = RecentsHome.of(list, current.query, now(), ZoneId.systemDefault()))
+        current.copy(entries = list, home = RecentsHome.of(list, current.query))
     }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), RecentsUiState())
 

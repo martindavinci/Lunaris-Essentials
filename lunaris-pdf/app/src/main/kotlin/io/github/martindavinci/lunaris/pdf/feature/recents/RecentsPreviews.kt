@@ -5,9 +5,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import io.github.martindavinci.lunaris.pdf.recents.RecentEntry
-import io.github.martindavinci.lunaris.pdf.recents.RecentsGroup
 import io.github.martindavinci.lunaris.pdf.recents.RecentsHome
-import io.github.martindavinci.lunaris.pdf.recents.RecentsSection
 import io.github.martindavinci.lunaris.pdf.settings.ThemeMode
 import io.github.martindavinci.lunaris.pdf.ui.theme.LunarisPdfTheme
 
@@ -23,7 +21,7 @@ private fun RecentsPreview() {
             RecentsScreen(
                 state = RecentsUiState(
                     entries = listOf(Moon, Notes, Rent),
-                    home = RecentsHome(resume = Moon, sections = listOf(RecentsSection(RecentsGroup.THIS_WEEK, listOf(Notes, Rent)))),
+                    home = RecentsHome(resume = Moon, all = listOf(Moon, Notes, Rent)),
                 ),
                 onAction = {},
                 onOpenSettings = {},

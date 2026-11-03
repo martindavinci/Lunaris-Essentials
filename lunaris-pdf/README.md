@@ -22,7 +22,7 @@
 <p align="center">
   <img src="docs/screenshots/contents.webp" width="32%" alt="The contents of a document">
   <img src="docs/screenshots/read-aloud.webp" width="32%" alt="A document read aloud, with its controls">
-  <img src="docs/screenshots/recents.webp" width="32%" alt="The document being read on top, then the recent ones by date, each with its first page">
+  <img src="docs/screenshots/recents.webp" width="32%" alt="The document being read on top, then all the recent ones, each with its first page">
 </p>
 
 ## Download
@@ -46,7 +46,7 @@ since other Lunaris apps publish their releases here too.
 - PDFs with a password; the password is asked each time and never stored
 - Comes back to the page and zoom where you left a document
 - The first screen offers the document you were reading, with its chapter and how far you got
-- Recent documents grouped by date, with their first page; search them, pin up to three, or remove one
+- Below it all your recent documents, with their first page; search them, pin up to three, or remove one
 
 **Reading**
 - Continuous scrolling, pinch to zoom, double tap to fit the width

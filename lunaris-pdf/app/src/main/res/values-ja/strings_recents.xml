@@ -11,9 +11,6 @@
     <string name="recents_empty_message">ここから、または他のアプリの「アプリで開く」からPDFを開けます。次回は読み終えたページから再開します。</string>
     <string name="recents_continue">続きを読む</string>
     <string name="recents_pinned">固定済み</string>
-    <string name="recents_today">今日</string>
-    <string name="recents_this_week">今週</string>
-    <string name="recents_earlier">それ以前</string>
     <string name="recents_yesterday">昨日</string>
     <string name="recents_search">最近のファイルを検索</string>
     <string name="recents_results">検索結果</string>

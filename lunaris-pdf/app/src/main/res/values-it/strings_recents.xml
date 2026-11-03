@@ -11,9 +11,6 @@
     <string name="recents_empty_message">Apri un PDF da qui, o da qualsiasi app con Apri con. La prossima volta riparte dalla pagina in cui ti sei fermato.</string>
     <string name="recents_continue">Continua a leggere</string>
     <string name="recents_pinned">Fissati</string>
-    <string name="recents_today">Oggi</string>
-    <string name="recents_this_week">Questa settimana</string>
-    <string name="recents_earlier">Prima</string>
     <string name="recents_yesterday">Ieri</string>
     <string name="recents_search">Cerca nei recenti</string>
     <string name="recents_results">Risultati</string>

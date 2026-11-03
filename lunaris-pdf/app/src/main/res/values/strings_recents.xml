@@ -11,9 +11,6 @@
     <string name="recents_empty_message">Open a PDF here, or from any app with Open with. Next time it reopens at the page where you stopped.</string>
     <string name="recents_continue">Continue reading</string>
     <string name="recents_pinned">Pinned</string>
-    <string name="recents_today">Today</string>
-    <string name="recents_this_week">This week</string>
-    <string name="recents_earlier">Earlier</string>
     <string name="recents_yesterday">Yesterday</string>
     <string name="recents_search">Search recents</string>
     <string name="recents_results">Results</string>

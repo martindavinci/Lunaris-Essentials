@@ -43,7 +43,6 @@ class RecentsViewModelTest {
         restore = { entries.value = entries.value + it },
         documents = documents,
         thumbnail = { null },
-        now = { 1_000L },
         openRecent = {
             opened += it.uri
             readable

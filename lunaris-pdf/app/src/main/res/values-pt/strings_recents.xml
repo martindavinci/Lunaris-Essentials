@@ -11,9 +11,6 @@
     <string name="recents_empty_message">Abra um PDF aqui, ou a partir de qualquer app com Abrir com. Da próxima vez, reabre na página onde parou.</string>
     <string name="recents_continue">Continuar a ler</string>
     <string name="recents_pinned">Fixados</string>
-    <string name="recents_today">Hoje</string>
-    <string name="recents_this_week">Esta semana</string>
-    <string name="recents_earlier">Antes</string>
     <string name="recents_yesterday">Ontem</string>
     <string name="recents_search">Pesquisar nos recentes</string>
     <string name="recents_results">Resultados</string>

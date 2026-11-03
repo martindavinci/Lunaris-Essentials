@@ -11,9 +11,6 @@
     <string name="recents_empty_message">여기에서 또는 다른 앱의 연결 프로그램으로 PDF를 여세요. 다음에는 멈춘 페이지부터 다시 열립니다.</string>
     <string name="recents_continue">이어서 읽기</string>
     <string name="recents_pinned">고정됨</string>
-    <string name="recents_today">오늘</string>
-    <string name="recents_this_week">이번 주</string>
-    <string name="recents_earlier">이전</string>
     <string name="recents_yesterday">어제</string>
     <string name="recents_search">최근 파일 검색</string>
     <string name="recents_results">검색 결과</string>

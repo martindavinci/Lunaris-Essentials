@@ -11,9 +11,6 @@
     <string name="recents_empty_message">Öffne hier ein PDF oder aus jeder App mit „Öffnen mit“. Beim nächsten Mal geht es auf der Seite weiter, auf der du aufgehört hast.</string>
     <string name="recents_continue">Weiterlesen</string>
     <string name="recents_pinned">Angeheftet</string>
-    <string name="recents_today">Heute</string>
-    <string name="recents_this_week">Diese Woche</string>
-    <string name="recents_earlier">Früher</string>
     <string name="recents_yesterday">Gestern</string>
     <string name="recents_search">Letzte Dateien durchsuchen</string>
     <string name="recents_results">Ergebnisse</string>

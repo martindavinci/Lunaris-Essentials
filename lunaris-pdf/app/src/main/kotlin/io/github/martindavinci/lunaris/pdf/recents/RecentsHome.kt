@@ -6,10 +6,6 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
-enum class RecentsGroup { TODAY, THIS_WEEK, EARLIER }
-
-data class RecentsSection(val group: RecentsGroup, val entries: List<RecentEntry>)
-
 /** When a document was opened, to be worded by the screen. */
 sealed interface WhenLabel {
     data class At(val millis: Long) : WhenLabel
@@ -20,29 +16,24 @@ sealed interface WhenLabel {
 
 /**
  * What the first screen shows. Usually a document is opened again, so the newest one gets a place of
- * its own in [resume]. With a search, [results] replaces all the rest.
+ * its own in [resume], and stays in [all] with the others. Pinned documents are listed apart, above.
+ * With a search, [results] replaces all the rest.
  */
 data class RecentsHome(
     val pinned: List<RecentEntry> = emptyList(),
     val resume: RecentEntry? = null,
-    val sections: List<RecentsSection> = emptyList(),
+    val all: List<RecentEntry> = emptyList(),
     val results: List<RecentEntry>? = null,
 ) {
     companion object {
         private const val DAYS_IN_A_WEEK = 7L
 
-        fun of(entries: List<RecentEntry>, query: String?, nowMillis: Long, zone: ZoneId): RecentsHome {
+        fun of(entries: List<RecentEntry>, query: String?): RecentsHome {
             if (query != null) {
                 return RecentsHome(results = entries.filter { it.name.contains(query.trim(), ignoreCase = true) })
             }
             val (pinned, others) = entries.partition { it.pinned }
-            val today = dateOf(nowMillis, zone)
-            val groups = others.drop(1).groupBy { groupOf(it.lastOpenedMillis, today, zone) }
-            return RecentsHome(
-                pinned = pinned,
-                resume = others.firstOrNull(),
-                sections = RecentsGroup.entries.mapNotNull { group -> groups[group]?.let { RecentsSection(group, it) } },
-            )
+            return RecentsHome(pinned = pinned, resume = others.firstOrNull(), all = others)
         }
 
         /** Null when the time is not known. */
@@ -55,15 +46,6 @@ data class RecentsHome(
                 days == 1L -> WhenLabel.Yesterday
                 days < DAYS_IN_A_WEEK -> WhenLabel.Weekday(date.dayOfWeek)
                 else -> WhenLabel.Day(date)
-            }
-        }
-
-        private fun groupOf(millis: Long, today: LocalDate, zone: ZoneId): RecentsGroup {
-            val days = ChronoUnit.DAYS.between(dateOf(millis, zone), today)
-            return when {
-                days <= 0 -> RecentsGroup.TODAY
-                days < DAYS_IN_A_WEEK -> RecentsGroup.THIS_WEEK
-                else -> RecentsGroup.EARLIER
             }
         }
 
