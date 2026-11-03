@@ -165,8 +165,9 @@ body.annotating #container {
 }
 
 /* A line or a highlight can start on top of what is already there. */
-body[data-tool='pen'] .annotationEditor,
-body[data-tool='highlightFree'] .annotationEditor,
-body[data-tool='highlight'] .annotationEditor {
+body[data-tool='pen'] .annotationEditorLayer > *,
+body[data-tool='highlightFree'] .annotationEditorLayer > *,
+body[data-tool='highlight'] .annotationEditorLayer > *,
+body[data-tool='text'] .annotationEditorLayer > :not(.freeTextEditor) {
   pointer-events: none;
 }

@@ -3,15 +3,21 @@
 // Two fingers stay with gestures.js: they scroll and zoom.
 const TAP_SLOP_PX = 12;
 const ERASER_REACH_PX = 10;
+const TEXT_REACH_PX = 24;
 const OWN_POINTERS = ['highlight', 'eraser'];
 const PLACING = ['note', 'sign'];
 const DRAWING = ['pen', 'highlightFree'];
 
+// The browser answers with the nearest text however far it is: a finger on a picture is not on the title.
 const textPositionAt = (x, y) => {
   const caret = document.caretRangeFromPoint(x, y);
   const parent = caret?.startContainer.parentElement;
   const layer = parent?.closest('.textLayer');
-  return layer ? { node: caret.startContainer, offset: caret.startOffset, layer } : null;
+  if (!layer) return null;
+  const box = parent.getBoundingClientRect();
+  const near = x >= box.left - TEXT_REACH_PX && x <= box.right + TEXT_REACH_PX
+    && y >= box.top - TEXT_REACH_PX && y <= box.bottom + TEXT_REACH_PX;
+  return near ? { node: caret.startContainer, offset: caret.startOffset, layer } : null;
 };
 
 export function installEditingTouches({ container, tool, ui, marks, onNoText, onLifted }) {
@@ -21,7 +27,7 @@ export function installEditingTouches({ container, tool, ui, marks, onNoText, on
   let start = null;
   let last = null;
 
-  const onEditor = (event) => event.target.closest?.('.annotationEditor');
+  const onEditor = (event) => event.target.closest?.('.stampEditor');
 
   // pdf.js must not see what these tools do with the finger, nor a second finger on any of them.
   const filterPointer = (event) => {
@@ -124,7 +130,8 @@ export function installEditingTouches({ container, tool, ui, marks, onNoText, on
     const [x, y] = at(event.touches[0]);
     last = { x, y };
     if (selecting) moveSelection(x, y);
-    else if (current === 'eraser') eraseAt(x, y);
+    // A finger never lies quite still: one tap takes one mark.
+    else if (current === 'eraser' && Math.hypot(x - start.x, y - start.y) > TAP_SLOP_PX) eraseAt(x, y);
   }, { capture: true, passive: true });
 
   container.addEventListener('touchend', (event) => {

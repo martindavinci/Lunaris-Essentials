@@ -42,7 +42,9 @@ export function installMarks({ viewer, post, ui, onEdit }) {
   let signature = null;
   let pin = null;
 
-  const pageAt = (x, y) => document.elementsFromPoint(x, y)
+  const pointsAt = (x, y) => document.elementsFromPoint(x, y);
+
+  const pageAt = (x, y) => pointsAt(x, y)
     .map((element) => element.closest('.page[data-page-number]'))
     .find(Boolean);
 
@@ -64,7 +66,9 @@ export function installMarks({ viewer, post, ui, onEdit }) {
     return editor;
   };
 
-  const noteAt = (x, y) => document.elementsFromPoint(x, y)
+  const onStamp = (x, y) => pointsAt(x, y).some((element) => element.closest('.stampEditor'));
+
+  const noteAt = (x, y) => pointsAt(x, y)
     .map((element) => notes.get(element.closest('.stampEditor')?.id))
     .find(Boolean);
 
@@ -84,7 +88,8 @@ export function installMarks({ viewer, post, ui, onEdit }) {
 
   const tapForSignature = (x, y) => {
     if (!signature) {
-      ui()?.unselectAll();
+      // A tap on one that is there picks it up, to move it or change its size.
+      if (!onStamp(x, y)) ui()?.unselectAll();
       return;
     }
     const placed = place(x, y, signature.blob, SIGNATURE_WIDTH, signature.ratio);
