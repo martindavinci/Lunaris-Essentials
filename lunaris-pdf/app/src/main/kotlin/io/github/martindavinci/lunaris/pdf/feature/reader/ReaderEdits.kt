@@ -2,17 +2,13 @@ package io.github.martindavinci.lunaris.pdf.feature.reader
 
 import io.github.martindavinci.lunaris.pdf.actions.DocumentActions
 import io.github.martindavinci.lunaris.pdf.annotate.AnnotationHints
-import io.github.martindavinci.lunaris.pdf.annotate.AnnotationOptions
 import io.github.martindavinci.lunaris.pdf.annotate.AnnotationPalette
-import io.github.martindavinci.lunaris.pdf.annotate.AnnotationTool
 import io.github.martindavinci.lunaris.pdf.annotate.EditedDocuments
 import io.github.martindavinci.lunaris.pdf.annotate.SignatureLibrary
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerChannel
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerCommand
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerEvent
-import java.util.Base64
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 /** Annotating and saving for the Reader: the tools, and the way from the page to a file. */
@@ -27,7 +23,10 @@ internal class ReaderEdits(
     private val update: ((ReaderUiState) -> ReaderUiState) -> Unit,
 ) {
     private var leaveAfter = false
+    private var waitingFile: (suspend (String) -> Unit)? = null
     private val export = ReaderExport(scope, viewer, editedFiles, update)
+    private val marks = ReaderMarks(scope, viewer, signatures, { state().annotation }, ::changeAnnotation)
+    private val tools = ReaderTools(scope, viewer, hints, marks, state, update, ::changeAnnotation)
 
     init {
         scope.launch { editedFiles.clear() }
@@ -35,12 +34,12 @@ internal class ReaderEdits(
 
     fun onAction(action: EditAction) {
         when (action) {
-            EditAction.StartAnnotating -> start()
-            is EditAction.ChooseTool -> chooseTool(action.tool)
-            is EditAction.ChooseColor -> chooseColor(action.color)
-            is EditAction.ChoosePenThickness -> changeOptions { it.copy(penThickness = action.thickness) }
-            is EditAction.SetHighlightFree -> changeOptions { it.copy(highlightFree = action.on) }
-            is EditAction.ChangeTextSize -> changeOptions { it.copy(textSize = AnnotationPalette.textSize(it.textSize, action.steps)) }
+            EditAction.StartAnnotating -> tools.start()
+            is EditAction.ChooseTool -> tools.choose(action.tool)
+            is EditAction.ChooseColor -> tools.chooseColor(action.color)
+            is EditAction.ChoosePenThickness -> tools.changeOptions { it.copy(penThickness = action.thickness) }
+            is EditAction.SetHighlightFree -> tools.changeOptions { it.copy(highlightFree = action.on) }
+            is EditAction.ChangeTextSize -> tools.changeOptions { it.copy(textSize = AnnotationPalette.textSize(it.textSize, action.steps)) }
             EditAction.HideScrollHint -> changeAnnotation { it.copy(showScrollHint = false) }
             EditAction.Undo -> viewer.send(ViewerCommand.UndoEdit)
             EditAction.Redo -> viewer.send(ViewerCommand.RedoEdit)
@@ -51,20 +50,22 @@ internal class ReaderEdits(
             EditAction.Discard -> discard()
             is EditAction.SaveTo -> save(action.uri, reload = false)
             EditAction.SaveOver -> if (state().canWrite) state().uri?.let { save(it, reload = true) }
-            is EditAction.SaveNote -> saveNote(action.id, action.text)
-            EditAction.DismissNote -> dismissNote()
-            is EditAction.AddSignature -> scope.launch {
-                signatures.add(action.png)
-                showSignatures()
-            }
-            is EditAction.RemoveSignature -> scope.launch {
-                signatures.remove(action.id)
-                showSignatures()
-            }
-            is EditAction.ChooseSignature -> chooseSignature(action.id)
+            is EditAction.SaveNote -> marks.saveNote(action.id, action.text)
+            EditAction.DismissNote -> marks.dismissNote()
+            is EditAction.AddSignature -> marks.addSignature(action.png)
+            is EditAction.RemoveSignature -> marks.removeSignature(action.id)
+            is EditAction.ChooseSignature -> marks.chooseSignature(action.id)
             EditAction.CloseSignatures -> changeAnnotation { it.copy(signatures = null) }
             EditAction.Print -> withCurrentFile { uri -> update { it.copy(printUri = uri) } }
             EditAction.PrintStarted -> update { it.copy(printUri = null) }
+            EditAction.ConfirmSigned -> {
+                update { it.copy(signedWarning = false) }
+                sendWaitingFile(edited = true)
+            }
+            EditAction.CancelSigned -> {
+                update { it.copy(signedWarning = false) }
+                waitingFile = null
+            }
         }
     }
 
@@ -85,66 +86,31 @@ internal class ReaderEdits(
 
     /** The edits lived in the page that the system took back. */
     fun onPageLost() {
+        val lost = state().hasUnsavedEdits
+        waitingFile = null
+        update { it.copy(annotation = null, edits = DocumentEdits(), saveSheet = null, signedWarning = false) }
         export.fail()
-        if (state().hasUnsavedEdits) update { it.copy(notice = ReaderNotice.EDITS_LOST) }
-        update { it.copy(annotation = null, edits = DocumentEdits(), saveSheet = null) }
+        if (lost) update { it.copy(notice = ReaderNotice.EDITS_LOST) }
     }
 
     /** Calls [action] with a uri of the document as it stands, with its edits if it has any. */
     fun withCurrentFile(action: suspend (String) -> Unit) {
+        waitingFile = action
+        // With changes the page goes first: a digital signature is about to break, and that gets said.
+        if (state().hasUnsavedEdits) viewer.send(ViewerCommand.SettleEdits) else sendWaitingFile(edited = false)
+    }
+
+    private fun sendWaitingFile(edited: Boolean) {
+        val action = waitingFile ?: return
+        waitingFile = null
         scope.launch {
-            val uri = if (state().hasUnsavedEdits) export.run() else state().uri
-            if (uri != null) action(uri) else update { it.copy(notice = ReaderNotice.SAVE_FAILED) }
+            val uri = if (edited) export.run() else state().uri
+            if (uri != null) action(uri) else if (state().hasUnsavedEdits) notifySaveFailed()
             export.done()
         }
     }
 
-    private fun start() {
-        update { it.copy(annotation = AnnotationUiState(), chromeVisible = true) }
-        sendTool()
-    }
-
-    private fun chooseTool(tool: AnnotationTool) {
-        changeAnnotation { it.copy(tool = tool, placingSignature = false) }
-        sendTool()
-        when (tool) {
-            AnnotationTool.PEN -> offerScrollHint()
-            AnnotationTool.SIGN -> scope.launch { showSignatures() }
-            else -> Unit
-        }
-    }
-
-    private fun offerScrollHint() {
-        scope.launch {
-            if (hints.shown.first() < SCROLL_HINT_TIMES) {
-                hints.countOne()
-                changeAnnotation { it.copy(showScrollHint = true) }
-            }
-        }
-    }
-
-    private fun chooseColor(color: String) = changeOptions { options ->
-        when (state().annotation?.tool) {
-            AnnotationTool.HIGHLIGHT -> options.copy(highlightColor = color)
-            AnnotationTool.PEN -> options.copy(penColor = color)
-            AnnotationTool.TEXT -> options.copy(textColor = color)
-            else -> options
-        }
-    }
-
-    private fun changeOptions(change: (AnnotationOptions) -> AnnotationOptions) {
-        changeAnnotation { it.copy(options = change(it.options)) }
-        sendTool()
-    }
-
-    private fun sendTool() {
-        val annotation = state().annotation
-        viewer.send(ViewerCommand.SetTool(annotation?.let { AnnotationPalette.spec(it.tool, it.options) }))
-    }
-
-    private fun changeAnnotation(change: (AnnotationUiState) -> AnnotationUiState) = update { current ->
-        current.copy(annotation = current.annotation?.let(change))
-    }
+    private fun notifySaveFailed() = update { it.copy(notice = ReaderNotice.SAVE_FAILED) }
 
     private fun settle(leave: Boolean) {
         leaveAfter = leave
@@ -152,7 +118,13 @@ internal class ReaderEdits(
     }
 
     private fun onSettled(event: ViewerEvent.EditsSettled) {
-        if (event.changes > 0) {
+        if (waitingFile != null) {
+            if (event.changes > 0 && event.signed) {
+                update { it.copy(signedWarning = true) }
+            } else {
+                sendWaitingFile(edited = event.changes > 0)
+            }
+        } else if (event.changes > 0) {
             update { it.copy(saveSheet = SaveSheet(event.changes, event.pages, event.signed, leaveAfter)) }
         } else {
             endEditing()
@@ -162,12 +134,13 @@ internal class ReaderEdits(
 
     private fun keepEditing() {
         update { it.copy(saveSheet = null) }
-        if (state().annotation != null) sendTool()
+        changeAnnotation { it.copy(placingSignature = false) }
+        if (state().annotation != null) tools.send()
     }
 
     private fun endEditing() {
         update { it.copy(annotation = null, edits = DocumentEdits(), saveSheet = null) }
-        sendTool()
+        tools.send()
     }
 
     private fun discard() {
@@ -178,13 +151,15 @@ internal class ReaderEdits(
 
     private fun reload() = update { it.copy(loading = true, viewRevision = it.viewRevision + 1) }
 
+    /** The question was answered, but the page with the changes may have gone while the system picker was open. */
     private fun save(target: String, reload: Boolean) {
-        val leave = state().saveSheet?.leaveAfter == true
+        val sheet = state().saveSheet ?: return
+        val leave = sheet.leaveAfter
         scope.launch {
             val saved = export.run()?.let { documents.saveCopy(it, target) } == true
             export.done()
             if (!saved) {
-                update { it.copy(notice = ReaderNotice.SAVE_FAILED) }
+                if (state().hasUnsavedEdits) notifySaveFailed()
                 return@launch
             }
             editedFiles.clear()
@@ -195,30 +170,7 @@ internal class ReaderEdits(
         }
     }
 
-    private fun saveNote(id: String, text: String) {
-        viewer.send(if (text.isBlank()) ViewerCommand.RemoveNote(id) else ViewerCommand.SetNoteText(id, text))
-        changeAnnotation { it.copy(note = null) }
-    }
-
-    private fun dismissNote() {
-        state().annotation?.note?.takeIf { it.text.isEmpty() }?.let { viewer.send(ViewerCommand.RemoveNote(it.id)) }
-        changeAnnotation { it.copy(note = null) }
-    }
-
-    private suspend fun showSignatures() {
-        val saved = signatures.list()
-        changeAnnotation { it.copy(signatures = saved) }
-    }
-
-    private fun chooseSignature(id: String) {
-        scope.launch {
-            val png = signatures.read(id) ?: return@launch
-            viewer.send(ViewerCommand.ArmSignature(Base64.getEncoder().encodeToString(png)))
-            changeAnnotation { it.copy(signatures = null, placingSignature = true) }
-        }
-    }
-
-    private companion object {
-        const val SCROLL_HINT_TIMES = 3
+    private fun changeAnnotation(change: (AnnotationUiState) -> AnnotationUiState) = update { current ->
+        current.copy(annotation = current.annotation?.let(change))
     }
 }

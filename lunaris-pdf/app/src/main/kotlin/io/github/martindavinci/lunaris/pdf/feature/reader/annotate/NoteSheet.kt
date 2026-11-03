@@ -40,7 +40,9 @@ internal fun NoteSheet(note: NoteDraft, onAction: (ReaderAction) -> Unit) {
     var text by rememberSaveable(note.id) { mutableStateOf(note.text) }
     val focus = remember { FocusRequester() }
     LaunchedEffect(note.id) { focus.requestFocus() }
-    BottomPanel(onDismiss = { onAction(EditAction.DismissNote) }, modifier = Modifier.imePadding()) {
+    // Going away keeps what was written, as there is no asking about a note.
+    val dismiss = { onAction(if (text.isBlank() || text == note.text) EditAction.DismissNote else EditAction.SaveNote(note.id, text)) }
+    BottomPanel(onDismiss = dismiss, modifier = Modifier.imePadding()) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(start = SheetPadding, end = SheetPadding, bottom = SheetPadding),
             verticalArrangement = Arrangement.spacedBy(SheetSpacing),

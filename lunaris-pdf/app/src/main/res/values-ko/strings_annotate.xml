@@ -66,4 +66,6 @@
         <item quantity="other">%1$d페이지</item>
     </plurals>
     <string name="annotate_summary" formatted="true">%1$s: %2$s</string>
+    <string name="annotate_open_refused">먼저 변경 사항을 저장하거나 버린 다음 다른 파일을 다시 여세요.</string>
+    <string name="annotate_continue">계속</string>
 </resources>

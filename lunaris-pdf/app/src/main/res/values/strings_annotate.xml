@@ -69,4 +69,6 @@
         <item quantity="other">on %1$d pages</item>
     </plurals>
     <string name="annotate_summary">%2$s %1$s</string>
+    <string name="annotate_open_refused">Save or discard your changes first, then open the other file again.</string>
+    <string name="annotate_continue">Continue</string>
 </resources>

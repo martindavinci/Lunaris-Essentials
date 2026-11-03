@@ -22,6 +22,7 @@ import io.github.martindavinci.lunaris.pdf.viewer.ToolSpec
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerChannel
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerCommand
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerEvent
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -80,11 +81,13 @@ class ReaderViewModelTest {
         val pieces = mutableListOf<Pair<Int, Int>>()
         var result: String? = "file:///cache/edited.pdf"
         var acceptPieces = true
+        var appendWaitsFor: CompletableDeferred<Unit>? = null
         override suspend fun begin() {
             began++
         }
         override suspend fun append(index: Int, bytes: ByteArray): Boolean {
             pieces += index to bytes.size
+            appendWaitsFor?.await()
             return acceptPieces
         }
         override suspend fun finish(size: Long): String? = result
@@ -918,9 +921,128 @@ class ReaderViewModelTest {
         vm.onAction(ReaderAction.Share)
         var whilePreparing: Float? = null
         documents.onShare = { whilePreparing = vm.state.value.exportProgress }
+        emit(ViewerEvent.EditsSettled(2, 1, signed = false))
         exportSucceeds()
         assertThat(whilePreparing).isNotNull()
         assertThat(vm.state.value.exportProgress).isNull()
+    }
+
+    @Test fun aCrashOfThePage_saysTheEditsAreGone_andLeavesAWayOut() {
+        val vm = editing()
+        emit(ViewerEvent.LoadFailed)
+        assertThat(vm.state.value.notice).isEqualTo(ReaderNotice.EDITS_LOST)
+        assertThat(vm.state.value.annotation).isNull()
+        assertThat(vm.state.value.hasUnsavedEdits).isFalse()
+        assertThat(vm.state.value.error).isEqualTo(ReaderError.CANNOT_OPEN)
+    }
+
+    @Test fun aCrashOfThePageDuringASave_endsTheWait() {
+        val vm = editing()
+        vm.onAction(EditAction.Finish)
+        emit(ViewerEvent.EditsSettled(2, 1, signed = false))
+        vm.onAction(EditAction.SaveTo("content://x/copy.pdf"))
+        emit(ViewerEvent.LoadFailed)
+        assertThat(vm.state.value.exportProgress).isNull()
+        assertThat(vm.state.value.saveSheet).isNull()
+        assertThat(vm.state.value.notice).isEqualTo(ReaderNotice.EDITS_LOST)
+        assertThat(documents.saved).isEmpty()
+    }
+
+    @Test fun thePageLostWhileThePickerIsOpen_savesNothing() {
+        val vm = editing()
+        vm.onAction(EditAction.Finish)
+        emit(ViewerEvent.EditsSettled(2, 1, signed = false))
+        emit(ViewerEvent.RendererKilled)
+        val began = edited.began
+        vm.onAction(EditAction.SaveTo("content://x/copy.pdf"))
+        assertThat(edited.began).isEqualTo(began)
+        assertThat(vm.state.value.exportProgress).isNull()
+        assertThat(documents.saved).isEmpty()
+    }
+
+    @Test fun aPieceBeingWrittenWhenThePageDies_doesNotBringTheWaitBack() {
+        val vm = editing()
+        vm.onAction(EditAction.Finish)
+        emit(ViewerEvent.EditsSettled(2, 1, signed = false))
+        vm.onAction(EditAction.SaveTo("content://x/copy.pdf"))
+        val writing = CompletableDeferred<Unit>()
+        edited.appendWaitsFor = writing
+        emit(ViewerEvent.ExportChunk(0, 2, "AQID"))
+        emit(ViewerEvent.RendererKilled)
+        writing.complete(Unit)
+        assertThat(vm.state.value.exportProgress).isNull()
+        assertThat(channel.sent).doesNotContain(ViewerCommand.ExportAck(0))
+    }
+
+    @Test fun aNewPageWithoutTheEdits_saysTheyAreGone() {
+        val vm = editing()
+        emit(ViewerEvent.Ready)
+        assertThat(vm.state.value.notice).isEqualTo(ReaderNotice.EDITS_LOST)
+        assertThat(vm.state.value.annotation).isNull()
+        assertThat(vm.state.value.hasUnsavedEdits).isFalse()
+    }
+
+    @Test fun editsLostToARestart_areSaid() {
+        editing()
+        val restored = viewModel()
+        assertThat(restored.state.value.notice).isEqualTo(ReaderNotice.EDITS_LOST)
+    }
+
+    @Test fun aRestartWithNothingUnsaved_saysNothing() {
+        val vm = editing()
+        vm.onAction(EditAction.Finish)
+        emit(ViewerEvent.EditsSettled(2, 1, signed = false))
+        vm.onAction(EditAction.Discard)
+        assertThat(viewModel().state.value.notice).isNull()
+    }
+
+    @Test fun unsavedEdits_areKnownOutsideTheReader() {
+        val vm = editing()
+        assertThat(current.hasUnsavedEdits).isTrue()
+        vm.onAction(EditAction.Finish)
+        emit(ViewerEvent.EditsSettled(2, 1, signed = false))
+        vm.onAction(EditAction.Discard)
+        assertThat(current.hasUnsavedEdits).isFalse()
+    }
+
+    @Test fun sharingASignedDocumentWithEdits_warnsFirst() {
+        val vm = editing()
+        vm.onAction(ReaderAction.Share)
+        emit(ViewerEvent.EditsSettled(2, 1, signed = true))
+        assertThat(vm.state.value.signedWarning).isTrue()
+        assertThat(edited.began).isEqualTo(0)
+        vm.onAction(EditAction.ConfirmSigned)
+        assertThat(vm.state.value.signedWarning).isFalse()
+        exportSucceeds()
+        assertThat(documents.shared).containsExactly("file:///cache/edited.pdf")
+    }
+
+    @Test fun cancellingTheWarning_sharesNothing() {
+        val vm = editing()
+        vm.onAction(ReaderAction.Share)
+        emit(ViewerEvent.EditsSettled(2, 1, signed = true))
+        vm.onAction(EditAction.CancelSigned)
+        assertThat(vm.state.value.signedWarning).isFalse()
+        assertThat(edited.began).isEqualTo(0)
+        assertThat(documents.shared).isEmpty()
+    }
+
+    @Test fun annotating_waitsForTheDocument() {
+        val vm = viewModel()
+        emit(ViewerEvent.Ready)
+        vm.onAction(EditAction.StartAnnotating)
+        assertThat(vm.state.value.annotation).isNull()
+    }
+
+    @Test fun keepEditing_forgetsTheSignatureInHand() {
+        val vm = editing()
+        vm.onAction(EditAction.AddSignature(byteArrayOf(1)))
+        vm.onAction(EditAction.ChooseTool(AnnotationTool.SIGN))
+        vm.onAction(EditAction.ChooseSignature("s0"))
+        vm.onAction(EditAction.Finish)
+        emit(ViewerEvent.EditsSettled(2, 1, signed = false))
+        vm.onAction(EditAction.KeepEditing)
+        assertThat(vm.state.value.annotation?.placingSignature).isFalse()
     }
 
     @Test fun aFailedExport_saysSoAndLosesNothing() {
@@ -1017,6 +1139,7 @@ class ReaderViewModelTest {
     @Test fun sharing_withEdits_sendsTheEditedFile() {
         val vm = editing()
         vm.onAction(ReaderAction.Share)
+        emit(ViewerEvent.EditsSettled(2, 1, signed = false))
         exportSucceeds()
         assertThat(documents.shared).containsExactly("file:///cache/edited.pdf")
         assertThat(vm.state.value.shareUri).isNotNull()
@@ -1033,6 +1156,7 @@ class ReaderViewModelTest {
     @Test fun savingACopy_withEdits_savesThemAndKeepsThemShown() {
         val vm = editing()
         vm.onAction(ReaderAction.SaveCopyTo("content://x/copy.pdf"))
+        emit(ViewerEvent.EditsSettled(2, 1, signed = false))
         exportSucceeds()
         assertThat(documents.saved).containsExactly("file:///cache/edited.pdf" to "content://x/copy.pdf")
     }
@@ -1040,6 +1164,7 @@ class ReaderViewModelTest {
     @Test fun printing_withEdits_printsTheEditedFile() {
         val vm = editing()
         vm.onAction(EditAction.Print)
+        emit(ViewerEvent.EditsSettled(2, 1, signed = false))
         exportSucceeds()
         assertThat(vm.state.value.printUri).isEqualTo("file:///cache/edited.pdf")
         vm.onAction(EditAction.PrintStarted)

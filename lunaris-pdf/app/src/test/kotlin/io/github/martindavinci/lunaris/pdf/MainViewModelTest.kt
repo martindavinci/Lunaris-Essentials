@@ -25,13 +25,27 @@ class MainViewModelTest {
 
     @After fun tearDown() = Dispatchers.resetMain()
 
-    private fun viewModel() = MainViewModel(
+    private fun viewModel(unsaved: Boolean = false) = MainViewModel(
         settings = flowOf(AppSettings()),
         openNew = {
             prepared += it
             gate.await()
         },
+        hasUnsavedEdits = { unsaved },
     ).also { it.state.launchIn(it.viewModelScope) }
+
+    @Test fun fileFromAnotherApp_doesNotReplaceUnsavedEdits() {
+        val vm = viewModel(unsaved = true)
+        var requests = 0
+        var refused = 0
+        vm.readerRequests.onEach { requests++ }.launchIn(vm.viewModelScope)
+        vm.refusedDocuments.onEach { refused++ }.launchIn(vm.viewModelScope)
+        vm.openFromIntent("content://a/1")
+        assertThat(prepared).isEmpty()
+        assertThat(vm.state.value.opening).isFalse()
+        assertThat(requests).isEqualTo(0)
+        assertThat(refused).isEqualTo(1)
+    }
 
     @Test fun fileFromAnotherApp_goesToTheReaderOncePrepared() {
         val vm = viewModel()

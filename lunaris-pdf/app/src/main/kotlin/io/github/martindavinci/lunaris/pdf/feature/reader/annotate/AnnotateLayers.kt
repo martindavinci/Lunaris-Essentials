@@ -15,10 +15,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -60,6 +62,22 @@ internal fun BoxScope.AnnotateLayers(state: ReaderUiState, bottomSpace: Dp, onAc
     }
     state.saveSheet?.let { SaveAnnotationsSheet(it, state.canWrite, onAction, onSaveCopy) }
     state.exportProgress?.let { Saving(it) }
+    if (state.signedWarning) SignedWarning(onAction)
+}
+
+@Composable
+private fun SignedWarning(onAction: (ReaderAction) -> Unit) {
+    AlertDialog(
+        onDismissRequest = { onAction(EditAction.CancelSigned) },
+        title = { Text(stringResource(R.string.annotate_signed_title)) },
+        text = { Text(stringResource(R.string.annotate_signed_body)) },
+        confirmButton = {
+            TextButton(onClick = { onAction(EditAction.ConfirmSigned) }) { Text(stringResource(R.string.annotate_continue)) }
+        },
+        dismissButton = {
+            TextButton(onClick = { onAction(EditAction.CancelSigned) }) { Text(stringResource(R.string.annotate_draw_cancel)) }
+        },
+    )
 }
 
 @Composable

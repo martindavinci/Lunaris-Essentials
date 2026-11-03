@@ -52,7 +52,8 @@ private val InkColor = Color(0xFF14143C)
 internal fun SignaturePad(onDone: (ByteArray) -> Unit, onCancel: () -> Unit) {
     var strokes by remember { mutableStateOf(emptyList<List<StrokePoint>>()) }
     val inkPx = with(LocalDensity.current) { InkWidth.toPx() }
-    BottomPanel(onDismiss = onCancel) {
+    // A drawing goes only with Cancel: a stray tap beside the pad is easy.
+    BottomPanel(onDismiss = { if (strokes.isEmpty()) onCancel() }) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(start = PanelPadding, end = PanelPadding, bottom = PanelPadding),
             verticalArrangement = Arrangement.spacedBy(PanelSpacing),

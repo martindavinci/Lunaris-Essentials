@@ -66,4 +66,6 @@
         <item quantity="other">%1$d ページ</item>
     </plurals>
     <string name="annotate_summary" formatted="true">%1$s: %2$s</string>
+    <string name="annotate_open_refused">先に変更を保存または破棄してから、もう一方のファイルを開き直してください。</string>
+    <string name="annotate_continue">続行</string>
 </resources>

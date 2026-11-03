@@ -54,4 +54,6 @@ sealed interface EditAction : ReaderAction {
     data object CloseSignatures : EditAction
     data object Print : EditAction
     data object PrintStarted : EditAction
+    data object ConfirmSigned : EditAction
+    data object CancelSigned : EditAction
 }

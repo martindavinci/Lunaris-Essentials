@@ -75,4 +75,6 @@
         <item quantity="other">na %1$d stronach</item>
     </plurals>
     <string name="annotate_summary">%2$s %1$s</string>
+    <string name="annotate_open_refused">Najpierw zapisz lub odrzuć zmiany, a potem otwórz drugi plik ponownie.</string>
+    <string name="annotate_continue">Dalej</string>
 </resources>

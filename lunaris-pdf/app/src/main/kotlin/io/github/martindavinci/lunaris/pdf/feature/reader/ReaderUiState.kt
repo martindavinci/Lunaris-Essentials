@@ -33,6 +33,8 @@ data class ReaderUiState(
     val annotation: AnnotationUiState? = null,
     val edits: DocumentEdits = DocumentEdits(),
     val saveSheet: SaveSheet? = null,
+    /** Sending the document on with its changes would break its digital signature: asked first. */
+    val signedWarning: Boolean = false,
     /** How far a save has come, from 0 to 1, while there is one. */
     val exportProgress: Float? = null,
     val printUri: String? = null,

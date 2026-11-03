@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.martindavinci.lunaris.pdf.open.DocumentOpener
+import io.github.martindavinci.lunaris.pdf.session.CurrentDocument
 import io.github.martindavinci.lunaris.pdf.settings.AppSettings
 import io.github.martindavinci.lunaris.pdf.settings.SettingsStore
 import javax.inject.Inject
@@ -25,13 +26,16 @@ data class MainUiState(val settings: AppSettings? = null, val opening: Boolean =
 class MainViewModel internal constructor(
     settings: Flow<AppSettings>,
     private val openNew: suspend (String) -> Unit,
+    private val hasUnsavedEdits: () -> Boolean,
 ) : ViewModel() {
 
     @Inject
-    constructor(settingsStore: SettingsStore, opener: DocumentOpener) : this(settingsStore.settings, opener::openNew)
+    constructor(settingsStore: SettingsStore, opener: DocumentOpener, current: CurrentDocument) :
+        this(settingsStore.settings, opener::openNew, { current.hasUnsavedEdits })
 
     private val opening = MutableStateFlow(false)
     private val openReader = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    private val refused = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
     val state: StateFlow<MainUiState> = combine(settings, opening) { current, busy -> MainUiState(current, busy) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MILLIS), MainUiState())
@@ -39,7 +43,14 @@ class MainViewModel internal constructor(
     /** Fires only while the screens are up. A file that started the app makes the Reader the first screen instead. */
     val readerRequests: SharedFlow<Unit> = openReader.asSharedFlow()
 
+    /** A file came while the Reader holds unsaved changes, which it would have replaced. */
+    val refusedDocuments: SharedFlow<Unit> = refused.asSharedFlow()
+
     fun openFromIntent(uri: String) {
+        if (hasUnsavedEdits()) {
+            refused.tryEmit(Unit)
+            return
+        }
         opening.value = true
         viewModelScope.launch {
             openNew(uri)

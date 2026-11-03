@@ -40,8 +40,11 @@ internal class ReaderExport(
             finish(null)
             return
         }
+        val current = running
         scope.launch {
-            if (editedFiles.append(event.index, bytes)) {
+            val written = editedFiles.append(event.index, bytes)
+            if (running !== current) return@launch
+            if (written) {
                 update { it.copy(exportProgress = (event.index + 1f) / event.total) }
                 viewer.send(ViewerCommand.ExportAck(event.index))
             } else {
@@ -51,8 +54,11 @@ internal class ReaderExport(
     }
 
     fun onDone(event: ViewerEvent.ExportDone) {
-        if (running == null) return
-        scope.launch { finish(editedFiles.finish(event.bytes)) }
+        val current = running ?: return
+        scope.launch {
+            val uri = editedFiles.finish(event.bytes)
+            if (running === current) finish(uri)
+        }
     }
 
     fun fail() = finish(null)

@@ -14,6 +14,10 @@ class CurrentDocument @Inject constructor() {
 
     val document: StateFlow<OpenDocument?> = current.asStateFlow()
 
+    /** The Reader has changes that only its page holds. */
+    @Volatile
+    var hasUnsavedEdits = false
+
     fun set(document: OpenDocument?) {
         current.value = document
     }

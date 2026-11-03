@@ -21,10 +21,14 @@ class DocumentCopier @Inject constructor(
         val resolver = context.contentResolver
         val source = from.toUri()
         val target = to.toUri()
+        // What a copy killed halfway left here has no other use.
+        val work = File(context.cacheDir, SAVE_FOLDER).apply { deleteRecursively() }
         SafeCopy.save(
-            temp = File(File(context.cacheDir, SAVE_FOLDER), UUID.randomUUID().toString()),
+            temp = File(work, UUID.randomUUID().toString()),
+            backup = File(work, UUID.randomUUID().toString()),
             openSource = { resolver.openInputStream(source) ?: throw FileNotFoundException(from) },
             openTarget = { resolver.openOutputStream(target, TRUNCATE) ?: throw FileNotFoundException(to) },
+            readTarget = { resolver.openInputStream(target) ?: throw FileNotFoundException(to) },
             targetHadContent = hasContent(target),
             deleteTarget = { DocumentsContract.deleteDocument(resolver, target) },
         )

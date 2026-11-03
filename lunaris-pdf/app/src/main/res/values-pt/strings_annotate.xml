@@ -72,4 +72,6 @@
         <item quantity="other">em %1$d páginas</item>
     </plurals>
     <string name="annotate_summary">%2$s %1$s</string>
+    <string name="annotate_open_refused">Primeiro guarde ou rejeite as alterações e depois volte a abrir o outro ficheiro.</string>
+    <string name="annotate_continue">Continuar</string>
 </resources>

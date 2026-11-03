@@ -69,4 +69,6 @@
         <item quantity="other">op %1$d pagina\'s</item>
     </plurals>
     <string name="annotate_summary">%2$s %1$s</string>
+    <string name="annotate_open_refused">Sla je wijzigingen eerst op of gooi ze weg en open daarna het andere bestand opnieuw.</string>
+    <string name="annotate_continue">Doorgaan</string>
 </resources>

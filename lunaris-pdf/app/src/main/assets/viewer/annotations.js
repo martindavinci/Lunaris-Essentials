@@ -7,6 +7,7 @@ import { installExport } from './export.js';
 const REPORT_MS = 250;
 const FREE_HIGHLIGHT_OPACITY = 0.4;
 const FULL_OPACITY = 1;
+const EDITOR_KEY_START = 'pdfjs_internal_editor_';
 
 export function installAnnotations({ container, viewer, eventBus, pdfjsLib, post, scroller }) {
   const { AnnotationEditorType: MODE, AnnotationEditorParamsType: PARAM } = pdfjsLib;
@@ -39,8 +40,10 @@ export function installAnnotations({ container, viewer, eventBus, pdfjsLib, post
   let current = { tool: null };
   let canUndo = false;
   let canRedo = false;
-  let savedHash = '';
+  let savedState = '[]';
   let savedCount = 0;
+  // pdf.js also writes form values itself as it draws a page, for a radio button already chosen.
+  const touchedFields = new Set();
   let reportTimer = 0;
   let reported = '';
   let signed = null;
@@ -56,11 +59,16 @@ export function installAnnotations({ container, viewer, eventBus, pdfjsLib, post
     }
   };
 
+  const usersChanges = () => {
+    const { map } = pdf?.annotationStorage.serializable ?? {};
+    return map ? [...map].filter(([key]) => key.startsWith(EDITOR_KEY_START) || touchedFields.has(key)) : [];
+  };
+
   const counts = () => {
-    const { map, hash } = pdf?.annotationStorage.serializable ?? {};
-    if (!map || hash === savedHash) return { changes: 0, pages: 0 };
-    const pages = new Set([...map.values()].map((entry) => entry.pageIndex).filter(Number.isInteger));
-    return { changes: Math.max(1, map.size - savedCount), pages: pages.size };
+    const changes = usersChanges();
+    if (JSON.stringify(changes) === savedState) return { changes: 0, pages: 0 };
+    const pages = new Set(changes.map(([, entry]) => entry.pageIndex).filter(Number.isInteger));
+    return { changes: Math.max(1, changes.length - savedCount), pages: pages.size };
   };
 
   const report = () => {
@@ -98,8 +106,13 @@ export function installAnnotations({ container, viewer, eventBus, pdfjsLib, post
     reportSoon();
   });
   // A form changes the document too, annotating or not.
-  container.addEventListener('input', reportSoon, true);
-  container.addEventListener('change', reportSoon, true);
+  const fieldChanged = (event) => {
+    const id = event.target.getAttribute?.('data-element-id');
+    if (id) touchedFields.add(id);
+    reportSoon();
+  };
+  container.addEventListener('input', fieldChanged, true);
+  container.addEventListener('change', fieldChanged, true);
   container.addEventListener('touchend', reportSoon, { capture: true, passive: true });
 
   const setTool = (next) => {
@@ -133,9 +146,9 @@ export function installAnnotations({ container, viewer, eventBus, pdfjsLib, post
   };
 
   const markSaved = () => {
-    const { map, hash } = pdf.annotationStorage.serializable;
-    savedHash = hash ?? '';
-    savedCount = map?.size ?? 0;
+    const changes = usersChanges();
+    savedState = JSON.stringify(changes);
+    savedCount = changes.length;
     report();
   };
 

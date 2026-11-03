@@ -26,7 +26,10 @@ export function installEditingTouches({ container, tool, ui, marks, onNoText, on
   // pdf.js must not see what these tools do with the finger, nor a second finger on any of them.
   const filterPointer = (event) => {
     const current = tool();
-    if (!current) return;
+    if (!current) {
+      first = null;
+      return;
+    }
     if (event.type === 'pointerdown' && first === null) first = event.pointerId;
     const second = event.pointerId !== first;
     const own = OWN_POINTERS.includes(current) || (PLACING.includes(current) && !onEditor(event));

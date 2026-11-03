@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -40,6 +41,11 @@ class MainActivity : ComponentActivity() {
         val fresh = OpenIntent.isFresh(recreated = savedInstanceState != null, flags = intent?.flags ?: 0)
         val startAtReader = fresh && open(intent)
         setContent {
+            LaunchedEffect(viewModel) {
+                viewModel.refusedDocuments.collect {
+                    Toast.makeText(this@MainActivity, R.string.annotate_open_refused, Toast.LENGTH_LONG).show()
+                }
+            }
             val state by viewModel.state.collectAsStateWithLifecycle()
             val settings = state.settings ?: return@setContent
             val dark = settings.theme.isDark()

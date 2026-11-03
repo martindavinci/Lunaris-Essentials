@@ -72,4 +72,6 @@
         <item quantity="other">in %1$d pagine</item>
     </plurals>
     <string name="annotate_summary">%2$s %1$s</string>
+    <string name="annotate_open_refused">Prima salva o scarta le modifiche, poi riapri l\'altro file.</string>
+    <string name="annotate_continue">Continua</string>
 </resources>

@@ -66,4 +66,6 @@
         <item quantity="other">%1$d 页</item>
     </plurals>
     <string name="annotate_summary" formatted="true">%1$s:%2$s</string>
+    <string name="annotate_open_refused">请先保存或放弃更改,然后重新打开另一个文件。</string>
+    <string name="annotate_continue">继续</string>
 </resources>

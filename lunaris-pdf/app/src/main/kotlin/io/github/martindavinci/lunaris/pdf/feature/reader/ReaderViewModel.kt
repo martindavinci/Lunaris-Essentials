@@ -91,6 +91,9 @@ class ReaderViewModel internal constructor(
     private val edits = ReaderEdits(viewModelScope, viewer, editedFiles, documents, signatures, hints, { state.value }) { change ->
         mutableState.update(change)
     }
+    private val unsaved = UnsavedMark(viewModelScope, currentDocument, savedState, state) { change ->
+        mutableState.update(change)
+    }
     private val jumps = ReaderJumps(viewer, { state.value }) { change -> mutableState.update(change) }
     private val recents = ReaderRecents(viewModelScope, touchRecent, thumbnails) {
         viewer.send(ViewerCommand.MakeThumbnail)
@@ -141,6 +144,7 @@ class ReaderViewModel internal constructor(
                 it.copy(loading = false, passwordPrompt = PasswordPrompt(event.wrong))
             }
             ViewerEvent.LoadFailed -> {
+                edits.onPageLost()
                 mutableState.update { it.copy(loading = false, error = ReaderError.CANNOT_OPEN) }
             }
             ViewerEvent.RendererKilled -> {
@@ -161,6 +165,8 @@ class ReaderViewModel internal constructor(
     }
 
     private fun onPageReady() {
+        // A page that comes while there are edits is a new one, without them.
+        if (state.value.hasUnsavedEdits || state.value.annotation != null) edits.onPageLost()
         pageReady = true
         viewer.send(ViewerCommand.Open(password, state.value.page, position.scale))
         viewer.send(ViewerCommand.SetNight(state.value.night))
@@ -208,5 +214,9 @@ class ReaderViewModel internal constructor(
         /** The viewer page comes from the APK: this long means it will never load. A slow file may take longer. */
         internal const val READY_TIMEOUT_MILLIS = 15_000L
         internal const val SAVE_POSITION_DELAY_MILLIS = 500L
+    }
+
+    override fun onCleared() {
+        unsaved.readerClosed()
     }
 }

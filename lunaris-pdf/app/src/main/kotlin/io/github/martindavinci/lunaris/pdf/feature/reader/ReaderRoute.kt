@@ -46,8 +46,10 @@ fun ReaderRoute(onBack: () -> Unit) {
     val leave = { if (state.hasUnsavedEdits) viewModel.onAction(EditAction.RequestLeave) else onBack() }
 
     BackHandler(enabled = state.search != null) { viewModel.onAction(ReaderAction.CloseSearch) }
-    BackHandler(enabled = state.annotation != null) { viewModel.onAction(EditAction.Finish) }
-    BackHandler(enabled = state.annotation == null && state.hasUnsavedEdits) { viewModel.onAction(EditAction.RequestLeave) }
+    BackHandler(enabled = state.search == null && state.annotation != null) { viewModel.onAction(EditAction.Finish) }
+    BackHandler(enabled = state.search == null && state.annotation == null && state.hasUnsavedEdits) {
+        viewModel.onAction(EditAction.RequestLeave)
+    }
     LaunchedEffect(state.closeReader) {
         if (state.closeReader) onBack()
     }
