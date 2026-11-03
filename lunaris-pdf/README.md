@@ -15,14 +15,14 @@
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/reader.webp" width="32%" alt="A document open, with the page number and a button back to the first page">
+  <img src="docs/screenshots/reader.webp" width="32%" alt="A document open, with its chapter, the page and the actions of reading">
   <img src="docs/screenshots/scroller.webp" width="32%" alt="The side scroller being dragged, with a label showing the page">
   <img src="docs/screenshots/search.webp" width="32%" alt="Search with matches highlighted and a count">
 </p>
 <p align="center">
   <img src="docs/screenshots/contents.webp" width="32%" alt="The contents of a document">
   <img src="docs/screenshots/read-aloud.webp" width="32%" alt="A document read aloud, with its controls">
-  <img src="docs/screenshots/recents.webp" width="32%" alt="The list of recent documents, each with the page where it was left">
+  <img src="docs/screenshots/recents.webp" width="32%" alt="The document being read on top, then the recent ones by date, each with its first page">
 </p>
 
 ## Download
@@ -45,17 +45,21 @@ since other Lunaris apps publish their releases here too.
 - Nothing between you and the page: no login, no welcome screens, no popups
 - PDFs with a password; the password is asked each time and never stored
 - Comes back to the page and zoom where you left a document
+- The first screen offers the document you were reading, with its chapter and how far you got
+- Recent documents grouped by date, with their first page; search them, pin up to three, or remove one
 
 **Reading**
 - Continuous scrolling, pinch to zoom, double tap to fit the width
-- A side scroller to move through the whole document, with the page number as you drag
-- A button that goes back to the first page, as soon as you leave it
-- Search with a count of the matches, select and copy text, contents, go to page
+- A side scroller to move through the whole document, with the page and the chapter as you drag
+- A button that goes back to the first page, past the second one; you can hide it in the settings
+- After a long move, a button goes back to where you were
+- Search as you type, with the matches counted, whole words and upper case if you want them
+- Select and copy text, contents, go to page
 - Night pages, with the colours of the page inverted, and a light, dark or system theme
 
 **With the document**
 - Print it, share it, save a copy
-- Read it aloud with the text to speech of your phone, following the pages
+- Read it aloud with the text to speech of your phone, following the pages and marking the sentence, at the speed you choose
 
 **Links are never opened by themselves.** The app shows the whole address first, and warns about one that is not HTTPS,
 uses punycode or non-ASCII characters in its host, points to an IP address, embeds a username or password, or uses an
@@ -70,8 +74,10 @@ A PDF can contain JavaScript. This app never runs it, and does not even include 
 The pages are drawn in a web view that loads nothing but the app's own files and the document you opened.
 
 There are no ads, no analytics and no account. The list of recent documents holds where each file is, its name, the
-page and the zoom, and it stays on the phone: Android's cloud backup is turned off for the app and its data is excluded
-from device-to-device transfer, although Android lets some phone makers' migration tools ignore that setting. A link
+page, the zoom, the title of the chapter you are in and a small picture of the first page. A document with a password
+keeps neither the title nor the picture. All of this stays on the phone and goes away with the list: Android's cloud
+backup is turned off for the app and its data is excluded from device-to-device transfer, although Android lets some
+phone makers' migration tools ignore that setting. A link
 you choose to open is handled by your browser, which uses its own network access, not the app's. Reading aloud uses the
 engine you have set up on your phone.
 
