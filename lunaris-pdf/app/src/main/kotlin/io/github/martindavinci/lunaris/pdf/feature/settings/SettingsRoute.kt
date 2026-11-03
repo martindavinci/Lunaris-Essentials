@@ -21,12 +21,14 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -87,6 +89,16 @@ internal fun SettingsContent(
     var showTheme by remember { mutableStateOf(false) }
     var showLanguage by remember { mutableStateOf(false) }
     var confirmClear by remember { mutableStateOf(false) }
+    var chosenLanguage by remember { mutableStateOf<String?>(null) }
+
+    // Below Android 13 the choice restarts the activity at once. With the dialog still open, its window
+    // would keep the focus while it goes away, and the app would stop answering: so the dialog closes first.
+    LaunchedEffect(chosenLanguage) {
+        chosenLanguage?.let { tag ->
+            withFrameNanos { }
+            onSetLanguage(tag)
+        }
+    }
 
     Column(Modifier.fillMaxSize()) {
         SettingsTopBar(stringResource(R.string.settings_title), onBack)
@@ -146,7 +158,7 @@ internal fun SettingsContent(
         )
     }
     if (showLanguage) {
-        LanguageDialog(current = language, onSelect = onSetLanguage, onDismiss = { showLanguage = false })
+        LanguageDialog(current = language, onSelect = { chosenLanguage = it }, onDismiss = { showLanguage = false })
     }
     if (confirmClear) {
         AlertDialog(
