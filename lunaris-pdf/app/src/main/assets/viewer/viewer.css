@@ -25,6 +25,10 @@ body.night {
   scrollbar-width: none;
 }
 
+#container::-webkit-scrollbar {
+  display: none;
+}
+
 /* Room for the app's bars, so the first and last page can be read in full with the bars showing. */
 #viewer {
   padding: var(--bar-top) 0 var(--bar-bottom);

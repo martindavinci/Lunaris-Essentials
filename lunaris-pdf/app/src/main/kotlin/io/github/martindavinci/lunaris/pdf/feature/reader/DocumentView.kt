@@ -102,6 +102,9 @@ private fun requestHandler(context: Context, uri: Uri): ViewerRequestHandler {
 
 @SuppressLint("SetJavaScriptEnabled")
 private fun WebView.configure() {
+    // The side scroller of the page is the only scrollbar.
+    isVerticalScrollBarEnabled = false
+    isHorizontalScrollBarEnabled = false
     settings.apply {
         javaScriptEnabled = true
         allowFileAccess = false
