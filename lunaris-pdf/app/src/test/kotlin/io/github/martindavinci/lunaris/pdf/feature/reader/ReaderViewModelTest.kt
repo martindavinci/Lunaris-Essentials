@@ -204,6 +204,36 @@ class ReaderViewModelTest {
         assertThat(vm.state.value.showTopButton).isTrue()
     }
 
+    @Test fun aWayBackToPageOne_isLeftToTheTopButton() {
+        val vm = viewModel()
+        ready()
+        emit(ViewerEvent.PageChanged(20, "page-width"))
+        vm.onAction(ReaderAction.BackToTop)
+        emit(ViewerEvent.PageChanged(1, "page-width"))
+        vm.onAction(ReaderAction.ReturnFromJump)
+        emit(ViewerEvent.PageChanged(20, "page-width"))
+        assertThat(vm.state.value.jump?.returnTo).isEqualTo(1)
+        assertThat(vm.state.value.showJump).isFalse()
+    }
+
+    @Test fun aWayBackToPageOne_staysWhenTheTopButtonIsOff() {
+        val vm = viewModel()
+        ready()
+        vm.onAction(ReaderAction.GoToPage(20))
+        emit(ViewerEvent.PageChanged(20, "page-width"))
+        topButton.value = false
+        assertThat(vm.state.value.showJump).isTrue()
+    }
+
+    @Test fun aWayBackToAnotherPage_stays() {
+        val vm = viewModel()
+        ready()
+        emit(ViewerEvent.PageChanged(5, "page-width"))
+        vm.onAction(ReaderAction.GoToPage(20))
+        emit(ViewerEvent.PageChanged(20, "page-width"))
+        assertThat(vm.state.value.showJump).isTrue()
+    }
+
     @Test fun ready_opensTheDocumentWhereItWasLeft() {
         current.set(OpenDocument("content://x/a.pdf", "a.pdf", page = 7, scale = "1.5"))
         viewModel()

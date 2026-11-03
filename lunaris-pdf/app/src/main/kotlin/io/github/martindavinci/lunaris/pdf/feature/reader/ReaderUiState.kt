@@ -46,7 +46,11 @@ data class ReaderUiState(
 
     val showPageIndicator: Boolean get() = !chromeVisible && scrolling && pages > 0
 
-    val showJump: Boolean get() = jump != null && search == null && annotation == null
+    val showJump: Boolean get() = jump != null && !topButtonGoesThere && search == null && annotation == null
+
+    /** Both would lead to the first page. Scrolling down only hides the button for a moment. */
+    private val topButtonGoesThere: Boolean
+        get() = jump?.returnTo == FIRST_PAGE && topButtonEnabled && page >= TOP_BUTTON_FROM_PAGE
 
     val hasUnsavedEdits: Boolean get() = edits.changes > 0
 
@@ -55,6 +59,7 @@ data class ReaderUiState(
 
     private companion object {
         const val TOP_BUTTON_FROM_PAGE = 3
+        const val FIRST_PAGE = 1
     }
 }
 
