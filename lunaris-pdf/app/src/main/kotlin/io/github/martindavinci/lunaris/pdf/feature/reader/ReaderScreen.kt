@@ -10,10 +10,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -67,6 +71,7 @@ internal fun ReaderScreen(
     var bottomHeight by remember { mutableIntStateOf(0) }
     val density = LocalDensity.current
     val keyboardUp = WindowInsets.ime.getBottom(density) > 0
+    val navigationBar = WindowInsets.navigationBars.getBottom(density)
 
     LaunchedEffect(topHeight, bottomHeight) {
         if (topHeight > 0 && bottomHeight > 0) {
@@ -79,7 +84,9 @@ internal fun ReaderScreen(
         }
     }
 
-    Box(Modifier.fillMaxSize().background(PageBackground).displayCutoutPadding()) {
+    // Only the status bar hides with the app's own: the system's buttons stay, below or beside the page.
+    val beside = WindowInsets.navigationBars.only(WindowInsetsSides.Horizontal)
+    Box(Modifier.fillMaxSize().background(PageBackground).displayCutoutPadding().windowInsetsPadding(beside)) {
         document()
 
         if (state.loading) CircularProgressIndicator(Modifier.align(Alignment.Center))
@@ -138,7 +145,7 @@ internal fun ReaderScreen(
         if (state.error == null) {
             ReaderOverlays(
                 state = state,
-                bottomSpace = with(density) { if (barsVisible) bottomHeight.toDp() else 0.dp },
+                bottomSpace = with(density) { if (barsVisible) bottomHeight.toDp() else navigationBar.toDp() },
                 onAction = onAction,
             )
         }
