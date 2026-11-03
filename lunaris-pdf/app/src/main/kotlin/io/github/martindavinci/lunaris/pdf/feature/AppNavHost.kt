@@ -1,5 +1,6 @@
 package io.github.martindavinci.lunaris.pdf.feature
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,7 +23,7 @@ fun AppNavHost(startAtReader: Boolean, readerRequests: Flow<Unit>, onExit: () ->
     val nav = rememberNavController()
     val start = rememberSaveable { if (startAtReader) Routes.READER else Routes.RECENTS }
     LaunchedEffect(nav) { readerRequests.collect { nav.openReader() } }
-    Surface {
+    Surface(color = MaterialTheme.colorScheme.background) {
         NavHost(navController = nav, startDestination = start) {
             composable(Routes.RECENTS) {
                 RecentsRoute(onOpenReader = nav::openReader, onOpenSettings = { nav.navigate(Routes.SETTINGS) })

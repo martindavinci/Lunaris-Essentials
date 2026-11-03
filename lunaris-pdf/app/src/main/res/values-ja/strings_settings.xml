@@ -9,9 +9,13 @@
     <string name="settings_theme_dark">ダーク</string>
     <string name="settings_night_pages_summary">ページの色を反転して表示します</string>
     <string name="settings_top_button">先頭に戻るボタン</string>
-    <string name="settings_top_button_summary">読書中、最初のページを離れると表示します</string>
+    <string name="settings_top_button_summary">読書中、3ページ目以降で表示します</string>
     <string name="settings_about_version">バージョン %1$s</string>
     <string name="settings_about_author">開発: Martin DaVinci</string>
     <string name="settings_about_tagline">毎日使う Android ユーティリティを、広告なしで。</string>
     <string name="settings_about_permissions">システム権限は必要ありません。</string>
+    <string name="settings_section_recents">最近のファイル</string>
+    <string name="settings_clear_recents">最近のリストを消去</string>
+    <string name="settings_clear_recents_summary">ファイル自体は変更されません</string>
+    <string name="settings_recents_cleared">リストを消去しました。ファイル自体は変更されません。</string>
 </resources>

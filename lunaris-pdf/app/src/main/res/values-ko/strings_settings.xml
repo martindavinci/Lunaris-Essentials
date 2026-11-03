@@ -9,9 +9,13 @@
     <string name="settings_theme_dark">다크</string>
     <string name="settings_night_pages_summary">페이지 색상을 반전하여 표시</string>
     <string name="settings_top_button">처음으로 돌아가기 버튼</string>
-    <string name="settings_top_button_summary">읽는 동안 첫 페이지를 벗어나면 표시합니다</string>
+    <string name="settings_top_button_summary">읽는 동안 세 번째 페이지부터 표시합니다</string>
     <string name="settings_about_version">버전 %1$s</string>
     <string name="settings_about_author">개발: Martin DaVinci</string>
     <string name="settings_about_tagline">광고 없는 일상의 Android 유틸리티.</string>
     <string name="settings_about_permissions">시스템 권한이 필요하지 않습니다.</string>
+    <string name="settings_section_recents">최근 파일</string>
+    <string name="settings_clear_recents">최근 목록 지우기</string>
+    <string name="settings_clear_recents_summary">파일 자체는 변경되지 않습니다</string>
+    <string name="settings_recents_cleared">목록을 지웠습니다. 파일 자체는 변경되지 않습니다.</string>
 </resources>

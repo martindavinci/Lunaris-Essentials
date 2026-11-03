@@ -3,6 +3,7 @@ package io.github.martindavinci.lunaris.pdf.feature.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.martindavinci.lunaris.pdf.recents.RecentsStore
 import io.github.martindavinci.lunaris.pdf.settings.SettingsStore
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
@@ -12,7 +13,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class SettingsViewModel @Inject constructor(private val settingsStore: SettingsStore) : ViewModel() {
+class SettingsViewModel @Inject constructor(
+    private val settingsStore: SettingsStore,
+    private val recents: RecentsStore,
+) : ViewModel() {
 
     val state: StateFlow<SettingsUiState> = settingsStore.settings
         .map { SettingsUiState(it) }
@@ -24,6 +28,7 @@ class SettingsViewModel @Inject constructor(private val settingsStore: SettingsS
                 is SettingsAction.SetTheme -> settingsStore.setTheme(action.theme)
                 is SettingsAction.SetNightPages -> settingsStore.setNightPages(action.on)
                 is SettingsAction.SetTopButton -> settingsStore.setTopButton(action.on)
+                SettingsAction.ClearRecents -> recents.clear()
             }
         }
     }

@@ -9,9 +9,13 @@
     <string name="settings_theme_dark">Oscuro</string>
     <string name="settings_night_pages_summary">Mostrar las páginas con los colores invertidos</string>
     <string name="settings_top_button">Botón para volver al inicio</string>
-    <string name="settings_top_button_summary">Mostrarlo al leer, en cuanto sales de la primera página</string>
+    <string name="settings_top_button_summary">Mostrarlo al leer, a partir de la tercera página</string>
     <string name="settings_about_version">Versión %1$s</string>
     <string name="settings_about_author">Por Martin DaVinci</string>
     <string name="settings_about_tagline">Las utilidades de Android de cada día, sin anuncios.</string>
     <string name="settings_about_permissions">No necesita permisos del sistema.</string>
+    <string name="settings_section_recents">Archivos recientes</string>
+    <string name="settings_clear_recents">Vaciar la lista de recientes</string>
+    <string name="settings_clear_recents_summary">Tus archivos no se tocan</string>
+    <string name="settings_recents_cleared">Lista vaciada. Tus archivos no se tocan.</string>
 </resources>

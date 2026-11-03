@@ -9,9 +9,13 @@
     <string name="settings_theme_dark">深色</string>
     <string name="settings_night_pages_summary">以反色显示页面</string>
     <string name="settings_top_button">返回开头按钮</string>
-    <string name="settings_top_button_summary">阅读时离开第一页后显示</string>
+    <string name="settings_top_button_summary">阅读时从第三页起显示</string>
     <string name="settings_about_version">版本 %1$s</string>
     <string name="settings_about_author">作者：Martin DaVinci</string>
     <string name="settings_about_tagline">日常必备的 Android 工具，没有广告。</string>
     <string name="settings_about_permissions">无需系统权限。</string>
+    <string name="settings_section_recents">最近的文件</string>
+    <string name="settings_clear_recents">清空最近列表</string>
+    <string name="settings_clear_recents_summary">不会改动你的文件</string>
+    <string name="settings_recents_cleared">列表已清空，不会改动你的文件。</string>
 </resources>
