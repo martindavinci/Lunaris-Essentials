@@ -4,7 +4,7 @@
 
 <h1 align="center">Lunaris PDF</h1>
 
-<p align="center"><b>A PDF reader for Android that works offline, opens straight to your document and shows no ads.</b></p>
+<p align="center"><b>A PDF reader for Android that works offline, opens straight to your document, lets you mark it up and shows no ads.</b></p>
 
 <p align="center">by <a href="https://github.com/martindavinci">Martin DaVinci</a></p>
 
@@ -23,6 +23,11 @@
   <img src="docs/screenshots/contents.webp" width="32%" alt="The contents of a document">
   <img src="docs/screenshots/settings.webp" width="32%" alt="The settings, on cards">
   <img src="docs/screenshots/recents.webp" width="32%" alt="The document being read on top, then all the recent ones, each with its first page">
+</p>
+<p align="center">
+  <img src="docs/screenshots/annotate.webp" width="32%" alt="Highlights, a pen line, a note and a signature on a page, with the tools below">
+  <img src="docs/screenshots/signatures.webp" width="32%" alt="The saved signatures, with a note saying that a drawn signature is not a digital one">
+  <img src="docs/screenshots/save.webp" width="32%" alt="The question at the end: save a copy, save over the original, or discard">
 </p>
 
 ## Download
@@ -57,8 +62,20 @@ since other Lunaris apps publish their releases here too.
 - Select and copy text, contents, go to page
 - Night pages, with the colours of the page inverted, and a light, dark or system theme
 
+**Annotating**
+- A highlighter that follows the lines of the text, or goes free where there is no text, as on a scan
+- Pen, text on the page, notes, and an eraser, with undo and redo
+- One finger draws, two fingers scroll or zoom, and the side scroller stays at hand
+- Fill in PDF forms
+- Draw your signature once and put it on any page. A drawn signature is a picture: it is not a digital signature and
+  does not prove who signed
+- Nothing is written until you say so. At the end you choose a new file, which leaves the original as it is, or saving
+  over the original where the file allows it. A PDF with a digital signature warns you first, because saving makes that
+  signature invalid
+- What you add is standard PDF, so other apps show it too
+
 **With the document**
-- Print it, share it, save a copy
+- Print it, share it, save a copy, with your changes in all three
 
 **Links are never opened by themselves.** The app shows the whole address first, and warns about one that is not HTTPS,
 uses punycode or non-ASCII characters in its host, points to an IP address, embeds a username or password, or uses an
@@ -71,6 +88,10 @@ storage permission: it can read only the files you open with it, through Android
 
 A PDF can contain JavaScript. This app never runs it, and does not even include the part of its PDF engine that could.
 The pages are drawn in a web view that loads nothing but the app's own files and the document you opened.
+
+Signatures you draw stay in the app's private storage, out of any backup, and you can delete them from the same panel.
+A document with unsaved changes exists only on screen; while it is being saved, printed or shared, the app keeps a
+temporary copy in its own cache.
 
 There are no ads, no analytics and no account. The list of recent documents holds where each file is, its name, the
 page, the zoom, the title of the chapter you are in and a small picture of the first page. A document with a password
