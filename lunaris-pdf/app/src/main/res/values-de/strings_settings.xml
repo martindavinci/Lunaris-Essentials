@@ -8,6 +8,8 @@
     <string name="settings_theme_light">Hell</string>
     <string name="settings_theme_dark">Dunkel</string>
     <string name="settings_night_pages_summary">Seiten mit invertierten Farben anzeigen</string>
+    <string name="settings_top_button">Taste zum Anfang</string>
+    <string name="settings_top_button_summary">Beim Lesen anzeigen, sobald du die erste Seite verlässt</string>
     <string name="settings_about_version">Version %1$s</string>
     <string name="settings_about_author">Von Martin DaVinci</string>
     <string name="settings_about_tagline">Die alltäglichen Android-Apps, ohne Werbung.</string>

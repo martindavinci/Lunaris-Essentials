@@ -8,6 +8,8 @@
     <string name="settings_theme_light">ライト</string>
     <string name="settings_theme_dark">ダーク</string>
     <string name="settings_night_pages_summary">ページの色を反転して表示します</string>
+    <string name="settings_top_button">先頭に戻るボタン</string>
+    <string name="settings_top_button_summary">読書中、最初のページを離れると表示します</string>
     <string name="settings_about_version">バージョン %1$s</string>
     <string name="settings_about_author">開発: Martin DaVinci</string>
     <string name="settings_about_tagline">毎日使う Android ユーティリティを、広告なしで。</string>

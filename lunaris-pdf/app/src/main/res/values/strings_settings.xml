@@ -8,6 +8,8 @@
     <string name="settings_theme_light">Light</string>
     <string name="settings_theme_dark">Dark</string>
     <string name="settings_night_pages_summary">Show pages with their colours inverted</string>
+    <string name="settings_top_button">Back to top button</string>
+    <string name="settings_top_button_summary">Show it while reading, once you leave the first page</string>
     <string name="settings_about_version">Version %1$s</string>
     <string name="settings_about_author">By Martin DaVinci</string>
     <string name="settings_about_tagline">The everyday Android utilities, without the ads.</string>

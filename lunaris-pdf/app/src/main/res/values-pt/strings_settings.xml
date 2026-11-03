@@ -8,6 +8,8 @@
     <string name="settings_theme_light">Claro</string>
     <string name="settings_theme_dark">Escuro</string>
     <string name="settings_night_pages_summary">Mostrar as páginas com as cores invertidas</string>
+    <string name="settings_top_button">Botão para voltar ao início</string>
+    <string name="settings_top_button_summary">Mostrar durante a leitura, ao sair da primeira página</string>
     <string name="settings_about_version">Versão %1$s</string>
     <string name="settings_about_author">Por Martin DaVinci</string>
     <string name="settings_about_tagline">As utilidades Android de todos os dias, sem anúncios.</string>

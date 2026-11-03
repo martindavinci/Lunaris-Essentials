@@ -25,8 +25,9 @@ data class ReaderUiState(
     val notice: ReaderNotice? = null,
     val canPrint: Boolean = true,
     val viewRevision: Int = 0,
+    val topButtonEnabled: Boolean = true,
 ) {
-    val showTopButton: Boolean get() = page > 1
+    val showTopButton: Boolean get() = topButtonEnabled && page > 1
 }
 
 enum class ReaderError { CANNOT_OPEN }

@@ -78,6 +78,7 @@ class ReaderViewModelTest {
     private val current = CurrentDocument()
     private val savedState = SavedStateHandle()
     private val night = MutableStateFlow(false)
+    private val topButton = MutableStateFlow(true)
     private val touched = mutableListOf<Pair<String, String>>()
     private val positions = mutableListOf<Triple<String, Int, String>>()
     private var enginesMade = 0
@@ -99,6 +100,7 @@ class ReaderViewModelTest {
         savedState = state,
         nightPages = night,
         setNightPages = { night.value = it },
+        topButtonEnabled = topButton,
         touchRecent = { uri, name -> touched += uri to name },
         savePosition = { uri, page, scale -> positions += Triple(uri, page, scale) },
         speechEngine = {
@@ -130,6 +132,17 @@ class ReaderViewModelTest {
         assertThat(vm.state.value.showTopButton).isTrue()
         vm.onAction(ReaderAction.BackToTop)
         assertThat(channel.sent).contains(ViewerCommand.GoToPage(1))
+    }
+
+    @Test fun topButtonTurnedOff_doesNotShowOnAnyPage() {
+        val vm = viewModel()
+        ready()
+        emit(ViewerEvent.PageChanged(5, "page-width"))
+        assertThat(vm.state.value.showTopButton).isTrue()
+        topButton.value = false
+        assertThat(vm.state.value.showTopButton).isFalse()
+        topButton.value = true
+        assertThat(vm.state.value.showTopButton).isTrue()
     }
 
     @Test fun ready_opensTheDocumentWhereItWasLeft() {

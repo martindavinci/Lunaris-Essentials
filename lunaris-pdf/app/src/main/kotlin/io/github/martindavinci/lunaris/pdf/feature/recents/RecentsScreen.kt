@@ -92,7 +92,8 @@ internal fun RecentsScreen(
         }
         ExtendedFloatingActionButton(
             onClick = onPickFile,
-            containerColor = MaterialTheme.colorScheme.primary,
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+            contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
             icon = { Icon(Icons.Filled.FolderOpen, contentDescription = null) },
             text = { Text(stringResource(R.string.recents_open)) },
             modifier = Modifier.align(Alignment.BottomEnd).padding(FabPadding),

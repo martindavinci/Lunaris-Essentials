@@ -8,4 +8,5 @@ data class SettingsUiState(val settings: AppSettings = AppSettings())
 sealed interface SettingsAction {
     data class SetTheme(val theme: ThemeMode) : SettingsAction
     data class SetNightPages(val on: Boolean) : SettingsAction
+    data class SetTopButton(val on: Boolean) : SettingsAction
 }

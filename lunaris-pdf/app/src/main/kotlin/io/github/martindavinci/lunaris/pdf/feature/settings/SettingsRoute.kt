@@ -75,6 +75,12 @@ internal fun SettingsContent(
                 checked = state.settings.nightPages,
                 onCheckedChange = { onAction(SettingsAction.SetNightPages(it)) },
             )
+            SettingsToggleRow(
+                title = stringResource(R.string.settings_top_button),
+                subtitle = stringResource(R.string.settings_top_button_summary),
+                checked = state.settings.topButton,
+                onCheckedChange = { onAction(SettingsAction.SetTopButton(it)) },
+            )
 
             SettingsSectionHeader(stringResource(R.string.settings_section_about))
             AboutSummary()

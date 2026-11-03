@@ -17,6 +17,7 @@ class SettingsStore @Inject constructor(private val dataStore: DataStore<Prefere
         AppSettings(
             theme = ThemeMode.entries.firstOrNull { it.name == prefs[THEME] } ?: defaults.theme,
             nightPages = prefs[NIGHT_PAGES] ?: defaults.nightPages,
+            topButton = prefs[TOP_BUTTON] ?: defaults.topButton,
         )
     }
 
@@ -28,8 +29,13 @@ class SettingsStore @Inject constructor(private val dataStore: DataStore<Prefere
         dataStore.editIfPossible { it[NIGHT_PAGES] = on }
     }
 
+    suspend fun setTopButton(on: Boolean) {
+        dataStore.editIfPossible { it[TOP_BUTTON] = on }
+    }
+
     private companion object {
         val THEME = stringPreferencesKey("theme")
         val NIGHT_PAGES = booleanPreferencesKey("night_pages")
+        val TOP_BUTTON = booleanPreferencesKey("top_button")
     }
 }

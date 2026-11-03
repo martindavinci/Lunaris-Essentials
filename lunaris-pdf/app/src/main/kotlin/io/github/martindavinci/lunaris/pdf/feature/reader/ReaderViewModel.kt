@@ -35,6 +35,7 @@ class ReaderViewModel internal constructor(
     savedState: SavedStateHandle,
     nightPages: Flow<Boolean>,
     private val setNightPages: suspend (Boolean) -> Unit,
+    topButtonEnabled: Flow<Boolean>,
     private val touchRecent: suspend (String, String) -> Unit,
     savePosition: suspend (String, Int, String) -> Unit,
     speechEngine: () -> SpeechEngine,
@@ -56,6 +57,7 @@ class ReaderViewModel internal constructor(
         savedState,
         settingsStore.settings.map { it.nightPages }.distinctUntilChanged(),
         settingsStore::setNightPages,
+        settingsStore.settings.map { it.topButton }.distinctUntilChanged(),
         recents::touch,
         recents::savePosition,
         speechEngine::get,
@@ -76,6 +78,9 @@ class ReaderViewModel internal constructor(
     init {
         viewModelScope.launch { viewer.events.collect(::onEvent) }
         viewModelScope.launch { nightPages.collect(::onNight) }
+        viewModelScope.launch {
+            topButtonEnabled.collect { on -> mutableState.update { it.copy(topButtonEnabled = on) } }
+        }
         viewModelScope.launch {
             delay(READY_TIMEOUT_MILLIS)
             if (!pageReady) onEvent(ViewerEvent.LoadFailed)

@@ -11,3 +11,7 @@ val LunarisOnSurfaceVariant = Color(0xFFAAB0B9)
 val LunarisOutline = Color(0xFF3B414A)
 val LunarisAccent = Color(0xFFD9483F)
 val LunarisOnAccent = Color(0xFF2A0605)
+
+// Deep blue, for the button that opens a document.
+val LunarisDeepBlue = Color(0xFF203D62)
+val LunarisOnDeepBlue = Color(0xFFF2F6FB)

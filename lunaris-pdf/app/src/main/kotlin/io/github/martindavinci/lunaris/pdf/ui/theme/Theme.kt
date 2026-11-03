@@ -19,10 +19,14 @@ private val DarkColors = darkColorScheme(
     surfaceVariant = LunarisSurfaceVariant,
     onSurfaceVariant = LunarisOnSurfaceVariant,
     outline = LunarisOutline,
+    tertiaryContainer = LunarisDeepBlue,
+    onTertiaryContainer = LunarisOnDeepBlue,
 )
 
 private val LightColors = lightColorScheme(
     primary = LunarisAccent,
+    tertiaryContainer = LunarisDeepBlue,
+    onTertiaryContainer = LunarisOnDeepBlue,
 )
 
 @Composable

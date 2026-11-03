@@ -27,11 +27,14 @@ class SettingsStoreTest {
 
     @Test fun nothingStored_givesTheDefaults() = runBlocking {
         assertThat(store.settings.first()).isEqualTo(AppSettings())
+        assertThat(store.settings.first().topButton).isTrue()
     }
 
     @Test fun choices_areKept() = runBlocking {
         store.setTheme(ThemeMode.DARK)
         store.setNightPages(true)
-        assertThat(store.settings.first()).isEqualTo(AppSettings(ThemeMode.DARK, nightPages = true))
+        store.setTopButton(false)
+        assertThat(store.settings.first())
+            .isEqualTo(AppSettings(ThemeMode.DARK, nightPages = true, topButton = false))
     }
 }

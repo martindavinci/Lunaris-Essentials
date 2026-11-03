@@ -8,6 +8,8 @@
     <string name="settings_theme_light">浅色</string>
     <string name="settings_theme_dark">深色</string>
     <string name="settings_night_pages_summary">以反色显示页面</string>
+    <string name="settings_top_button">返回开头按钮</string>
+    <string name="settings_top_button_summary">阅读时离开第一页后显示</string>
     <string name="settings_about_version">版本 %1$s</string>
     <string name="settings_about_author">作者：Martin DaVinci</string>
     <string name="settings_about_tagline">日常必备的 Android 工具，没有广告。</string>

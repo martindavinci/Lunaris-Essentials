@@ -8,6 +8,8 @@
     <string name="settings_theme_light">Licht</string>
     <string name="settings_theme_dark">Donker</string>
     <string name="settings_night_pages_summary">Pagina\'s met omgekeerde kleuren tonen</string>
+    <string name="settings_top_button">Knop terug naar het begin</string>
+    <string name="settings_top_button_summary">Toon hem tijdens het lezen zodra je de eerste pagina verlaat</string>
     <string name="settings_about_version">Versie %1$s</string>
     <string name="settings_about_author">Door Martin DaVinci</string>
     <string name="settings_about_tagline">De alledaagse Android-hulpmiddelen, zonder advertenties.</string>

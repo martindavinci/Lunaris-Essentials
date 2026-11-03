@@ -23,6 +23,7 @@ class SettingsViewModel @Inject constructor(private val settingsStore: SettingsS
             when (action) {
                 is SettingsAction.SetTheme -> settingsStore.setTheme(action.theme)
                 is SettingsAction.SetNightPages -> settingsStore.setNightPages(action.on)
+                is SettingsAction.SetTopButton -> settingsStore.setTopButton(action.on)
             }
         }
     }
