@@ -151,3 +151,22 @@ body.night {
 #scroll-label-chapter:empty {
   display: none;
 }
+
+/* While annotating one finger is for the tool. */
+body.annotating #container {
+  touch-action: none;
+}
+
+/* The app has its own controls for all of these. */
+#viewer .editToolbar,
+#viewer .altText,
+#viewer .stampEditor.pin .resizers {
+  display: none;
+}
+
+/* A line or a highlight can start on top of what is already there. */
+body[data-tool='pen'] .annotationEditor,
+body[data-tool='highlightFree'] .annotationEditor,
+body[data-tool='highlight'] .annotationEditor {
+  pointer-events: none;
+}

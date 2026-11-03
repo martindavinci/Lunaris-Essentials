@@ -4,6 +4,11 @@ const TAP_SLOP_PX = 12;
 const DOUBLE_TAP_ZOOM = 2;
 const NAMED_FIT = 'page-width';
 const FIT_SCALES = ['page-width', 'page-fit', 'page-actual', 'auto'];
+// While annotating two fingers scroll, and zoom only once they have moved this far apart or together.
+const PINCH_DEAD_ZONE = 0.08;
+const FORM_CONTROLS = 'input, textarea, select, button';
+
+const annotating = () => document.body.classList.contains('annotating');
 
 const distance = (a, b) => Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
 const middle = (a, b) => [(a.clientX + b.clientX) / 2, (a.clientY + b.clientY) / 2];
@@ -20,7 +25,7 @@ export function installGestures({ container, viewer, viewerElement, goToPage, on
       const origin = middle(a, b);
       const box = viewerElement.getBoundingClientRect();
       viewerElement.style.transformOrigin = `${origin[0] - box.left}px ${origin[1] - box.top}px`;
-      pinch = { startDistance: distance(a, b), origin, factor: 1 };
+      pinch = { startDistance: distance(a, b), origin, factor: 1, last: origin };
       tapStart = null;
     } else if (event.touches.length === 1) {
       const [touch] = event.touches;
@@ -32,6 +37,13 @@ export function installGestures({ container, viewer, viewerElement, goToPage, on
     if (pinch && event.touches.length === 2) {
       event.preventDefault();
       pinch.factor = distance(event.touches[0], event.touches[1]) / pinch.startDistance;
+      if (annotating()) {
+        // The page takes no touch of its own in this mode, so the scroll is done here.
+        const now = middle(event.touches[0], event.touches[1]);
+        container.scrollBy(pinch.last[0] - now[0], pinch.last[1] - now[1]);
+        pinch.last = now;
+        if (Math.abs(pinch.factor - 1) < PINCH_DEAD_ZONE) pinch.factor = 1;
+      }
       viewerElement.style.transform = `scale(${pinch.factor})`;
     } else if (tapStart) {
       const [touch] = event.touches;
@@ -64,6 +76,15 @@ export function installGestures({ container, viewer, viewerElement, goToPage, on
   // Capturing, so a link in a PDF never navigates: the app shows it first.
   container.addEventListener('click', (event) => {
     const link = event.target.closest?.('a');
+    if (annotating()) {
+      // No link, no bars, no zoom: a tap is for the tool.
+      if (link) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      return;
+    }
+    if (event.target.closest?.(FORM_CONTROLS)) return;
     if (link) {
       if (link.classList.contains('internalLink')) {
         onInternalLink();

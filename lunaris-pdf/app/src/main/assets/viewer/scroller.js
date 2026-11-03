@@ -17,6 +17,7 @@ export function installScroller({ container, viewer, goToPage, onScrollState, on
   const labelPage = document.getElementById('scroll-label-page');
   const labelChapter = document.getElementById('scroll-label-chapter');
   let dragging = false;
+  let pinned = false;
   let hideTimer = 0;
   let idleTimer = 0;
   let targetPage = 1;
@@ -44,7 +45,7 @@ export function installScroller({ container, viewer, goToPage, onScrollState, on
     if (scrollRange() <= 0) return;
     strip.classList.add('visible');
     clearTimeout(hideTimer);
-    if (!dragging) hideTimer = setTimeout(() => strip.classList.remove('visible'), HIDE_AFTER_MS);
+    if (!dragging && !pinned) hideTimer = setTimeout(() => strip.classList.remove('visible'), HIDE_AFTER_MS);
   };
 
   const report = () => {
@@ -163,6 +164,11 @@ export function installScroller({ container, viewer, goToPage, onScrollState, on
     },
     setChapters(list) {
       chapters = list;
+    },
+    // While annotating it stays: a finger on the edge would otherwise draw instead of scrolling.
+    setPinned(on) {
+      pinned = on;
+      show();
     },
   };
 }

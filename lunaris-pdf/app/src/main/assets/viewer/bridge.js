@@ -4,6 +4,7 @@ import * as pdfjsLib from './pdf.min.mjs';
 import { installScroller } from './scroller.js';
 import { installGestures } from './gestures.js';
 import { firstPageJpeg } from './thumbnail.js';
+import { installAnnotations } from './annotations.js';
 
 globalThis.pdfjsLib = pdfjsLib;
 await import('./pdf_viewer.mjs');
@@ -32,8 +33,9 @@ const viewer = new PDFViewer({
   findController,
   removePageBorders: true,
   textLayerMode: 1,
-  annotationMode: pdfjsLib.AnnotationMode.ENABLE,
-  annotationEditorMode: pdfjsLib.AnnotationEditorType.DISABLE,
+  annotationMode: pdfjsLib.AnnotationMode.ENABLE_FORMS,
+  annotationEditorMode: pdfjsLib.AnnotationEditorType.NONE,
+  annotationEditorHighlightColors: 'yellow=#FFD54F,green=#A8D8B9,blue=#90CAF9,pink=#F48FB1',
 });
 linkService.setViewer(viewer);
 
@@ -161,6 +163,7 @@ const open = ({ password, page, scale }) => {
   };
   task.promise.then((document) => {
     pdf = document;
+    annotations.setDocument(document);
     viewer.setDocument(document);
     linkService.setDocument(document, null);
     scroller.setDocument();
@@ -202,6 +205,7 @@ const scroller = installScroller({
   onChapterCrossed: () => post({ type: 'chapterCrossed' }),
   onJump,
 });
+const annotations = installAnnotations({ container, viewer, eventBus, pdfjsLib, post, scroller });
 installGestures({
   container,
   viewer,
@@ -228,6 +232,7 @@ globalThis.lunaris = {
       case 'setNight': document.body.classList.toggle('night', command.on); break;
       case 'setBarSpace': setBarSpace(command); break;
       case 'makeThumbnail': if (pdf) makeThumbnail().catch(() => {}); break;
+      default: annotations.handle(command);
     }
   },
 };
