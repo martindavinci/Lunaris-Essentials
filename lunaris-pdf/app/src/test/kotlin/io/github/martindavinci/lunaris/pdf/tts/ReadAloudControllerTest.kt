@@ -204,8 +204,8 @@ class ReadAloudControllerTest {
     }
 
     @Test fun rates_goRoundAndComeBack() {
-        val seen = generateSequence(SpeechRates.next(1f)) { SpeechRates.next(it) }.take(4).toList()
-        assertThat(seen).containsExactly(1.25f, 1.5f, 0.75f, 1f).inOrder()
-        assertThat(SpeechRates.next(3f)).isEqualTo(1f)
+        val seen = generateSequence(SpeechRates.next(1f)) { SpeechRates.next(it) }.take(7).toList()
+        assertThat(seen).containsExactly(1.25f, 1.5f, 2f, 2.5f, 3f, 0.75f, 1f).inOrder()
+        assertThat(SpeechRates.next(4f)).isEqualTo(1f)
     }
 }

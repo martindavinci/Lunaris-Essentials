@@ -5,7 +5,7 @@ data class SpokenSentence(val page: Int, val text: String, val index: Int, val t
 
 /** The speeds offered, in the order a tap goes through them. */
 object SpeechRates {
-    private val RATES = listOf(1f, 1.25f, 1.5f, 0.75f)
+    private val RATES = listOf(1f, 1.25f, 1.5f, 2f, 2.5f, 3f, 0.75f)
 
     const val NORMAL = 1f
 
