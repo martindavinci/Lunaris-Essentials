@@ -9,17 +9,11 @@ import io.github.martindavinci.lunaris.pdf.recents.DocumentThumbnails
 import io.github.martindavinci.lunaris.pdf.recents.ReadingSpot
 import io.github.martindavinci.lunaris.pdf.recents.RecentVisit
 import io.github.martindavinci.lunaris.pdf.session.CurrentDocument
-import io.github.martindavinci.lunaris.pdf.settings.SpeechPreferences
-import io.github.martindavinci.lunaris.pdf.tts.ReadAloudState
-import io.github.martindavinci.lunaris.pdf.tts.SpokenSentence
-import io.github.martindavinci.lunaris.pdf.tts.SpeechEngine
-import io.github.martindavinci.lunaris.pdf.tts.VoiceInfo
 import io.github.martindavinci.lunaris.pdf.url.UrlWarning
 import io.github.martindavinci.lunaris.pdf.viewer.OutlineItem
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerChannel
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerCommand
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerEvent
-import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -50,32 +44,6 @@ class ReaderViewModelTest {
         }
     }
 
-    private class FakeSpeech : SpeechEngine {
-        val spoken = mutableListOf<String>()
-        var lastId: String? = null
-        var shutDown = false
-        override var onSegmentDone: ((String) -> Unit)? = null
-        override var onUnavailable: (() -> Unit)? = null
-        override fun speak(text: String, utteranceId: String) {
-            spoken += text
-            lastId = utteranceId
-        }
-        override fun stop() = Unit
-        var rate: Float? = null
-        var lastVoice: String? = null
-        var offered = emptyList<VoiceInfo>()
-        override fun setRate(rate: Float) {
-            this.rate = rate
-        }
-        override fun setVoice(voiceId: String?) {
-            lastVoice = voiceId
-        }
-        override fun voices(): List<VoiceInfo> = offered
-        override fun shutdown() {
-            shutDown = true
-        }
-    }
-
     private class FakeDocuments : DocumentActions {
         var saveWorks = true
         var shareUri: String? = "content://share/a.pdf"
@@ -85,17 +53,6 @@ class ReaderViewModelTest {
             return saveWorks
         }
         override suspend fun prepareShare(from: String, name: String): String? = shareUri
-    }
-
-    private class FakeSpeechPrefs : SpeechPreferences {
-        override val speechRate = MutableStateFlow(1f)
-        override val speechVoice = MutableStateFlow<String?>(null)
-        override suspend fun setSpeechRate(rate: Float) {
-            speechRate.value = rate
-        }
-        override suspend fun setSpeechVoice(voiceId: String?) {
-            speechVoice.value = voiceId
-        }
     }
 
     private class FakeThumbnails : DocumentThumbnails {
@@ -116,10 +73,7 @@ class ReaderViewModelTest {
     private val visits = mutableListOf<RecentVisit>()
     private val spots = mutableListOf<ReadingSpot>()
     private val thumbnails = FakeThumbnails()
-    private val speechPrefs = FakeSpeechPrefs()
     private val positions = mutableListOf<Triple<String, Int, String>>()
-    private var enginesMade = 0
-    private val engine = FakeSpeech()
     private val documents = FakeDocuments()
     private lateinit var dispatcher: TestDispatcher
 
@@ -147,11 +101,6 @@ class ReaderViewModelTest {
             spots += spot
         },
         thumbnails = thumbnails,
-        speechPrefs = speechPrefs,
-        speechEngine = {
-            enginesMade++
-            engine
-        },
         documents = documents,
     )
 
@@ -455,42 +404,6 @@ class ReaderViewModelTest {
         assertThat(positions).containsExactly(Triple("content://x/a.pdf", 3, "1"))
     }
 
-    @Test fun openingADocument_doesNotStartTheSpeechEngine() {
-        viewModel()
-        ready()
-        assertThat(enginesMade).isEqualTo(0)
-    }
-
-    @Test fun readAloud_startsFromTheCurrentPageAndFollowsTheDocument() {
-        val vm = viewModel()
-        ready(pages = 3)
-        emit(ViewerEvent.PageChanged(2, "1"))
-        vm.onAction(ReaderAction.StartReadAloud)
-        assertThat(channel.sent).contains(ViewerCommand.ReadPageText(2))
-        emit(ViewerEvent.PageText(2, "Page two."))
-        assertThat(engine.spoken).containsExactly("Page two.")
-        assertThat(vm.state.value.readAloud).isEqualTo(ReadAloudState.Reading(2))
-        channel.sent.clear()
-        engine.onSegmentDone?.invoke(checkNotNull(engine.lastId))
-        assertThat(channel.sent).contains(ViewerCommand.ReadPageText(3))
-        emit(ViewerEvent.PageText(3, "Page three."))
-        assertThat(vm.state.value.readAloud).isEqualTo(ReadAloudState.Reading(3))
-        assertThat(channel.sent).contains(ViewerCommand.GoToPage(3))
-    }
-
-    @Test fun readAloudControls_reachTheEngine() {
-        val vm = viewModel()
-        ready(pages = 3)
-        vm.onAction(ReaderAction.StartReadAloud)
-        emit(ViewerEvent.PageText(1, "One."))
-        vm.onAction(ReaderAction.PauseReadAloud)
-        assertThat(vm.state.value.readAloud).isEqualTo(ReadAloudState.Paused(1))
-        vm.onAction(ReaderAction.ResumeReadAloud)
-        assertThat(vm.state.value.readAloud).isEqualTo(ReadAloudState.Reading(1))
-        vm.onAction(ReaderAction.StopReadAloud)
-        assertThat(vm.state.value.readAloud).isEqualTo(ReadAloudState.Idle)
-    }
-
     @Test fun savedCopy_saysSo() {
         val vm = viewModel()
         vm.onAction(ReaderAction.SaveCopyTo("content://x/copy.pdf"))
@@ -532,15 +445,6 @@ class ReaderViewModelTest {
         assertThat(vm.state.value.canPrint).isFalse()
     }
 
-    @Test fun loadFailed_stopsReadingAloud() {
-        val vm = viewModel()
-        ready(pages = 3)
-        vm.onAction(ReaderAction.StartReadAloud)
-        emit(ViewerEvent.PageText(1, "One."))
-        emit(ViewerEvent.LoadFailed)
-        assertThat(vm.state.value.readAloud).isEqualTo(ReadAloudState.Idle)
-    }
-
     @Test fun rendererKilledBySystem_reopensOnTheSamePageWithoutAMessage() {
         val vm = viewModel()
         ready(pages = 10)
@@ -568,7 +472,7 @@ class ReaderViewModelTest {
 
     private val chapters = listOf(OutlineItem("One", 1, 0), OutlineItem("Part", 2, 1), OutlineItem("Two", 8, 0))
 
-    @Test fun topButton_hidesWhileGoingDown_andWhileReadingAloud() {
+    @Test fun topButton_hidesWhileGoingDown() {
         val vm = viewModel()
         ready()
         emit(ViewerEvent.PageChanged(5, "page-width"))
@@ -576,8 +480,6 @@ class ReaderViewModelTest {
         assertThat(vm.state.value.showTopButton).isFalse()
         emit(ViewerEvent.ScrollChanged(moving = false, down = false))
         assertThat(vm.state.value.showTopButton).isTrue()
-        vm.onAction(ReaderAction.StartReadAloud)
-        assertThat(vm.state.value.showTopButton).isFalse()
     }
 
     @Test fun pageIndicator_showsOnlyWhenTheBarsAreHiddenAndThePageMoves() {
@@ -755,78 +657,4 @@ class ReaderViewModelTest {
         assertThat(vm.state.value.chapterTicks).isEqualTo(before + 1)
     }
 
-    @Test fun readAloud_marksTheSentence_andShowsTheProgress() {
-        val vm = viewModel()
-        ready()
-        vm.onAction(ReaderAction.StartReadAloud)
-        emit(ViewerEvent.PageText(1, "One. Two."))
-        assertThat(vm.state.value.spoken).isEqualTo(SpokenSentence(1, "One.", index = 0, total = 2))
-        assertThat(channel.sent).contains(ViewerCommand.MarkSentence(1, "One."))
-        vm.onAction(ReaderAction.StopReadAloud)
-        assertThat(channel.sent.last()).isEqualTo(ViewerCommand.ClearMark)
-    }
-
-    @Test fun savedSpeedAndVoice_applyWhenReadingStarts() {
-        speechPrefs.speechRate.value = 2.5f
-        speechPrefs.speechVoice.value = "it-it-x-itc-local"
-        val vm = viewModel()
-        ready()
-        vm.onAction(ReaderAction.StartReadAloud)
-        assertThat(engine.rate).isEqualTo(2.5f)
-        assertThat(engine.lastVoice).isEqualTo("it-it-x-itc-local")
-        assertThat(vm.state.value.readAloudRate).isEqualTo(2.5f)
-    }
-
-    @Test fun choosingASpeed_savesItAndAppliesIt() {
-        val vm = viewModel()
-        ready()
-        vm.onAction(ReaderAction.StartReadAloud)
-        emit(ViewerEvent.PageText(1, "One. Two."))
-        vm.onAction(ReaderAction.SetReadAloudRate(3.04f))
-        assertThat(speechPrefs.speechRate.value).isEqualTo(3f)
-        assertThat(engine.rate).isEqualTo(3f)
-        assertThat(engine.spoken).containsExactly("One.", "One.").inOrder()
-        assertThat(vm.state.value.readAloudRate).isEqualTo(3f)
-    }
-
-    @Test fun choosingAVoice_savesItAndAppliesIt() {
-        val vm = viewModel()
-        ready()
-        vm.onAction(ReaderAction.StartReadAloud)
-        emit(ViewerEvent.PageText(1, "One."))
-        vm.onAction(ReaderAction.SetReadAloudVoice("de-de-x-nfh-local"))
-        assertThat(speechPrefs.speechVoice.value).isEqualTo("de-de-x-nfh-local")
-        assertThat(engine.lastVoice).isEqualTo("de-de-x-nfh-local")
-        assertThat(vm.state.value.readAloudVoice).isEqualTo("de-de-x-nfh-local")
-    }
-
-    @Test fun voices_areOfferedOnceTheEngineSpeaks() {
-        engine.offered = listOf(VoiceInfo("it-it-x-itc-local", Locale.ITALY, isNetwork = false))
-        val vm = viewModel()
-        ready()
-        assertThat(vm.state.value.readAloudVoices).isEmpty()
-        vm.onAction(ReaderAction.StartReadAloud)
-        emit(ViewerEvent.PageText(1, "One."))
-        assertThat(vm.state.value.readAloudVoices).isEqualTo(engine.offered)
-    }
-
-    @Test fun skippingBySentence_followsTheVoice() {
-        val vm = viewModel()
-        ready()
-        vm.onAction(ReaderAction.StartReadAloud)
-        emit(ViewerEvent.PageText(1, "One. Two."))
-        vm.onAction(ReaderAction.NextReadAloudSentence)
-        assertThat(engine.spoken.last()).isEqualTo("Two.")
-        vm.onAction(ReaderAction.PreviousReadAloudSentence)
-        assertThat(engine.spoken.last()).isEqualTo("One.")
-    }
-
-    @Test fun readAloud_marksTheRightOneOfARepeatedSentence() {
-        val vm = viewModel()
-        ready()
-        vm.onAction(ReaderAction.StartReadAloud)
-        emit(ViewerEvent.PageText(1, "Again. Again."))
-        vm.onAction(ReaderAction.NextReadAloudSentence)
-        assertThat(channel.sent.last()).isEqualTo(ViewerCommand.MarkSentence(1, "Again.", occurrence = 1))
-    }
 }

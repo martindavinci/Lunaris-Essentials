@@ -5,26 +5,4 @@
     <string name="action_save_copy">保存副本</string>
     <string name="action_saved">副本已保存</string>
     <string name="action_save_failed">无法保存副本</string>
-    <string name="read_aloud">朗读</string>
-    <string name="read_aloud_page">正在朗读第 %1$d 页</string>
-    <string name="read_aloud_pause">暂停</string>
-    <string name="read_aloud_resume">继续</string>
-    <string name="read_aloud_next">下一页</string>
-    <string name="read_aloud_previous">上一页</string>
-    <string name="read_aloud_stop">停止朗读</string>
-    <string name="read_aloud_no_text">这些页面没有可朗读的文字。通常是扫描的文档。</string>
-    <string name="read_aloud_unavailable">此手机上没有可用的文字转语音引擎。</string>
-    <string name="read_aloud_paused">已暂停在第 %1$d 页</string>
-    <string name="read_aloud_sentence">第 %1$d / %2$d 句</string>
-    <string name="read_aloud_voice">语音</string>
-    <string name="read_aloud_speed">语速</string>
-    <string name="read_aloud_network">需要联网</string>
-    <string name="read_aloud_offline">离线</string>
-    <string name="read_aloud_previous_sentence">上一句</string>
-    <string name="read_aloud_next_sentence">下一句</string>
-    <string name="read_aloud_expand">展开控制</string>
-    <string name="read_aloud_collapse">收起控制</string>
-    <string name="read_aloud_voice_selected">已选择</string>
-    <string name="read_aloud_default_voice">默认语音</string>
-    <string name="read_aloud_where">第 %1$d 页 · 第 %2$d / %3$d 句</string>
 </resources>

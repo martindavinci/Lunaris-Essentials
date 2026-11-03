@@ -20,7 +20,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.RecordVoiceOver
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.UnfoldMore
 import androidx.compose.material3.Checkbox
@@ -120,7 +119,7 @@ internal fun ReaderTopBar(
     }
 }
 
-/** The page goes to a page; the three actions of reading stay under the thumb. */
+/** The page goes to a page; night pages and contents stay under the thumb. */
 @Composable
 internal fun ReaderBottomBar(
     page: Int,
@@ -141,9 +140,6 @@ internal fun ReaderBottomBar(
         ) {
             PagePill(page, pages, onGoToPage)
             Spacer(Modifier.weight(1f))
-            IconButton(onClick = { onAction(ReaderAction.StartReadAloud) }) {
-                Icon(Icons.Filled.RecordVoiceOver, contentDescription = stringResource(R.string.read_aloud))
-            }
             NightButton(night, onClick = { onAction(ReaderAction.ToggleNight) })
             IconButton(onClick = onOutline) {
                 Icon(Icons.AutoMirrored.Filled.List, contentDescription = stringResource(R.string.reader_outline))

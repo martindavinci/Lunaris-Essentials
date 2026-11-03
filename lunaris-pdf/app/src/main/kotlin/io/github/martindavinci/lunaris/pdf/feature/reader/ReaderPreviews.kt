@@ -2,13 +2,9 @@ package io.github.martindavinci.lunaris.pdf.feature.reader
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import io.github.martindavinci.lunaris.pdf.tts.ReadAloudState
-import io.github.martindavinci.lunaris.pdf.tts.SpokenSentence
-import io.github.martindavinci.lunaris.pdf.tts.VoiceInfo
 import io.github.martindavinci.lunaris.pdf.ui.theme.LunarisPdfTheme
 import io.github.martindavinci.lunaris.pdf.url.UrlWarning
 import io.github.martindavinci.lunaris.pdf.viewer.OutlineItem
-import java.util.Locale
 
 private val SampleState = ReaderUiState(
     name = "Codex Leicester.pdf",
@@ -52,30 +48,6 @@ private fun ReaderErrorPreview() {
             onPrint = {},
             onSaveCopy = {},
             document = {},
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun ReaderReadAloudPreview() {
-    LunarisPdfTheme {
-        ReadAloudBar(ReadAloudState.Reading(12), SpokenSentence(12, "The Moon.", 2, 6), rate = 1f, onExpand = {}, onAction = {})
-    }
-}
-
-@Preview
-@Composable
-private fun ReaderReadAloudPanelPreview() {
-    LunarisPdfTheme {
-        ReadAloudPanel(
-            state = SampleState.copy(
-                readAloud = ReadAloudState.Reading(12),
-                spoken = SpokenSentence(12, "The Moon.", 2, 6),
-                readAloudVoices = listOf(VoiceInfo("it-it-x-itc-local", Locale.ITALY, isNetwork = false)),
-            ),
-            onAction = {},
-            onCollapse = {},
         )
     }
 }

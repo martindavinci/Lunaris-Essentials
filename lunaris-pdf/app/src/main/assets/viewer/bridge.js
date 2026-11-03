@@ -3,7 +3,7 @@
 import * as pdfjsLib from './pdf.min.mjs';
 import { installScroller } from './scroller.js';
 import { installGestures } from './gestures.js';
-import { firstPageJpeg, installSentenceMark } from './marks.js';
+import { firstPageJpeg } from './thumbnail.js';
 
 globalThis.pdfjsLib = pdfjsLib;
 await import('./pdf_viewer.mjs');
@@ -167,12 +167,6 @@ const open = ({ password, page, scale }) => {
   }).catch(() => post({ type: 'loadFailed' }));
 };
 
-const readPageText = async (page) => {
-  const content = await (await pdf.getPage(page)).getTextContent();
-  const text = content.items.map((item) => (item.str ?? '') + (item.hasEOL ? '\n' : '')).join('');
-  post({ type: 'pageText', page, text });
-};
-
 const find = ({ query, previous, caseSensitive, wholeWords }) => {
   const search = JSON.stringify([query, caseSensitive, wholeWords]);
   eventBus.dispatch('find', {
@@ -208,7 +202,6 @@ const scroller = installScroller({
   onChapterCrossed: () => post({ type: 'chapterCrossed' }),
   onJump,
 });
-const sentenceMark = installSentenceMark({ container, viewer, eventBus, barTop: () => barTop });
 installGestures({
   container,
   viewer,
@@ -233,13 +226,8 @@ globalThis.lunaris = {
         eventBus.dispatch('findbarclose', { source: null });
         break;
       case 'setNight': document.body.classList.toggle('night', command.on); break;
-      case 'readPageText':
-        if (inRange(command.page)) readPageText(command.page).catch(() => post({ type: 'pageText', page: command.page, text: '' }));
-        break;
       case 'setBarSpace': setBarSpace(command); break;
       case 'makeThumbnail': if (pdf) makeThumbnail().catch(() => {}); break;
-      case 'markSentence': sentenceMark.mark(command.page, command.text, command.occurrence); break;
-      case 'clearMark': sentenceMark.unmark(); break;
     }
   },
 };

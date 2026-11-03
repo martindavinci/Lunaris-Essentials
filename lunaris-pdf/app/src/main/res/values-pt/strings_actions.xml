@@ -5,26 +5,4 @@
     <string name="action_save_copy">Guardar uma cópia</string>
     <string name="action_saved">Cópia guardada</string>
     <string name="action_save_failed">Não foi possível guardar a cópia</string>
-    <string name="read_aloud">Ler em voz alta</string>
-    <string name="read_aloud_page">A ler a página %1$d</string>
-    <string name="read_aloud_pause">Pausa</string>
-    <string name="read_aloud_resume">Continuar</string>
-    <string name="read_aloud_next">Página seguinte</string>
-    <string name="read_aloud_previous">Página anterior</string>
-    <string name="read_aloud_stop">Parar a leitura</string>
-    <string name="read_aloud_no_text">Estas páginas não têm texto para ler. Normalmente é um documento digitalizado.</string>
-    <string name="read_aloud_unavailable">Este telemóvel não tem nenhum motor de conversão de texto em voz pronto a usar.</string>
-    <string name="read_aloud_paused">Em pausa na página %1$d</string>
-    <string name="read_aloud_sentence">Frase %1$d de %2$d</string>
-    <string name="read_aloud_voice">Voz</string>
-    <string name="read_aloud_speed">Velocidade</string>
-    <string name="read_aloud_network">requer ligação</string>
-    <string name="read_aloud_offline">offline</string>
-    <string name="read_aloud_previous_sentence">Frase anterior</string>
-    <string name="read_aloud_next_sentence">Frase seguinte</string>
-    <string name="read_aloud_expand">Expandir controlos</string>
-    <string name="read_aloud_collapse">Recolher controlos</string>
-    <string name="read_aloud_voice_selected">Selecionada</string>
-    <string name="read_aloud_default_voice">Voz predefinida</string>
-    <string name="read_aloud_where">Página %1$d · Frase %2$d de %3$d</string>
 </resources>

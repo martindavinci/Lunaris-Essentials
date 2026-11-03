@@ -1,9 +1,5 @@
 package io.github.martindavinci.lunaris.pdf.feature.reader
 
-import io.github.martindavinci.lunaris.pdf.tts.ReadAloudState
-import io.github.martindavinci.lunaris.pdf.tts.SpeechRates
-import io.github.martindavinci.lunaris.pdf.tts.SpokenSentence
-import io.github.martindavinci.lunaris.pdf.tts.VoiceInfo
 import io.github.martindavinci.lunaris.pdf.url.UrlSafety
 import io.github.martindavinci.lunaris.pdf.url.UrlWarning
 import io.github.martindavinci.lunaris.pdf.url.withVisibleBidiControls
@@ -24,7 +20,6 @@ data class ReaderUiState(
     val passwordPrompt: PasswordPrompt? = null,
     val pendingLink: PendingLink? = null,
     val night: Boolean = false,
-    val readAloud: ReadAloudState = ReadAloudState.Idle,
     val shareUri: String? = null,
     val notice: ReaderNotice? = null,
     val canPrint: Boolean = true,
@@ -33,20 +28,15 @@ data class ReaderUiState(
     val scrolling: Boolean = false,
     val scrollingDown: Boolean = false,
     val jump: PageJump? = null,
-    val spoken: SpokenSentence? = null,
-    val readAloudRate: Float = SpeechRates.NORMAL,
-    val readAloudVoice: String? = null,
-    val readAloudVoices: List<VoiceInfo> = emptyList(),
     val chapterTicks: Int = 0,
 ) {
     /** Past the first pages, when the way back is worth a button. Never in the way of going on. */
     val showTopButton: Boolean
-        get() = topButtonEnabled && page >= TOP_BUTTON_FROM_PAGE && !scrollingDown &&
-            readAloud == ReadAloudState.Idle && search == null
+        get() = topButtonEnabled && page >= TOP_BUTTON_FROM_PAGE && !scrollingDown && search == null
 
     val showPageIndicator: Boolean get() = !chromeVisible && scrolling && pages > 0
 
-    val showJump: Boolean get() = jump != null && search == null && readAloud == ReadAloudState.Idle
+    val showJump: Boolean get() = jump != null && search == null
 
     /** The chapter being read, when the document has contents. */
     val chapter: String? get() = DocumentChapters.chapterAt(outline, page)?.title
@@ -110,16 +100,6 @@ sealed interface ReaderAction {
     data class SubmitPassword(val password: String) : ReaderAction
     data object DismissLink : ReaderAction
     data object ToggleNight : ReaderAction
-    data object StartReadAloud : ReaderAction
-    data object PauseReadAloud : ReaderAction
-    data object ResumeReadAloud : ReaderAction
-    data object NextReadAloudPage : ReaderAction
-    data object PreviousReadAloudPage : ReaderAction
-    data object StopReadAloud : ReaderAction
-    data object NextReadAloudSentence : ReaderAction
-    data object PreviousReadAloudSentence : ReaderAction
-    data class SetReadAloudRate(val rate: Float) : ReaderAction
-    data class SetReadAloudVoice(val voiceId: String?) : ReaderAction
     data class SaveCopyTo(val uri: String) : ReaderAction
     data object Share : ReaderAction
     data object ShareStarted : ReaderAction

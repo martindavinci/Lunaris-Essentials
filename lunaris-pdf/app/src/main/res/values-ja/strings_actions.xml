@@ -5,26 +5,4 @@
     <string name="action_save_copy">コピーを保存</string>
     <string name="action_saved">コピーを保存しました</string>
     <string name="action_save_failed">コピーを保存できませんでした</string>
-    <string name="read_aloud">読み上げ</string>
-    <string name="read_aloud_page">%1$d ページを読み上げ中</string>
-    <string name="read_aloud_pause">一時停止</string>
-    <string name="read_aloud_resume">再開</string>
-    <string name="read_aloud_next">次のページ</string>
-    <string name="read_aloud_previous">前のページ</string>
-    <string name="read_aloud_stop">読み上げを停止</string>
-    <string name="read_aloud_no_text">これらのページには読み上げるテキストがありません。スキャンした文書によくあります。</string>
-    <string name="read_aloud_unavailable">この端末には使用できる音声合成エンジンがありません。</string>
-    <string name="read_aloud_paused">%1$dページで一時停止中</string>
-    <string name="read_aloud_sentence">%1$d / %2$d 文</string>
-    <string name="read_aloud_voice">音声</string>
-    <string name="read_aloud_speed">速度</string>
-    <string name="read_aloud_network">接続が必要</string>
-    <string name="read_aloud_offline">オフライン</string>
-    <string name="read_aloud_previous_sentence">前の文</string>
-    <string name="read_aloud_next_sentence">次の文</string>
-    <string name="read_aloud_expand">コントロールを展開</string>
-    <string name="read_aloud_collapse">コントロールを折りたたむ</string>
-    <string name="read_aloud_voice_selected">選択中</string>
-    <string name="read_aloud_default_voice">デフォルトの音声</string>
-    <string name="read_aloud_where">%1$dページ · %2$d / %3$d 文</string>
 </resources>

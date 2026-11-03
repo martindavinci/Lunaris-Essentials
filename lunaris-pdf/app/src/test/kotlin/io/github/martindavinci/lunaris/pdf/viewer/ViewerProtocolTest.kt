@@ -34,7 +34,6 @@ class ViewerProtocolTest {
             ViewerCommand.GoToPage(4) to "goToPage",
             ViewerCommand.CloseFind to "closeFind",
             ViewerCommand.SetNight(true) to "setNight",
-            ViewerCommand.ReadPageText(2) to "readPageText",
         ).map { (command, type) -> payloadOf(ViewerProtocol.encode(command)).getString("type") to type }
         types.forEach { (actual, expected) -> assertThat(actual).isEqualTo(expected) }
     }
@@ -57,7 +56,6 @@ class ViewerProtocolTest {
     @Test fun pageZeroOrNegative_isIgnored() {
         assertThat(ViewerProtocol.decode("""{"type":"pageChanged","page":0,"scale":"1"}""")).isNull()
         assertThat(ViewerProtocol.decode("""{"type":"pageChanged","page":-3,"scale":"1"}""")).isNull()
-        assertThat(ViewerProtocol.decode("""{"type":"pageText","page":0,"text":"x"}""")).isNull()
         assertThat(ViewerProtocol.decode("""{"type":"loaded","pages":0,"outline":[]}""")).isNull()
     }
 
@@ -96,8 +94,6 @@ class ViewerProtocolTest {
             .isEqualTo(ViewerEvent.FindResult(2, 9, true))
         assertThat(ViewerProtocol.decode("""{"type":"linkTapped","url":"https://example.com"}"""))
             .isEqualTo(ViewerEvent.LinkTapped("https://example.com"))
-        assertThat(ViewerProtocol.decode("""{"type":"pageText","page":2,"text":"hello"}"""))
-            .isEqualTo(ViewerEvent.PageText(2, "hello"))
     }
 
     @Test fun storedScale_isCheckedBeforeUse() {
@@ -121,8 +117,6 @@ class ViewerProtocolTest {
         mapOf(
             ViewerCommand.SetBarSpace(80, 90) to "setBarSpace",
             ViewerCommand.MakeThumbnail to "makeThumbnail",
-            ViewerCommand.MarkSentence(2, "text") to "markSentence",
-            ViewerCommand.ClearMark to "clearMark",
         ).forEach { (command, type) ->
             assertThat(payloadOf(ViewerProtocol.encode(command)).getString("type")).isEqualTo(type)
         }
@@ -140,10 +134,5 @@ class ViewerProtocolTest {
         assertThat(ViewerProtocol.decode("""{"type":"thumbnail","jpeg":"AAAA"}""")).isEqualTo(ViewerEvent.Thumbnail("AAAA"))
         val huge = "A".repeat(ViewerProtocol.MAX_THUMBNAIL_CHARS + 1)
         assertThat(ViewerProtocol.decode("""{"type":"thumbnail","jpeg":"$huge"}""")).isNull()
-    }
-
-    @Test fun markSentence_saysWhichOccurrence() {
-        val payload = payloadOf(ViewerProtocol.encode(ViewerCommand.MarkSentence(2, "text", occurrence = 3)))
-        assertThat(payload.getInt("occurrence")).isEqualTo(3)
     }
 }

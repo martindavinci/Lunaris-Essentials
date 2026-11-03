@@ -34,7 +34,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.martindavinci.lunaris.pdf.R
-import io.github.martindavinci.lunaris.pdf.tts.ReadAloudState
 import kotlin.math.roundToInt
 
 /** The dark around the pages; the same in viewer.css, so nothing flashes while the page loads. */
@@ -58,7 +57,6 @@ internal fun ReaderScreen(
 ) {
     var showGoToPage by rememberSaveable { mutableStateOf(false) }
     var showOutline by rememberSaveable { mutableStateOf(false) }
-    var showReadAloud by rememberSaveable { mutableStateOf(false) }
     var topHeight by remember { mutableIntStateOf(0) }
     var bottomHeight by remember { mutableIntStateOf(0) }
     val density = LocalDensity.current
@@ -105,8 +103,7 @@ internal fun ReaderScreen(
                 }
             }
         }
-        val readingAloud = state.readAloud != ReadAloudState.Idle
-        val bottomVisible = readingAloud || state.search != null || (barsVisible && state.pages > 0)
+        val bottomVisible = state.search != null || (barsVisible && state.pages > 0)
         AnimatedVisibility(
             visible = bottomVisible,
             enter = slideInVertically { it } + fadeIn(),
@@ -115,13 +112,6 @@ internal fun ReaderScreen(
         ) {
             when {
                 state.search != null -> ReaderSearchNav(state.search, onAction)
-                readingAloud -> ReadAloudBar(
-                    state = state.readAloud,
-                    spoken = state.spoken,
-                    rate = state.readAloudRate,
-                    onExpand = { showReadAloud = true },
-                    onAction = onAction,
-                )
                 else -> Box(Modifier.onSizeChanged { bottomHeight = it.height }) {
                     ReaderBottomBar(
                         page = state.page,
@@ -140,9 +130,6 @@ internal fun ReaderScreen(
                 bottomSpace = with(density) { if (barsVisible) bottomHeight.toDp() else 0.dp },
                 onAction = onAction,
             )
-        }
-        if (showReadAloud && readingAloud) {
-            ReadAloudPanel(state, onAction, onCollapse = { showReadAloud = false })
         }
         if (showOutline) {
             OutlinePanel(

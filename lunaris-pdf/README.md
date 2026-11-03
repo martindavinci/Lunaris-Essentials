@@ -21,7 +21,7 @@
 </p>
 <p align="center">
   <img src="docs/screenshots/contents.webp" width="32%" alt="The contents of a document">
-  <img src="docs/screenshots/read-aloud.webp" width="32%" alt="A document read aloud, with its controls">
+  <img src="docs/screenshots/settings.webp" width="32%" alt="The settings, on cards">
   <img src="docs/screenshots/recents.webp" width="32%" alt="The document being read on top, then all the recent ones, each with its first page">
 </p>
 
@@ -59,8 +59,6 @@ since other Lunaris apps publish their releases here too.
 
 **With the document**
 - Print it, share it, save a copy
-- Read it aloud with the text to speech of your phone: the page follows the voice and the sentence is marked, skip by
-  sentence or by page, choose the voice and a speed from 0.5x to 4x, both remembered
 
 **Links are never opened by themselves.** The app shows the whole address first, and warns about one that is not HTTPS,
 uses punycode or non-ASCII characters in its host, points to an IP address, embeds a username or password, or uses an
@@ -79,9 +77,7 @@ page, the zoom, the title of the chapter you are in and a small picture of the f
 keeps neither the title nor the picture. All of this stays on the phone and goes away with the list: Android's cloud
 backup is turned off for the app and its data is excluded from device-to-device transfer, although Android lets some
 phone makers' migration tools ignore that setting. A link
-you choose to open is handled by your browser, which uses its own network access, not the app's. Reading aloud uses the
-engine you have set up on your phone. Voices it marks as "requires connection" go through that engine, not the app, and
-are shown as such in the list of voices.
+you choose to open is handled by your browser, which uses its own network access, not the app's.
 
 You can check it yourself: the [manifest](app/src/main/AndroidManifest.xml) declares no system permission, and on a
 downloaded APK

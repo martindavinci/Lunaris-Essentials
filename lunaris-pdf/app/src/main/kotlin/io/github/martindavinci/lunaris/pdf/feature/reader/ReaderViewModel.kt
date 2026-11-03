@@ -13,15 +13,11 @@ import io.github.martindavinci.lunaris.pdf.recents.RecentsStore
 import io.github.martindavinci.lunaris.pdf.recents.ThumbnailStore
 import io.github.martindavinci.lunaris.pdf.session.CurrentDocument
 import io.github.martindavinci.lunaris.pdf.settings.SettingsStore
-import io.github.martindavinci.lunaris.pdf.settings.SpeechPreferences
-import io.github.martindavinci.lunaris.pdf.tts.ReadAloudState
-import io.github.martindavinci.lunaris.pdf.tts.SpeechEngine
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerChannel
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerCommand
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerEngine
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerEvent
 import javax.inject.Inject
-import javax.inject.Provider
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,8 +40,6 @@ class ReaderViewModel internal constructor(
     touchRecent: suspend (RecentVisit) -> Unit,
     savePosition: suspend (ReadingSpot) -> Unit,
     thumbnails: DocumentThumbnails,
-    speechPrefs: SpeechPreferences,
-    speechEngine: () -> SpeechEngine,
     documents: DocumentActions,
 ) : ViewModel() {
 
@@ -57,7 +51,6 @@ class ReaderViewModel internal constructor(
         settingsStore: SettingsStore,
         recents: RecentsStore,
         thumbnails: ThumbnailStore,
-        speechEngine: Provider<SpeechEngine>,
         documents: DocumentCopier,
     ) : this(
         engine,
@@ -69,8 +62,6 @@ class ReaderViewModel internal constructor(
         recents::touch,
         recents::savePosition,
         thumbnails,
-        settingsStore,
-        speechEngine::get,
         documents,
     )
 
@@ -83,7 +74,6 @@ class ReaderViewModel internal constructor(
     private var pageReady = false
     private var barSpace: ViewerCommand.SetBarSpace? = null
     private val files = ReaderFiles(viewModelScope, documents) { change -> mutableState.update(change) }
-    private val speech = ReaderSpeech(viewModelScope, viewer, speechEngine, speechPrefs, { mutableState.update(it) }, ::onReadAloud)
     private val search = ReaderSearch(viewer, { state.value }) { change -> mutableState.update(change) }
     private val jumps = ReaderJumps(viewer, { state.value }) { change -> mutableState.update(change) }
     private val recents = ReaderRecents(viewModelScope, touchRecent, thumbnails) {
@@ -118,16 +108,6 @@ class ReaderViewModel internal constructor(
             is ReaderAction.SubmitPassword -> submitPassword(action.password)
             ReaderAction.DismissLink -> mutableState.update { it.copy(pendingLink = null) }
             ReaderAction.ToggleNight -> viewModelScope.launch { setNightPages(!state.value.night) }
-            ReaderAction.StartReadAloud -> speech.start(state.value.page, state.value.pages)
-            ReaderAction.PauseReadAloud -> speech.pause()
-            ReaderAction.ResumeReadAloud -> speech.resume()
-            ReaderAction.NextReadAloudPage -> speech.next()
-            ReaderAction.PreviousReadAloudPage -> speech.previous()
-            ReaderAction.StopReadAloud -> speech.stop()
-            ReaderAction.NextReadAloudSentence -> speech.nextSentence()
-            ReaderAction.PreviousReadAloudSentence -> speech.previousSentence()
-            is ReaderAction.SetReadAloudRate -> speech.chooseRate(action.rate)
-            is ReaderAction.SetReadAloudVoice -> speech.chooseVoice(action.voiceId)
             is ReaderAction.SaveCopyTo -> state.value.uri?.let { files.saveCopy(it, action.uri) }
             ReaderAction.Share -> state.value.uri?.let { files.share(it, state.value.name) }
             ReaderAction.ShareStarted -> mutableState.update { it.copy(shareUri = null) }
@@ -144,16 +124,13 @@ class ReaderViewModel internal constructor(
                 it.copy(loading = false, passwordPrompt = PasswordPrompt(event.wrong))
             }
             ViewerEvent.LoadFailed -> {
-                speech.stop()
                 mutableState.update { it.copy(loading = false, error = ReaderError.CANNOT_OPEN) }
             }
             ViewerEvent.RendererKilled -> {
-                speech.stop()
                 mutableState.update { it.copy(loading = true, viewRevision = it.viewRevision + 1) }
             }
             is ViewerEvent.FindResult -> search.onResult(event)
             is ViewerEvent.LinkTapped -> mutableState.update { it.copy(pendingLink = PendingLink.of(event.url)) }
-            is ViewerEvent.PageText -> speech.onPageText(event)
             is ViewerEvent.ScrollChanged -> mutableState.update { it.copy(scrolling = event.moving, scrollingDown = event.down) }
             is ViewerEvent.Jumped -> jumps.moved(event.from, event.to)
             ViewerEvent.ChapterCrossed -> mutableState.update { it.copy(chapterTicks = it.chapterTicks + 1) }
@@ -204,18 +181,6 @@ class ReaderViewModel internal constructor(
         password = value
         mutableState.update { it.copy(passwordPrompt = null, loading = true, canPrint = false) }
         viewer.send(ViewerCommand.Open(value, state.value.page, position.scale))
-    }
-
-    /** The document follows the voice. */
-    private fun onReadAloud(value: ReadAloudState) {
-        mutableState.update { it.copy(readAloud = value) }
-        if (value is ReadAloudState.Reading && value.page != state.value.page) {
-            viewer.send(ViewerCommand.GoToPage(value.page))
-        }
-    }
-
-    override fun onCleared() {
-        speech.shutdown()
     }
 
     private fun clampPage(page: Int): Int = page.coerceIn(1, state.value.pages.coerceAtLeast(1))

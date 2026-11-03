@@ -5,26 +5,4 @@
     <string name="action_save_copy">사본 저장</string>
     <string name="action_saved">사본을 저장했습니다</string>
     <string name="action_save_failed">사본을 저장할 수 없습니다</string>
-    <string name="read_aloud">소리 내어 읽기</string>
-    <string name="read_aloud_page">%1$d페이지 읽는 중</string>
-    <string name="read_aloud_pause">일시정지</string>
-    <string name="read_aloud_resume">계속</string>
-    <string name="read_aloud_next">다음 페이지</string>
-    <string name="read_aloud_previous">이전 페이지</string>
-    <string name="read_aloud_stop">읽기 중지</string>
-    <string name="read_aloud_no_text">이 페이지에는 읽을 텍스트가 없습니다. 주로 스캔한 문서에서 나타납니다.</string>
-    <string name="read_aloud_unavailable">이 휴대전화에는 사용할 수 있는 음성 합성 엔진이 없습니다.</string>
-    <string name="read_aloud_paused">%1$d페이지에서 일시 중지됨</string>
-    <string name="read_aloud_sentence">%1$d / %2$d 문장</string>
-    <string name="read_aloud_voice">음성</string>
-    <string name="read_aloud_speed">속도</string>
-    <string name="read_aloud_network">연결 필요</string>
-    <string name="read_aloud_offline">오프라인</string>
-    <string name="read_aloud_previous_sentence">이전 문장</string>
-    <string name="read_aloud_next_sentence">다음 문장</string>
-    <string name="read_aloud_expand">컨트롤 펼치기</string>
-    <string name="read_aloud_collapse">컨트롤 접기</string>
-    <string name="read_aloud_voice_selected">선택됨</string>
-    <string name="read_aloud_default_voice">기본 음성</string>
-    <string name="read_aloud_where">%1$d페이지 · %2$d / %3$d 문장</string>
 </resources>

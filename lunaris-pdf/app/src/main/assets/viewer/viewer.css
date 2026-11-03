@@ -48,19 +48,6 @@ body.night {
   outline: 1.5px solid #2e9be0;
 }
 
-/* The sentence being read aloud, exactly: drawn on the page and multiplied with it, under the fingers' way. */
-.speaking-layer {
-  position: absolute;
-  inset: 0;
-  mix-blend-mode: multiply;
-  pointer-events: none;
-}
-
-.speaking-layer div {
-  position: absolute;
-  background-color: #a9d3f0;
-}
-
 /* Only the thumb catches touches: a page scrolled near the edge stays a page. */
 #scroller {
   position: absolute;

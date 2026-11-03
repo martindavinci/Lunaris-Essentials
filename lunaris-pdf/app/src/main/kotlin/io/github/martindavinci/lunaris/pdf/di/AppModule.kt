@@ -12,8 +12,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.github.martindavinci.lunaris.pdf.recents.ThumbnailStore
-import io.github.martindavinci.lunaris.pdf.tts.DocumentSpeaker
-import io.github.martindavinci.lunaris.pdf.tts.SpeechEngine
 import java.io.File
 import javax.inject.Singleton
 
@@ -38,8 +36,4 @@ object AppModule {
     @Singleton
     fun provideThumbnails(@ApplicationContext context: Context): ThumbnailStore =
         ThumbnailStore(File(context.noBackupFilesDir, THUMBNAILS_FOLDER))
-
-    /** A new engine each time, which its user shuts down. */
-    @Provides
-    fun provideSpeechEngine(@ApplicationContext context: Context): SpeechEngine = DocumentSpeaker(context)
 }

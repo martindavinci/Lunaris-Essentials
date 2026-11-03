@@ -2,13 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Lets the app find the device's text to speech engine. Grants nothing. -->
-    <queries>
-        <intent>
-            <action android:name="android.intent.action.TTS_SERVICE" />
-        </intent>
-    </queries>
-
     <!-- No cloud backup and no device transfer: from Android 12 allowBackup covers only the cloud. -->
     <application
         android:name=".LunarisPdfApp"

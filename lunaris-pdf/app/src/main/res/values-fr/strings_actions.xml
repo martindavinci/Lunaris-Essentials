@@ -5,26 +5,4 @@
     <string name="action_save_copy">Enregistrer une copie</string>
     <string name="action_saved">Copie enregistrée</string>
     <string name="action_save_failed">La copie n\'a pas pu être enregistrée</string>
-    <string name="read_aloud">Lire à voix haute</string>
-    <string name="read_aloud_page">Lecture de la page %1$d</string>
-    <string name="read_aloud_pause">Pause</string>
-    <string name="read_aloud_resume">Reprendre</string>
-    <string name="read_aloud_next">Page suivante</string>
-    <string name="read_aloud_previous">Page précédente</string>
-    <string name="read_aloud_stop">Arrêter la lecture</string>
-    <string name="read_aloud_no_text">Ces pages ne contiennent pas de texte à lire. C\'est souvent un document numérisé.</string>
-    <string name="read_aloud_unavailable">Ce téléphone n\'a aucun moteur de synthèse vocale prêt à l\'emploi.</string>
-    <string name="read_aloud_paused">En pause à la page %1$d</string>
-    <string name="read_aloud_sentence">Phrase %1$d sur %2$d</string>
-    <string name="read_aloud_voice">Voix</string>
-    <string name="read_aloud_speed">Vitesse</string>
-    <string name="read_aloud_network">connexion requise</string>
-    <string name="read_aloud_offline">hors ligne</string>
-    <string name="read_aloud_previous_sentence">Phrase précédente</string>
-    <string name="read_aloud_next_sentence">Phrase suivante</string>
-    <string name="read_aloud_expand">Développer les commandes</string>
-    <string name="read_aloud_collapse">Réduire les commandes</string>
-    <string name="read_aloud_voice_selected">Sélectionnée</string>
-    <string name="read_aloud_default_voice">Voix par défaut</string>
-    <string name="read_aloud_where">Page %1$d · Phrase %2$d sur %3$d</string>
 </resources>

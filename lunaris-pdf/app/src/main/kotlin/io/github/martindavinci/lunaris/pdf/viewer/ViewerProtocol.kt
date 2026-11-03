@@ -16,13 +16,10 @@ sealed interface ViewerCommand {
     ) : ViewerCommand
     data object CloseFind : ViewerCommand
     data class SetNight(val on: Boolean) : ViewerCommand
-    data class ReadPageText(val page: Int) : ViewerCommand
 
     /** How much of the top and bottom the app's bars cover, in dp. */
     data class SetBarSpace(val top: Int, val bottom: Int) : ViewerCommand
     data object MakeThumbnail : ViewerCommand
-    data class MarkSentence(val page: Int, val text: String, val occurrence: Int = 0) : ViewerCommand
-    data object ClearMark : ViewerCommand
 }
 
 /** What the viewer page tells the app. It renders untrusted files, so nothing here is taken on trust. */
@@ -46,7 +43,6 @@ sealed interface ViewerEvent {
         val onPage: Int = 0,
     ) : ViewerEvent
     data class LinkTapped(val url: String) : ViewerEvent
-    data class PageText(val page: Int, val text: String) : ViewerEvent
     data object Tapped : ViewerEvent
 
     /** [moving]: scrolled a moment ago. [down]: towards the end, or dragging the scroller. */
@@ -83,13 +79,9 @@ object ViewerProtocol {
                 .put("caseSensitive", command.caseSensitive).put("wholeWords", command.wholeWords)
             ViewerCommand.CloseFind -> JSONObject().put("type", "closeFind")
             is ViewerCommand.SetNight -> JSONObject().put("type", "setNight").put("on", command.on)
-            is ViewerCommand.ReadPageText -> JSONObject().put("type", "readPageText").put("page", command.page)
             is ViewerCommand.SetBarSpace -> JSONObject().put("type", "setBarSpace")
                 .put("top", command.top).put("bottom", command.bottom)
             ViewerCommand.MakeThumbnail -> JSONObject().put("type", "makeThumbnail")
-            is ViewerCommand.MarkSentence -> JSONObject().put("type", "markSentence")
-                .put("page", command.page).put("text", command.text).put("occurrence", command.occurrence)
-            ViewerCommand.ClearMark -> JSONObject().put("type", "clearMark")
         }
         val safe = payload.toString()
             .replace("'", "\\u0027")
@@ -117,8 +109,6 @@ object ViewerProtocol {
                 message.optInt("onPage", 0),
             )
             "linkTapped" -> ViewerEvent.LinkTapped(message.getString("url"))
-            "pageText" -> message.getInt("page").takeIf { it > 0 }
-                ?.let { ViewerEvent.PageText(it, message.getString("text")) }
             "scrollChanged" -> ViewerEvent.ScrollChanged(message.getBoolean("moving"), message.getBoolean("down"))
             "chapterCrossed" -> ViewerEvent.ChapterCrossed
             "jumped" -> jumped(message)
