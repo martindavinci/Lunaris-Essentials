@@ -141,4 +141,9 @@ class ViewerProtocolTest {
         val huge = "A".repeat(ViewerProtocol.MAX_THUMBNAIL_CHARS + 1)
         assertThat(ViewerProtocol.decode("""{"type":"thumbnail","jpeg":"$huge"}""")).isNull()
     }
+
+    @Test fun markSentence_saysWhichOccurrence() {
+        val payload = payloadOf(ViewerProtocol.encode(ViewerCommand.MarkSentence(2, "text", occurrence = 3)))
+        assertThat(payload.getInt("occurrence")).isEqualTo(3)
+    }
 }

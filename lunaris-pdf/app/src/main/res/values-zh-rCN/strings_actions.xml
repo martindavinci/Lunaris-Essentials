@@ -16,4 +16,15 @@
     <string name="read_aloud_unavailable">此手机上没有可用的文字转语音引擎。</string>
     <string name="read_aloud_paused">已暂停在第 %1$d 页</string>
     <string name="read_aloud_sentence">第 %1$d / %2$d 句</string>
+    <string name="read_aloud_voice">语音</string>
+    <string name="read_aloud_speed">语速</string>
+    <string name="read_aloud_network">需要联网</string>
+    <string name="read_aloud_offline">离线</string>
+    <string name="read_aloud_previous_sentence">上一句</string>
+    <string name="read_aloud_next_sentence">下一句</string>
+    <string name="read_aloud_expand">展开控制</string>
+    <string name="read_aloud_collapse">收起控制</string>
+    <string name="read_aloud_voice_selected">已选择</string>
+    <string name="read_aloud_default_voice">默认语音</string>
+    <string name="read_aloud_where">第 %1$d 页 · 第 %2$d / %3$d 句</string>
 </resources>

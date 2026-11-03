@@ -68,6 +68,67 @@ class ReadAloudController(
         if (page > 1) load(page - 1)
     }
 
+    fun nextSentence() {
+        when {
+            sentences.isEmpty() -> Unit
+            current < sentences.lastIndex -> moveTo(current + 1)
+            page < pages -> load(page + 1)
+        }
+    }
+
+    /** From the first sentence of a page, to the last one before it. */
+    fun previousSentence() {
+        when {
+            sentences.isEmpty() -> Unit
+            current > 0 -> moveTo(current - 1)
+            page > 1 -> loadBackFrom(page - 1)
+            else -> moveTo(0)
+        }
+    }
+
+    /** Takes effect at once: the engine only applies it to what it is told to say next. */
+    fun setRate(rate: Float) {
+        engine.setRate(rate)
+        repeatSentence()
+    }
+
+    fun setVoice(voiceId: String?) {
+        engine.setVoice(voiceId)
+        repeatSentence()
+    }
+
+    private fun repeatSentence() {
+        if (state.value is ReadAloudState.Reading && sentences.isNotEmpty()) speak()
+    }
+
+    private fun moveTo(target: Int) {
+        current = target
+        if (state.value is ReadAloudState.Paused) {
+            announce()
+        } else {
+            speak()
+        }
+    }
+
+    private fun loadBackFrom(target: Int) {
+        val start = page
+        silence()
+        loading = scope.launch {
+            for (candidate in target downTo 1) {
+                val found = PageSentences.of(fetchPage(candidate))
+                if (found.isNotEmpty()) {
+                    page = candidate
+                    sentences = found
+                    current = found.lastIndex
+                    mutableState.value = ReadAloudState.Reading(candidate)
+                    speak()
+                    return@launch
+                }
+            }
+            load(start)
+        }
+    }
+
     fun stop() {
         silence()
         mutableSentence.value = null
@@ -110,8 +171,13 @@ class ReadAloudController(
 
     private fun speak() {
         utterance++
-        mutableSentence.value = SpokenSentence(page, sentences[current], current, sentences.size)
+        announce()
         engine.speak(sentences[current], utterance.toString())
+    }
+
+    private fun announce() {
+        val text = sentences[current]
+        mutableSentence.value = SpokenSentence(page, text, current, sentences.size, sentences.take(current).count { it == text })
     }
 
     private fun silence() {

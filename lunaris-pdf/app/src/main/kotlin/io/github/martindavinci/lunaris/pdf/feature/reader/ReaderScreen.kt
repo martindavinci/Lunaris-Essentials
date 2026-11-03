@@ -58,6 +58,7 @@ internal fun ReaderScreen(
 ) {
     var showGoToPage by rememberSaveable { mutableStateOf(false) }
     var showOutline by rememberSaveable { mutableStateOf(false) }
+    var showReadAloud by rememberSaveable { mutableStateOf(false) }
     var topHeight by remember { mutableIntStateOf(0) }
     var bottomHeight by remember { mutableIntStateOf(0) }
     val density = LocalDensity.current
@@ -114,7 +115,13 @@ internal fun ReaderScreen(
         ) {
             when {
                 state.search != null -> ReaderSearchNav(state.search, onAction)
-                readingAloud -> ReadAloudBar(state.readAloud, state.spoken, state.readAloudRate, onAction)
+                readingAloud -> ReadAloudBar(
+                    state = state.readAloud,
+                    spoken = state.spoken,
+                    rate = state.readAloudRate,
+                    onExpand = { showReadAloud = true },
+                    onAction = onAction,
+                )
                 else -> Box(Modifier.onSizeChanged { bottomHeight = it.height }) {
                     ReaderBottomBar(
                         page = state.page,
@@ -133,6 +140,9 @@ internal fun ReaderScreen(
                 bottomSpace = with(density) { if (barsVisible) bottomHeight.toDp() else 0.dp },
                 onAction = onAction,
             )
+        }
+        if (showReadAloud && readingAloud) {
+            ReadAloudPanel(state, onAction, onCollapse = { showReadAloud = false })
         }
         if (showOutline) {
             OutlinePanel(

@@ -1,15 +1,21 @@
 package io.github.martindavinci.lunaris.pdf.tts
 
-/** One sentence being spoken: [index] of [total] on its [page]. */
-data class SpokenSentence(val page: Int, val text: String, val index: Int, val total: Int)
+import kotlin.math.roundToInt
 
-/** The speeds offered, in the order a tap goes through them. */
+/**
+ * One sentence being spoken: [index] of [total] on its [page]. [occurrence] counts the same words earlier
+ * on the page, to tell them apart.
+ */
+data class SpokenSentence(val page: Int, val text: String, val index: Int, val total: Int, val occurrence: Int = 0)
+
+/** The speeds offered: what the slider gives, in tenths. */
 object SpeechRates {
-    private val RATES = listOf(1f, 1.25f, 1.5f, 2f, 2.5f, 3f, 0.75f)
-
     const val NORMAL = 1f
+    const val MIN = 0.5f
+    const val MAX = 4f
+    private const val STEPS_IN_ONE = 10f
 
-    fun next(rate: Float): Float = RATES.getOrElse(RATES.indexOf(rate) + 1) { RATES.first() }.takeIf { rate in RATES } ?: NORMAL
+    fun snap(rate: Float): Float = (rate.coerceIn(MIN, MAX) * STEPS_IN_ONE).roundToInt() / STEPS_IN_ONE
 }
 
 sealed interface ReadAloudState {

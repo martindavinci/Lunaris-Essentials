@@ -59,7 +59,8 @@ since other Lunaris apps publish their releases here too.
 
 **With the document**
 - Print it, share it, save a copy
-- Read it aloud with the text to speech of your phone, following the pages and marking the sentence, at the speed you choose
+- Read it aloud with the text to speech of your phone: the page follows the voice and the sentence is marked, skip by
+  sentence or by page, choose the voice and a speed from 0.5x to 4x, both remembered
 
 **Links are never opened by themselves.** The app shows the whole address first, and warns about one that is not HTTPS,
 uses punycode or non-ASCII characters in its host, points to an IP address, embeds a username or password, or uses an
@@ -79,7 +80,8 @@ keeps neither the title nor the picture. All of this stays on the phone and goes
 backup is turned off for the app and its data is excluded from device-to-device transfer, although Android lets some
 phone makers' migration tools ignore that setting. A link
 you choose to open is handled by your browser, which uses its own network access, not the app's. Reading aloud uses the
-engine you have set up on your phone.
+engine you have set up on your phone. Voices it marks as "requires connection" go through that engine, not the app, and
+are shown as such in the list of voices.
 
 You can check it yourself: the [manifest](app/src/main/AndroidManifest.xml) declares no system permission, and on a
 downloaded APK

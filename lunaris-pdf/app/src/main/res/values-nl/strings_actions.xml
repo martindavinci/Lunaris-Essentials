@@ -16,4 +16,15 @@
     <string name="read_aloud_unavailable">Deze telefoon heeft geen tekst-naar-spraakengine die klaarstaat.</string>
     <string name="read_aloud_paused">Gepauzeerd op pagina %1$d</string>
     <string name="read_aloud_sentence">Zin %1$d van %2$d</string>
+    <string name="read_aloud_voice">Stem</string>
+    <string name="read_aloud_speed">Snelheid</string>
+    <string name="read_aloud_network">verbinding vereist</string>
+    <string name="read_aloud_offline">offline</string>
+    <string name="read_aloud_previous_sentence">Vorige zin</string>
+    <string name="read_aloud_next_sentence">Volgende zin</string>
+    <string name="read_aloud_expand">Bediening uitvouwen</string>
+    <string name="read_aloud_collapse">Bediening invouwen</string>
+    <string name="read_aloud_voice_selected">Geselecteerd</string>
+    <string name="read_aloud_default_voice">Standaardstem</string>
+    <string name="read_aloud_where">Pagina %1$d · Zin %2$d van %3$d</string>
 </resources>

@@ -16,4 +16,15 @@
     <string name="read_aloud_unavailable">この端末には使用できる音声合成エンジンがありません。</string>
     <string name="read_aloud_paused">%1$dページで一時停止中</string>
     <string name="read_aloud_sentence">%1$d / %2$d 文</string>
+    <string name="read_aloud_voice">音声</string>
+    <string name="read_aloud_speed">速度</string>
+    <string name="read_aloud_network">接続が必要</string>
+    <string name="read_aloud_offline">オフライン</string>
+    <string name="read_aloud_previous_sentence">前の文</string>
+    <string name="read_aloud_next_sentence">次の文</string>
+    <string name="read_aloud_expand">コントロールを展開</string>
+    <string name="read_aloud_collapse">コントロールを折りたたむ</string>
+    <string name="read_aloud_voice_selected">選択中</string>
+    <string name="read_aloud_default_voice">デフォルトの音声</string>
+    <string name="read_aloud_where">%1$dページ · %2$d / %3$d 文</string>
 </resources>

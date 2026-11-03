@@ -37,4 +37,15 @@ class SettingsStoreTest {
         assertThat(store.settings.first())
             .isEqualTo(AppSettings(ThemeMode.DARK, nightPages = true, topButton = false))
     }
+
+    @Test fun speech_startsNormal_andIsRemembered() = runBlocking {
+        assertThat(store.speechRate.first()).isEqualTo(1f)
+        assertThat(store.speechVoice.first()).isNull()
+        store.setSpeechRate(2.5f)
+        store.setSpeechVoice("it-it-x-itc-local")
+        assertThat(store.speechRate.first()).isEqualTo(2.5f)
+        assertThat(store.speechVoice.first()).isEqualTo("it-it-x-itc-local")
+        store.setSpeechVoice(null)
+        assertThat(store.speechVoice.first()).isNull()
+    }
 }

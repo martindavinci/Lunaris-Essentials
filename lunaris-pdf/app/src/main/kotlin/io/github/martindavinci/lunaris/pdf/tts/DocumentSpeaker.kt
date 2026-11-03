@@ -20,11 +20,13 @@ class DocumentSpeaker(context: Context) : SpeechEngine {
     private var settled = false
     private var usable = false
     private var pending: Pair<String, String>? = null   // text to segmentId, requested before init
+    private var chosenVoice: String? = null
     private val progress = SegmentProgress { onSegmentDone?.invoke(it) }
 
     private val tts = TextToSpeech(context) { status ->
         settled = true
         usable = status == TextToSpeech.SUCCESS && selectDefaultVoice()
+        if (usable) applyVoice()
         val queued = pending
         pending = null
         when {
@@ -60,9 +62,18 @@ class DocumentSpeaker(context: Context) : SpeechEngine {
 
     override fun setRate(rate: Float) { tts.setSpeechRate(rate) }
 
+    /** Before the engine is ready this only remembers the choice. A voice no longer there means the default. */
     override fun setVoice(voiceId: String?) {
-        val voice = voiceId?.let { id -> tts.voices?.firstOrNull { it.name == id } }
-        if (voice != null) tts.voice = voice
+        chosenVoice = voiceId
+        if (usable) {
+            if (voiceId == null) selectDefaultVoice()
+            applyVoice()
+        }
+    }
+
+    private fun applyVoice() {
+        val id = chosenVoice ?: return
+        tts.voices?.firstOrNull { it.name == id }?.let { tts.voice = it }
     }
 
     override fun voices(): List<VoiceInfo> =

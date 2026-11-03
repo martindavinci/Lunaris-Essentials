@@ -16,4 +16,15 @@
     <string name="read_aloud_unavailable">Ten telefon nie ma gotowego do użycia syntezatora mowy.</string>
     <string name="read_aloud_paused">Wstrzymano na stronie %1$d</string>
     <string name="read_aloud_sentence">Zdanie %1$d z %2$d</string>
+    <string name="read_aloud_voice">Głos</string>
+    <string name="read_aloud_speed">Szybkość</string>
+    <string name="read_aloud_network">wymaga połączenia</string>
+    <string name="read_aloud_offline">offline</string>
+    <string name="read_aloud_previous_sentence">Poprzednie zdanie</string>
+    <string name="read_aloud_next_sentence">Następne zdanie</string>
+    <string name="read_aloud_expand">Rozwiń sterowanie</string>
+    <string name="read_aloud_collapse">Zwiń sterowanie</string>
+    <string name="read_aloud_voice_selected">Wybrany</string>
+    <string name="read_aloud_default_voice">Domyślny głos</string>
+    <string name="read_aloud_where">Strona %1$d · Zdanie %2$d z %3$d</string>
 </resources>

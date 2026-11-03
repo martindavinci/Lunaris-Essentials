@@ -3,6 +3,7 @@ package io.github.martindavinci.lunaris.pdf.feature.reader
 import io.github.martindavinci.lunaris.pdf.tts.ReadAloudState
 import io.github.martindavinci.lunaris.pdf.tts.SpeechRates
 import io.github.martindavinci.lunaris.pdf.tts.SpokenSentence
+import io.github.martindavinci.lunaris.pdf.tts.VoiceInfo
 import io.github.martindavinci.lunaris.pdf.url.UrlSafety
 import io.github.martindavinci.lunaris.pdf.url.UrlWarning
 import io.github.martindavinci.lunaris.pdf.url.withVisibleBidiControls
@@ -34,6 +35,8 @@ data class ReaderUiState(
     val jump: PageJump? = null,
     val spoken: SpokenSentence? = null,
     val readAloudRate: Float = SpeechRates.NORMAL,
+    val readAloudVoice: String? = null,
+    val readAloudVoices: List<VoiceInfo> = emptyList(),
     val chapterTicks: Int = 0,
 ) {
     /** Past the first pages, when the way back is worth a button. Never in the way of going on. */
@@ -113,7 +116,10 @@ sealed interface ReaderAction {
     data object NextReadAloudPage : ReaderAction
     data object PreviousReadAloudPage : ReaderAction
     data object StopReadAloud : ReaderAction
-    data object NextReadAloudRate : ReaderAction
+    data object NextReadAloudSentence : ReaderAction
+    data object PreviousReadAloudSentence : ReaderAction
+    data class SetReadAloudRate(val rate: Float) : ReaderAction
+    data class SetReadAloudVoice(val voiceId: String?) : ReaderAction
     data class SaveCopyTo(val uri: String) : ReaderAction
     data object Share : ReaderAction
     data object ShareStarted : ReaderAction

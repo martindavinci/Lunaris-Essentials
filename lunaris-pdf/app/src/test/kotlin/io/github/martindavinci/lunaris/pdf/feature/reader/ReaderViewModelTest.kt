@@ -9,6 +9,7 @@ import io.github.martindavinci.lunaris.pdf.recents.DocumentThumbnails
 import io.github.martindavinci.lunaris.pdf.recents.ReadingSpot
 import io.github.martindavinci.lunaris.pdf.recents.RecentVisit
 import io.github.martindavinci.lunaris.pdf.session.CurrentDocument
+import io.github.martindavinci.lunaris.pdf.settings.SpeechPreferences
 import io.github.martindavinci.lunaris.pdf.tts.ReadAloudState
 import io.github.martindavinci.lunaris.pdf.tts.SpokenSentence
 import io.github.martindavinci.lunaris.pdf.tts.SpeechEngine
@@ -18,6 +19,7 @@ import io.github.martindavinci.lunaris.pdf.viewer.OutlineItem
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerChannel
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerCommand
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerEvent
+import java.util.Locale
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -59,9 +61,16 @@ class ReaderViewModelTest {
             lastId = utteranceId
         }
         override fun stop() = Unit
-        override fun setRate(rate: Float) = Unit
-        override fun setVoice(voiceId: String?) = Unit
-        override fun voices(): List<VoiceInfo> = emptyList()
+        var rate: Float? = null
+        var lastVoice: String? = null
+        var offered = emptyList<VoiceInfo>()
+        override fun setRate(rate: Float) {
+            this.rate = rate
+        }
+        override fun setVoice(voiceId: String?) {
+            lastVoice = voiceId
+        }
+        override fun voices(): List<VoiceInfo> = offered
         override fun shutdown() {
             shutDown = true
         }
@@ -76,6 +85,17 @@ class ReaderViewModelTest {
             return saveWorks
         }
         override suspend fun prepareShare(from: String, name: String): String? = shareUri
+    }
+
+    private class FakeSpeechPrefs : SpeechPreferences {
+        override val speechRate = MutableStateFlow(1f)
+        override val speechVoice = MutableStateFlow<String?>(null)
+        override suspend fun setSpeechRate(rate: Float) {
+            speechRate.value = rate
+        }
+        override suspend fun setSpeechVoice(voiceId: String?) {
+            speechVoice.value = voiceId
+        }
     }
 
     private class FakeThumbnails : DocumentThumbnails {
@@ -96,6 +116,7 @@ class ReaderViewModelTest {
     private val visits = mutableListOf<RecentVisit>()
     private val spots = mutableListOf<ReadingSpot>()
     private val thumbnails = FakeThumbnails()
+    private val speechPrefs = FakeSpeechPrefs()
     private val positions = mutableListOf<Triple<String, Int, String>>()
     private var enginesMade = 0
     private val engine = FakeSpeech()
@@ -126,6 +147,7 @@ class ReaderViewModelTest {
             spots += spot
         },
         thumbnails = thumbnails,
+        speechPrefs = speechPrefs,
         speechEngine = {
             enginesMade++
             engine
@@ -744,11 +766,67 @@ class ReaderViewModelTest {
         assertThat(channel.sent.last()).isEqualTo(ViewerCommand.ClearMark)
     }
 
-    @Test fun readAloudSpeed_goesRound() {
+    @Test fun savedSpeedAndVoice_applyWhenReadingStarts() {
+        speechPrefs.speechRate.value = 2.5f
+        speechPrefs.speechVoice.value = "it-it-x-itc-local"
         val vm = viewModel()
         ready()
         vm.onAction(ReaderAction.StartReadAloud)
-        vm.onAction(ReaderAction.NextReadAloudRate)
-        assertThat(vm.state.value.readAloudRate).isEqualTo(1.25f)
+        assertThat(engine.rate).isEqualTo(2.5f)
+        assertThat(engine.lastVoice).isEqualTo("it-it-x-itc-local")
+        assertThat(vm.state.value.readAloudRate).isEqualTo(2.5f)
+    }
+
+    @Test fun choosingASpeed_savesItAndAppliesIt() {
+        val vm = viewModel()
+        ready()
+        vm.onAction(ReaderAction.StartReadAloud)
+        emit(ViewerEvent.PageText(1, "One. Two."))
+        vm.onAction(ReaderAction.SetReadAloudRate(3.04f))
+        assertThat(speechPrefs.speechRate.value).isEqualTo(3f)
+        assertThat(engine.rate).isEqualTo(3f)
+        assertThat(engine.spoken).containsExactly("One.", "One.").inOrder()
+        assertThat(vm.state.value.readAloudRate).isEqualTo(3f)
+    }
+
+    @Test fun choosingAVoice_savesItAndAppliesIt() {
+        val vm = viewModel()
+        ready()
+        vm.onAction(ReaderAction.StartReadAloud)
+        emit(ViewerEvent.PageText(1, "One."))
+        vm.onAction(ReaderAction.SetReadAloudVoice("de-de-x-nfh-local"))
+        assertThat(speechPrefs.speechVoice.value).isEqualTo("de-de-x-nfh-local")
+        assertThat(engine.lastVoice).isEqualTo("de-de-x-nfh-local")
+        assertThat(vm.state.value.readAloudVoice).isEqualTo("de-de-x-nfh-local")
+    }
+
+    @Test fun voices_areOfferedOnceTheEngineSpeaks() {
+        engine.offered = listOf(VoiceInfo("it-it-x-itc-local", Locale.ITALY, isNetwork = false))
+        val vm = viewModel()
+        ready()
+        assertThat(vm.state.value.readAloudVoices).isEmpty()
+        vm.onAction(ReaderAction.StartReadAloud)
+        emit(ViewerEvent.PageText(1, "One."))
+        assertThat(vm.state.value.readAloudVoices).isEqualTo(engine.offered)
+    }
+
+    @Test fun skippingBySentence_followsTheVoice() {
+        val vm = viewModel()
+        ready()
+        vm.onAction(ReaderAction.StartReadAloud)
+        emit(ViewerEvent.PageText(1, "One. Two."))
+        vm.onAction(ReaderAction.NextReadAloudSentence)
+        assertThat(engine.spoken.last()).isEqualTo("Two.")
+        vm.onAction(ReaderAction.PreviousReadAloudSentence)
+        assertThat(engine.spoken.last()).isEqualTo("One.")
+    }
+
+    @Test fun readAloud_marksTheRightOneOfARepeatedSentence() {
+        val vm = viewModel()
+        ready()
+        vm.onAction(ReaderAction.StartReadAloud)
+        emit(ViewerEvent.PageText(1, "Again. Again."))
+        vm.onAction(ReaderAction.NextReadAloudSentence)
+        assertThat(channel.sent.last()).isEqualTo(ViewerCommand.MarkSentence(1, "Again.", occurrence = 1))
     }
 }

@@ -21,7 +21,7 @@ sealed interface ViewerCommand {
     /** How much of the top and bottom the app's bars cover, in dp. */
     data class SetBarSpace(val top: Int, val bottom: Int) : ViewerCommand
     data object MakeThumbnail : ViewerCommand
-    data class MarkSentence(val page: Int, val text: String) : ViewerCommand
+    data class MarkSentence(val page: Int, val text: String, val occurrence: Int = 0) : ViewerCommand
     data object ClearMark : ViewerCommand
 }
 
@@ -88,7 +88,7 @@ object ViewerProtocol {
                 .put("top", command.top).put("bottom", command.bottom)
             ViewerCommand.MakeThumbnail -> JSONObject().put("type", "makeThumbnail")
             is ViewerCommand.MarkSentence -> JSONObject().put("type", "markSentence")
-                .put("page", command.page).put("text", command.text)
+                .put("page", command.page).put("text", command.text).put("occurrence", command.occurrence)
             ViewerCommand.ClearMark -> JSONObject().put("type", "clearMark")
         }
         val safe = payload.toString()

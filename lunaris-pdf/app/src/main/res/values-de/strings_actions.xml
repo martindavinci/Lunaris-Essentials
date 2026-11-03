@@ -16,4 +16,15 @@
     <string name="read_aloud_unavailable">Auf diesem Telefon ist keine Sprachausgabe einsatzbereit.</string>
     <string name="read_aloud_paused">Pausiert auf Seite %1$d</string>
     <string name="read_aloud_sentence">Satz %1$d von %2$d</string>
+    <string name="read_aloud_voice">Stimme</string>
+    <string name="read_aloud_speed">Geschwindigkeit</string>
+    <string name="read_aloud_network">Verbindung erforderlich</string>
+    <string name="read_aloud_offline">offline</string>
+    <string name="read_aloud_previous_sentence">Vorheriger Satz</string>
+    <string name="read_aloud_next_sentence">Nächster Satz</string>
+    <string name="read_aloud_expand">Steuerung ausklappen</string>
+    <string name="read_aloud_collapse">Steuerung einklappen</string>
+    <string name="read_aloud_voice_selected">Ausgewählt</string>
+    <string name="read_aloud_default_voice">Standardstimme</string>
+    <string name="read_aloud_where">Seite %1$d · Satz %2$d von %3$d</string>
 </resources>

@@ -16,4 +16,15 @@
     <string name="read_aloud_unavailable">이 휴대전화에는 사용할 수 있는 음성 합성 엔진이 없습니다.</string>
     <string name="read_aloud_paused">%1$d페이지에서 일시 중지됨</string>
     <string name="read_aloud_sentence">%1$d / %2$d 문장</string>
+    <string name="read_aloud_voice">음성</string>
+    <string name="read_aloud_speed">속도</string>
+    <string name="read_aloud_network">연결 필요</string>
+    <string name="read_aloud_offline">오프라인</string>
+    <string name="read_aloud_previous_sentence">이전 문장</string>
+    <string name="read_aloud_next_sentence">다음 문장</string>
+    <string name="read_aloud_expand">컨트롤 펼치기</string>
+    <string name="read_aloud_collapse">컨트롤 접기</string>
+    <string name="read_aloud_voice_selected">선택됨</string>
+    <string name="read_aloud_default_voice">기본 음성</string>
+    <string name="read_aloud_where">%1$d페이지 · %2$d / %3$d 문장</string>
 </resources>

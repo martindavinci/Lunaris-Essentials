@@ -13,9 +13,9 @@ import io.github.martindavinci.lunaris.pdf.recents.RecentsStore
 import io.github.martindavinci.lunaris.pdf.recents.ThumbnailStore
 import io.github.martindavinci.lunaris.pdf.session.CurrentDocument
 import io.github.martindavinci.lunaris.pdf.settings.SettingsStore
+import io.github.martindavinci.lunaris.pdf.settings.SpeechPreferences
 import io.github.martindavinci.lunaris.pdf.tts.ReadAloudState
 import io.github.martindavinci.lunaris.pdf.tts.SpeechEngine
-import io.github.martindavinci.lunaris.pdf.tts.SpokenSentence
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerChannel
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerCommand
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerEngine
@@ -44,6 +44,7 @@ class ReaderViewModel internal constructor(
     touchRecent: suspend (RecentVisit) -> Unit,
     savePosition: suspend (ReadingSpot) -> Unit,
     thumbnails: DocumentThumbnails,
+    speechPrefs: SpeechPreferences,
     speechEngine: () -> SpeechEngine,
     documents: DocumentActions,
 ) : ViewModel() {
@@ -68,6 +69,7 @@ class ReaderViewModel internal constructor(
         recents::touch,
         recents::savePosition,
         thumbnails,
+        settingsStore,
         speechEngine::get,
         documents,
     )
@@ -81,7 +83,7 @@ class ReaderViewModel internal constructor(
     private var pageReady = false
     private var barSpace: ViewerCommand.SetBarSpace? = null
     private val files = ReaderFiles(viewModelScope, documents) { change -> mutableState.update(change) }
-    private val speech = ReaderSpeech(viewModelScope, viewer, speechEngine, ::onReadAloud, ::onSentence)
+    private val speech = ReaderSpeech(viewModelScope, viewer, speechEngine, speechPrefs, { mutableState.update(it) }, ::onReadAloud)
     private val search = ReaderSearch(viewer, { state.value }) { change -> mutableState.update(change) }
     private val jumps = ReaderJumps(viewer, { state.value }) { change -> mutableState.update(change) }
     private val recents = ReaderRecents(viewModelScope, touchRecent, thumbnails) {
@@ -122,7 +124,10 @@ class ReaderViewModel internal constructor(
             ReaderAction.NextReadAloudPage -> speech.next()
             ReaderAction.PreviousReadAloudPage -> speech.previous()
             ReaderAction.StopReadAloud -> speech.stop()
-            ReaderAction.NextReadAloudRate -> mutableState.update { it.copy(readAloudRate = speech.nextRate()) }
+            ReaderAction.NextReadAloudSentence -> speech.nextSentence()
+            ReaderAction.PreviousReadAloudSentence -> speech.previousSentence()
+            is ReaderAction.SetReadAloudRate -> speech.chooseRate(action.rate)
+            is ReaderAction.SetReadAloudVoice -> speech.chooseVoice(action.voiceId)
             is ReaderAction.SaveCopyTo -> state.value.uri?.let { files.saveCopy(it, action.uri) }
             ReaderAction.Share -> state.value.uri?.let { files.share(it, state.value.name) }
             ReaderAction.ShareStarted -> mutableState.update { it.copy(shareUri = null) }
@@ -207,11 +212,6 @@ class ReaderViewModel internal constructor(
         if (value is ReadAloudState.Reading && value.page != state.value.page) {
             viewer.send(ViewerCommand.GoToPage(value.page))
         }
-    }
-
-    private fun onSentence(sentence: SpokenSentence?) {
-        mutableState.update { it.copy(spoken = sentence) }
-        viewer.send(sentence?.let { ViewerCommand.MarkSentence(it.page, it.text) } ?: ViewerCommand.ClearMark)
     }
 
     override fun onCleared() {

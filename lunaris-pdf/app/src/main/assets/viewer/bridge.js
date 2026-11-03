@@ -208,7 +208,7 @@ const scroller = installScroller({
   onChapterCrossed: () => post({ type: 'chapterCrossed' }),
   onJump,
 });
-const sentenceMark = installSentenceMark({ viewer, eventBus });
+const sentenceMark = installSentenceMark({ container, viewer, eventBus, barTop: () => barTop });
 installGestures({
   container,
   viewer,
@@ -238,7 +238,7 @@ globalThis.lunaris = {
         break;
       case 'setBarSpace': setBarSpace(command); break;
       case 'makeThumbnail': if (pdf) makeThumbnail().catch(() => {}); break;
-      case 'markSentence': sentenceMark.mark(command.page, command.text); break;
+      case 'markSentence': sentenceMark.mark(command.page, command.text, command.occurrence); break;
       case 'clearMark': sentenceMark.unmark(); break;
     }
   },
