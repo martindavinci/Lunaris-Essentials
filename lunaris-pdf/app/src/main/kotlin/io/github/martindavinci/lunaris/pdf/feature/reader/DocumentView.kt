@@ -52,7 +52,7 @@ internal fun DocumentView(uri: String, viewer: ViewerChannel, modifier: Modifier
             }
         },
         onRelease = { view ->
-            viewer.detach()
+            viewer.detach(view)
             view.destroy()
         },
     )

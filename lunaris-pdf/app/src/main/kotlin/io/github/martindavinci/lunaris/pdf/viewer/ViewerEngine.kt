@@ -17,7 +17,9 @@ interface ViewerChannel {
 
     /** Only the page's own origin and main frame are heard. False if this WebView is too old for that. */
     fun attach(view: WebView): Boolean
-    fun detach()
+
+    /** Nothing happens if another view has taken its place: a replaced view is released after the new one attaches. */
+    fun detach(view: WebView)
 
     /** Failures the page cannot report itself, such as its renderer dying. */
     fun report(event: ViewerEvent)
@@ -47,8 +49,8 @@ class ViewerEngine @Inject constructor() : ViewerChannel {
         return true
     }
 
-    override fun detach() {
-        webView = null
+    override fun detach(view: WebView) {
+        if (webView === view) webView = null
     }
 
     override fun report(event: ViewerEvent) {

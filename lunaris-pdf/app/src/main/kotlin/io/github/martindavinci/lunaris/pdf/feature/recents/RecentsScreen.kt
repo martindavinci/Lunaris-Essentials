@@ -28,6 +28,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.github.martindavinci.lunaris.pdf.R
 import io.github.martindavinci.lunaris.pdf.recents.RecentEntry
@@ -66,13 +68,15 @@ internal fun RecentsScreen(
             }
         }
         if (state.entries.isNotEmpty()) {
+            // The button keeps its text out of the accessibility tree, as it would while collapsing.
+            val openLabel = stringResource(R.string.recents_open)
             ExtendedFloatingActionButton(
                 onClick = onPickFile,
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 icon = { Icon(Icons.Filled.FolderOpen, contentDescription = null) },
                 text = { Text(stringResource(R.string.recents_open)) },
-                modifier = Modifier.align(Alignment.BottomEnd).systemBarsPadding().padding(FabPadding),
+                modifier = Modifier.semantics { contentDescription = openLabel }.align(Alignment.BottomEnd).systemBarsPadding().padding(FabPadding),
             )
         }
         SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).systemBarsPadding())

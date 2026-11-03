@@ -46,7 +46,7 @@ class ReaderViewModelTest {
             sent += command
         }
         override fun attach(view: WebView) = true
-        override fun detach() = Unit
+        override fun detach(view: WebView) = Unit
         override fun report(event: ViewerEvent) {
             events.tryEmit(event)
         }
