@@ -18,7 +18,7 @@ private val SampleState = ReaderUiState(
 @Composable
 private fun ReaderScreenPreview() {
     LunarisPdfTheme {
-        ReaderScreen(state = SampleState, onAction = {}, onBack = {}, onPrint = {}, onSaveCopy = {}, document = {})
+        ReaderScreen(state = SampleState, onAction = {}, onBack = {}, onPrint = {}, onSaveCopy = {}, onSaveEdits = {}, document = {})
     }
 }
 
@@ -32,6 +32,7 @@ private fun ReaderSearchPreview() {
             onBack = {},
             onPrint = {},
             onSaveCopy = {},
+            onSaveEdits = {},
             document = {},
         )
     }
@@ -47,6 +48,7 @@ private fun ReaderErrorPreview() {
             onBack = {},
             onPrint = {},
             onSaveCopy = {},
+            onSaveEdits = {},
             document = {},
         )
     }

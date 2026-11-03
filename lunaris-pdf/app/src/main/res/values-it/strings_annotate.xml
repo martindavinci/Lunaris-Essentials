@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="annotate_start">Annota</string>
+    <string name="annotate_title">Annotazioni</string>
+    <string name="annotate_done">Fine</string>
+    <string name="annotate_no_changes">Ancora nessuna modifica</string>
+    <string name="annotate_undo">Annulla</string>
+    <string name="annotate_redo">Ripristina</string>
+    <string name="annotate_tool_highlight">Evidenzia</string>
+    <string name="annotate_tool_pen">Penna</string>
+    <string name="annotate_tool_text">Testo</string>
+    <string name="annotate_tool_note">Nota</string>
+    <string name="annotate_tool_sign">Firma</string>
+    <string name="annotate_tool_eraser">Gomma</string>
+    <string name="annotate_highlight_text">Testo</string>
+    <string name="annotate_highlight_free">Libero</string>
+    <string name="annotate_color_yellow">Giallo</string>
+    <string name="annotate_color_green">Verde</string>
+    <string name="annotate_color_blue">Blu</string>
+    <string name="annotate_color_pink">Rosa</string>
+    <string name="annotate_color_black">Nero</string>
+    <string name="annotate_color_red">Rosso</string>
+    <string name="annotate_thin">Sottile</string>
+    <string name="annotate_medium">Medio</string>
+    <string name="annotate_thick">Spesso</string>
+    <string name="annotate_text_smaller">Testo più piccolo</string>
+    <string name="annotate_text_larger">Testo più grande</string>
+    <string name="annotate_delete_selected">Elimina selezione</string>
+    <string name="annotate_hint_scroll">Due dita per scorrere</string>
+    <string name="annotate_hint_no_text">Qui non c\'è testo. Scegli Libero per segnarlo a mano.</string>
+    <string name="annotate_hint_note">Tocca la pagina per aggiungere una nota</string>
+    <string name="annotate_hint_eraser">Tocca un segno per toglierlo</string>
+    <string name="annotate_hint_place_signature">Tocca dove va la firma</string>
+    <string name="annotate_note_title">Nota</string>
+    <string name="annotate_note_placeholder">Scrivi la nota</string>
+    <string name="annotate_save">Salva</string>
+    <string name="annotate_delete">Elimina</string>
+    <string name="annotate_signatures">Firme</string>
+    <string name="annotate_draw_new">Disegna nuova</string>
+    <string name="annotate_signatures_info">Una firma disegnata è un\'immagine sulla pagina. Non è una firma digitale e non prova chi ha firmato.</string>
+    <string name="annotate_signatures_how">Tocca una firma, poi tocca il punto della pagina in cui va.</string>
+    <string name="annotate_signatures_empty">Ancora nessuna firma</string>
+    <string name="annotate_delete_signature">Elimina firma</string>
+    <string name="annotate_signature_item">Firma %1$d</string>
+    <string name="annotate_draw_title">Disegna la tua firma</string>
+    <string name="annotate_draw_clear">Cancella</string>
+    <string name="annotate_draw_cancel">Annulla</string>
+    <string name="annotate_save_title">Salvare le annotazioni?</string>
+    <string name="annotate_signed_title">Questo PDF ha una firma digitale</string>
+    <string name="annotate_signed_body">Salvando le modifiche diventerà non valida. La copia mostrerà le annotazioni, non una firma valida.</string>
+    <string name="annotate_save_copy_detail">Nuovo file · l\'originale resta com\'è</string>
+    <string name="annotate_save_over">Salva sull\'originale</string>
+    <string name="annotate_save_over_detail">Sostituisce il file che hai aperto</string>
+    <string name="annotate_save_over_blocked">Non è possibile: l\'app che ti ha dato questo file non permette di modificarlo.</string>
+    <string name="annotate_discard">Scarta le modifiche</string>
+    <string name="annotate_keep_editing">Continua a modificare</string>
+    <string name="annotate_saving">Salvataggio…</string>
+    <string name="annotate_edits_lost">Android ha chiuso la pagina: le modifiche non salvate sono andate perse.</string>
+    <plurals name="annotate_changes_unsaved">
+        <item quantity="one">%d modifica · non ancora salvata</item>
+        <item quantity="many">%d modifiche · non ancora salvate</item>
+        <item quantity="other">%d modifiche · non ancora salvate</item>
+    </plurals>
+    <plurals name="annotate_changes">
+        <item quantity="one">%d modifica</item>
+        <item quantity="many">%d modifiche</item>
+        <item quantity="other">%d modifiche</item>
+    </plurals>
+    <plurals name="annotate_pages">
+        <item quantity="one">in %1$d pagina</item>
+        <item quantity="many">in %1$d pagine</item>
+        <item quantity="other">in %1$d pagine</item>
+    </plurals>
+    <string name="annotate_summary">%2$s %1$s</string>
+</resources>

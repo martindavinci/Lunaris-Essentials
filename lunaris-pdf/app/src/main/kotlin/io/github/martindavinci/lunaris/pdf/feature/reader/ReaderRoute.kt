@@ -9,6 +9,7 @@ import android.view.HapticFeedbackConstants
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -39,7 +40,17 @@ fun ReaderRoute(onBack: () -> Unit) {
         target?.let { viewModel.onAction(ReaderAction.SaveCopyTo(it.toString())) }
     }
 
+    val saveEdits = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(PDF_MIME)) { target ->
+        target?.let { viewModel.onAction(EditAction.SaveTo(it.toString())) }
+    }
+    val leave = { if (state.hasUnsavedEdits) viewModel.onAction(EditAction.RequestLeave) else onBack() }
+
     BackHandler(enabled = state.search != null) { viewModel.onAction(ReaderAction.CloseSearch) }
+    BackHandler(enabled = state.annotation != null) { viewModel.onAction(EditAction.Finish) }
+    BackHandler(enabled = state.annotation == null && state.hasUnsavedEdits) { viewModel.onAction(EditAction.RequestLeave) }
+    LaunchedEffect(state.closeReader) {
+        if (state.closeReader) onBack()
+    }
 
     val view = LocalView.current
     LaunchedEffect(state.chapterTicks) {
@@ -69,15 +80,10 @@ fun ReaderRoute(onBack: () -> Unit) {
     ReaderScreen(
         state = state,
         onAction = viewModel::onAction,
-        onBack = onBack,
+        onBack = leave,
         onPrint = { viewModel.onAction(EditAction.Print) },
-        onSaveCopy = {
-            try {
-                saveCopy.launch(state.name)
-            } catch (_: ActivityNotFoundException) {
-                Toast.makeText(context, R.string.action_save_failed, Toast.LENGTH_LONG).show()
-            }
-        },
+        onSaveCopy = { createFile(context, saveCopy, state.name) },
+        onSaveEdits = { createFile(context, saveEdits, state.name) },
         document = {
             val uri = state.uri
             if (uri != null && state.error == null) {
@@ -112,6 +118,14 @@ private val ReaderNotice.messageRes: Int
         ReaderNotice.SHARE_FAILED -> R.string.action_share_failed
         ReaderNotice.EDITS_LOST -> R.string.annotate_edits_lost
     }
+
+private fun createFile(context: Context, launcher: ActivityResultLauncher<String>, name: String) {
+    try {
+        launcher.launch(name)
+    } catch (_: ActivityNotFoundException) {
+        Toast.makeText(context, R.string.action_save_failed, Toast.LENGTH_LONG).show()
+    }
+}
 
 private fun print(context: Context, uri: String, state: ReaderUiState) {
     val adapter = PdfPrintAdapter(context.applicationContext.contentResolver, uri.toUri(), state.name, state.pages)

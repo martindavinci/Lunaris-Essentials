@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="annotate_start">Annoter</string>
+    <string name="annotate_title">Annotations</string>
+    <string name="annotate_done">OK</string>
+    <string name="annotate_no_changes">Aucune modification pour l\'instant</string>
+    <string name="annotate_undo">Annuler</string>
+    <string name="annotate_redo">Rétablir</string>
+    <string name="annotate_tool_highlight">Surligner</string>
+    <string name="annotate_tool_pen">Stylo</string>
+    <string name="annotate_tool_text">Texte</string>
+    <string name="annotate_tool_note">Note</string>
+    <string name="annotate_tool_sign">Signer</string>
+    <string name="annotate_tool_eraser">Gomme</string>
+    <string name="annotate_highlight_text">Texte</string>
+    <string name="annotate_highlight_free">Libre</string>
+    <string name="annotate_color_yellow">Jaune</string>
+    <string name="annotate_color_green">Vert</string>
+    <string name="annotate_color_blue">Bleu</string>
+    <string name="annotate_color_pink">Rose</string>
+    <string name="annotate_color_black">Noir</string>
+    <string name="annotate_color_red">Rouge</string>
+    <string name="annotate_thin">Fin</string>
+    <string name="annotate_medium">Moyen</string>
+    <string name="annotate_thick">Épais</string>
+    <string name="annotate_text_smaller">Texte plus petit</string>
+    <string name="annotate_text_larger">Texte plus grand</string>
+    <string name="annotate_delete_selected">Supprimer la sélection</string>
+    <string name="annotate_hint_scroll">Deux doigts pour défiler</string>
+    <string name="annotate_hint_no_text">Pas de texte ici. Choisissez Libre pour marquer à la main.</string>
+    <string name="annotate_hint_note">Touchez la page pour ajouter une note</string>
+    <string name="annotate_hint_eraser">Touchez une marque pour l\'enlever</string>
+    <string name="annotate_hint_place_signature">Touchez l\'endroit de la signature</string>
+    <string name="annotate_note_title">Note</string>
+    <string name="annotate_note_placeholder">Écrivez votre note</string>
+    <string name="annotate_save">Enregistrer</string>
+    <string name="annotate_delete">Supprimer</string>
+    <string name="annotate_signatures">Signatures</string>
+    <string name="annotate_draw_new">Nouvelle signature</string>
+    <string name="annotate_signatures_info">Une signature dessinée est une image sur la page. Ce n\'est pas une signature numérique et elle ne prouve pas qui a signé.</string>
+    <string name="annotate_signatures_how">Touchez une signature, puis l\'endroit de la page où la placer.</string>
+    <string name="annotate_signatures_empty">Aucune signature pour l\'instant</string>
+    <string name="annotate_delete_signature">Supprimer la signature</string>
+    <string name="annotate_signature_item">Signature %1$d</string>
+    <string name="annotate_draw_title">Dessinez votre signature</string>
+    <string name="annotate_draw_clear">Effacer</string>
+    <string name="annotate_draw_cancel">Annuler</string>
+    <string name="annotate_save_title">Enregistrer les annotations ?</string>
+    <string name="annotate_signed_title">Ce PDF a une signature numérique</string>
+    <string name="annotate_signed_body">Enregistrer les modifications la rendra non valide. La copie montrera vos annotations, pas une signature valide.</string>
+    <string name="annotate_save_copy_detail">Nouveau fichier · l\'original reste tel quel</string>
+    <string name="annotate_save_over">Enregistrer sur l\'original</string>
+    <string name="annotate_save_over_detail">Remplace le fichier que vous avez ouvert</string>
+    <string name="annotate_save_over_blocked">Impossible : l\'application qui vous a donné ce fichier ne permet pas de le modifier.</string>
+    <string name="annotate_discard">Abandonner les modifications</string>
+    <string name="annotate_keep_editing">Continuer à modifier</string>
+    <string name="annotate_saving">Enregistrement…</string>
+    <string name="annotate_edits_lost">Android a fermé la page : les modifications non enregistrées sont perdues.</string>
+    <plurals name="annotate_changes_unsaved">
+        <item quantity="one">%d modification · pas encore enregistrée</item>
+        <item quantity="many">%d modifications · pas encore enregistrées</item>
+        <item quantity="other">%d modifications · pas encore enregistrées</item>
+    </plurals>
+    <plurals name="annotate_changes">
+        <item quantity="one">%d modification</item>
+        <item quantity="many">%d modifications</item>
+        <item quantity="other">%d modifications</item>
+    </plurals>
+    <plurals name="annotate_pages">
+        <item quantity="one">sur %1$d page</item>
+        <item quantity="many">sur %1$d pages</item>
+        <item quantity="other">sur %1$d pages</item>
+    </plurals>
+    <string name="annotate_summary">%2$s %1$s</string>
+</resources>

@@ -1,24 +1,22 @@
 package io.github.martindavinci.lunaris.pdf.feature.reader
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.DarkMode
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.UnfoldMore
@@ -42,7 +40,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.martindavinci.lunaris.pdf.R
 
-private const val LONGEST_PAGE_LABEL = 16
 private val TopBarHeight = 64.dp
 private val BottomBarHeight = 72.dp
 private val BarEdgePadding = 12.dp
@@ -50,8 +47,9 @@ private val PillHeight = 44.dp
 private val PillShape = RoundedCornerShape(22.dp)
 private val PillPadding = 16.dp
 private val PillSpacing = 4.dp
+private val PillIconGap = 8.dp
 private val PillIconSize = 18.dp
-private val ActionSize = 48.dp
+private val ActionGap = 8.dp
 
 @Composable
 internal fun ReaderTopBar(
@@ -119,12 +117,11 @@ internal fun ReaderTopBar(
     }
 }
 
-/** The page goes to a page; night pages and contents stay under the thumb. */
+/** The page goes to a page, Annotate into the tools, and the contents stay under the thumb. It rides above a keyboard, for forms. */
 @Composable
 internal fun ReaderBottomBar(
     page: Int,
     pages: Int,
-    night: Boolean,
     onAction: (ReaderAction) -> Unit,
     onGoToPage: () -> Unit,
     onOutline: () -> Unit,
@@ -134,13 +131,15 @@ internal fun ReaderBottomBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .navigationBarsPadding()
+                .imePadding()
                 .heightIn(min = BottomBarHeight)
                 .padding(horizontal = BarEdgePadding),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             PagePill(page, pages, onGoToPage)
             Spacer(Modifier.weight(1f))
-            NightButton(night, onClick = { onAction(ReaderAction.ToggleNight) })
+            AnnotateButton(onClick = { onAction(EditAction.StartAnnotating) })
+            Spacer(Modifier.width(ActionGap))
             IconButton(onClick = onOutline) {
                 Icon(Icons.AutoMirrored.Filled.List, contentDescription = stringResource(R.string.reader_outline))
             }
@@ -150,8 +149,7 @@ internal fun ReaderBottomBar(
 
 @Composable
 private fun PagePill(page: Int, pages: Int, onClick: () -> Unit) {
-    val long = stringResource(R.string.reader_page_of, page, pages)
-    val label = if (long.length > LONGEST_PAGE_LABEL) stringResource(R.string.reader_page_short, page, pages) else long
+    val label = stringResource(R.string.reader_page_short, page, pages)
     Surface(onClick = onClick, shape = PillShape, color = MaterialTheme.colorScheme.surfaceVariant) {
         Row(
             modifier = Modifier.heightIn(min = PillHeight).padding(horizontal = PillPadding),
@@ -165,19 +163,16 @@ private fun PagePill(page: Int, pages: Int, onClick: () -> Unit) {
 }
 
 @Composable
-private fun NightButton(on: Boolean, onClick: () -> Unit) {
+private fun AnnotateButton(onClick: () -> Unit) {
     val colors = MaterialTheme.colorScheme
-    Box(
-        modifier = Modifier
-            .size(ActionSize)
-            .then(if (on) Modifier.background(colors.primaryContainer, CircleShape) else Modifier)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            Icons.Filled.DarkMode,
-            contentDescription = stringResource(R.string.reader_night_pages),
-            tint = if (on) colors.onPrimaryContainer else colors.onSurface,
-        )
+    Surface(onClick = onClick, shape = PillShape, color = colors.primaryContainer, contentColor = colors.onPrimaryContainer) {
+        Row(
+            modifier = Modifier.heightIn(min = PillHeight).padding(horizontal = PillPadding),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(PillIconGap),
+        ) {
+            Icon(Icons.Filled.Edit, contentDescription = null, modifier = Modifier.size(PillIconSize))
+            Text(stringResource(R.string.annotate_start), style = MaterialTheme.typography.labelLarge, maxLines = 1)
+        }
     }
 }

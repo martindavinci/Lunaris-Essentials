@@ -17,6 +17,7 @@ const MAX_OUTLINE_ITEMS = 5000;
 const LINK_SETTLE_MS = 400;
 // The search bars are taller than the usual ones.
 const SEARCH_BAR_EXTRA_PX = 56;
+const FOCUS_MARGIN_PX = 16;
 
 const post = (message) => globalThis.lunarisHost.postMessage(JSON.stringify(message));
 
@@ -56,6 +57,15 @@ const setBarSpace = ({ top, bottom }) => {
   barTop = top;
   document.documentElement.style.setProperty('--bar-top', `${top}px`);
   document.documentElement.style.setProperty('--bar-bottom', `${bottom}px`);
+  keepFocusInSight(bottom);
+};
+
+// The bar rides above the keyboard, and what is being typed into must stay above the bar.
+const keepFocusInSight = (bottom) => {
+  const focused = document.activeElement;
+  if (!focused || focused === document.body) return;
+  const below = focused.getBoundingClientRect().bottom - (innerHeight - bottom);
+  if (below > 0) container.scrollTop += below + FOCUS_MARGIN_PX;
 };
 
 const firstPageDrawn = new Promise((resolve) => eventBus.on('pagerendered', resolve, { once: true }));

@@ -9,9 +9,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -34,6 +36,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.martindavinci.lunaris.pdf.R
+import io.github.martindavinci.lunaris.pdf.feature.reader.annotate.AnnotateLayers
+import io.github.martindavinci.lunaris.pdf.feature.reader.annotate.AnnotateToolBar
+import io.github.martindavinci.lunaris.pdf.feature.reader.annotate.AnnotateTopBar
 import kotlin.math.roundToInt
 
 /** The dark around the pages; the same in viewer.css, so nothing flashes while the page loads. */
@@ -53,6 +58,7 @@ internal fun ReaderScreen(
     onBack: () -> Unit,
     onPrint: () -> Unit,
     onSaveCopy: () -> Unit,
+    onSaveEdits: () -> Unit,
     document: @Composable () -> Unit,
 ) {
     var showGoToPage by rememberSaveable { mutableStateOf(false) }
@@ -60,6 +66,7 @@ internal fun ReaderScreen(
     var topHeight by remember { mutableIntStateOf(0) }
     var bottomHeight by remember { mutableIntStateOf(0) }
     val density = LocalDensity.current
+    val keyboardUp = WindowInsets.ime.getBottom(density) > 0
 
     LaunchedEffect(topHeight, bottomHeight) {
         if (topHeight > 0 && bottomHeight > 0) {
@@ -78,7 +85,7 @@ internal fun ReaderScreen(
         if (state.loading) CircularProgressIndicator(Modifier.align(Alignment.Center))
         state.error?.let { ReaderErrorMessage(onBack, Modifier.align(Alignment.Center)) }
 
-        val barsVisible = (state.chromeVisible || state.search != null) && state.error == null
+        val barsVisible = (state.chromeVisible || state.search != null || keyboardUp) && state.error == null
         AnimatedVisibility(
             visible = barsVisible,
             enter = slideInVertically { -it } + fadeIn(),
@@ -87,6 +94,8 @@ internal fun ReaderScreen(
         ) {
             if (state.search != null) {
                 ReaderSearchBar(state.search, onAction)
+            } else if (state.annotation != null) {
+                Box(Modifier.onSizeChanged { topHeight = it.height }) { AnnotateTopBar(state.edits, onAction) }
             } else {
                 Box(Modifier.onSizeChanged { topHeight = it.height }) {
                     ReaderTopBar(
@@ -112,11 +121,13 @@ internal fun ReaderScreen(
         ) {
             when {
                 state.search != null -> ReaderSearchNav(state.search, onAction)
+                state.annotation != null -> Box(Modifier.onSizeChanged { bottomHeight = it.height }) {
+                    AnnotateToolBar(state.annotation, onAction)
+                }
                 else -> Box(Modifier.onSizeChanged { bottomHeight = it.height }) {
                     ReaderBottomBar(
                         page = state.page,
                         pages = state.pages,
-                        night = state.night,
                         onAction = onAction,
                         onGoToPage = { showGoToPage = true },
                         onOutline = { showOutline = true },
@@ -131,6 +142,7 @@ internal fun ReaderScreen(
                 onAction = onAction,
             )
         }
+        AnnotateLayers(state, with(density) { bottomHeight.toDp() }, onAction, onSaveEdits)
         if (showOutline) {
             OutlinePanel(
                 items = state.outline,

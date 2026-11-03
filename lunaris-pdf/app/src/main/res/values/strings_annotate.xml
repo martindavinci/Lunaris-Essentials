@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="annotate_start">Annotate</string>
+    <string name="annotate_title">Annotating</string>
+    <string name="annotate_done">Done</string>
+    <string name="annotate_no_changes">No changes yet</string>
+    <string name="annotate_undo">Undo</string>
+    <string name="annotate_redo">Redo</string>
+    <string name="annotate_tool_highlight">Highlight</string>
+    <string name="annotate_tool_pen">Pen</string>
+    <string name="annotate_tool_text">Text</string>
+    <string name="annotate_tool_note">Note</string>
+    <string name="annotate_tool_sign">Sign</string>
+    <string name="annotate_tool_eraser">Eraser</string>
+    <string name="annotate_highlight_text">Text</string>
+    <string name="annotate_highlight_free">Free</string>
+    <string name="annotate_color_yellow">Yellow</string>
+    <string name="annotate_color_green">Green</string>
+    <string name="annotate_color_blue">Blue</string>
+    <string name="annotate_color_pink">Pink</string>
+    <string name="annotate_color_black">Black</string>
+    <string name="annotate_color_red">Red</string>
+    <string name="annotate_thin">Thin</string>
+    <string name="annotate_medium">Medium</string>
+    <string name="annotate_thick">Thick</string>
+    <string name="annotate_text_smaller">Smaller text</string>
+    <string name="annotate_text_larger">Larger text</string>
+    <string name="annotate_delete_selected">Delete selected</string>
+    <string name="annotate_hint_scroll">Two fingers to scroll</string>
+    <string name="annotate_hint_no_text">No text here. Choose Free to mark it by hand.</string>
+    <string name="annotate_hint_note">Tap the page to add a note</string>
+    <string name="annotate_hint_eraser">Tap a mark to remove it</string>
+    <string name="annotate_hint_place_signature">Tap where the signature goes</string>
+    <string name="annotate_note_title">Note</string>
+    <string name="annotate_note_placeholder">Write your note</string>
+    <string name="annotate_save">Save</string>
+    <string name="annotate_delete">Delete</string>
+    <string name="annotate_signatures">Signatures</string>
+    <string name="annotate_draw_new">Draw new</string>
+    <string name="annotate_signatures_info">A drawn signature is a picture on the page. It is not a digital signature and does not prove who signed.</string>
+    <string name="annotate_signatures_how">Tap a signature, then tap where it goes on the page.</string>
+    <string name="annotate_signatures_empty">No signatures yet</string>
+    <string name="annotate_delete_signature">Delete signature</string>
+    <string name="annotate_signature_item">Signature %1$d</string>
+    <string name="annotate_draw_title">Draw your signature</string>
+    <string name="annotate_draw_clear">Clear</string>
+    <string name="annotate_draw_cancel">Cancel</string>
+    <string name="annotate_save_title">Save your annotations?</string>
+    <string name="annotate_signed_title">This PDF has a digital signature</string>
+    <string name="annotate_signed_body">Saving changes will make it invalid. The copy will show your annotations, not a valid signature.</string>
+    <string name="annotate_save_copy_detail">New file · the original stays as it is</string>
+    <string name="annotate_save_over">Save over the original</string>
+    <string name="annotate_save_over_detail">Replaces the file you opened</string>
+    <string name="annotate_save_over_blocked">Not possible: the app that gave you this file does not allow changes to it.</string>
+    <string name="annotate_discard">Discard changes</string>
+    <string name="annotate_keep_editing">Keep editing</string>
+    <string name="annotate_saving">Saving…</string>
+    <string name="annotate_edits_lost">Android closed the page: the changes not saved are gone.</string>
+    <plurals name="annotate_changes_unsaved">
+        <item quantity="one">%d change · not saved yet</item>
+        <item quantity="other">%d changes · not saved yet</item>
+    </plurals>
+    <plurals name="annotate_changes">
+        <item quantity="one">%d change</item>
+        <item quantity="other">%d changes</item>
+    </plurals>
+    <plurals name="annotate_pages">
+        <item quantity="one">on %1$d page</item>
+        <item quantity="other">on %1$d pages</item>
+    </plurals>
+    <string name="annotate_summary">%2$s %1$s</string>
+</resources>

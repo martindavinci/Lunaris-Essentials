@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="annotate_start">Annoteren</string>
+    <string name="annotate_title">Annoteren</string>
+    <string name="annotate_done">Klaar</string>
+    <string name="annotate_no_changes">Nog geen wijzigingen</string>
+    <string name="annotate_undo">Ongedaan maken</string>
+    <string name="annotate_redo">Opnieuw</string>
+    <string name="annotate_tool_highlight">Markeren</string>
+    <string name="annotate_tool_pen">Pen</string>
+    <string name="annotate_tool_text">Tekst</string>
+    <string name="annotate_tool_note">Notitie</string>
+    <string name="annotate_tool_sign">Tekenen</string>
+    <string name="annotate_tool_eraser">Gum</string>
+    <string name="annotate_highlight_text">Tekst</string>
+    <string name="annotate_highlight_free">Vrij</string>
+    <string name="annotate_color_yellow">Geel</string>
+    <string name="annotate_color_green">Groen</string>
+    <string name="annotate_color_blue">Blauw</string>
+    <string name="annotate_color_pink">Roze</string>
+    <string name="annotate_color_black">Zwart</string>
+    <string name="annotate_color_red">Rood</string>
+    <string name="annotate_thin">Dun</string>
+    <string name="annotate_medium">Gemiddeld</string>
+    <string name="annotate_thick">Dik</string>
+    <string name="annotate_text_smaller">Kleinere tekst</string>
+    <string name="annotate_text_larger">Grotere tekst</string>
+    <string name="annotate_delete_selected">Selectie verwijderen</string>
+    <string name="annotate_hint_scroll">Twee vingers om te scrollen</string>
+    <string name="annotate_hint_no_text">Hier staat geen tekst. Kies Vrij om met de hand te markeren.</string>
+    <string name="annotate_hint_note">Tik op de pagina om een notitie toe te voegen</string>
+    <string name="annotate_hint_eraser">Tik op een markering om die te verwijderen</string>
+    <string name="annotate_hint_place_signature">Tik waar de handtekening moet komen</string>
+    <string name="annotate_note_title">Notitie</string>
+    <string name="annotate_note_placeholder">Schrijf je notitie</string>
+    <string name="annotate_save">Opslaan</string>
+    <string name="annotate_delete">Verwijderen</string>
+    <string name="annotate_signatures">Handtekeningen</string>
+    <string name="annotate_draw_new">Nieuwe tekenen</string>
+    <string name="annotate_signatures_info">Een getekende handtekening is een afbeelding op de pagina. Het is geen digitale handtekening en bewijst niet wie heeft getekend.</string>
+    <string name="annotate_signatures_how">Tik op een handtekening en daarna op de plek op de pagina.</string>
+    <string name="annotate_signatures_empty">Nog geen handtekeningen</string>
+    <string name="annotate_delete_signature">Handtekening verwijderen</string>
+    <string name="annotate_signature_item">Handtekening %1$d</string>
+    <string name="annotate_draw_title">Teken je handtekening</string>
+    <string name="annotate_draw_clear">Wissen</string>
+    <string name="annotate_draw_cancel">Annuleren</string>
+    <string name="annotate_save_title">Annotaties opslaan?</string>
+    <string name="annotate_signed_title">Deze pdf heeft een digitale handtekening</string>
+    <string name="annotate_signed_body">Door wijzigingen op te slaan wordt die ongeldig. De kopie toont je annotaties, geen geldige handtekening.</string>
+    <string name="annotate_save_copy_detail">Nieuw bestand · het origineel blijft zoals het is</string>
+    <string name="annotate_save_over">Over het origineel opslaan</string>
+    <string name="annotate_save_over_detail">Vervangt het bestand dat je hebt geopend</string>
+    <string name="annotate_save_over_blocked">Niet mogelijk: de app waarvan dit bestand komt, staat geen wijzigingen toe.</string>
+    <string name="annotate_discard">Wijzigingen weggooien</string>
+    <string name="annotate_keep_editing">Verder bewerken</string>
+    <string name="annotate_saving">Opslaan…</string>
+    <string name="annotate_edits_lost">Android heeft de pagina gesloten: niet-opgeslagen wijzigingen zijn verloren.</string>
+    <plurals name="annotate_changes_unsaved">
+        <item quantity="one">%d wijziging · nog niet opgeslagen</item>
+        <item quantity="other">%d wijzigingen · nog niet opgeslagen</item>
+    </plurals>
+    <plurals name="annotate_changes">
+        <item quantity="one">%d wijziging</item>
+        <item quantity="other">%d wijzigingen</item>
+    </plurals>
+    <plurals name="annotate_pages">
+        <item quantity="one">op %1$d pagina</item>
+        <item quantity="other">op %1$d pagina\'s</item>
+    </plurals>
+    <string name="annotate_summary">%2$s %1$s</string>
+</resources>

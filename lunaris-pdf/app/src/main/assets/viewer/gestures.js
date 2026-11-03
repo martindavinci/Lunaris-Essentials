@@ -108,7 +108,11 @@ export function installGestures({ container, viewer, viewerElement, goToPage, on
     }
   }, true);
 
+  let lastWidth = innerWidth;
   addEventListener('resize', () => {
+    // Only the width fits a page: a keyboard coming up must not move it.
+    if (innerWidth === lastWidth) return;
+    lastWidth = innerWidth;
     const scale = String(viewer.currentScaleValue);
     if (!viewer.pagesCount || !FIT_SCALES.includes(scale)) return;
     const page = viewer.currentPageNumber;

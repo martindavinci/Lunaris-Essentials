@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="annotate_start">Anmerken</string>
+    <string name="annotate_title">Anmerkungen</string>
+    <string name="annotate_done">Fertig</string>
+    <string name="annotate_no_changes">Noch keine Änderungen</string>
+    <string name="annotate_undo">Rückgängig</string>
+    <string name="annotate_redo">Wiederholen</string>
+    <string name="annotate_tool_highlight">Markieren</string>
+    <string name="annotate_tool_pen">Stift</string>
+    <string name="annotate_tool_text">Text</string>
+    <string name="annotate_tool_note">Notiz</string>
+    <string name="annotate_tool_sign">Signieren</string>
+    <string name="annotate_tool_eraser">Radierer</string>
+    <string name="annotate_highlight_text">Text</string>
+    <string name="annotate_highlight_free">Frei</string>
+    <string name="annotate_color_yellow">Gelb</string>
+    <string name="annotate_color_green">Grün</string>
+    <string name="annotate_color_blue">Blau</string>
+    <string name="annotate_color_pink">Rosa</string>
+    <string name="annotate_color_black">Schwarz</string>
+    <string name="annotate_color_red">Rot</string>
+    <string name="annotate_thin">Dünn</string>
+    <string name="annotate_medium">Mittel</string>
+    <string name="annotate_thick">Dick</string>
+    <string name="annotate_text_smaller">Kleinerer Text</string>
+    <string name="annotate_text_larger">Größerer Text</string>
+    <string name="annotate_delete_selected">Auswahl löschen</string>
+    <string name="annotate_hint_scroll">Mit zwei Fingern scrollen</string>
+    <string name="annotate_hint_no_text">Hier ist kein Text. Wähle Frei, um von Hand zu markieren.</string>
+    <string name="annotate_hint_note">Tippe auf die Seite, um eine Notiz hinzuzufügen</string>
+    <string name="annotate_hint_eraser">Tippe auf eine Markierung, um sie zu entfernen</string>
+    <string name="annotate_hint_place_signature">Tippe dorthin, wo die Unterschrift hin soll</string>
+    <string name="annotate_note_title">Notiz</string>
+    <string name="annotate_note_placeholder">Notiz schreiben</string>
+    <string name="annotate_save">Speichern</string>
+    <string name="annotate_delete">Löschen</string>
+    <string name="annotate_signatures">Unterschriften</string>
+    <string name="annotate_draw_new">Neu zeichnen</string>
+    <string name="annotate_signatures_info">Eine gezeichnete Unterschrift ist ein Bild auf der Seite. Sie ist keine digitale Signatur und beweist nicht, wer unterschrieben hat.</string>
+    <string name="annotate_signatures_how">Tippe auf eine Unterschrift und dann auf die Stelle auf der Seite.</string>
+    <string name="annotate_signatures_empty">Noch keine Unterschriften</string>
+    <string name="annotate_delete_signature">Unterschrift löschen</string>
+    <string name="annotate_signature_item">Unterschrift %1$d</string>
+    <string name="annotate_draw_title">Zeichne deine Unterschrift</string>
+    <string name="annotate_draw_clear">Leeren</string>
+    <string name="annotate_draw_cancel">Abbrechen</string>
+    <string name="annotate_save_title">Anmerkungen speichern?</string>
+    <string name="annotate_signed_title">Dieses PDF hat eine digitale Signatur</string>
+    <string name="annotate_signed_body">Durch das Speichern wird sie ungültig. Die Kopie zeigt deine Anmerkungen, aber keine gültige Signatur.</string>
+    <string name="annotate_save_copy_detail">Neue Datei · das Original bleibt unverändert</string>
+    <string name="annotate_save_over">Original überschreiben</string>
+    <string name="annotate_save_over_detail">Ersetzt die geöffnete Datei</string>
+    <string name="annotate_save_over_blocked">Nicht möglich: Die App, von der diese Datei stammt, erlaubt keine Änderungen.</string>
+    <string name="annotate_discard">Änderungen verwerfen</string>
+    <string name="annotate_keep_editing">Weiter bearbeiten</string>
+    <string name="annotate_saving">Wird gespeichert…</string>
+    <string name="annotate_edits_lost">Android hat die Seite geschlossen: Nicht gespeicherte Änderungen sind verloren.</string>
+    <plurals name="annotate_changes_unsaved">
+        <item quantity="one">%d Änderung · noch nicht gespeichert</item>
+        <item quantity="other">%d Änderungen · noch nicht gespeichert</item>
+    </plurals>
+    <plurals name="annotate_changes">
+        <item quantity="one">%d Änderung</item>
+        <item quantity="other">%d Änderungen</item>
+    </plurals>
+    <plurals name="annotate_pages">
+        <item quantity="one">auf %1$d Seite</item>
+        <item quantity="other">auf %1$d Seiten</item>
+    </plurals>
+    <string name="annotate_summary">%2$s %1$s</string>
+</resources>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="annotate_start">注釈</string>
+    <string name="annotate_title">注釈を編集中</string>
+    <string name="annotate_done">完了</string>
+    <string name="annotate_no_changes">まだ変更はありません</string>
+    <string name="annotate_undo">元に戻す</string>
+    <string name="annotate_redo">やり直す</string>
+    <string name="annotate_tool_highlight">ハイライト</string>
+    <string name="annotate_tool_pen">ペン</string>
+    <string name="annotate_tool_text">テキスト</string>
+    <string name="annotate_tool_note">メモ</string>
+    <string name="annotate_tool_sign">署名</string>
+    <string name="annotate_tool_eraser">消しゴム</string>
+    <string name="annotate_highlight_text">テキスト</string>
+    <string name="annotate_highlight_free">フリー</string>
+    <string name="annotate_color_yellow">黄</string>
+    <string name="annotate_color_green">緑</string>
+    <string name="annotate_color_blue">青</string>
+    <string name="annotate_color_pink">ピンク</string>
+    <string name="annotate_color_black">黒</string>
+    <string name="annotate_color_red">赤</string>
+    <string name="annotate_thin">細い</string>
+    <string name="annotate_medium">中</string>
+    <string name="annotate_thick">太い</string>
+    <string name="annotate_text_smaller">文字を小さく</string>
+    <string name="annotate_text_larger">文字を大きく</string>
+    <string name="annotate_delete_selected">選択を削除</string>
+    <string name="annotate_hint_scroll">2本指でスクロール</string>
+    <string name="annotate_hint_no_text">ここにテキストはありません。手書きで印を付けるにはフリーを選んでください。</string>
+    <string name="annotate_hint_note">ページをタップしてメモを追加</string>
+    <string name="annotate_hint_eraser">印をタップして削除</string>
+    <string name="annotate_hint_place_signature">署名する場所をタップ</string>
+    <string name="annotate_note_title">メモ</string>
+    <string name="annotate_note_placeholder">メモを入力</string>
+    <string name="annotate_save">保存</string>
+    <string name="annotate_delete">削除</string>
+    <string name="annotate_signatures">署名</string>
+    <string name="annotate_draw_new">新しく描く</string>
+    <string name="annotate_signatures_info">手描きの署名はページ上の画像です。デジタル署名ではなく、署名者を証明するものではありません。</string>
+    <string name="annotate_signatures_how">署名をタップしてから、ページ上の配置場所をタップします。</string>
+    <string name="annotate_signatures_empty">署名はまだありません</string>
+    <string name="annotate_delete_signature">署名を削除</string>
+    <string name="annotate_signature_item">署名 %1$d</string>
+    <string name="annotate_draw_title">署名を描いてください</string>
+    <string name="annotate_draw_clear">消去</string>
+    <string name="annotate_draw_cancel">キャンセル</string>
+    <string name="annotate_save_title">注釈を保存しますか?</string>
+    <string name="annotate_signed_title">この PDF にはデジタル署名があります</string>
+    <string name="annotate_signed_body">変更を保存すると署名は無効になります。コピーには注釈が表示されますが、有効な署名ではなくなります。</string>
+    <string name="annotate_save_copy_detail">新しいファイル · 元のファイルはそのままです</string>
+    <string name="annotate_save_over">元のファイルに上書き</string>
+    <string name="annotate_save_over_detail">開いているファイルを置き換えます</string>
+    <string name="annotate_save_over_blocked">できません:このファイルを渡したアプリが変更を許可していません。</string>
+    <string name="annotate_discard">変更を破棄</string>
+    <string name="annotate_keep_editing">編集を続ける</string>
+    <string name="annotate_saving">保存中…</string>
+    <string name="annotate_edits_lost">Android がページを閉じました。保存していない変更は失われました。</string>
+    <plurals name="annotate_changes_unsaved">
+        <item quantity="other">%d 件の変更 · 未保存</item>
+    </plurals>
+    <plurals name="annotate_changes">
+        <item quantity="other">%d 件の変更</item>
+    </plurals>
+    <plurals name="annotate_pages">
+        <item quantity="other">%1$d ページ</item>
+    </plurals>
+    <string name="annotate_summary" formatted="true">%1$s: %2$s</string>
+</resources>
