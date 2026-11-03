@@ -6,6 +6,11 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.martindavinci.lunaris.pdf.actions.DocumentActions
 import io.github.martindavinci.lunaris.pdf.actions.DocumentCopier
+import io.github.martindavinci.lunaris.pdf.annotate.AnnotationHints
+import io.github.martindavinci.lunaris.pdf.annotate.EditedDocuments
+import io.github.martindavinci.lunaris.pdf.annotate.EditedFileStore
+import io.github.martindavinci.lunaris.pdf.annotate.SignatureLibrary
+import io.github.martindavinci.lunaris.pdf.annotate.SignatureStore
 import io.github.martindavinci.lunaris.pdf.recents.DocumentThumbnails
 import io.github.martindavinci.lunaris.pdf.recents.ReadingSpot
 import io.github.martindavinci.lunaris.pdf.recents.RecentVisit
@@ -41,6 +46,9 @@ class ReaderViewModel internal constructor(
     savePosition: suspend (ReadingSpot) -> Unit,
     thumbnails: DocumentThumbnails,
     documents: DocumentActions,
+    editedFiles: EditedDocuments,
+    signatures: SignatureLibrary,
+    hints: AnnotationHints,
 ) : ViewModel() {
 
     @Inject
@@ -52,6 +60,8 @@ class ReaderViewModel internal constructor(
         recents: RecentsStore,
         thumbnails: ThumbnailStore,
         documents: DocumentCopier,
+        editedFiles: EditedFileStore,
+        signatures: SignatureStore,
     ) : this(
         engine,
         currentDocument,
@@ -63,6 +73,9 @@ class ReaderViewModel internal constructor(
         recents::savePosition,
         thumbnails,
         documents,
+        editedFiles,
+        signatures,
+        settingsStore,
     )
 
     private val position = ReaderPosition(savedState, viewModelScope, savePosition, SAVE_POSITION_DELAY_MILLIS)
@@ -73,8 +86,11 @@ class ReaderViewModel internal constructor(
     private var password: String? = null
     private var pageReady = false
     private var barSpace: ViewerCommand.SetBarSpace? = null
-    private val files = ReaderFiles(viewModelScope, documents) { change -> mutableState.update(change) }
+    private val files = ReaderFiles(documents) { change -> mutableState.update(change) }
     private val search = ReaderSearch(viewer, { state.value }) { change -> mutableState.update(change) }
+    private val edits = ReaderEdits(viewModelScope, viewer, editedFiles, documents, signatures, hints, { state.value }) { change ->
+        mutableState.update(change)
+    }
     private val jumps = ReaderJumps(viewer, { state.value }) { change -> mutableState.update(change) }
     private val recents = ReaderRecents(viewModelScope, touchRecent, thumbnails) {
         viewer.send(ViewerCommand.MakeThumbnail)
@@ -108,8 +124,9 @@ class ReaderViewModel internal constructor(
             is ReaderAction.SubmitPassword -> submitPassword(action.password)
             ReaderAction.DismissLink -> mutableState.update { it.copy(pendingLink = null) }
             ReaderAction.ToggleNight -> viewModelScope.launch { setNightPages(!state.value.night) }
-            is ReaderAction.SaveCopyTo -> state.value.uri?.let { files.saveCopy(it, action.uri) }
-            ReaderAction.Share -> state.value.uri?.let { files.share(it, state.value.name) }
+            is ReaderAction.SaveCopyTo -> edits.withCurrentFile { files.saveCopy(it, action.uri) }
+            ReaderAction.Share -> edits.withCurrentFile { files.share(it, state.value.name) }
+            is EditAction -> edits.onAction(action)
             ReaderAction.ShareStarted -> mutableState.update { it.copy(shareUri = null) }
             ReaderAction.NoticeShown -> mutableState.update { it.copy(notice = null) }
         }
@@ -127,6 +144,7 @@ class ReaderViewModel internal constructor(
                 mutableState.update { it.copy(loading = false, error = ReaderError.CANNOT_OPEN) }
             }
             ViewerEvent.RendererKilled -> {
+                edits.onPageLost()
                 mutableState.update { it.copy(loading = true, viewRevision = it.viewRevision + 1) }
             }
             is ViewerEvent.FindResult -> search.onResult(event)
@@ -136,8 +154,9 @@ class ReaderViewModel internal constructor(
             ViewerEvent.ChapterCrossed -> mutableState.update { it.copy(chapterTicks = it.chapterTicks + 1) }
             is ViewerEvent.Thumbnail -> if (password == null) recents.onThumbnail(state.value.uri, event.jpeg)
             ViewerEvent.Tapped -> mutableState.update {
-                if (it.search != null) it else it.copy(chromeVisible = !it.chromeVisible)
+                if (it.search != null || it.annotation != null) it else it.copy(chromeVisible = !it.chromeVisible)
             }
+            is ViewerEvent.Editing -> edits.onEvent(event)
         }
     }
 

@@ -4,6 +4,13 @@ import android.webkit.WebView
 import androidx.lifecycle.SavedStateHandle
 import com.google.common.truth.Truth.assertThat
 import io.github.martindavinci.lunaris.pdf.actions.DocumentActions
+import io.github.martindavinci.lunaris.pdf.annotate.AnnotationHints
+import io.github.martindavinci.lunaris.pdf.annotate.AnnotationPalette
+import io.github.martindavinci.lunaris.pdf.annotate.AnnotationOptions
+import io.github.martindavinci.lunaris.pdf.annotate.AnnotationTool
+import io.github.martindavinci.lunaris.pdf.annotate.EditedDocuments
+import io.github.martindavinci.lunaris.pdf.annotate.SavedSignature
+import io.github.martindavinci.lunaris.pdf.annotate.SignatureLibrary
 import io.github.martindavinci.lunaris.pdf.model.OpenDocument
 import io.github.martindavinci.lunaris.pdf.recents.DocumentThumbnails
 import io.github.martindavinci.lunaris.pdf.recents.ReadingSpot
@@ -11,6 +18,7 @@ import io.github.martindavinci.lunaris.pdf.recents.RecentVisit
 import io.github.martindavinci.lunaris.pdf.session.CurrentDocument
 import io.github.martindavinci.lunaris.pdf.url.UrlWarning
 import io.github.martindavinci.lunaris.pdf.viewer.OutlineItem
+import io.github.martindavinci.lunaris.pdf.viewer.ToolSpec
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerChannel
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerCommand
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerEvent
@@ -52,7 +60,45 @@ class ReaderViewModelTest {
             saved += from to to
             return saveWorks
         }
-        override suspend fun prepareShare(from: String, name: String): String? = shareUri
+        val shared = mutableListOf<String>()
+        override suspend fun prepareShare(from: String, name: String): String? {
+            shared += from
+            return shareUri
+        }
+    }
+
+    private class FakeEdited : EditedDocuments {
+        var began = 0
+        val pieces = mutableListOf<Pair<Int, Int>>()
+        var result: String? = "file:///cache/edited.pdf"
+        var acceptPieces = true
+        override suspend fun begin() {
+            began++
+        }
+        override suspend fun append(index: Int, bytes: ByteArray): Boolean {
+            pieces += index to bytes.size
+            return acceptPieces
+        }
+        override suspend fun finish(size: Long): String? = result
+    }
+
+    private class FakeSignatures : SignatureLibrary {
+        val saved = mutableListOf<SavedSignature>()
+        override suspend fun list(): List<SavedSignature> = saved.toList()
+        override suspend fun add(png: ByteArray) {
+            saved += SavedSignature("s${saved.size}", "/s${saved.size}.png")
+        }
+        override suspend fun remove(id: String) {
+            saved.removeAll { it.id == id }
+        }
+        override suspend fun read(id: String): ByteArray? = if (saved.any { it.id == id }) byteArrayOf(1, 2, 3) else null
+    }
+
+    private class FakeHints : AnnotationHints {
+        override val shown = MutableStateFlow(0)
+        override suspend fun countOne() {
+            shown.value += 1
+        }
     }
 
     private class FakeThumbnails : DocumentThumbnails {
@@ -73,6 +119,9 @@ class ReaderViewModelTest {
     private val visits = mutableListOf<RecentVisit>()
     private val spots = mutableListOf<ReadingSpot>()
     private val thumbnails = FakeThumbnails()
+    private val edited = FakeEdited()
+    private val signatures = FakeSignatures()
+    private val hints = FakeHints()
     private val positions = mutableListOf<Triple<String, Int, String>>()
     private val documents = FakeDocuments()
     private lateinit var dispatcher: TestDispatcher
@@ -101,6 +150,9 @@ class ReaderViewModelTest {
             spots += spot
         },
         thumbnails = thumbnails,
+        editedFiles = edited,
+        signatures = signatures,
+        hints = hints,
         documents = documents,
     )
 
@@ -657,4 +709,360 @@ class ReaderViewModelTest {
         assertThat(vm.state.value.chapterTicks).isEqualTo(before + 1)
     }
 
+    private fun editing(changes: Int = 2): ReaderViewModel {
+        val vm = viewModel()
+        ready()
+        vm.onAction(EditAction.StartAnnotating)
+        emit(ViewerEvent.EditsChanged(changes, 1, canUndo = true, canRedo = false))
+        return vm
+    }
+
+    private fun lastTool() = channel.sent.filterIsInstance<ViewerCommand.SetTool>().last().spec
+
+    private fun exportSucceeds() {
+        emit(ViewerEvent.ExportChunk(0, 1, "AQID"))
+        emit(ViewerEvent.ExportDone(3))
+    }
+
+    @Test fun startingToAnnotate_choosesTheHighlighter_andShowsTheBars() {
+        val vm = viewModel()
+        ready()
+        emit(ViewerEvent.Tapped)
+        vm.onAction(EditAction.StartAnnotating)
+        assertThat(vm.state.value.annotation?.tool).isEqualTo(AnnotationTool.HIGHLIGHT)
+        assertThat(vm.state.value.chromeVisible).isTrue()
+        assertThat(lastTool()?.tool).isEqualTo("highlight")
+    }
+
+    @Test fun whileAnnotating_aTapDoesNotHideTheBars_andFloatingButtonsLeave() {
+        val vm = viewModel()
+        ready()
+        emit(ViewerEvent.PageChanged(5, "page-width"))
+        vm.onAction(EditAction.StartAnnotating)
+        emit(ViewerEvent.Tapped)
+        assertThat(vm.state.value.chromeVisible).isTrue()
+        assertThat(vm.state.value.showTopButton).isFalse()
+    }
+
+    @Test fun choosingAToolAndItsOptions_reachesThePage() {
+        val vm = editing()
+        vm.onAction(EditAction.ChooseTool(AnnotationTool.PEN))
+        assertThat(lastTool()?.tool).isEqualTo("pen")
+        vm.onAction(EditAction.ChooseColor(AnnotationPalette.PEN_COLORS.last()))
+        assertThat(lastTool()).isEqualTo(ToolSpec("pen", AnnotationPalette.PEN_COLORS.last(), AnnotationOptions().penThickness))
+        vm.onAction(EditAction.ChoosePenThickness(AnnotationPalette.PEN_THICKNESSES.last()))
+        assertThat(lastTool()?.size).isEqualTo(AnnotationPalette.PEN_THICKNESSES.last())
+        vm.onAction(EditAction.ChooseTool(AnnotationTool.HIGHLIGHT))
+        vm.onAction(EditAction.SetHighlightFree(true))
+        assertThat(lastTool()?.tool).isEqualTo("highlightFree")
+    }
+
+    @Test fun eachTool_remembersItsColor() {
+        val vm = editing()
+        vm.onAction(EditAction.ChooseColor(AnnotationPalette.HIGHLIGHT_COLORS.last()))
+        vm.onAction(EditAction.ChooseTool(AnnotationTool.PEN))
+        vm.onAction(EditAction.ChooseColor(AnnotationPalette.PEN_COLORS.last()))
+        vm.onAction(EditAction.ChooseTool(AnnotationTool.HIGHLIGHT))
+        assertThat(lastTool()?.color).isEqualTo(AnnotationPalette.HIGHLIGHT_COLORS.last())
+    }
+
+    @Test fun undoAndRedo_reachThePage_andTheirStateComesBack() {
+        val vm = editing()
+        assertThat(vm.state.value.edits.canUndo).isTrue()
+        vm.onAction(EditAction.Undo)
+        vm.onAction(EditAction.Redo)
+        assertThat(channel.sent).containsAtLeast(ViewerCommand.UndoEdit, ViewerCommand.RedoEdit)
+    }
+
+    @Test fun theScrollHint_showsThreeTimesOnly() {
+        val vm = editing()
+        repeat(3) {
+            vm.onAction(EditAction.ChooseTool(AnnotationTool.PEN))
+            assertThat(vm.state.value.annotation?.showScrollHint).isTrue()
+            vm.onAction(EditAction.HideScrollHint)
+            vm.onAction(EditAction.ChooseTool(AnnotationTool.TEXT))
+        }
+        vm.onAction(EditAction.ChooseTool(AnnotationTool.PEN))
+        assertThat(vm.state.value.annotation?.showScrollHint).isFalse()
+    }
+
+    @Test fun done_withNoChanges_justLeavesTheMode() {
+        val vm = editing(changes = 0)
+        vm.onAction(EditAction.Finish)
+        assertThat(channel.sent.last()).isEqualTo(ViewerCommand.SettleEdits)
+        emit(ViewerEvent.EditsSettled(0, 0, signed = false))
+        assertThat(vm.state.value.annotation).isNull()
+        assertThat(vm.state.value.saveSheet).isNull()
+        assertThat(lastTool()).isNull()
+    }
+
+    @Test fun done_withChanges_asksWhatToDo_andSaysIfSigned() {
+        val vm = editing()
+        vm.onAction(EditAction.Finish)
+        emit(ViewerEvent.EditsSettled(5, 2, signed = true))
+        assertThat(vm.state.value.saveSheet).isEqualTo(SaveSheet(changes = 5, pages = 2, signed = true, leaveAfter = false))
+    }
+
+    @Test fun keepEditing_putsTheToolBack() {
+        val vm = editing()
+        vm.onAction(EditAction.ChooseTool(AnnotationTool.PEN))
+        vm.onAction(EditAction.Finish)
+        emit(ViewerEvent.EditsSettled(2, 1, signed = false))
+        channel.sent.clear()
+        vm.onAction(EditAction.KeepEditing)
+        assertThat(vm.state.value.saveSheet).isNull()
+        assertThat(lastTool()?.tool).isEqualTo("pen")
+    }
+
+    @Test fun leaving_withAFormFilled_asksToo() {
+        val vm = viewModel()
+        ready()
+        emit(ViewerEvent.EditsChanged(1, 0, canUndo = false, canRedo = false))
+        assertThat(vm.state.value.hasUnsavedEdits).isTrue()
+        vm.onAction(EditAction.RequestLeave)
+        emit(ViewerEvent.EditsSettled(1, 0, signed = false))
+        assertThat(vm.state.value.saveSheet?.leaveAfter).isTrue()
+    }
+
+    @Test fun discarding_reloadsTheOriginal() {
+        val vm = editing()
+        vm.onAction(EditAction.Finish)
+        emit(ViewerEvent.EditsSettled(2, 1, signed = false))
+        val revision = vm.state.value.viewRevision
+        vm.onAction(EditAction.Discard)
+        assertThat(vm.state.value.viewRevision).isEqualTo(revision + 1)
+        assertThat(vm.state.value.annotation).isNull()
+        assertThat(vm.state.value.hasUnsavedEdits).isFalse()
+        assertThat(vm.state.value.closeReader).isFalse()
+    }
+
+    @Test fun discardingOnTheWayOut_closesWithoutReloading() {
+        val vm = editing()
+        vm.onAction(EditAction.RequestLeave)
+        emit(ViewerEvent.EditsSettled(2, 1, signed = false))
+        val revision = vm.state.value.viewRevision
+        vm.onAction(EditAction.Discard)
+        assertThat(vm.state.value.closeReader).isTrue()
+        assertThat(vm.state.value.viewRevision).isEqualTo(revision)
+    }
+
+    @Test fun savingACopy_exportsAcknowledgesAndCopies() {
+        val vm = editing()
+        vm.onAction(EditAction.Finish)
+        emit(ViewerEvent.EditsSettled(2, 1, signed = false))
+        vm.onAction(EditAction.SaveTo("content://x/copy.pdf"))
+        assertThat(edited.began).isEqualTo(1)
+        assertThat(channel.sent.last()).isEqualTo(ViewerCommand.ExportDocument)
+        assertThat(vm.state.value.exportProgress).isEqualTo(0f)
+        emit(ViewerEvent.ExportChunk(0, 2, "AQID"))
+        assertThat(channel.sent.last()).isEqualTo(ViewerCommand.ExportAck(0))
+        assertThat(vm.state.value.exportProgress).isEqualTo(0.5f)
+        emit(ViewerEvent.ExportChunk(1, 2, "BA=="))
+        emit(ViewerEvent.ExportDone(4))
+        assertThat(edited.pieces).containsExactly(0 to 3, 1 to 1).inOrder()
+        assertThat(documents.saved).containsExactly("file:///cache/edited.pdf" to "content://x/copy.pdf")
+        assertThat(channel.sent).contains(ViewerCommand.MarkSaved)
+        assertThat(vm.state.value.notice).isEqualTo(ReaderNotice.SAVED)
+        assertThat(vm.state.value.annotation).isNull()
+        assertThat(vm.state.value.saveSheet).isNull()
+        assertThat(vm.state.value.exportProgress).isNull()
+        assertThat(vm.state.value.hasUnsavedEdits).isFalse()
+    }
+
+    @Test fun savedOnTheWayOut_closes() {
+        val vm = editing()
+        vm.onAction(EditAction.RequestLeave)
+        emit(ViewerEvent.EditsSettled(2, 1, signed = false))
+        vm.onAction(EditAction.SaveTo("content://x/copy.pdf"))
+        exportSucceeds()
+        assertThat(vm.state.value.closeReader).isTrue()
+    }
+
+    @Test fun aFailedExport_saysSoAndLosesNothing() {
+        val vm = editing()
+        vm.onAction(EditAction.Finish)
+        emit(ViewerEvent.EditsSettled(2, 1, signed = false))
+        vm.onAction(EditAction.SaveTo("content://x/copy.pdf"))
+        emit(ViewerEvent.ExportFailed)
+        assertThat(vm.state.value.notice).isEqualTo(ReaderNotice.SAVE_FAILED)
+        assertThat(vm.state.value.saveSheet).isNotNull()
+        assertThat(vm.state.value.exportProgress).isNull()
+        assertThat(vm.state.value.hasUnsavedEdits).isTrue()
+        assertThat(documents.saved).isEmpty()
+    }
+
+    @Test fun aPieceThatCannotBeWritten_failsTheSave_withoutAnAck() {
+        edited.acceptPieces = false
+        val vm = editing()
+        vm.onAction(EditAction.Finish)
+        emit(ViewerEvent.EditsSettled(2, 1, signed = false))
+        vm.onAction(EditAction.SaveTo("content://x/copy.pdf"))
+        emit(ViewerEvent.ExportChunk(0, 2, "AQID"))
+        assertThat(channel.sent).doesNotContain(ViewerCommand.ExportAck(0))
+        assertThat(vm.state.value.notice).isEqualTo(ReaderNotice.SAVE_FAILED)
+    }
+
+    @Test fun aPieceThatIsNotBase64_failsTheSave() {
+        val vm = editing()
+        vm.onAction(EditAction.Finish)
+        emit(ViewerEvent.EditsSettled(2, 1, signed = false))
+        vm.onAction(EditAction.SaveTo("content://x/copy.pdf"))
+        emit(ViewerEvent.ExportChunk(0, 1, "not base64!"))
+        assertThat(vm.state.value.notice).isEqualTo(ReaderNotice.SAVE_FAILED)
+    }
+
+    @Test fun aChunkNobodyAskedFor_isIgnored() {
+        val vm = editing()
+        emit(ViewerEvent.ExportChunk(0, 1, "AQID"))
+        assertThat(edited.pieces).isEmpty()
+        assertThat(vm.state.value.notice).isNull()
+    }
+
+    @Test fun saveOverTheOriginal_needsPermission() {
+        current.set(OpenDocument("content://x/a.pdf", "a.pdf", canWrite = false))
+        val vm = editing()
+        assertThat(vm.state.value.canWrite).isFalse()
+        vm.onAction(EditAction.SaveOver)
+        assertThat(edited.began).isEqualTo(0)
+    }
+
+    @Test fun saveOverTheOriginal_writesItAndReloads() {
+        current.set(OpenDocument("content://x/a.pdf", "a.pdf", canWrite = true))
+        val vm = editing()
+        vm.onAction(EditAction.Finish)
+        emit(ViewerEvent.EditsSettled(2, 1, signed = false))
+        val revision = vm.state.value.viewRevision
+        vm.onAction(EditAction.SaveOver)
+        exportSucceeds()
+        assertThat(documents.saved).containsExactly("file:///cache/edited.pdf" to "content://x/a.pdf")
+        assertThat(vm.state.value.viewRevision).isEqualTo(revision + 1)
+        assertThat(vm.state.value.notice).isEqualTo(ReaderNotice.SAVED)
+    }
+
+    @Test fun aFailedWrite_keepsTheSheetAndTheEdits() {
+        documents.saveWorks = false
+        val vm = editing()
+        vm.onAction(EditAction.Finish)
+        emit(ViewerEvent.EditsSettled(2, 1, signed = false))
+        vm.onAction(EditAction.SaveTo("content://x/copy.pdf"))
+        exportSucceeds()
+        assertThat(vm.state.value.notice).isEqualTo(ReaderNotice.SAVE_FAILED)
+        assertThat(vm.state.value.saveSheet).isNotNull()
+        assertThat(vm.state.value.hasUnsavedEdits).isTrue()
+    }
+
+    @Test fun theSystemKillingThePage_saysTheEditsAreGone() {
+        val vm = editing()
+        emit(ViewerEvent.RendererKilled)
+        assertThat(vm.state.value.notice).isEqualTo(ReaderNotice.EDITS_LOST)
+        assertThat(vm.state.value.annotation).isNull()
+        assertThat(vm.state.value.hasUnsavedEdits).isFalse()
+    }
+
+    @Test fun theSystemKillingThePageDuringASave_failsIt() {
+        val vm = editing()
+        vm.onAction(EditAction.Finish)
+        emit(ViewerEvent.EditsSettled(2, 1, signed = false))
+        vm.onAction(EditAction.SaveTo("content://x/copy.pdf"))
+        emit(ViewerEvent.RendererKilled)
+        assertThat(vm.state.value.exportProgress).isNull()
+        assertThat(documents.saved).isEmpty()
+    }
+
+    @Test fun sharing_withEdits_sendsTheEditedFile() {
+        val vm = editing()
+        vm.onAction(ReaderAction.Share)
+        exportSucceeds()
+        assertThat(documents.shared).containsExactly("file:///cache/edited.pdf")
+        assertThat(vm.state.value.shareUri).isNotNull()
+    }
+
+    @Test fun sharing_withoutEdits_sendsTheFile() {
+        val vm = viewModel()
+        ready()
+        vm.onAction(ReaderAction.Share)
+        assertThat(edited.began).isEqualTo(0)
+        assertThat(documents.shared).containsExactly("content://x/a.pdf")
+    }
+
+    @Test fun savingACopy_withEdits_savesThemAndKeepsThemShown() {
+        val vm = editing()
+        vm.onAction(ReaderAction.SaveCopyTo("content://x/copy.pdf"))
+        exportSucceeds()
+        assertThat(documents.saved).containsExactly("file:///cache/edited.pdf" to "content://x/copy.pdf")
+    }
+
+    @Test fun printing_withEdits_printsTheEditedFile() {
+        val vm = editing()
+        vm.onAction(EditAction.Print)
+        exportSucceeds()
+        assertThat(vm.state.value.printUri).isEqualTo("file:///cache/edited.pdf")
+        vm.onAction(EditAction.PrintStarted)
+        assertThat(vm.state.value.printUri).isNull()
+    }
+
+    @Test fun printing_withoutEdits_printsTheFile() {
+        val vm = viewModel()
+        ready()
+        vm.onAction(EditAction.Print)
+        assertThat(vm.state.value.printUri).isEqualTo("content://x/a.pdf")
+    }
+
+    @Test fun aNewNote_leftEmpty_goesAway() {
+        val vm = editing()
+        vm.onAction(EditAction.ChooseTool(AnnotationTool.NOTE))
+        emit(ViewerEvent.NoteRequested("n1", ""))
+        assertThat(vm.state.value.annotation?.note).isEqualTo(NoteDraft("n1", ""))
+        vm.onAction(EditAction.DismissNote)
+        assertThat(channel.sent.last()).isEqualTo(ViewerCommand.RemoveNote("n1"))
+        assertThat(vm.state.value.annotation?.note).isNull()
+    }
+
+    @Test fun aNoteWithText_staysWhenDismissed_andSaves() {
+        val vm = editing()
+        emit(ViewerEvent.NoteRequested("n1", "old"))
+        channel.sent.clear()
+        vm.onAction(EditAction.DismissNote)
+        assertThat(channel.sent).isEmpty()
+        emit(ViewerEvent.NoteRequested("n1", "old"))
+        vm.onAction(EditAction.SaveNote("n1", "new"))
+        assertThat(channel.sent.last()).isEqualTo(ViewerCommand.SetNoteText("n1", "new"))
+        assertThat(vm.state.value.annotation?.note).isNull()
+    }
+
+    @Test fun savingANoteEmpty_removesIt() {
+        val vm = editing()
+        emit(ViewerEvent.NoteRequested("n1", "old"))
+        vm.onAction(EditAction.SaveNote("n1", "   "))
+        assertThat(channel.sent.last()).isEqualTo(ViewerCommand.RemoveNote("n1"))
+    }
+
+    @Test fun theSignTool_opensTheSignatures_andChoosingOneArmsIt() {
+        val vm = editing()
+        vm.onAction(EditAction.AddSignature(byteArrayOf(1)))
+        vm.onAction(EditAction.ChooseTool(AnnotationTool.SIGN))
+        val listed = checkNotNull(vm.state.value.annotation?.signatures)
+        assertThat(listed).hasSize(1)
+        vm.onAction(EditAction.ChooseSignature(listed.single().id))
+        assertThat(channel.sent.last()).isEqualTo(ViewerCommand.ArmSignature("AQID"))
+        assertThat(vm.state.value.annotation?.signatures).isNull()
+        assertThat(vm.state.value.annotation?.placingSignature).isTrue()
+        emit(ViewerEvent.SignaturePlaced)
+        assertThat(vm.state.value.annotation?.placingSignature).isFalse()
+    }
+
+    @Test fun removingASignature_refreshesTheList() {
+        val vm = editing()
+        vm.onAction(EditAction.AddSignature(byteArrayOf(1)))
+        vm.onAction(EditAction.ChooseTool(AnnotationTool.SIGN))
+        vm.onAction(EditAction.RemoveSignature("s0"))
+        assertThat(vm.state.value.annotation?.signatures).isEmpty()
+    }
+
+    @Test fun noTextUnderTheFinger_hintsAtTheFreeHighlighter() {
+        val vm = editing()
+        val before = vm.state.value.annotation?.noTextHints
+        emit(ViewerEvent.NoTextHere)
+        assertThat(vm.state.value.annotation?.noTextHints).isEqualTo(checkNotNull(before) + 1)
+    }
 }

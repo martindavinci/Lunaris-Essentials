@@ -29,14 +29,24 @@ data class ReaderUiState(
     val scrollingDown: Boolean = false,
     val jump: PageJump? = null,
     val chapterTicks: Int = 0,
+    val canWrite: Boolean = false,
+    val annotation: AnnotationUiState? = null,
+    val edits: DocumentEdits = DocumentEdits(),
+    val saveSheet: SaveSheet? = null,
+    /** How far a save has come, from 0 to 1, while there is one. */
+    val exportProgress: Float? = null,
+    val printUri: String? = null,
+    val closeReader: Boolean = false,
 ) {
     /** Past the first pages, when the way back is worth a button. Never in the way of going on. */
     val showTopButton: Boolean
-        get() = topButtonEnabled && page >= TOP_BUTTON_FROM_PAGE && !scrollingDown && search == null
+        get() = topButtonEnabled && page >= TOP_BUTTON_FROM_PAGE && !scrollingDown && search == null && annotation == null
 
     val showPageIndicator: Boolean get() = !chromeVisible && scrolling && pages > 0
 
-    val showJump: Boolean get() = jump != null && search == null
+    val showJump: Boolean get() = jump != null && search == null && annotation == null
+
+    val hasUnsavedEdits: Boolean get() = edits.changes > 0
 
     /** The chapter being read, when the document has contents. */
     val chapter: String? get() = DocumentChapters.chapterAt(outline, page)?.title
@@ -49,7 +59,7 @@ data class ReaderUiState(
 enum class ReaderError { CANNOT_OPEN }
 
 /** A short message about something that just happened. */
-enum class ReaderNotice { SAVED, SAVE_FAILED, SHARE_FAILED }
+enum class ReaderNotice { SAVED, SAVE_FAILED, SHARE_FAILED, EDITS_LOST }
 
 data class SearchState(
     val query: String = "",

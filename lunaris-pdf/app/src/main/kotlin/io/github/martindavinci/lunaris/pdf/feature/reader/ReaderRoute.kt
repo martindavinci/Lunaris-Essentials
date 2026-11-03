@@ -53,6 +53,12 @@ fun ReaderRoute(onBack: () -> Unit) {
             shareFile(context, uri)
         }
     }
+    LaunchedEffect(state.printUri) {
+        state.printUri?.let { uri ->
+            viewModel.onAction(EditAction.PrintStarted)
+            print(context, uri, state)
+        }
+    }
     LaunchedEffect(state.notice) {
         state.notice?.let { notice ->
             viewModel.onAction(ReaderAction.NoticeShown)
@@ -64,7 +70,7 @@ fun ReaderRoute(onBack: () -> Unit) {
         state = state,
         onAction = viewModel::onAction,
         onBack = onBack,
-        onPrint = { print(context, state) },
+        onPrint = { viewModel.onAction(EditAction.Print) },
         onSaveCopy = {
             try {
                 saveCopy.launch(state.name)
@@ -104,10 +110,10 @@ private val ReaderNotice.messageRes: Int
         ReaderNotice.SAVED -> R.string.action_saved
         ReaderNotice.SAVE_FAILED -> R.string.action_save_failed
         ReaderNotice.SHARE_FAILED -> R.string.action_share_failed
+        ReaderNotice.EDITS_LOST -> R.string.annotate_edits_lost
     }
 
-private fun print(context: Context, state: ReaderUiState) {
-    val uri = state.uri ?: return
+private fun print(context: Context, uri: String, state: ReaderUiState) {
     val adapter = PdfPrintAdapter(context.applicationContext.contentResolver, uri.toUri(), state.name, state.pages)
     context.getSystemService(PrintManager::class.java).print(state.name, adapter, null)
 }

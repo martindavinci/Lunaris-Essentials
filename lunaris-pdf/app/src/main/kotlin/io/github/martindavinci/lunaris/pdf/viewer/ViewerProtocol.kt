@@ -20,6 +20,27 @@ sealed interface ViewerCommand {
     /** How much of the top and bottom the app's bars cover, in dp. */
     data class SetBarSpace(val top: Int, val bottom: Int) : ViewerCommand
     data object MakeThumbnail : ViewerCommand
+
+    /** The tool in hand; null ends the editing. */
+    data class SetTool(val spec: ToolSpec?) : ViewerCommand
+    data object UndoEdit : ViewerCommand
+    data object RedoEdit : ViewerCommand
+    data object DeleteSelected : ViewerCommand
+
+    /** Commits what is being edited and answers with [ViewerEvent.EditsSettled]. */
+    data object SettleEdits : ViewerCommand
+
+    /** The next tap on a page puts this picture there, as base64 PNG. */
+    data class ArmSignature(val png: String) : ViewerCommand
+    data class SetNoteText(val id: String, val text: String) : ViewerCommand
+    data class RemoveNote(val id: String) : ViewerCommand
+    data object ExportDocument : ViewerCommand
+
+    /** The piece was written: the page may send the next one. */
+    data class ExportAck(val index: Int) : ViewerCommand
+
+    /** What is in the document now counts as saved. */
+    data object MarkSaved : ViewerCommand
 }
 
 /** What the viewer page tells the app. It renders untrusted files, so nothing here is taken on trust. */
@@ -54,13 +75,35 @@ sealed interface ViewerEvent {
 
     /** The first page as a base64 JPEG. */
     data class Thumbnail(val jpeg: String) : ViewerEvent
+
+    /** PasswordNeeded and the like aside, what concerns changing the document. */
+    data class EditsChanged(val changes: Int, val pages: Int, val canUndo: Boolean, val canRedo: Boolean) : Editing
+
+    /** After [ViewerCommand.SettleEdits]. [signed]: the document has a digital signature, which saving invalidates. */
+    data class EditsSettled(val changes: Int, val pages: Int, val signed: Boolean) : Editing
+    data class NoteRequested(val id: String, val text: String) : Editing
+    data object SignaturePlaced : Editing
+
+    /** The highlighter was dragged where the page has no text. */
+    data object NoTextHere : Editing
+    data class ExportChunk(val index: Int, val total: Int, val data: String) : Editing
+    data class ExportDone(val bytes: Long) : Editing
+    data object ExportFailed : Editing
+
+    sealed interface Editing : ViewerEvent
 }
+
+/** A tool for the page. [size] is a thickness or a text size, as the tool needs. */
+data class ToolSpec(val tool: String, val color: String, val size: Int)
 
 /** [page] is null when the entry does not lead to a page of this document. */
 data class OutlineItem(val title: String, val page: Int?, val depth: Int)
 
 object ViewerProtocol {
     const val MAX_THUMBNAIL_CHARS = 2_000_000
+
+    /** A megabyte of file in base64, and some room. */
+    const val MAX_CHUNK_CHARS = 2_000_000
     private const val MIN_SCALE = 0.1
     private const val MAX_SCALE = 25.0
     private val NAMED_SCALES = setOf("page-width", "page-fit", "page-actual", "auto")
@@ -82,6 +125,20 @@ object ViewerProtocol {
             is ViewerCommand.SetBarSpace -> JSONObject().put("type", "setBarSpace")
                 .put("top", command.top).put("bottom", command.bottom)
             ViewerCommand.MakeThumbnail -> JSONObject().put("type", "makeThumbnail")
+            is ViewerCommand.SetTool -> JSONObject().put("type", "setTool")
+                .put("tool", command.spec?.tool ?: JSONObject.NULL)
+                .put("color", command.spec?.color ?: JSONObject.NULL)
+                .put("size", command.spec?.size ?: 0)
+            ViewerCommand.UndoEdit -> JSONObject().put("type", "undoEdit")
+            ViewerCommand.RedoEdit -> JSONObject().put("type", "redoEdit")
+            ViewerCommand.DeleteSelected -> JSONObject().put("type", "deleteSelected")
+            ViewerCommand.SettleEdits -> JSONObject().put("type", "settleEdits")
+            is ViewerCommand.ArmSignature -> JSONObject().put("type", "armSignature").put("png", command.png)
+            is ViewerCommand.SetNoteText -> JSONObject().put("type", "setNoteText").put("id", command.id).put("text", command.text)
+            is ViewerCommand.RemoveNote -> JSONObject().put("type", "removeNote").put("id", command.id)
+            ViewerCommand.ExportDocument -> JSONObject().put("type", "exportDocument")
+            is ViewerCommand.ExportAck -> JSONObject().put("type", "exportAck").put("index", command.index)
+            ViewerCommand.MarkSaved -> JSONObject().put("type", "markSaved")
         }
         val safe = payload.toString()
             .replace("'", "\\u0027")
@@ -113,10 +170,36 @@ object ViewerProtocol {
             "chapterCrossed" -> ViewerEvent.ChapterCrossed
             "jumped" -> jumped(message)
             "thumbnail" -> message.getString("jpeg").takeIf { it.length <= MAX_THUMBNAIL_CHARS }?.let(ViewerEvent::Thumbnail)
-            else -> null
+            else -> editing(message)
         }
     } catch (_: JSONException) {
         null
+    }
+
+    private fun editing(message: JSONObject): ViewerEvent? =
+        when (message.optString("type")) {
+            "editsChanged" -> ViewerEvent.EditsChanged(
+                message.getInt("changes"),
+                message.getInt("pages"),
+                message.getBoolean("canUndo"),
+                message.getBoolean("canRedo"),
+            ).takeIf { it.changes >= 0 && it.pages >= 0 }
+            "editsSettled" -> ViewerEvent.EditsSettled(message.getInt("changes"), message.getInt("pages"), message.getBoolean("signed"))
+                .takeIf { it.changes >= 0 && it.pages >= 0 }
+            "noteRequested" -> ViewerEvent.NoteRequested(message.getString("id"), message.getString("text"))
+            "signaturePlaced" -> ViewerEvent.SignaturePlaced
+            "noTextHere" -> ViewerEvent.NoTextHere
+            "exportChunk" -> exportChunk(message)
+            "exportDone" -> message.getLong("bytes").takeIf { it >= 0 }?.let(ViewerEvent::ExportDone)
+            "exportFailed" -> ViewerEvent.ExportFailed
+            else -> null
+        }
+
+    private fun exportChunk(message: JSONObject): ViewerEvent? {
+        val index = message.getInt("index")
+        val total = message.getInt("total")
+        val data = message.getString("data")
+        return ViewerEvent.ExportChunk(index, total, data).takeIf { index in 0 until total && data.length <= MAX_CHUNK_CHARS }
     }
 
     private fun jumped(message: JSONObject): ViewerEvent? {

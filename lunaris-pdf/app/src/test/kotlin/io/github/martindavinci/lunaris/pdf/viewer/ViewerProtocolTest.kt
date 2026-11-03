@@ -117,6 +117,17 @@ class ViewerProtocolTest {
         mapOf(
             ViewerCommand.SetBarSpace(80, 90) to "setBarSpace",
             ViewerCommand.MakeThumbnail to "makeThumbnail",
+            ViewerCommand.SetTool(ToolSpec("pen", "#000000", 2)) to "setTool",
+            ViewerCommand.UndoEdit to "undoEdit",
+            ViewerCommand.RedoEdit to "redoEdit",
+            ViewerCommand.DeleteSelected to "deleteSelected",
+            ViewerCommand.SettleEdits to "settleEdits",
+            ViewerCommand.ArmSignature("AAAA") to "armSignature",
+            ViewerCommand.SetNoteText("id", "text") to "setNoteText",
+            ViewerCommand.RemoveNote("id") to "removeNote",
+            ViewerCommand.ExportDocument to "exportDocument",
+            ViewerCommand.ExportAck(3) to "exportAck",
+            ViewerCommand.MarkSaved to "markSaved",
         ).forEach { (command, type) ->
             assertThat(payloadOf(ViewerProtocol.encode(command)).getString("type")).isEqualTo(type)
         }
@@ -134,5 +145,48 @@ class ViewerProtocolTest {
         assertThat(ViewerProtocol.decode("""{"type":"thumbnail","jpeg":"AAAA"}""")).isEqualTo(ViewerEvent.Thumbnail("AAAA"))
         val huge = "A".repeat(ViewerProtocol.MAX_THUMBNAIL_CHARS + 1)
         assertThat(ViewerProtocol.decode("""{"type":"thumbnail","jpeg":"$huge"}""")).isNull()
+    }
+
+    @Test fun noTool_endsTheEditing() {
+        val payload = payloadOf(ViewerProtocol.encode(ViewerCommand.SetTool(null)))
+        assertThat(payload.isNull("tool")).isTrue()
+    }
+
+    @Test fun aTool_carriesItsOptions() {
+        val payload = payloadOf(ViewerProtocol.encode(ViewerCommand.SetTool(ToolSpec("pen", "#112233", 4))))
+        assertThat(payload.getString("tool")).isEqualTo("pen")
+        assertThat(payload.getString("color")).isEqualTo("#112233")
+        assertThat(payload.getInt("size")).isEqualTo(4)
+    }
+
+    @Test fun anotesText_cannotBreakOutOfTheCall() {
+        val text = "a\"');alert(1)//\n"
+        val encoded = ViewerProtocol.encode(ViewerCommand.SetNoteText("id", text))
+        assertThat(encoded).doesNotContain("');alert(1)")
+        assertThat(payloadOf(encoded).getString("text")).isEqualTo(text)
+    }
+
+    @Test fun editEvents_decode() {
+        assertThat(ViewerProtocol.decode("""{"type":"editsChanged","changes":5,"pages":2,"canUndo":true,"canRedo":false}"""))
+            .isEqualTo(ViewerEvent.EditsChanged(5, 2, canUndo = true, canRedo = false))
+        assertThat(ViewerProtocol.decode("""{"type":"editsSettled","changes":5,"pages":2,"signed":true}"""))
+            .isEqualTo(ViewerEvent.EditsSettled(5, 2, signed = true))
+        assertThat(ViewerProtocol.decode("""{"type":"noteRequested","id":"n1","text":"hi"}"""))
+            .isEqualTo(ViewerEvent.NoteRequested("n1", "hi"))
+        assertThat(ViewerProtocol.decode("""{"type":"signaturePlaced"}""")).isEqualTo(ViewerEvent.SignaturePlaced)
+        assertThat(ViewerProtocol.decode("""{"type":"noTextHere"}""")).isEqualTo(ViewerEvent.NoTextHere)
+        assertThat(ViewerProtocol.decode("""{"type":"exportChunk","index":1,"total":3,"data":"AAAA"}"""))
+            .isEqualTo(ViewerEvent.ExportChunk(1, 3, "AAAA"))
+        assertThat(ViewerProtocol.decode("""{"type":"exportDone","bytes":10}""")).isEqualTo(ViewerEvent.ExportDone(10))
+        assertThat(ViewerProtocol.decode("""{"type":"exportFailed"}""")).isEqualTo(ViewerEvent.ExportFailed)
+    }
+
+    @Test fun nonsenseEditEvents_areIgnored() {
+        assertThat(ViewerProtocol.decode("""{"type":"editsChanged","changes":-1,"pages":2,"canUndo":true,"canRedo":false}""")).isNull()
+        assertThat(ViewerProtocol.decode("""{"type":"exportChunk","index":-1,"total":3,"data":"AAAA"}""")).isNull()
+        assertThat(ViewerProtocol.decode("""{"type":"exportChunk","index":3,"total":3,"data":"AAAA"}""")).isNull()
+        val huge = "A".repeat(ViewerProtocol.MAX_CHUNK_CHARS + 1)
+        assertThat(ViewerProtocol.decode("""{"type":"exportChunk","index":0,"total":1,"data":"$huge"}""")).isNull()
+        assertThat(ViewerProtocol.decode("""{"type":"exportDone","bytes":-5}""")).isNull()
     }
 }

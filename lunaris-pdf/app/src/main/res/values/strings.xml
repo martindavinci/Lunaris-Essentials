@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name" translatable="false">Lunaris PDF</string>
+    <string name="annotate_edits_lost">Android closed the page: the changes not saved are gone.</string>
 </resources>

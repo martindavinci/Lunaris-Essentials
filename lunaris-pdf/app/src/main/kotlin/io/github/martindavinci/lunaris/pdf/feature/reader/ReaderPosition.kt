@@ -30,7 +30,7 @@ internal class ReaderPosition(
             document?.scale?.takeIf(ViewerProtocol::isScale)?.let { savedState[KEY_SCALE] = it }
         }
         val page = savedState.get<Int>(KEY_PAGE) ?: document?.page ?: 1
-        return ReaderUiState(uri = uri, name = name, page = page)
+        return ReaderUiState(uri = uri, name = name, page = page, canWrite = document?.canWrite == true)
     }
 
     fun onPageChanged(uri: String?, page: Int, newScale: String, chapter: String) {
