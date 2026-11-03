@@ -21,7 +21,7 @@ internal class ReaderExport(
 ) {
     private var running: CompletableDeferred<String?>? = null
 
-    /** A uri of the file, or null if it could not be made. */
+    /** A uri of the file, or null if it could not be made. The wait goes on for what comes next: see [done]. */
     suspend fun run(): String? {
         running?.complete(null)
         val answer = CompletableDeferred<String?>()
@@ -57,8 +57,10 @@ internal class ReaderExport(
 
     fun fail() = finish(null)
 
+    fun done() = update { it.copy(exportProgress = null) }
+
     private fun finish(uri: String?) {
-        update { it.copy(exportProgress = null) }
+        if (uri == null) done()
         running?.complete(uri)
         running = null
     }

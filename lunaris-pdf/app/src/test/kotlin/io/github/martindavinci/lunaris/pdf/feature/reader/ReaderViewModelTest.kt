@@ -58,11 +58,15 @@ class ReaderViewModelTest {
         val saved = mutableListOf<Pair<String, String>>()
         override suspend fun saveCopy(from: String, to: String): Boolean {
             saved += from to to
+            onSave()
             return saveWorks
         }
         val shared = mutableListOf<String>()
+        var onSave: () -> Unit = {}
+        var onShare: () -> Unit = {}
         override suspend fun prepareShare(from: String, name: String): String? {
             shared += from
+            onShare()
             return shareUri
         }
     }
@@ -895,6 +899,28 @@ class ReaderViewModelTest {
         vm.onAction(EditAction.SaveTo("content://x/copy.pdf"))
         exportSucceeds()
         assertThat(edited.cleared).isEqualTo(1)
+    }
+
+    @Test fun theWait_lastsUntilTheFileIsWritten() {
+        val vm = editing()
+        vm.onAction(EditAction.Finish)
+        emit(ViewerEvent.EditsSettled(2, 1, signed = false))
+        vm.onAction(EditAction.SaveTo("content://x/copy.pdf"))
+        var whileWriting: Float? = null
+        documents.onSave = { whileWriting = vm.state.value.exportProgress }
+        exportSucceeds()
+        assertThat(whileWriting).isNotNull()
+        assertThat(vm.state.value.exportProgress).isNull()
+    }
+
+    @Test fun sharing_withEdits_waitsUntilTheCopyIsReady() {
+        val vm = editing()
+        vm.onAction(ReaderAction.Share)
+        var whilePreparing: Float? = null
+        documents.onShare = { whilePreparing = vm.state.value.exportProgress }
+        exportSucceeds()
+        assertThat(whilePreparing).isNotNull()
+        assertThat(vm.state.value.exportProgress).isNull()
     }
 
     @Test fun aFailedExport_saysSoAndLosesNothing() {

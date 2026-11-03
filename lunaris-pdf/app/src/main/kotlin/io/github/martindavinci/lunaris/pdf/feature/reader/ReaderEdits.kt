@@ -95,6 +95,7 @@ internal class ReaderEdits(
         scope.launch {
             val uri = if (state().hasUnsavedEdits) export.run() else state().uri
             if (uri != null) action(uri) else update { it.copy(notice = ReaderNotice.SAVE_FAILED) }
+            export.done()
         }
     }
 
@@ -181,6 +182,7 @@ internal class ReaderEdits(
         val leave = state().saveSheet?.leaveAfter == true
         scope.launch {
             val saved = export.run()?.let { documents.saveCopy(it, target) } == true
+            export.done()
             if (!saved) {
                 update { it.copy(notice = ReaderNotice.SAVE_FAILED) }
                 return@launch
