@@ -3,6 +3,7 @@ package io.github.martindavinci.lunaris.pdf.feature.reader
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
+import android.view.View
 import android.view.ViewGroup
 import android.webkit.RenderProcessGoneDetail
 import android.webkit.WebResourceRequest
@@ -17,6 +18,9 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.net.toUri
+import androidx.core.view.AccessibilityDelegateCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
 import io.github.martindavinci.lunaris.pdf.viewer.ContentDocumentSource
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerChannel
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerEvent
@@ -37,6 +41,7 @@ internal fun DocumentView(uri: String, viewer: ViewerChannel, modifier: Modifier
                 // With wrap-content the page would see a viewport as tall as its content: none.
                 layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
                 configure()
+                keepHolderVisibleToAccessibility()
                 setBackgroundColor(PageBackground.toArgb())
                 webViewClient = ViewerClient(handler, viewer)
                 if (viewer.attach(this)) {
@@ -51,6 +56,34 @@ internal fun DocumentView(uri: String, viewer: ViewerChannel, modifier: Modifier
             view.destroy()
         },
     )
+}
+
+/**
+ * While an accessibility service runs, Compose marks the holder of an AndroidView as not visible, so that
+ * TalkBack does not stop on it. Services that read the tree from the top, like Select to Speak, then skip
+ * everything inside it and find no text in the document. Compose sets this as the holder attaches: hence the post.
+ */
+private fun View.keepHolderVisibleToAccessibility() {
+    addOnAttachStateChangeListener(object : View.OnAttachStateChangeListener {
+        override fun onViewAttachedToWindow(view: View) {
+            view.post {
+                val holder = view.parent as? View ?: return@post
+                val fromCompose = ViewCompat.getAccessibilityDelegate(holder)
+                ViewCompat.setAccessibilityDelegate(holder, object : AccessibilityDelegateCompat() {
+                    override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfoCompat) {
+                        if (fromCompose != null) {
+                            fromCompose.onInitializeAccessibilityNodeInfo(host, info)
+                        } else {
+                            super.onInitializeAccessibilityNodeInfo(host, info)
+                        }
+                        info.isVisibleToUser = true
+                    }
+                })
+            }
+        }
+
+        override fun onViewDetachedFromWindow(view: View) = Unit
+    })
 }
 
 private fun requestHandler(context: Context, uri: Uri): ViewerRequestHandler {

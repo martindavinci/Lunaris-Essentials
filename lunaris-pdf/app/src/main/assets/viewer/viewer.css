@@ -21,6 +21,8 @@ body.night {
   overflow: auto;
   touch-action: pan-x pan-y;
   -webkit-tap-highlight-color: transparent;
+  /* The side scroller is the only scrollbar. */
+  scrollbar-width: none;
 }
 
 /* Room for the app's bars, so the first and last page can be read in full with the bars showing. */
