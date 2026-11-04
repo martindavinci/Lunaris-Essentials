@@ -44,13 +44,15 @@ internal class PagesJobs(
         val outputs = plan.outputs(state.slots) ?: return
         update { it.copy(panel = null) }
         scope.launch {
-            val targets = plan.fileNames(documentName, state.slots.size).map { name ->
+            val targets = mutableListOf<JobTarget>()
+            for (name in plan.fileNames(documentName, state.slots.size)) {
                 val made = files.createIn(folder, name)
                 if (made == null) {
+                    targets.forEach { files.delete(it.uri) }
                     update { it.copy(notice = PagesNotice.FOLDER_FAILED) }
                     return@launch
                 }
-                JobTarget(made, name)
+                targets += JobTarget(made, name)
             }
             run(JobKind.SPLIT, targets, outputs)
         }

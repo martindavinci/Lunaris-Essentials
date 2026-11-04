@@ -364,6 +364,58 @@ class PagesViewModelTest {
     }
 
     @Test
+    fun `the page count comes from the file when the Reader did not say`() {
+        current.forPages = null
+        assertThat(viewModel().ids()).hasSize(5)
+    }
+
+    @Test
+    fun `saving over the document itself ends the screen, as its pages are not those any more`() {
+        val vm = viewModel()
+        vm.act(PagesAction.Move(setOf(0), 5), PagesAction.SaveTo("content://doc", "Moon.pdf"))
+        channel.report(WorkEvent.Ready)
+        channel.makeOutput(0)
+        channel.report(WorkEvent.Done)
+        assertThat(vm.ui.originalReplaced).isTrue()
+        assertThat(vm.ui.close).isFalse()
+        vm.act(PagesAction.CloseSaved)
+        assertThat(vm.ui.close).isTrue()
+    }
+
+    @Test
+    fun `the same goes when the file changed under another name of it`() {
+        val vm = viewModel()
+        vm.act(PagesAction.Move(setOf(0), 5), PagesAction.SaveTo("content://picker/same", "Moon.pdf"))
+        channel.report(WorkEvent.Ready)
+        channel.makeOutput(0)
+        files.sizes = mapOf("content://doc" to 99L)
+        channel.report(WorkEvent.Done)
+        assertThat(vm.ui.originalReplaced).isTrue()
+    }
+
+    @Test
+    fun `a new file leaves the screen open, on pages still good`() {
+        val vm = viewModel()
+        vm.act(PagesAction.Move(setOf(0), 5), PagesAction.SaveTo("content://out/a.pdf", "a.pdf"))
+        channel.report(WorkEvent.Ready)
+        channel.makeOutput(0)
+        channel.report(WorkEvent.Done)
+        assertThat(vm.ui.originalReplaced).isFalse()
+        vm.act(PagesAction.CloseSaved)
+        assertThat(vm.ui.close).isFalse()
+    }
+
+    @Test
+    fun `a split the folder refuses halfway leaves no empty files`() {
+        files.refuseToCreate = setOf("Moon (3).pdf")
+        val vm = viewModel()
+        vm.act(PagesAction.OpenSplit, PagesAction.SetSplitEveryPage(true), PagesAction.SplitInto("tree://folder"))
+        assertThat(vm.ui.work).isNull()
+        assertThat(vm.ui.notice).isEqualTo(PagesNotice.FOLDER_FAILED)
+        assertThat(files.deleted).containsExactly("tree://folder/Moon (1).pdf", "tree://folder/Moon (2).pdf")
+    }
+
+    @Test
     fun `while there is something to lose, a new document is held back`() {
         val vm = viewModel()
         assertThat(current.hasUnsavedEdits).isFalse()

@@ -31,6 +31,8 @@ data class PagesUiState(
     val askingToLeave: Boolean = false,
     val work: WorkState? = null,
     val notice: PagesNotice? = null,
+    /** The chosen target was the document itself: this grid no longer tells what is in it. */
+    val originalReplaced: Boolean = false,
     /** Leave this screen once this is true. */
     val close: Boolean = false,
     /** The saved file is ready in the Reader. */

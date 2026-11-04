@@ -22,7 +22,7 @@ fun interface ImagePages {
     suspend fun prepare(uri: String): PreparedImage?
 }
 
-/** How EXIF says an image should stand. A quarter turn fits the page's rotation; a mirror does not. */
+/** How EXIF says an image should stand: the mirror first, then the turn. A turn fits the page's rotation; a mirror does not. */
 data class ExifTurn(val turn: Int, val mirrored: Boolean) {
     companion object {
         private const val QUARTER = 90
@@ -33,9 +33,9 @@ data class ExifTurn(val turn: Int, val mirrored: Boolean) {
             ExifValues.MIRROR_HORIZONTAL -> ExifTurn(0, true)
             ExifValues.ROTATE_180 -> ExifTurn(HALF, false)
             ExifValues.MIRROR_VERTICAL -> ExifTurn(HALF, true)
-            ExifValues.TRANSPOSE -> ExifTurn(QUARTER, true)
+            ExifValues.TRANSPOSE -> ExifTurn(THREE_QUARTERS, true)
             ExifValues.ROTATE_90 -> ExifTurn(QUARTER, false)
-            ExifValues.TRANSVERSE -> ExifTurn(THREE_QUARTERS, true)
+            ExifValues.TRANSVERSE -> ExifTurn(QUARTER, true)
             ExifValues.ROTATE_270 -> ExifTurn(THREE_QUARTERS, false)
             else -> ExifTurn(0, false)
         }

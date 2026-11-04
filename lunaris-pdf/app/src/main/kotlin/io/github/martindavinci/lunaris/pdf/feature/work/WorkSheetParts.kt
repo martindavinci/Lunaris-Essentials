@@ -75,7 +75,9 @@ internal fun Saved(state: WorkState.Saved, texts: WorkTexts, onDone: () -> Unit,
             )
         }
     }
-    Text(texts.savedNote, style = MaterialTheme.typography.bodyMedium, color = colors.onSurfaceVariant)
+    if (texts.savedNote.isNotEmpty()) {
+        Text(texts.savedNote, style = MaterialTheme.typography.bodyMedium, color = colors.onSurfaceVariant)
+    }
     Row(horizontalArrangement = Arrangement.spacedBy(Spacing)) {
         OutlinedButton(onClick = onDone, shape = ButtonShape, modifier = Modifier.weight(1f).heightIn(min = ButtonHeight)) {
             Text(stringResource(R.string.work_done), color = colors.primary)

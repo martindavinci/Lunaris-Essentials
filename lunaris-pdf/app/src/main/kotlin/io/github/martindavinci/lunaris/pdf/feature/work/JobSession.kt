@@ -71,7 +71,7 @@ class JobSession(
     private val scope: CoroutineScope,
     private val runner: WorkRunner,
     private val files: OutputFiles,
-    private val onSaved: (JobKind) -> Unit,
+    private val onSaved: suspend (JobKind) -> Unit,
     private val update: (WorkState?) -> Unit,
 ) {
     private var kind = JobKind.SAVE

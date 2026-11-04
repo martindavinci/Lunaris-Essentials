@@ -115,7 +115,7 @@ internal fun PagesScreen(
                     noteWhileRunning = stringResource(R.string.work_note_pages),
                     cancelNote = stringResource(R.string.work_cancel_edits),
                     stillHere = stringResource(R.string.work_edits_here),
-                    savedNote = stringResource(R.string.work_original_same),
+                    savedNote = if (state.originalReplaced) "" else stringResource(R.string.work_original_same),
                 ),
                 sourceName = { source -> if (source == 0) state.name else null },
                 onCancel = { onAction(PagesAction.CancelWork) },

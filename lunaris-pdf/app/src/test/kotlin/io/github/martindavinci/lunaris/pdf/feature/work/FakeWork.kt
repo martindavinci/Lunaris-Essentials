@@ -39,6 +39,8 @@ internal class FakeOutputFiles(var saves: Boolean = true) : OutputFiles {
     val remembered = mutableListOf<Pair<String, Int>>()
     val created = mutableListOf<String>()
     var withContent = emptySet<String>()
+    var sizes = emptyMap<String, Long>()
+    var refuseToCreate = emptySet<String>()
 
     override suspend fun save(from: String, to: String): Boolean {
         if (saves) savedTo += to
@@ -48,11 +50,12 @@ internal class FakeOutputFiles(var saves: Boolean = true) : OutputFiles {
     override suspend fun delete(uri: String) {
         deleted += uri
     }
-    override suspend fun createIn(folder: String, name: String): String {
+    override suspend fun createIn(folder: String, name: String): String? {
+        if (name in refuseToCreate) return null
         created += name
         return "$folder/$name"
     }
-    override suspend fun describe(uri: String) = OutputInfo(uri.substringAfterLast('/'), "Download", 2048)
+    override suspend fun describe(uri: String) = OutputInfo(uri.substringAfterLast('/'), "Download", sizes[uri] ?: 2048)
     override suspend fun remember(uri: String, name: String, pages: Int) {
         remembered += uri to pages
     }

@@ -18,8 +18,10 @@ import java.io.File
 import java.io.IOException
 import java.util.UUID
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 sealed interface PdfOpening {
@@ -46,6 +48,7 @@ interface PagePictures {
 @OptIn(ExperimentalCoroutinesApi::class)
 class PageThumbnails @Inject constructor(@ApplicationContext private val context: Context) : PagePictures {
     private val thread = Dispatchers.IO.limitedParallelism(1)
+    private val closing = CoroutineScope(thread)
     private val folder = File(context.cacheDir, COPY_FOLDER)
     private val renderers = HashMap<String, Opened>()
     private val pictures = object : LruCache<String, ImageBitmap>(CACHE_BYTES) {
@@ -114,34 +117,44 @@ class PageThumbnails @Inject constructor(@ApplicationContext private val context
         }
     }
 
+    /** On the same thread as the drawing: a renderer closed halfway through a page takes the app down. */
     override fun close() {
-        renderers.values.forEach { it.close() }
-        renderers.clear()
-        pictures.evictAll()
-        folder.deleteRecursively()
+        closing.launch {
+            renderers.values.forEach { it.close() }
+            renderers.clear()
+            pictures.evictAll()
+            folder.deleteRecursively()
+        }
     }
 
     private fun renderer(uri: String): Opened = renderers.getOrPut(uri) { open(uri, seekable(uri)) }
 
     private fun open(uri: String, seekable: Boolean): Opened {
         if (seekable) {
-            val descriptor = checkNotNull(context.contentResolver.openFileDescriptor(uri.toUri(), READ)) { uri }
+            val descriptor = readable { context.contentResolver.openFileDescriptor(uri.toUri(), READ) }
             return Opened(descriptor, PdfRenderer(descriptor), null)
         }
         folder.mkdirs()
         val copy = File(folder, UUID.randomUUID().toString())
-        val input = checkNotNull(context.contentResolver.openInputStream(uri.toUri())) { uri }
+        val input = readable { context.contentResolver.openInputStream(uri.toUri()) }
         input.use { from -> copy.outputStream().use { from.copyTo(it) } }
         val descriptor = ParcelFileDescriptor.open(copy, ParcelFileDescriptor.MODE_READ_ONLY)
         return Opened(descriptor, PdfRenderer(descriptor), copy)
     }
 
     private fun seekable(uri: String): Boolean = try {
-        context.contentResolver.openFileDescriptor(uri.toUri(), READ)?.use { descriptor ->
+        readable { context.contentResolver.openFileDescriptor(uri.toUri(), READ) }.use { descriptor ->
             android.system.Os.lseek(descriptor.fileDescriptor, 0L, android.system.OsConstants.SEEK_CUR) >= 0
-        } ?: false
+        }
     } catch (_: android.system.ErrnoException) {
         false
+    }
+
+    /** A lost permission is a file that cannot be read. Only PdfRenderer's own SecurityException means a password. */
+    private fun <T : Any> readable(open: () -> T?): T = try {
+        open() ?: throw IOException("no answer from the provider")
+    } catch (failure: SecurityException) {
+        throw IOException(failure)
     }
 
     /** PdfRenderer opens a file with an owner password all the same, but pdf-lib would refuse it after all the work. */

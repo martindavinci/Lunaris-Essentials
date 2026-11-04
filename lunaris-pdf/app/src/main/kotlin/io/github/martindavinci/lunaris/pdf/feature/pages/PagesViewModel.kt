@@ -66,6 +66,9 @@ class PagesViewModel internal constructor(
     private var edits = PageEdits.decode(saved.get<String>(KEY_EDITS).orEmpty()) ?: PageEdits(pagesOf(knownPages))
     private var lastTouched: Long? = null
     private var leaveWhenSaved = false
+    private val restored = saved.get<String>(KEY_EDITS) != null
+    private var sizeAtOpening: Long? = null
+    private var lastTarget: String? = null
 
     private val mutableState = MutableStateFlow(PagesUiState(name = documentName, slots = edits.slots))
     val state: StateFlow<PagesUiState> = mutableState.asStateFlow()
@@ -123,9 +126,13 @@ class PagesViewModel internal constructor(
             }
             is PagesAction.SaveTo -> {
                 if (ui.askingToLeave) leaveWhenSaved = true
+                lastTarget = action.uri
                 jobs.save(action.uri, action.name)
             }
-            is PagesAction.ExtractTo -> jobs.extract(action.uri, action.name)
+            is PagesAction.ExtractTo -> {
+                lastTarget = action.uri
+                jobs.extract(action.uri, action.name)
+            }
             is PagesAction.SplitInto -> jobs.split(action.folder, documentName)
             PagesAction.RequestLeave -> requestLeave()
             PagesAction.KeepEditing -> mutableState.update { it.copy(askingToLeave = false) }
@@ -149,13 +156,14 @@ class PagesViewModel internal constructor(
     private val ui get() = state.value
 
     private suspend fun open() {
+        sizeAtOpening = files.describe(documentUri)?.bytes
         when (val opening = pictures.open(documentUri)) {
             is PdfOpening.Pages -> {
                 if (locked) {
                     mutableState.update { it.copy(problem = PagesProblem.PROTECTED, loading = false) }
                     return
                 }
-                if (saved.get<String>(KEY_EDITS) == null && opening.count != edits.slots.size && edits.changes == 0) {
+                if (!restored && opening.count != edits.slots.size && edits.changes == 0) {
                     edits = PageEdits(pagesOf(opening.count))
                     publish()
                 }
@@ -209,10 +217,16 @@ class PagesViewModel internal constructor(
         }
     }
 
-    private fun onSaved(kind: JobKind) {
-        if (kind != JobKind.SAVE) return
-        edits.markSaved()
-        publish()
+    /** The picker lets the user choose the document itself, and may call it by another uri: hence the size too. */
+    private suspend fun onSaved(kind: JobKind) {
+        if (kind == JobKind.SAVE) {
+            edits.markSaved()
+            publish()
+        }
+        if (kind != JobKind.SPLIT && (lastTarget == documentUri || files.describe(documentUri)?.bytes != sizeAtOpening)) {
+            leaveWhenSaved = true
+            mutableState.update { it.copy(originalReplaced = true) }
+        }
     }
 
     private fun openSaved() {
