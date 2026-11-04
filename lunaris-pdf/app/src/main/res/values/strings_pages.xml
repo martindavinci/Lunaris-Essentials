@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pages_title">Pages</string>
+    <string name="pages_save">Save</string>
+    <string name="pages_no_changes">No changes yet</string>
+    <plurals name="pages_changes">
+        <item quantity="one">%d change</item>
+        <item quantity="other">%d changes</item>
+    </plurals>
+    <string name="pages_note">Saving makes a new file. The outline, links and form fields are not kept.</string>
+    <string name="pages_loading">Loading pages… You can already select and move them.</string>
+    <string name="pages_save_annotations_first">Save your annotations first</string>
+    <string name="pages_add">Add pages</string>
+    <string name="pages_split">Split</string>
+    <plurals name="pages_selected">
+        <item quantity="one">%d page selected</item>
+        <item quantity="other">%d pages selected</item>
+    </plurals>
+    <string name="pages_select_all">Select all</string>
+    <string name="pages_clear_selection">Clear selection</string>
+    <string name="pages_rotate">Rotate</string>
+    <string name="pages_delete">Delete</string>
+    <string name="pages_extract">Extract</string>
+    <plurals name="pages_move_after">
+        <item quantity="one">Move %1$d page after page %2$d</item>
+        <item quantity="other">Move %1$d pages after page %2$d</item>
+    </plurals>
+    <plurals name="pages_move_start">
+        <item quantity="one">Move %d page to the start</item>
+        <item quantity="other">Move %d pages to the start</item>
+    </plurals>
+    <string name="pages_page_label">Page %d</string>
+    <string name="pages_back_to_reading">Back to reading</string>
+    <string name="pages_protected_title">This PDF is password-protected</string>
+    <string name="pages_protected_message">You can read it, but its pages can\'t be moved, removed or extracted. Lunaris never removes passwords.</string>
+    <string name="pages_damaged_title">This PDF can\'t be organized</string>
+    <string name="pages_damaged_message">Part of the file is damaged, so its pages can\'t be rebuilt safely. Nothing has been changed.</string>
+    <string name="pages_add_title">Add pages</string>
+    <string name="pages_insert_after">Insert after</string>
+    <string name="pages_insert_start">At the start</string>
+    <string name="pages_add_blank">Blank page</string>
+    <string name="pages_add_blank_detail">Same size as page %d</string>
+    <string name="pages_add_blank_first">Same size as the first page</string>
+    <string name="pages_add_pdf">Pages from another PDF</string>
+    <string name="pages_add_pdf_detail">Choose a file, then pick the pages</string>
+    <string name="pages_add_image">Image</string>
+    <string name="pages_add_image_detail">JPG, PNG or WebP · one page per image</string>
+    <string name="pages_pick_title">Choose the pages</string>
+    <plurals name="pages_pick_add">
+        <item quantity="one">Add %d page</item>
+        <item quantity="other">Add %d pages</item>
+    </plurals>
+    <string name="pages_split_title">Split PDF</string>
+    <string name="pages_split_ranges">By page ranges</string>
+    <string name="pages_split_ranges_detail">You choose where to cut</string>
+    <string name="pages_split_every">One file per page</string>
+    <plurals name="pages_split_files">
+        <item quantity="one">%d file</item>
+        <item quantity="other">%d files</item>
+    </plurals>
+    <string name="pages_split_row">File %d</string>
+    <string name="pages_split_hint">1-3, 5</string>
+    <plurals name="pages_split_count">
+        <item quantity="one">%d page</item>
+        <item quantity="other">%d pages</item>
+    </plurals>
+    <string name="pages_split_wrong">Check the numbers</string>
+    <string name="pages_split_remove_row">Remove this range</string>
+    <string name="pages_split_add_range">Add range</string>
+    <plurals name="pages_split_note">
+        <item quantity="one">%d new file. This PDF stays as it is.</item>
+        <item quantity="other">%d new files. This PDF stays as it is.</item>
+    </plurals>
+    <plurals name="pages_split_go">
+        <item quantity="one">Split into %d file</item>
+        <item quantity="other">Split into %d files</item>
+    </plurals>
+    <string name="pages_leave_title">Save your changes?</string>
+    <plurals name="pages_leave_message">
+        <item quantity="one">You made %d change. Saving makes a new file; this PDF stays as it is.</item>
+        <item quantity="other">You made %d changes. Saving makes a new file; this PDF stays as it is.</item>
+    </plurals>
+    <string name="pages_leave_save">Save as new file</string>
+    <string name="pages_leave_discard">Discard changes</string>
+    <string name="pages_leave_keep">Keep editing</string>
+    <string name="pages_notice_last">A PDF needs at least one page</string>
+    <string name="pages_notice_other_protected">That PDF has a password, so its pages can\'t be added</string>
+    <string name="pages_notice_other_damaged">That PDF can\'t be read</string>
+    <string name="pages_notice_image_failed">An image could not be read</string>
+    <string name="pages_notice_folder_failed">New files can\'t be made in that folder</string>
+    <string name="pages_edited_name">%s (edited).pdf</string>
+    <string name="pages_extracted_name">%s (pages).pdf</string>
+    <string name="no_app_for_files">No app on this phone can choose files</string>
+
+    <string name="work_saving">Saving a new file…</string>
+    <string name="work_extracting">Extracting the pages…</string>
+    <string name="work_splitting">Splitting the PDF…</string>
+    <string name="work_creating">Creating PDF…</string>
+    <string name="work_preparing">Getting ready…</string>
+    <string name="work_page_of">Page %1$d of %2$d</string>
+    <string name="work_file_page_of">File %1$d of %2$d · page %3$d of %4$d</string>
+    <string name="work_file_of">File %1$d of %2$d</string>
+    <string name="work_adding">Adding %1$s · %2$d of %3$d</string>
+    <string name="work_note_pages">Outline, links and form fields are not kept in the new file.</string>
+    <string name="work_note_text">Text, Markdown and HTML are laid out on %s pages.</string>
+    <string name="work_cancel_edits">Cancel stops here. Your edits stay as they are.</string>
+    <string name="work_cancel_list">Cancel stops here. Your list stays as it is.</string>
+    <string name="work_saved">Saved</string>
+    <plurals name="work_new_files">
+        <item quantity="one">%d new file</item>
+        <item quantity="other">%d new files</item>
+    </plurals>
+    <string name="work_original_same">The original PDF has not changed.</string>
+    <plurals name="work_files_same">
+        <item quantity="one">Your file has not changed.</item>
+        <item quantity="other">Your %d files have not changed.</item>
+    </plurals>
+    <string name="work_done">Done</string>
+    <string name="work_open">Open</string>
+    <string name="work_failed_save">Couldn\'t save the file</string>
+    <string name="work_failed_create">Couldn\'t create the PDF</string>
+    <string name="work_why_protected">%s has a password, so its pages can\'t be used.</string>
+    <string name="work_why_protected_this">This PDF has a password, so its pages can\'t be used.</string>
+    <string name="work_why_damaged">%s is damaged, so its pages can\'t be rebuilt safely.</string>
+    <string name="work_why_damaged_this">This PDF is damaged, so its pages can\'t be rebuilt safely.</string>
+    <string name="work_why_unreadable">%s can no longer be read. It may have been moved or deleted.</string>
+    <string name="work_why_unreadable_this">The file can no longer be read. It may have been moved or deleted.</string>
+    <string name="work_why_memory">The phone ran out of memory for this job. Closing other apps may help.</string>
+    <string name="work_why_write">The file could not be written.</string>
+    <string name="work_why_space">There isn\'t enough free space on the phone.</string>
+    <string name="work_edits_here">Your edits are still here.</string>
+    <string name="work_list_here">Your list is still here.</string>
+    <string name="work_needed_free">Needed %1$s · free %2$s</string>
+    <string name="work_try_again">Try again</string>
+    <string name="work_save_elsewhere">Save somewhere else</string>
+    <string name="work_remove_file">Remove that file</string>
+    <string name="work_close">Close</string>
+</resources>

@@ -1,5 +1,6 @@
 package io.github.martindavinci.lunaris.pdf.pages
 
+import android.webkit.WebView
 import io.github.martindavinci.lunaris.pdf.annotate.EditedDocuments
 import java.util.Base64
 import kotlinx.coroutines.CompletableDeferred
@@ -13,6 +14,11 @@ interface WorkChannel {
     val events: Flow<WorkEvent>
     fun send(command: WorkCommand)
     fun report(event: WorkEvent)
+
+    /** Only the page's own origin and main frame are heard. False if this WebView is too old for that. */
+    fun attach(view: WebView): Boolean = false
+
+    fun detach(view: WebView) = Unit
 }
 
 sealed interface WorkResult {

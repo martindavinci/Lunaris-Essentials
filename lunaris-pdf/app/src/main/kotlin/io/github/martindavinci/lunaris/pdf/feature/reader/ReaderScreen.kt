@@ -159,6 +159,10 @@ internal fun ReaderScreen(
                     showOutline = false
                     onAction(ReaderAction.GoToPage(page))
                 },
+                onPages = {
+                    showOutline = false
+                    onAction(ReaderAction.OpenPages)
+                },
                 onDismiss = { showOutline = false },
             )
         }

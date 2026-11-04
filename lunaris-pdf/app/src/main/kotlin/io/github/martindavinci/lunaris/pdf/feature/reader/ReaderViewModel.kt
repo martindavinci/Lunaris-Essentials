@@ -17,6 +17,7 @@ import io.github.martindavinci.lunaris.pdf.recents.RecentVisit
 import io.github.martindavinci.lunaris.pdf.recents.RecentsStore
 import io.github.martindavinci.lunaris.pdf.recents.ThumbnailStore
 import io.github.martindavinci.lunaris.pdf.session.CurrentDocument
+import io.github.martindavinci.lunaris.pdf.session.ForPages
 import io.github.martindavinci.lunaris.pdf.settings.SettingsStore
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerChannel
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerCommand
@@ -37,7 +38,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class ReaderViewModel internal constructor(
     val viewer: ViewerChannel,
-    currentDocument: CurrentDocument,
+    private val currentDocument: CurrentDocument,
     savedState: SavedStateHandle,
     nightPages: Flow<Boolean>,
     private val setNightPages: suspend (Boolean) -> Unit,
@@ -132,6 +133,8 @@ class ReaderViewModel internal constructor(
             is EditAction -> edits.onAction(action)
             ReaderAction.ShareStarted -> mutableState.update { it.copy(shareUri = null) }
             ReaderAction.NoticeShown -> mutableState.update { it.copy(notice = null) }
+            ReaderAction.OpenPages -> openPages()
+            ReaderAction.PagesOpened -> mutableState.update { it.copy(openPages = false) }
         }
     }
 
@@ -206,6 +209,15 @@ class ReaderViewModel internal constructor(
         password = value
         mutableState.update { it.copy(passwordPrompt = null, loading = true, canPrint = false) }
         viewer.send(ViewerCommand.Open(value, state.value.page, position.scale))
+    }
+
+    private fun openPages() {
+        if (state.value.hasUnsavedEdits) {
+            mutableState.update { it.copy(notice = ReaderNotice.SAVE_EDITS_FIRST) }
+            return
+        }
+        currentDocument.forPages = ForPages(state.value.pages, locked = password != null)
+        mutableState.update { it.copy(openPages = true) }
     }
 
     private fun clampPage(page: Int): Int = page.coerceIn(1, state.value.pages.coerceAtLeast(1))

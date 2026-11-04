@@ -39,6 +39,8 @@ data class ReaderUiState(
     val exportProgress: Float? = null,
     val printUri: String? = null,
     val closeReader: Boolean = false,
+    /** Go to the Pages screen, which works on the file and knows nothing of what only this page holds. */
+    val openPages: Boolean = false,
 ) {
     /** Past the first pages, when the way back is worth a button. Never in the way of going on. */
     val showTopButton: Boolean
@@ -66,7 +68,7 @@ data class ReaderUiState(
 enum class ReaderError { CANNOT_OPEN }
 
 /** A short message about something that just happened. */
-enum class ReaderNotice { SAVED, SAVE_FAILED, SHARE_FAILED, EDITS_LOST }
+enum class ReaderNotice { SAVED, SAVE_FAILED, SHARE_FAILED, EDITS_LOST, SAVE_EDITS_FIRST }
 
 data class SearchState(
     val query: String = "",
@@ -121,4 +123,6 @@ sealed interface ReaderAction {
     data object Share : ReaderAction
     data object ShareStarted : ReaderAction
     data object NoticeShown : ReaderAction
+    data object OpenPages : ReaderAction
+    data object PagesOpened : ReaderAction
 }

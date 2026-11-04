@@ -29,9 +29,8 @@ class WorkEngine @Inject constructor() : WorkChannel {
         incoming.tryEmit(event)
     }
 
-    /** Only the page's own origin and main frame are heard. False if this WebView is too old for that. */
     @SuppressLint("RequiresFeature")
-    fun attach(view: WebView): Boolean {
+    override fun attach(view: WebView): Boolean {
         if (!WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER)) return false
         WebViewCompat.addWebMessageListener(view, HOST_OBJECT, setOf(ORIGIN)) { _, message, _, isMainFrame, _ ->
             if (isMainFrame) message.data?.let(WorkProtocol::decode)?.let(::report)
@@ -40,7 +39,7 @@ class WorkEngine @Inject constructor() : WorkChannel {
         return true
     }
 
-    fun detach(view: WebView) {
+    override fun detach(view: WebView) {
         if (webView === view) webView = null
     }
 

@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import io.github.martindavinci.lunaris.pdf.feature.pages.PagesRoute
 import io.github.martindavinci.lunaris.pdf.feature.reader.ReaderRoute
 import io.github.martindavinci.lunaris.pdf.feature.recents.RecentsRoute
 import io.github.martindavinci.lunaris.pdf.feature.settings.SettingsRoute
@@ -40,6 +41,13 @@ fun AppNavHost(startAtReader: Boolean, readerRequests: Flow<Unit>, onExit: () ->
                             if (nav.previousBackStackEntry == null) onExit() else nav.popBackStack()
                         }
                     },
+                    onOpenPages = { if (nav.currentBackStackEntry == entry) nav.navigate(Routes.PAGES) },
+                )
+            }
+            composable(Routes.PAGES) { entry ->
+                PagesRoute(
+                    onBack = { if (nav.currentBackStackEntry == entry) nav.popBackStack() },
+                    onOpenReader = nav::openReader,
                 )
             }
         }
@@ -50,6 +58,7 @@ object Routes {
     const val RECENTS = "recents"
     const val READER = "reader"
     const val SETTINGS = "settings"
+    const val PAGES = "pages"
 }
 
 /** A new Reader for the new document, replacing the one on screen if any. */

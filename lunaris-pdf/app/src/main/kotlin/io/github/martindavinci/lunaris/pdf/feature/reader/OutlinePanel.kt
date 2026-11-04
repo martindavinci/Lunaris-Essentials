@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -60,16 +61,23 @@ internal fun OutlinePanel(
     page: Int,
     pages: Int,
     onSelect: (Int) -> Unit,
+    onPages: () -> Unit,
     onDismiss: () -> Unit,
 ) {
     val current = remember(items, page) { DocumentChapters.currentIndex(items, page) }
     val list = rememberLazyListState(initialFirstVisibleItemIndex = (current - ENTRIES_ABOVE_CURRENT).coerceAtLeast(0))
     BottomPanel(onDismiss = onDismiss, modifier = if (items.isEmpty()) Modifier else Modifier.fillMaxHeight(PANEL_HEIGHT_FRACTION)) {
-        Text(
-            text = stringResource(R.string.reader_outline),
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(horizontal = EdgePadding + EdgePadding / 2),
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(start = EdgePadding + EdgePadding / 2, end = EdgePadding / 2),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = stringResource(R.string.reader_outline),
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.weight(1f),
+            )
+            TextButton(onClick = onPages) { Text(stringResource(R.string.pages_title)) }
+        }
         GoToPageRow(pages, onSelect)
         if (items.isEmpty()) {
             Text(

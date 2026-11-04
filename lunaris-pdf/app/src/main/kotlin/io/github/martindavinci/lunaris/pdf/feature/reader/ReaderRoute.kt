@@ -32,7 +32,7 @@ import io.github.martindavinci.lunaris.pdf.actions.PdfPrintAdapter
 private const val PDF_MIME = "application/pdf"
 
 @Composable
-fun ReaderRoute(onBack: () -> Unit) {
+fun ReaderRoute(onBack: () -> Unit, onOpenPages: () -> Unit) {
     val viewModel: ReaderViewModel = hiltViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -52,6 +52,12 @@ fun ReaderRoute(onBack: () -> Unit) {
     }
     LaunchedEffect(state.closeReader) {
         if (state.closeReader) onBack()
+    }
+    LaunchedEffect(state.openPages) {
+        if (state.openPages) {
+            viewModel.onAction(ReaderAction.PagesOpened)
+            onOpenPages()
+        }
     }
 
     val view = LocalView.current
@@ -119,6 +125,7 @@ private val ReaderNotice.messageRes: Int
         ReaderNotice.SAVE_FAILED -> R.string.action_save_failed
         ReaderNotice.SHARE_FAILED -> R.string.action_share_failed
         ReaderNotice.EDITS_LOST -> R.string.annotate_edits_lost
+        ReaderNotice.SAVE_EDITS_FIRST -> R.string.pages_save_annotations_first
     }
 
 private fun createFile(context: Context, launcher: ActivityResultLauncher<String>, name: String) {

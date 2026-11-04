@@ -108,6 +108,7 @@ internal fun ReaderTopBar(
                             onAction(ReaderAction.ToggleNight)
                         },
                     )
+                    menuItem(R.string.pages_title) { onAction(ReaderAction.OpenPages) }
                     if (canPrint) menuItem(R.string.action_print, onPrint)
                     menuItem(R.string.action_share) { onAction(ReaderAction.Share) }
                     menuItem(R.string.action_save_copy, onSaveCopy)

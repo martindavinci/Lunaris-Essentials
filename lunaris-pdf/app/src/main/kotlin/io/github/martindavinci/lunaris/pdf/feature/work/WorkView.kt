@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.net.toUri
-import io.github.martindavinci.lunaris.pdf.pages.WorkEngine
+import io.github.martindavinci.lunaris.pdf.pages.WorkChannel
 import io.github.martindavinci.lunaris.pdf.pages.WorkEvent
 import io.github.martindavinci.lunaris.pdf.viewer.ContentDocumentSource
 import io.github.martindavinci.lunaris.pdf.viewer.ViewerRequestHandler
@@ -30,7 +30,7 @@ private val HiddenSize = 1.dp
 
 /** The page that makes the files: unseen, and only there while a job runs. It can reach nothing but [ViewerRequestHandler]. */
 @Composable
-internal fun WorkView(sources: List<String>, engine: WorkEngine) {
+internal fun WorkView(sources: List<String>, engine: WorkChannel) {
     val appContext = LocalContext.current.applicationContext
     val handler = remember(sources) { requestHandler(appContext, sources.map { it.toUri() }) }
     AndroidView(
@@ -84,7 +84,7 @@ private fun WebView.configure() {
     }
 }
 
-private class WorkClient(private val handler: ViewerRequestHandler, private val engine: WorkEngine) : WebViewClient() {
+private class WorkClient(private val handler: ViewerRequestHandler, private val engine: WorkChannel) : WebViewClient() {
 
     override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse {
         val url = request.url

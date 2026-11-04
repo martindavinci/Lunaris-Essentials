@@ -7,6 +7,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+/** What the Reader knows of its document when the Pages screen opens. */
+data class ForPages(val pages: Int, val locked: Boolean)
+
 /** The document the Reader shows. Callers set it, then navigate. */
 @Singleton
 class CurrentDocument @Inject constructor() {
@@ -17,6 +20,9 @@ class CurrentDocument @Inject constructor() {
     /** The Reader has changes that only its page holds. */
     @Volatile
     var hasUnsavedEdits = false
+
+    @Volatile
+    var forPages: ForPages? = null
 
     fun set(document: OpenDocument?) {
         current.value = document

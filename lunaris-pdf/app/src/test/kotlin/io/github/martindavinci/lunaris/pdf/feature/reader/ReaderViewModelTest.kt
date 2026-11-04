@@ -16,6 +16,7 @@ import io.github.martindavinci.lunaris.pdf.recents.DocumentThumbnails
 import io.github.martindavinci.lunaris.pdf.recents.ReadingSpot
 import io.github.martindavinci.lunaris.pdf.recents.RecentVisit
 import io.github.martindavinci.lunaris.pdf.session.CurrentDocument
+import io.github.martindavinci.lunaris.pdf.session.ForPages
 import io.github.martindavinci.lunaris.pdf.url.UrlWarning
 import io.github.martindavinci.lunaris.pdf.viewer.OutlineItem
 import io.github.martindavinci.lunaris.pdf.viewer.ToolSpec
@@ -1264,5 +1265,32 @@ class ReaderViewModelTest {
         val before = vm.state.value.annotation?.noTextHints
         emit(ViewerEvent.NoTextHere)
         assertThat(vm.state.value.annotation?.noTextHints).isEqualTo(checkNotNull(before) + 1)
+    }
+
+    @Test fun openingPages_tellsWhatTheReaderKnows() {
+        val vm = viewModel()
+        ready()
+        emit(ViewerEvent.Loaded(7, emptyList()))
+        vm.onAction(ReaderAction.OpenPages)
+        assertThat(vm.state.value.openPages).isTrue()
+        assertThat(current.forPages).isEqualTo(ForPages(7, locked = false))
+        vm.onAction(ReaderAction.PagesOpened)
+        assertThat(vm.state.value.openPages).isFalse()
+    }
+
+    @Test fun aFileOpenedWithAPassword_goesToPagesAsLocked() {
+        val vm = viewModel()
+        emit(ViewerEvent.PasswordNeeded(wrong = false))
+        vm.onAction(ReaderAction.SubmitPassword("word"))
+        emit(ViewerEvent.Loaded(3, emptyList()))
+        vm.onAction(ReaderAction.OpenPages)
+        assertThat(current.forPages).isEqualTo(ForPages(3, locked = true))
+    }
+
+    @Test fun unsavedAnnotations_keepPagesClosed_andSaySo() {
+        val vm = editing()
+        vm.onAction(ReaderAction.OpenPages)
+        assertThat(vm.state.value.openPages).isFalse()
+        assertThat(vm.state.value.notice).isEqualTo(ReaderNotice.SAVE_EDITS_FIRST)
     }
 }
