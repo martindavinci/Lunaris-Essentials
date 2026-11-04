@@ -4,8 +4,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -99,7 +102,8 @@ internal fun PagesTopBar(state: PagesUiState, subtitle: String, onBack: () -> Un
 internal fun PagesDefaultBar(onAction: (PagesAction) -> Unit) {
     Surface(color = MaterialTheme.colorScheme.background) {
         Row(
-            modifier = Modifier.fillMaxWidth().navigationBarsPadding().padding(BarPadding),
+            // Equal heights, also when a long label in some language takes two lines.
+            modifier = Modifier.fillMaxWidth().navigationBarsPadding().padding(BarPadding).height(IntrinsicSize.Min),
             horizontalArrangement = Arrangement.spacedBy(BarSpacing),
         ) {
             BigBarButton(Icons.Filled.Add, stringResource(R.string.pages_add), Modifier.weight(1f)) { onAction(PagesAction.OpenAdd) }
@@ -115,7 +119,7 @@ private fun BigBarButton(icon: ImageVector, label: String, modifier: Modifier, o
         onClick = onClick,
         shape = BigButtonShape,
         colors = ButtonDefaults.buttonColors(containerColor = colors.surfaceVariant, contentColor = colors.onSurface),
-        modifier = modifier.heightIn(min = BigButtonHeight),
+        modifier = modifier.fillMaxHeight().heightIn(min = BigButtonHeight),
     ) {
         Icon(icon, contentDescription = null)
         Text(label, modifier = Modifier.padding(start = BarSpacing), textAlign = TextAlign.Center)
