@@ -4,7 +4,7 @@
 
 <h1 align="center">Lunaris PDF</h1>
 
-<p align="center"><b>A PDF reader for Android that works offline, opens straight to your document, lets you mark it up and shows no ads.</b></p>
+<p align="center"><b>A PDF reader for Android that works offline, opens straight to your document, lets you mark it up, reorganize its pages and make new PDFs, and shows no ads.</b></p>
 
 <p align="center">by <a href="https://github.com/martindavinci">Martin DaVinci</a></p>
 
@@ -28,6 +28,11 @@
   <img src="docs/screenshots/annotate.webp" width="32%" alt="Highlights, a pen line, a note and a signature on a page, with the tools below">
   <img src="docs/screenshots/signatures.webp" width="32%" alt="The saved signatures, with a note saying that a drawn signature is not a digital one">
   <img src="docs/screenshots/save.webp" width="32%" alt="The question at the end: save a copy, save over the original, or discard">
+</p>
+<p align="center">
+  <img src="docs/screenshots/pages.webp" width="32%" alt="All the pages in a grid, three of them selected, with Rotate, Delete and Extract below">
+  <img src="docs/screenshots/split.webp" width="32%" alt="Splitting a PDF by page ranges, with the number of pages of each new file">
+  <img src="docs/screenshots/create.webp" width="32%" alt="A list of a PDF, an image, Markdown, HTML and text, about to become one PDF">
 </p>
 
 ## Download
@@ -61,6 +66,20 @@ since other Lunaris apps publish their releases here too.
 - Search as you type, with the matches counted, whole words and upper case if you want them
 - Select and copy text, contents, go to page
 - Night pages, with the colours of the page inverted, and a light, dark or system theme
+
+**Organizing pages**
+- All the pages in one grid: tap to select, long press to drag, a selected group moves as one
+- Rotate, delete or extract what is selected, with undo and redo
+- Add blank pages, pages from another PDF, or images
+- Split into page ranges you type, or into one file per page
+- Saving always makes a new file and leaves the original as it is. The new file has no outline, internal links or form
+  fields, and pages you deleted really leave it. A PDF with a password can be read, not changed
+
+**Creating PDFs**
+- One list for PDFs, images (JPG, PNG, WebP), text, Markdown and HTML, in any order, drag to change it
+- Text stays real text you can select and search, with a page size, direction and margins of your choice
+- HTML is read with no scripts and no network: a picture from the web becomes its description
+- Open it from the first screen, or share images to the app
 
 **Annotating**
 - A highlighter that follows the lines of the text, or goes free where there is no text, as on a scan
@@ -122,11 +141,14 @@ cd lunaris-essentials/lunaris-pdf
 ```
 
 Point Gradle to your SDK with `ANDROID_HOME` or a `local.properties` file containing `sdk.dir=…`. The pdf.js files in
-`app/src/main/assets/viewer` come from `tools/pdfjs/fetch-pdfjs.ps1`, which checks them against `manifest.json`.
+`app/src/main/assets/viewer` come from `tools/pdfjs/fetch-pdfjs.ps1`, and pdf-lib from `tools/pdflib/fetch-pdflib.ps1`;
+both check the download against their `manifest.json`.
 
 ## License
 
 GPL-3.0-or-later, see [LICENSE](../LICENSE). The name "Lunaris PDF" and its icon are not licensed as trademarks: see
 [TRADEMARKS.md](../TRADEMARKS.md). Documents are drawn with [PDF.js](https://github.com/mozilla/pdf.js), under the
-Apache-2.0 license like Jetpack Compose, DataStore and Dagger Hilt. The components shipped with PDF.js keep their own
-licenses; all of them are listed in the app, under Settings, Licenses.
+Apache-2.0 license like Jetpack Compose, DataStore and Dagger Hilt. New files are made with
+[pdf-lib](https://github.com/Hopding/pdf-lib) (MIT), and Markdown is read with
+[commonmark-java](https://github.com/commonmark/commonmark-java) (BSD-2-Clause). The components shipped with PDF.js keep
+their own licenses; all of them are listed in the app, under Settings, Licenses.

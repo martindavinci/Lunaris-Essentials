@@ -43,12 +43,13 @@ been: they work offline, show nothing but your work, and stay out of your data.
 </tr>
 <tr>
 <td width="96" align="center"><a href="lunaris-pdf/"><img src="lunaris-pdf/app/src/main/ic_launcher-playstore.png" width="72" alt="Lunaris PDF icon"></a></td>
-<td><b><a href="lunaris-pdf/">Lunaris PDF</a></b><br>A PDF reader that opens straight to your document: a side scroller, search, annotations, forms, a drawn signature, and the JavaScript inside a PDF never runs. No system permissions at all.<br><br>
+<td><b><a href="lunaris-pdf/">Lunaris PDF</a></b><br>A PDF reader that opens straight to your document: a side scroller, search, annotations, forms, a drawn signature, organizing pages, making new PDFs, and the JavaScript inside a PDF never runs. No system permissions at all.<br><br>
 <a href="lunaris-pdf/"><img src="lunaris-pdf/docs/screenshots/reader.webp" width="104" alt="A document open"></a>
 <a href="lunaris-pdf/"><img src="lunaris-pdf/docs/screenshots/scroller.webp" width="104" alt="The side scroller being dragged"></a>
 <a href="lunaris-pdf/"><img src="lunaris-pdf/docs/screenshots/annotate.webp" width="104" alt="Highlights, a pen line and a signature on a page"></a>
 <a href="lunaris-pdf/"><img src="lunaris-pdf/docs/screenshots/settings.webp" width="104" alt="The settings"></a>
 <a href="lunaris-pdf/"><img src="lunaris-pdf/docs/screenshots/recents.webp" width="104" alt="The list of recent documents"></a>
+<a href="lunaris-pdf/"><img src="lunaris-pdf/docs/screenshots/pages.webp" width="104" alt="All the pages in a grid, three of them selected"></a>
 </td>
 </tr>
 </table>
