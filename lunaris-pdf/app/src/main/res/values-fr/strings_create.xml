@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_title">Créer un PDF</string>
+    <string name="create_entry">Créer un PDF</string>
+    <string name="create_entry_detail">À partir de PDF, d\'images et de fichiers texte</string>
+    <string name="create_entry_link">Créer un PDF à partir de fichiers</string>
+    <string name="create_empty_title">Réunir des fichiers en un seul PDF</string>
+    <string name="create_empty_message">Ajoutez des PDF, des images, du texte, du Markdown ou du HTML, dans l\'ordre de votre choix. Vos fichiers ne sont pas modifiés.</string>
+    <string name="create_add_files">Ajouter des fichiers</string>
+    <string name="create_remove">Retirer</string>
+    <string name="create_removed">Retiré de la liste</string>
+    <string name="create_note">Crée un nouveau fichier. Vos fichiers ne sont pas modifiés.</string>
+    <string name="create_meta_pdf">PDF · %s</string>
+    <string name="create_meta_image">Image · 1 page</string>
+    <string name="create_meta_markdown">Markdown · %s</string>
+    <string name="create_meta_html">HTML · %s</string>
+    <string name="create_meta_text">Texte · %s</string>
+    <plurals name="create_about_pages">
+        <item quantity="one">environ %d page</item>
+        <item quantity="many">environ %d pages</item>
+        <item quantity="other">environ %d pages</item>
+    </plurals>
+    <plurals name="create_unusable">
+        <item quantity="one">%d inutilisable</item>
+        <item quantity="many">%d inutilisables</item>
+        <item quantity="other">%d inutilisables</item>
+    </plurals>
+    <plurals name="create_remove_them">
+        <item quantity="one">%d fichier est inutilisable. Retirez-le pour créer le PDF.</item>
+        <item quantity="many">%d fichiers sont inutilisables. Retirez-les pour créer le PDF.</item>
+        <item quantity="other">%d fichiers sont inutilisables. Retirez-les pour créer le PDF.</item>
+    </plurals>
+    <string name="create_problem_protected">Protégé par mot de passe, il ne peut pas être ajouté</string>
+    <string name="create_problem_damaged">Endommagé, il ne peut pas être ajouté</string>
+    <string name="create_problem_unsupported">Non pris en charge. Utilisez des PDF, des images, du texte, du Markdown ou du HTML.</string>
+    <string name="create_layout">Mise en page des fichiers texte</string>
+    <string name="create_layout_size">Format de page</string>
+    <string name="create_layout_direction">Orientation</string>
+    <string name="create_layout_margins">Marges</string>
+    <string name="create_format_a4">A4</string>
+    <string name="create_format_letter">Lettre US</string>
+    <string name="create_portrait">Portrait</string>
+    <string name="create_landscape">Paysage</string>
+    <string name="create_margins_narrow">Étroites</string>
+    <string name="create_margins_normal">Normales</string>
+    <string name="create_margins_wide">Larges</string>
+    <string name="create_summary_narrow">marges étroites</string>
+    <string name="create_summary_normal">marges normales</string>
+    <string name="create_summary_wide">marges larges</string>
+    <string name="create_leave_title">Quitter cette liste ?</string>
+    <string name="create_leave_message">Les fichiers restent où ils sont, mais la liste ne sera pas conservée.</string>
+    <string name="create_leave">Quitter</string>
+    <string name="create_keep">Rester</string>
+</resources>

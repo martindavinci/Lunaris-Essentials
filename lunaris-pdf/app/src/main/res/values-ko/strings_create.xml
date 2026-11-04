@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_title">PDF 만들기</string>
+    <string name="create_entry">PDF 만들기</string>
+    <string name="create_entry_detail">PDF, 이미지, 텍스트 파일로</string>
+    <string name="create_entry_link">파일로 PDF 만들기</string>
+    <string name="create_empty_title">파일을 하나의 PDF로 합치기</string>
+    <string name="create_empty_message">PDF, 이미지, 텍스트, Markdown, HTML을 원하는 순서로 추가하세요. 원본 파일은 변경되지 않습니다.</string>
+    <string name="create_add_files">파일 추가</string>
+    <string name="create_remove">제거</string>
+    <string name="create_removed">목록에서 제거됨</string>
+    <string name="create_note">새 파일을 만듭니다. 원본 파일은 변경되지 않습니다.</string>
+    <string name="create_meta_pdf">PDF · %s</string>
+    <string name="create_meta_image">이미지 · 1페이지</string>
+    <string name="create_meta_markdown">Markdown · %s</string>
+    <string name="create_meta_html">HTML · %s</string>
+    <string name="create_meta_text">텍스트 · %s</string>
+    <plurals name="create_about_pages">
+        <item quantity="other">약 %d페이지</item>
+    </plurals>
+    <plurals name="create_unusable">
+        <item quantity="other">%d개 사용할 수 없음</item>
+    </plurals>
+    <plurals name="create_remove_them">
+        <item quantity="other">사용할 수 없는 파일이 %d개 있습니다. PDF를 만들려면 제거하세요.</item>
+    </plurals>
+    <string name="create_problem_protected">비밀번호로 보호되어 추가할 수 없습니다</string>
+    <string name="create_problem_damaged">손상되어 추가할 수 없습니다</string>
+    <string name="create_problem_unsupported">지원하지 않습니다. PDF, 이미지, 텍스트, Markdown, HTML을 사용하세요.</string>
+    <string name="create_layout">텍스트 파일 레이아웃</string>
+    <string name="create_layout_size">페이지 크기</string>
+    <string name="create_layout_direction">방향</string>
+    <string name="create_layout_margins">여백</string>
+    <string name="create_format_a4">A4</string>
+    <string name="create_format_letter">레터</string>
+    <string name="create_portrait">세로</string>
+    <string name="create_landscape">가로</string>
+    <string name="create_margins_narrow">좁게</string>
+    <string name="create_margins_normal">보통</string>
+    <string name="create_margins_wide">넓게</string>
+    <string name="create_summary_narrow">좁은 여백</string>
+    <string name="create_summary_normal">보통 여백</string>
+    <string name="create_summary_wide">넓은 여백</string>
+    <string name="create_leave_title">이 목록에서 나갈까요?</string>
+    <string name="create_leave_message">파일은 그대로 있지만 목록은 저장되지 않습니다.</string>
+    <string name="create_leave">나가기</string>
+    <string name="create_keep">머무르기</string>
+</resources>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_title">PDF maken</string>
+    <string name="create_entry">Een PDF maken</string>
+    <string name="create_entry_detail">Van PDF\'s, afbeeldingen en tekstbestanden</string>
+    <string name="create_entry_link">Een PDF maken van bestanden</string>
+    <string name="create_empty_title">Bestanden samenvoegen tot één PDF</string>
+    <string name="create_empty_message">Voeg PDF\'s, afbeeldingen, tekst, Markdown of HTML toe, in elke volgorde. Je bestanden worden niet gewijzigd.</string>
+    <string name="create_add_files">Bestanden toevoegen</string>
+    <string name="create_remove">Verwijderen</string>
+    <string name="create_removed">Uit de lijst verwijderd</string>
+    <string name="create_note">Maakt een nieuw bestand. Je bestanden worden niet gewijzigd.</string>
+    <string name="create_meta_pdf">PDF · %s</string>
+    <string name="create_meta_image">Afbeelding · 1 pagina</string>
+    <string name="create_meta_markdown">Markdown · %s</string>
+    <string name="create_meta_html">HTML · %s</string>
+    <string name="create_meta_text">Tekst · %s</string>
+    <plurals name="create_about_pages">
+        <item quantity="one">ongeveer %d pagina</item>
+        <item quantity="other">ongeveer %d pagina\'s</item>
+    </plurals>
+    <plurals name="create_unusable">
+        <item quantity="one">%d kan niet worden gebruikt</item>
+        <item quantity="other">%d kunnen niet worden gebruikt</item>
+    </plurals>
+    <plurals name="create_remove_them">
+        <item quantity="one">%d bestand kan niet worden gebruikt. Verwijder het om de PDF te maken.</item>
+        <item quantity="other">%d bestanden kunnen niet worden gebruikt. Verwijder ze om de PDF te maken.</item>
+    </plurals>
+    <string name="create_problem_protected">Met wachtwoord beveiligd, kan niet worden toegevoegd</string>
+    <string name="create_problem_damaged">Beschadigd, kan niet worden toegevoegd</string>
+    <string name="create_problem_unsupported">Niet ondersteund. Gebruik PDF, afbeeldingen, tekst, Markdown of HTML.</string>
+    <string name="create_layout">Opmaak voor tekstbestanden</string>
+    <string name="create_layout_size">Paginaformaat</string>
+    <string name="create_layout_direction">Afdrukstand</string>
+    <string name="create_layout_margins">Marges</string>
+    <string name="create_format_a4">A4</string>
+    <string name="create_format_letter">Letter</string>
+    <string name="create_portrait">Staand</string>
+    <string name="create_landscape">Liggend</string>
+    <string name="create_margins_narrow">Smal</string>
+    <string name="create_margins_normal">Normaal</string>
+    <string name="create_margins_wide">Breed</string>
+    <string name="create_summary_narrow">smalle marges</string>
+    <string name="create_summary_normal">normale marges</string>
+    <string name="create_summary_wide">brede marges</string>
+    <string name="create_leave_title">Deze lijst verlaten?</string>
+    <string name="create_leave_message">De bestanden blijven waar ze zijn, maar de lijst wordt niet bewaard.</string>
+    <string name="create_leave">Verlaten</string>
+    <string name="create_keep">Blijven</string>
+</resources>

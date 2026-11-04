@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_title">Utwórz PDF</string>
+    <string name="create_entry">Utwórz PDF</string>
+    <string name="create_entry_detail">Z plików PDF, obrazów i plików tekstowych</string>
+    <string name="create_entry_link">Utwórz PDF z plików</string>
+    <string name="create_empty_title">Połącz pliki w jeden PDF</string>
+    <string name="create_empty_message">Dodaj pliki PDF, obrazy, tekst, Markdown lub HTML, w dowolnej kolejności. Twoje pliki nie są zmieniane.</string>
+    <string name="create_add_files">Dodaj pliki</string>
+    <string name="create_remove">Usuń</string>
+    <string name="create_removed">Usunięto z listy</string>
+    <string name="create_note">Tworzy nowy plik. Twoje pliki nie są zmieniane.</string>
+    <string name="create_meta_pdf">PDF · %s</string>
+    <string name="create_meta_image">Obraz · 1 strona</string>
+    <string name="create_meta_markdown">Markdown · %s</string>
+    <string name="create_meta_html">HTML · %s</string>
+    <string name="create_meta_text">Tekst · %s</string>
+    <plurals name="create_about_pages">
+        <item quantity="one">około %d strony</item>
+        <item quantity="few">około %d stron</item>
+        <item quantity="many">około %d stron</item>
+        <item quantity="other">około %d strony</item>
+    </plurals>
+    <plurals name="create_unusable">
+        <item quantity="one">%d nie można użyć</item>
+        <item quantity="few">%d nie można użyć</item>
+        <item quantity="many">%d nie można użyć</item>
+        <item quantity="other">%d nie można użyć</item>
+    </plurals>
+    <plurals name="create_remove_them">
+        <item quantity="one">%d plik nie nadaje się do użycia. Usuń go, aby utworzyć PDF.</item>
+        <item quantity="few">%d pliki nie nadają się do użycia. Usuń je, aby utworzyć PDF.</item>
+        <item quantity="many">%d plików nie nadaje się do użycia. Usuń je, aby utworzyć PDF.</item>
+        <item quantity="other">%d pliku nie nadaje się do użycia. Usuń je, aby utworzyć PDF.</item>
+    </plurals>
+    <string name="create_problem_protected">Chroniony hasłem, nie można go dodać</string>
+    <string name="create_problem_damaged">Uszkodzony, nie można go dodać</string>
+    <string name="create_problem_unsupported">Nieobsługiwany. Użyj PDF, obrazów, tekstu, Markdown lub HTML.</string>
+    <string name="create_layout">Układ plików tekstowych</string>
+    <string name="create_layout_size">Rozmiar strony</string>
+    <string name="create_layout_direction">Orientacja</string>
+    <string name="create_layout_margins">Marginesy</string>
+    <string name="create_format_a4">A4</string>
+    <string name="create_format_letter">Letter</string>
+    <string name="create_portrait">Pionowo</string>
+    <string name="create_landscape">Poziomo</string>
+    <string name="create_margins_narrow">Wąskie</string>
+    <string name="create_margins_normal">Normalne</string>
+    <string name="create_margins_wide">Szerokie</string>
+    <string name="create_summary_narrow">wąskie marginesy</string>
+    <string name="create_summary_normal">normalne marginesy</string>
+    <string name="create_summary_wide">szerokie marginesy</string>
+    <string name="create_leave_title">Opuścić tę listę?</string>
+    <string name="create_leave_message">Pliki zostają tam, gdzie są, ale lista nie zostanie zachowana.</string>
+    <string name="create_leave">Opuść</string>
+    <string name="create_keep">Zostań</string>
+</resources>

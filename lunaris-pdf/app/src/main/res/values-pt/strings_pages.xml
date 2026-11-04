@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pages_title">Páginas</string>
+    <string name="pages_save">Guardar</string>
+    <string name="pages_no_changes">Ainda sem alterações</string>
+    <plurals name="pages_changes">
+        <item quantity="one">%d alteração</item>
+        <item quantity="many">%d alterações</item>
+        <item quantity="other">%d alterações</item>
+    </plurals>
+    <string name="pages_note">Ao guardar, cria-se um ficheiro novo. O índice, as ligações e os campos de formulário não são mantidos.</string>
+    <string name="pages_loading">A carregar as páginas… Já pode selecioná-las e movê-las.</string>
+    <string name="pages_save_annotations_first">Guarde primeiro as suas anotações</string>
+    <string name="pages_add">Adicionar páginas</string>
+    <string name="pages_split">Dividir</string>
+    <plurals name="pages_selected">
+        <item quantity="one">%d página selecionada</item>
+        <item quantity="many">%d páginas selecionadas</item>
+        <item quantity="other">%d páginas selecionadas</item>
+    </plurals>
+    <string name="pages_select_all">Selecionar tudo</string>
+    <string name="pages_clear_selection">Limpar seleção</string>
+    <string name="pages_rotate">Rodar</string>
+    <string name="pages_delete">Eliminar</string>
+    <string name="pages_extract">Extrair</string>
+    <plurals name="pages_move_after">
+        <item quantity="one">Mover %1$d página para depois da página %2$d</item>
+        <item quantity="many">Mover %1$d páginas para depois da página %2$d</item>
+        <item quantity="other">Mover %1$d páginas para depois da página %2$d</item>
+    </plurals>
+    <plurals name="pages_move_start">
+        <item quantity="one">Mover %d página para o início</item>
+        <item quantity="many">Mover %d páginas para o início</item>
+        <item quantity="other">Mover %d páginas para o início</item>
+    </plurals>
+    <string name="pages_page_label">Página %d</string>
+    <string name="pages_back_to_reading">Voltar à leitura</string>
+    <string name="pages_protected_title">Este PDF está protegido por palavra-passe</string>
+    <string name="pages_protected_message">Pode lê-lo, mas as suas páginas não podem ser movidas, removidas nem extraídas. O Lunaris nunca remove palavras-passe.</string>
+    <string name="pages_damaged_title">Não é possível organizar este PDF</string>
+    <string name="pages_damaged_message">Parte do ficheiro está danificada, por isso as páginas não podem ser reconstruídas com segurança. Nada foi alterado.</string>
+    <string name="pages_add_title">Adicionar páginas</string>
+    <string name="pages_insert_after">Inserir depois de</string>
+    <string name="pages_insert_start">No início</string>
+    <string name="pages_add_blank">Página em branco</string>
+    <string name="pages_add_blank_detail">Do mesmo tamanho que a página %d</string>
+    <string name="pages_add_blank_first">Do mesmo tamanho que a primeira página</string>
+    <string name="pages_add_pdf">Páginas de outro PDF</string>
+    <string name="pages_add_pdf_detail">Escolha um ficheiro e depois as páginas</string>
+    <string name="pages_add_image">Imagem</string>
+    <string name="pages_add_image_detail">JPG, PNG ou WebP · uma página por imagem</string>
+    <string name="pages_pick_title">Escolha as páginas</string>
+    <plurals name="pages_pick_add">
+        <item quantity="one">Adicionar %d página</item>
+        <item quantity="many">Adicionar %d páginas</item>
+        <item quantity="other">Adicionar %d páginas</item>
+    </plurals>
+    <string name="pages_split_title">Dividir o PDF</string>
+    <string name="pages_split_ranges">Por intervalos de páginas</string>
+    <string name="pages_split_ranges_detail">Escolhe onde cortar</string>
+    <string name="pages_split_every">Um ficheiro por página</string>
+    <plurals name="pages_split_files">
+        <item quantity="one">%d ficheiro</item>
+        <item quantity="many">%d ficheiros</item>
+        <item quantity="other">%d ficheiros</item>
+    </plurals>
+    <string name="pages_split_row">Ficheiro %d</string>
+    <string name="pages_split_hint">1-3, 5</string>
+    <plurals name="pages_split_count">
+        <item quantity="one">%d página</item>
+        <item quantity="many">%d páginas</item>
+        <item quantity="other">%d páginas</item>
+    </plurals>
+    <string name="pages_split_wrong">Verifique os números</string>
+    <string name="pages_split_remove_row">Remover este intervalo</string>
+    <string name="pages_split_add_range">Adicionar intervalo</string>
+    <plurals name="pages_split_note">
+        <item quantity="one">%d ficheiro novo. Este PDF fica como está.</item>
+        <item quantity="many">%d ficheiros novos. Este PDF fica como está.</item>
+        <item quantity="other">%d ficheiros novos. Este PDF fica como está.</item>
+    </plurals>
+    <plurals name="pages_split_go">
+        <item quantity="one">Dividir em %d ficheiro</item>
+        <item quantity="many">Dividir em %d ficheiros</item>
+        <item quantity="other">Dividir em %d ficheiros</item>
+    </plurals>
+    <string name="pages_leave_title">Guardar as alterações?</string>
+    <plurals name="pages_leave_message">
+        <item quantity="one">Fez %d alteração. Ao guardar, cria-se um ficheiro novo; este PDF fica como está.</item>
+        <item quantity="many">Fez %d alterações. Ao guardar, cria-se um ficheiro novo; este PDF fica como está.</item>
+        <item quantity="other">Fez %d alterações. Ao guardar, cria-se um ficheiro novo; este PDF fica como está.</item>
+    </plurals>
+    <string name="pages_leave_save">Guardar como ficheiro novo</string>
+    <string name="pages_leave_discard">Descartar alterações</string>
+    <string name="pages_leave_keep">Continuar a editar</string>
+    <string name="pages_notice_last">Um PDF precisa de pelo menos uma página</string>
+    <string name="pages_notice_other_protected">Esse PDF tem palavra-passe, por isso as suas páginas não podem ser adicionadas</string>
+    <string name="pages_notice_other_damaged">Não é possível ler esse PDF</string>
+    <string name="pages_notice_image_failed">Não foi possível ler uma imagem</string>
+    <string name="pages_notice_folder_failed">Não é possível criar ficheiros novos nessa pasta</string>
+    <string name="pages_edited_name">%s (editado).pdf</string>
+    <string name="pages_extracted_name">%s (páginas).pdf</string>
+    <string name="no_app_for_files">Nenhuma aplicação neste telemóvel consegue escolher ficheiros</string>
+
+    <string name="work_saving">A guardar um ficheiro novo…</string>
+    <string name="work_extracting">A extrair as páginas…</string>
+    <string name="work_splitting">A dividir o PDF…</string>
+    <string name="work_creating">A criar o PDF…</string>
+    <string name="work_preparing">A preparar…</string>
+    <string name="work_page_of">Página %1$d de %2$d</string>
+    <string name="work_file_page_of">Ficheiro %1$d de %2$d · página %3$d de %4$d</string>
+    <string name="work_adding">A adicionar %1$s · %2$d de %3$d</string>
+    <string name="work_note_pages">O índice, as ligações e os campos de formulário não são mantidos no ficheiro novo.</string>
+    <string name="work_note_text">O texto, o Markdown e o HTML são paginados em páginas %s.</string>
+    <string name="work_cancel_edits">Cancelar pára aqui. As suas alterações ficam como estão.</string>
+    <string name="work_cancel_list">Cancelar pára aqui. A sua lista fica como está.</string>
+    <string name="work_saved">Guardado</string>
+    <plurals name="work_new_files">
+        <item quantity="one">%d ficheiro novo</item>
+        <item quantity="many">%d ficheiros novos</item>
+        <item quantity="other">%d ficheiros novos</item>
+    </plurals>
+    <string name="work_original_same">O PDF original não foi alterado.</string>
+    <plurals name="work_files_same">
+        <item quantity="one">O seu ficheiro (%d) não foi alterado.</item>
+        <item quantity="many">Os seus %d ficheiros não foram alterados.</item>
+        <item quantity="other">Os seus %d ficheiros não foram alterados.</item>
+    </plurals>
+    <string name="work_done">Concluído</string>
+    <string name="work_open">Abrir</string>
+    <string name="work_failed_save">Não foi possível guardar o ficheiro</string>
+    <string name="work_failed_create">Não foi possível criar o PDF</string>
+    <string name="work_why_protected">%s tem palavra-passe, por isso as suas páginas não podem ser usadas.</string>
+    <string name="work_why_protected_this">Este PDF tem palavra-passe, por isso as suas páginas não podem ser usadas.</string>
+    <string name="work_why_damaged">%s está danificado, por isso as suas páginas não podem ser reconstruídas com segurança.</string>
+    <string name="work_why_damaged_this">Este PDF está danificado, por isso as suas páginas não podem ser reconstruídas com segurança.</string>
+    <string name="work_why_unreadable">%s já não pode ser lido. Pode ter sido movido ou eliminado.</string>
+    <string name="work_why_unreadable_this">O ficheiro já não pode ser lido. Pode ter sido movido ou eliminado.</string>
+    <string name="work_why_memory">O telemóvel ficou sem memória para esta tarefa. Fechar outras aplicações pode ajudar.</string>
+    <string name="work_why_write">Não foi possível escrever o ficheiro.</string>
+    <string name="work_why_space">Não há espaço livre suficiente no telemóvel.</string>
+    <string name="work_edits_here">As suas alterações continuam aqui.</string>
+    <string name="work_list_here">A sua lista continua aqui.</string>
+    <string name="work_needed_free">Necessário %1$s · livre %2$s</string>
+    <string name="work_try_again">Tentar novamente</string>
+    <string name="work_save_elsewhere">Guardar noutro local</string>
+    <string name="work_remove_file">Remover esse ficheiro</string>
+    <string name="work_close">Fechar</string>
+</resources>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_title">创建 PDF</string>
+    <string name="create_entry">创建 PDF</string>
+    <string name="create_entry_detail">来自 PDF、图片和文本文件</string>
+    <string name="create_entry_link">用文件创建 PDF</string>
+    <string name="create_empty_title">将文件合并为一个 PDF</string>
+    <string name="create_empty_message">可按任意顺序添加 PDF、图片、文本、Markdown 或 HTML。你的文件不会被更改。</string>
+    <string name="create_add_files">添加文件</string>
+    <string name="create_remove">移除</string>
+    <string name="create_removed">已从列表中移除</string>
+    <string name="create_note">会生成新文件。你的文件不会被更改。</string>
+    <string name="create_meta_pdf">PDF · %s</string>
+    <string name="create_meta_image">图片 · 1 页</string>
+    <string name="create_meta_markdown">Markdown · %s</string>
+    <string name="create_meta_html">HTML · %s</string>
+    <string name="create_meta_text">文本 · %s</string>
+    <plurals name="create_about_pages">
+        <item quantity="other">约 %d 页</item>
+    </plurals>
+    <plurals name="create_unusable">
+        <item quantity="other">%d 个无法使用</item>
+    </plurals>
+    <plurals name="create_remove_them">
+        <item quantity="other">有 %d 个文件无法使用。请将其移除以创建 PDF。</item>
+    </plurals>
+    <string name="create_problem_protected">有密码保护，无法添加</string>
+    <string name="create_problem_damaged">已损坏，无法添加</string>
+    <string name="create_problem_unsupported">不支持。请使用 PDF、图片、文本、Markdown 或 HTML。</string>
+    <string name="create_layout">文本文件的版式</string>
+    <string name="create_layout_size">页面大小</string>
+    <string name="create_layout_direction">方向</string>
+    <string name="create_layout_margins">页边距</string>
+    <string name="create_format_a4">A4</string>
+    <string name="create_format_letter">信纸</string>
+    <string name="create_portrait">纵向</string>
+    <string name="create_landscape">横向</string>
+    <string name="create_margins_narrow">窄</string>
+    <string name="create_margins_normal">常规</string>
+    <string name="create_margins_wide">宽</string>
+    <string name="create_summary_narrow">窄页边距</string>
+    <string name="create_summary_normal">常规页边距</string>
+    <string name="create_summary_wide">宽页边距</string>
+    <string name="create_leave_title">要离开此列表吗?</string>
+    <string name="create_leave_message">文件会留在原处，但列表不会保留。</string>
+    <string name="create_leave">离开</string>
+    <string name="create_keep">留下</string>
+</resources>

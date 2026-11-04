@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pages_title">ページ</string>
+    <string name="pages_save">保存</string>
+    <string name="pages_no_changes">まだ変更はありません</string>
+    <plurals name="pages_changes">
+        <item quantity="other">%d 件の変更</item>
+    </plurals>
+    <string name="pages_note">保存すると新しいファイルが作られます。しおり、リンク、フォームフィールドは引き継がれません。</string>
+    <string name="pages_loading">ページを読み込んでいます… すでに選択や移動ができます。</string>
+    <string name="pages_save_annotations_first">先に注釈を保存してください</string>
+    <string name="pages_add">ページを追加</string>
+    <string name="pages_split">分割</string>
+    <plurals name="pages_selected">
+        <item quantity="other">%d ページを選択中</item>
+    </plurals>
+    <string name="pages_select_all">すべて選択</string>
+    <string name="pages_clear_selection">選択を解除</string>
+    <string name="pages_rotate">回転</string>
+    <string name="pages_delete">削除</string>
+    <string name="pages_extract">抽出</string>
+    <plurals name="pages_move_after">
+        <item quantity="other">%1$d ページを %2$d ページの後ろへ移動</item>
+    </plurals>
+    <plurals name="pages_move_start">
+        <item quantity="other">%d ページを先頭へ移動</item>
+    </plurals>
+    <string name="pages_page_label">%d ページ</string>
+    <string name="pages_back_to_reading">読書に戻る</string>
+    <string name="pages_protected_title">この PDF はパスワードで保護されています</string>
+    <string name="pages_protected_message">読むことはできますが、ページの移動、削除、抽出はできません。Lunaris がパスワードを解除することはありません。</string>
+    <string name="pages_damaged_title">この PDF は整理できません</string>
+    <string name="pages_damaged_message">ファイルの一部が壊れているため、ページを安全に再構築できません。何も変更されていません。</string>
+    <string name="pages_add_title">ページを追加</string>
+    <string name="pages_insert_after">挿入位置</string>
+    <string name="pages_insert_start">先頭</string>
+    <string name="pages_add_blank">白紙ページ</string>
+    <string name="pages_add_blank_detail">%d ページと同じサイズ</string>
+    <string name="pages_add_blank_first">最初のページと同じサイズ</string>
+    <string name="pages_add_pdf">別の PDF のページ</string>
+    <string name="pages_add_pdf_detail">ファイルを選んでから、ページを選びます</string>
+    <string name="pages_add_image">画像</string>
+    <string name="pages_add_image_detail">JPG、PNG、WebP · 画像1枚につき1ページ</string>
+    <string name="pages_pick_title">ページを選択</string>
+    <plurals name="pages_pick_add">
+        <item quantity="other">%d ページを追加</item>
+    </plurals>
+    <string name="pages_split_title">PDF を分割</string>
+    <string name="pages_split_ranges">ページ範囲で分割</string>
+    <string name="pages_split_ranges_detail">分割する位置を自分で決めます</string>
+    <string name="pages_split_every">1ページごとに1ファイル</string>
+    <plurals name="pages_split_files">
+        <item quantity="other">%d ファイル</item>
+    </plurals>
+    <string name="pages_split_row">ファイル %d</string>
+    <string name="pages_split_hint">1-3, 5</string>
+    <plurals name="pages_split_count">
+        <item quantity="other">%d ページ</item>
+    </plurals>
+    <string name="pages_split_wrong">番号を確認してください</string>
+    <string name="pages_split_remove_row">この範囲を削除</string>
+    <string name="pages_split_add_range">範囲を追加</string>
+    <plurals name="pages_split_note">
+        <item quantity="other">新しいファイルが %d 個できます。この PDF はそのまま残ります。</item>
+    </plurals>
+    <plurals name="pages_split_go">
+        <item quantity="other">%d ファイルに分割</item>
+    </plurals>
+    <string name="pages_leave_title">変更を保存しますか?</string>
+    <plurals name="pages_leave_message">
+        <item quantity="other">%d 件の変更をしました。保存すると新しいファイルが作られ、この PDF はそのまま残ります。</item>
+    </plurals>
+    <string name="pages_leave_save">新しいファイルとして保存</string>
+    <string name="pages_leave_discard">変更を破棄</string>
+    <string name="pages_leave_keep">編集を続ける</string>
+    <string name="pages_notice_last">PDF には最低1ページが必要です</string>
+    <string name="pages_notice_other_protected">その PDF にはパスワードがあるため、ページを追加できません</string>
+    <string name="pages_notice_other_damaged">その PDF は読み込めません</string>
+    <string name="pages_notice_image_failed">読み込めない画像がありました</string>
+    <string name="pages_notice_folder_failed">そのフォルダには新しいファイルを作成できません</string>
+    <string name="pages_edited_name">%s (編集済み).pdf</string>
+    <string name="pages_extracted_name">%s (抽出).pdf</string>
+    <string name="no_app_for_files">この端末にはファイルを選択できるアプリがありません</string>
+
+    <string name="work_saving">新しいファイルを保存中…</string>
+    <string name="work_extracting">ページを抽出中…</string>
+    <string name="work_splitting">PDF を分割中…</string>
+    <string name="work_creating">PDF を作成中…</string>
+    <string name="work_preparing">準備中…</string>
+    <string name="work_page_of">%1$d / %2$d ページ</string>
+    <string name="work_file_page_of">ファイル %1$d / %2$d · %3$d / %4$d ページ</string>
+    <string name="work_adding">%1$s を追加中 · %2$d / %3$d</string>
+    <string name="work_note_pages">しおり、リンク、フォームフィールドは新しいファイルに引き継がれません。</string>
+    <string name="work_note_text">テキスト、Markdown、HTML は %s のページにレイアウトされます。</string>
+    <string name="work_cancel_edits">キャンセルするとここで止まります。編集内容はそのまま残ります。</string>
+    <string name="work_cancel_list">キャンセルするとここで止まります。リストはそのまま残ります。</string>
+    <string name="work_saved">保存しました</string>
+    <plurals name="work_new_files">
+        <item quantity="other">新しいファイル %d 個</item>
+    </plurals>
+    <string name="work_original_same">元の PDF は変更されていません。</string>
+    <plurals name="work_files_same">
+        <item quantity="other">%d 個のファイルは変更されていません。</item>
+    </plurals>
+    <string name="work_done">完了</string>
+    <string name="work_open">開く</string>
+    <string name="work_failed_save">ファイルを保存できませんでした</string>
+    <string name="work_failed_create">PDF を作成できませんでした</string>
+    <string name="work_why_protected">%s にはパスワードがあるため、ページを使えません。</string>
+    <string name="work_why_protected_this">この PDF にはパスワードがあるため、ページを使えません。</string>
+    <string name="work_why_damaged">%s は壊れているため、ページを安全に再構築できません。</string>
+    <string name="work_why_damaged_this">この PDF は壊れているため、ページを安全に再構築できません。</string>
+    <string name="work_why_unreadable">%s を読み込めなくなりました。移動または削除された可能性があります。</string>
+    <string name="work_why_unreadable_this">ファイルを読み込めなくなりました。移動または削除された可能性があります。</string>
+    <string name="work_why_memory">この処理に必要なメモリが足りませんでした。他のアプリを閉じると改善することがあります。</string>
+    <string name="work_why_write">ファイルを書き込めませんでした。</string>
+    <string name="work_why_space">端末の空き容量が足りません。</string>
+    <string name="work_edits_here">編集内容は残っています。</string>
+    <string name="work_list_here">リストは残っています。</string>
+    <string name="work_needed_free">必要 %1$s · 空き %2$s</string>
+    <string name="work_try_again">再試行</string>
+    <string name="work_save_elsewhere">別の場所に保存</string>
+    <string name="work_remove_file">そのファイルを削除</string>
+    <string name="work_close">閉じる</string>
+</resources>

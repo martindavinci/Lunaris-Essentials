@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pages_title">Pagina\'s</string>
+    <string name="pages_save">Opslaan</string>
+    <string name="pages_no_changes">Nog geen wijzigingen</string>
+    <plurals name="pages_changes">
+        <item quantity="one">%d wijziging</item>
+        <item quantity="other">%d wijzigingen</item>
+    </plurals>
+    <string name="pages_note">Bij opslaan ontstaat een nieuw bestand. De inhoudsopgave, links en formuliervelden blijven niet behouden.</string>
+    <string name="pages_loading">Pagina\'s laden… Je kunt ze al selecteren en verplaatsen.</string>
+    <string name="pages_save_annotations_first">Sla eerst je annotaties op</string>
+    <string name="pages_add">Pagina\'s toevoegen</string>
+    <string name="pages_split">Splitsen</string>
+    <plurals name="pages_selected">
+        <item quantity="one">%d pagina geselecteerd</item>
+        <item quantity="other">%d pagina\'s geselecteerd</item>
+    </plurals>
+    <string name="pages_select_all">Alles selecteren</string>
+    <string name="pages_clear_selection">Selectie wissen</string>
+    <string name="pages_rotate">Draaien</string>
+    <string name="pages_delete">Verwijderen</string>
+    <string name="pages_extract">Uitpakken</string>
+    <plurals name="pages_move_after">
+        <item quantity="one">%1$d pagina verplaatsen na pagina %2$d</item>
+        <item quantity="other">%1$d pagina\'s verplaatsen na pagina %2$d</item>
+    </plurals>
+    <plurals name="pages_move_start">
+        <item quantity="one">%d pagina naar het begin verplaatsen</item>
+        <item quantity="other">%d pagina\'s naar het begin verplaatsen</item>
+    </plurals>
+    <string name="pages_page_label">Pagina %d</string>
+    <string name="pages_back_to_reading">Terug naar lezen</string>
+    <string name="pages_protected_title">Deze PDF is beveiligd met een wachtwoord</string>
+    <string name="pages_protected_message">Je kunt hem lezen, maar de pagina\'s kunnen niet worden verplaatst, verwijderd of uitgepakt. Lunaris verwijdert nooit wachtwoorden.</string>
+    <string name="pages_damaged_title">Deze PDF kan niet worden geordend</string>
+    <string name="pages_damaged_message">Een deel van het bestand is beschadigd, dus de pagina\'s kunnen niet veilig worden opgebouwd. Er is niets gewijzigd.</string>
+    <string name="pages_add_title">Pagina\'s toevoegen</string>
+    <string name="pages_insert_after">Invoegen na</string>
+    <string name="pages_insert_start">Aan het begin</string>
+    <string name="pages_add_blank">Lege pagina</string>
+    <string name="pages_add_blank_detail">Even groot als pagina %d</string>
+    <string name="pages_add_blank_first">Even groot als de eerste pagina</string>
+    <string name="pages_add_pdf">Pagina\'s uit een andere PDF</string>
+    <string name="pages_add_pdf_detail">Kies een bestand en daarna de pagina\'s</string>
+    <string name="pages_add_image">Afbeelding</string>
+    <string name="pages_add_image_detail">JPG, PNG of WebP · één pagina per afbeelding</string>
+    <string name="pages_pick_title">Kies de pagina\'s</string>
+    <plurals name="pages_pick_add">
+        <item quantity="one">%d pagina toevoegen</item>
+        <item quantity="other">%d pagina\'s toevoegen</item>
+    </plurals>
+    <string name="pages_split_title">PDF splitsen</string>
+    <string name="pages_split_ranges">Op paginabereik</string>
+    <string name="pages_split_ranges_detail">Jij kiest waar er wordt geknipt</string>
+    <string name="pages_split_every">Eén bestand per pagina</string>
+    <plurals name="pages_split_files">
+        <item quantity="one">%d bestand</item>
+        <item quantity="other">%d bestanden</item>
+    </plurals>
+    <string name="pages_split_row">Bestand %d</string>
+    <string name="pages_split_hint">1-3, 5</string>
+    <plurals name="pages_split_count">
+        <item quantity="one">%d pagina</item>
+        <item quantity="other">%d pagina\'s</item>
+    </plurals>
+    <string name="pages_split_wrong">Controleer de nummers</string>
+    <string name="pages_split_remove_row">Dit bereik verwijderen</string>
+    <string name="pages_split_add_range">Bereik toevoegen</string>
+    <plurals name="pages_split_note">
+        <item quantity="one">%d nieuw bestand. Deze PDF blijft zoals hij is.</item>
+        <item quantity="other">%d nieuwe bestanden. Deze PDF blijft zoals hij is.</item>
+    </plurals>
+    <plurals name="pages_split_go">
+        <item quantity="one">Splitsen in %d bestand</item>
+        <item quantity="other">Splitsen in %d bestanden</item>
+    </plurals>
+    <string name="pages_leave_title">Wijzigingen opslaan?</string>
+    <plurals name="pages_leave_message">
+        <item quantity="one">Je hebt %d wijziging gemaakt. Bij opslaan ontstaat een nieuw bestand; deze PDF blijft zoals hij is.</item>
+        <item quantity="other">Je hebt %d wijzigingen gemaakt. Bij opslaan ontstaat een nieuw bestand; deze PDF blijft zoals hij is.</item>
+    </plurals>
+    <string name="pages_leave_save">Opslaan als nieuw bestand</string>
+    <string name="pages_leave_discard">Wijzigingen negeren</string>
+    <string name="pages_leave_keep">Verder bewerken</string>
+    <string name="pages_notice_last">Een PDF heeft minstens één pagina nodig</string>
+    <string name="pages_notice_other_protected">Die PDF heeft een wachtwoord, dus de pagina\'s kunnen niet worden toegevoegd</string>
+    <string name="pages_notice_other_damaged">Die PDF kan niet worden gelezen</string>
+    <string name="pages_notice_image_failed">Een afbeelding kon niet worden gelezen</string>
+    <string name="pages_notice_folder_failed">In die map kunnen geen nieuwe bestanden worden gemaakt</string>
+    <string name="pages_edited_name">%s (bewerkt).pdf</string>
+    <string name="pages_extracted_name">%s (pagina\'s).pdf</string>
+    <string name="no_app_for_files">Geen app op deze telefoon kan bestanden kiezen</string>
+
+    <string name="work_saving">Nieuw bestand opslaan…</string>
+    <string name="work_extracting">Pagina\'s uitpakken…</string>
+    <string name="work_splitting">PDF splitsen…</string>
+    <string name="work_creating">PDF maken…</string>
+    <string name="work_preparing">Voorbereiden…</string>
+    <string name="work_page_of">Pagina %1$d van %2$d</string>
+    <string name="work_file_page_of">Bestand %1$d van %2$d · pagina %3$d van %4$d</string>
+    <string name="work_adding">%1$s toevoegen · %2$d van %3$d</string>
+    <string name="work_note_pages">De inhoudsopgave, links en formuliervelden blijven niet behouden in het nieuwe bestand.</string>
+    <string name="work_note_text">Tekst, Markdown en HTML worden opgemaakt op %s-pagina\'s.</string>
+    <string name="work_cancel_edits">Annuleren stopt hier. Je wijzigingen blijven zoals ze zijn.</string>
+    <string name="work_cancel_list">Annuleren stopt hier. Je lijst blijft zoals hij is.</string>
+    <string name="work_saved">Opgeslagen</string>
+    <plurals name="work_new_files">
+        <item quantity="one">%d nieuw bestand</item>
+        <item quantity="other">%d nieuwe bestanden</item>
+    </plurals>
+    <string name="work_original_same">De originele PDF is niet gewijzigd.</string>
+    <plurals name="work_files_same">
+        <item quantity="one">Je bestand is niet gewijzigd.</item>
+        <item quantity="other">Je %d bestanden zijn niet gewijzigd.</item>
+    </plurals>
+    <string name="work_done">Klaar</string>
+    <string name="work_open">Openen</string>
+    <string name="work_failed_save">Het bestand kon niet worden opgeslagen</string>
+    <string name="work_failed_create">De PDF kon niet worden gemaakt</string>
+    <string name="work_why_protected">%s heeft een wachtwoord, dus de pagina\'s kunnen niet worden gebruikt.</string>
+    <string name="work_why_protected_this">Deze PDF heeft een wachtwoord, dus de pagina\'s kunnen niet worden gebruikt.</string>
+    <string name="work_why_damaged">%s is beschadigd, dus de pagina\'s kunnen niet veilig worden opgebouwd.</string>
+    <string name="work_why_damaged_this">Deze PDF is beschadigd, dus de pagina\'s kunnen niet veilig worden opgebouwd.</string>
+    <string name="work_why_unreadable">%s kan niet meer worden gelezen. Het is misschien verplaatst of verwijderd.</string>
+    <string name="work_why_unreadable_this">Het bestand kan niet meer worden gelezen. Het is misschien verplaatst of verwijderd.</string>
+    <string name="work_why_memory">De telefoon had niet genoeg geheugen voor deze taak. Het sluiten van andere apps kan helpen.</string>
+    <string name="work_why_write">Het bestand kon niet worden geschreven.</string>
+    <string name="work_why_space">Er is niet genoeg vrije ruimte op de telefoon.</string>
+    <string name="work_edits_here">Je wijzigingen staan er nog.</string>
+    <string name="work_list_here">Je lijst staat er nog.</string>
+    <string name="work_needed_free">Nodig %1$s · vrij %2$s</string>
+    <string name="work_try_again">Opnieuw proberen</string>
+    <string name="work_save_elsewhere">Ergens anders opslaan</string>
+    <string name="work_remove_file">Dat bestand verwijderen</string>
+    <string name="work_close">Sluiten</string>
+</resources>

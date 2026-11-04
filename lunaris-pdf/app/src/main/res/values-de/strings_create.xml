@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_title">PDF erstellen</string>
+    <string name="create_entry">PDF erstellen</string>
+    <string name="create_entry_detail">Aus PDFs, Bildern und Textdateien</string>
+    <string name="create_entry_link">PDF aus Dateien erstellen</string>
+    <string name="create_empty_title">Dateien zu einem PDF zusammenfügen</string>
+    <string name="create_empty_message">Füge PDFs, Bilder, Text, Markdown oder HTML in beliebiger Reihenfolge hinzu. Deine Dateien werden nicht verändert.</string>
+    <string name="create_add_files">Dateien hinzufügen</string>
+    <string name="create_remove">Entfernen</string>
+    <string name="create_removed">Aus der Liste entfernt</string>
+    <string name="create_note">Erstellt eine neue Datei. Deine Dateien werden nicht verändert.</string>
+    <string name="create_meta_pdf">PDF · %s</string>
+    <string name="create_meta_image">Bild · 1 Seite</string>
+    <string name="create_meta_markdown">Markdown · %s</string>
+    <string name="create_meta_html">HTML · %s</string>
+    <string name="create_meta_text">Text · %s</string>
+    <plurals name="create_about_pages">
+        <item quantity="one">etwa %d Seite</item>
+        <item quantity="other">etwa %d Seiten</item>
+    </plurals>
+    <plurals name="create_unusable">
+        <item quantity="one">%d nicht verwendbar</item>
+        <item quantity="other">%d nicht verwendbar</item>
+    </plurals>
+    <plurals name="create_remove_them">
+        <item quantity="one">%d Datei lässt sich nicht verwenden. Entferne sie, um das PDF zu erstellen.</item>
+        <item quantity="other">%d Dateien lassen sich nicht verwenden. Entferne sie, um das PDF zu erstellen.</item>
+    </plurals>
+    <string name="create_problem_protected">Passwortgeschützt, lässt sich nicht hinzufügen</string>
+    <string name="create_problem_damaged">Beschädigt, lässt sich nicht hinzufügen</string>
+    <string name="create_problem_unsupported">Nicht unterstützt. Verwende PDF, Bilder, Text, Markdown oder HTML.</string>
+    <string name="create_layout">Layout für Textdateien</string>
+    <string name="create_layout_size">Seitengröße</string>
+    <string name="create_layout_direction">Ausrichtung</string>
+    <string name="create_layout_margins">Ränder</string>
+    <string name="create_format_a4">A4</string>
+    <string name="create_format_letter">Letter</string>
+    <string name="create_portrait">Hochformat</string>
+    <string name="create_landscape">Querformat</string>
+    <string name="create_margins_narrow">Schmal</string>
+    <string name="create_margins_normal">Normal</string>
+    <string name="create_margins_wide">Breit</string>
+    <string name="create_summary_narrow">schmale Ränder</string>
+    <string name="create_summary_normal">normale Ränder</string>
+    <string name="create_summary_wide">breite Ränder</string>
+    <string name="create_leave_title">Diese Liste verlassen?</string>
+    <string name="create_leave_message">Die Dateien bleiben, wo sie sind, aber die Liste wird nicht gespeichert.</string>
+    <string name="create_leave">Verlassen</string>
+    <string name="create_keep">Bleiben</string>
+</resources>

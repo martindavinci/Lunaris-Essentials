@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pages_title">Strony</string>
+    <string name="pages_save">Zapisz</string>
+    <string name="pages_no_changes">Jeszcze bez zmian</string>
+    <plurals name="pages_changes">
+        <item quantity="one">%d zmiana</item>
+        <item quantity="few">%d zmiany</item>
+        <item quantity="many">%d zmian</item>
+        <item quantity="other">%d zmiany</item>
+    </plurals>
+    <string name="pages_note">Zapisanie tworzy nowy plik. Spis treści, linki i pola formularzy nie są zachowywane.</string>
+    <string name="pages_loading">Wczytywanie stron… Możesz już je zaznaczać i przenosić.</string>
+    <string name="pages_save_annotations_first">Najpierw zapisz adnotacje</string>
+    <string name="pages_add">Dodaj strony</string>
+    <string name="pages_split">Podziel</string>
+    <plurals name="pages_selected">
+        <item quantity="one">Zaznaczono %d stronę</item>
+        <item quantity="few">Zaznaczono %d strony</item>
+        <item quantity="many">Zaznaczono %d stron</item>
+        <item quantity="other">Zaznaczono %d strony</item>
+    </plurals>
+    <string name="pages_select_all">Zaznacz wszystko</string>
+    <string name="pages_clear_selection">Wyczyść zaznaczenie</string>
+    <string name="pages_rotate">Obróć</string>
+    <string name="pages_delete">Usuń</string>
+    <string name="pages_extract">Wyodrębnij</string>
+    <plurals name="pages_move_after">
+        <item quantity="one">Przenieś %1$d stronę za stronę %2$d</item>
+        <item quantity="few">Przenieś %1$d strony za stronę %2$d</item>
+        <item quantity="many">Przenieś %1$d stron za stronę %2$d</item>
+        <item quantity="other">Przenieś %1$d strony za stronę %2$d</item>
+    </plurals>
+    <plurals name="pages_move_start">
+        <item quantity="one">Przenieś %d stronę na początek</item>
+        <item quantity="few">Przenieś %d strony na początek</item>
+        <item quantity="many">Przenieś %d stron na początek</item>
+        <item quantity="other">Przenieś %d strony na początek</item>
+    </plurals>
+    <string name="pages_page_label">Strona %d</string>
+    <string name="pages_back_to_reading">Wróć do czytania</string>
+    <string name="pages_protected_title">Ten PDF jest chroniony hasłem</string>
+    <string name="pages_protected_message">Możesz go czytać, ale jego stron nie można przenosić, usuwać ani wyodrębniać. Lunaris nigdy nie usuwa haseł.</string>
+    <string name="pages_damaged_title">Tego PDF-a nie można uporządkować</string>
+    <string name="pages_damaged_message">Część pliku jest uszkodzona, więc jego stron nie można bezpiecznie odtworzyć. Nic nie zostało zmienione.</string>
+    <string name="pages_add_title">Dodaj strony</string>
+    <string name="pages_insert_after">Wstaw po</string>
+    <string name="pages_insert_start">Na początku</string>
+    <string name="pages_add_blank">Pusta strona</string>
+    <string name="pages_add_blank_detail">Taki sam rozmiar jak strona %d</string>
+    <string name="pages_add_blank_first">Taki sam rozmiar jak pierwsza strona</string>
+    <string name="pages_add_pdf">Strony z innego PDF-a</string>
+    <string name="pages_add_pdf_detail">Wybierz plik, potem strony</string>
+    <string name="pages_add_image">Obraz</string>
+    <string name="pages_add_image_detail">JPG, PNG lub WebP · jedna strona na obraz</string>
+    <string name="pages_pick_title">Wybierz strony</string>
+    <plurals name="pages_pick_add">
+        <item quantity="one">Dodaj %d stronę</item>
+        <item quantity="few">Dodaj %d strony</item>
+        <item quantity="many">Dodaj %d stron</item>
+        <item quantity="other">Dodaj %d strony</item>
+    </plurals>
+    <string name="pages_split_title">Podziel PDF</string>
+    <string name="pages_split_ranges">Według zakresów stron</string>
+    <string name="pages_split_ranges_detail">Ty wybierasz, gdzie ciąć</string>
+    <string name="pages_split_every">Jeden plik na stronę</string>
+    <plurals name="pages_split_files">
+        <item quantity="one">%d plik</item>
+        <item quantity="few">%d pliki</item>
+        <item quantity="many">%d plików</item>
+        <item quantity="other">%d pliku</item>
+    </plurals>
+    <string name="pages_split_row">Plik %d</string>
+    <string name="pages_split_hint">1-3, 5</string>
+    <plurals name="pages_split_count">
+        <item quantity="one">%d strona</item>
+        <item quantity="few">%d strony</item>
+        <item quantity="many">%d stron</item>
+        <item quantity="other">%d strony</item>
+    </plurals>
+    <string name="pages_split_wrong">Sprawdź numery</string>
+    <string name="pages_split_remove_row">Usuń ten zakres</string>
+    <string name="pages_split_add_range">Dodaj zakres</string>
+    <plurals name="pages_split_note">
+        <item quantity="one">%d nowy plik. Ten PDF pozostaje bez zmian.</item>
+        <item quantity="few">%d nowe pliki. Ten PDF pozostaje bez zmian.</item>
+        <item quantity="many">%d nowych plików. Ten PDF pozostaje bez zmian.</item>
+        <item quantity="other">%d nowego pliku. Ten PDF pozostaje bez zmian.</item>
+    </plurals>
+    <plurals name="pages_split_go">
+        <item quantity="one">Podziel na %d plik</item>
+        <item quantity="few">Podziel na %d pliki</item>
+        <item quantity="many">Podziel na %d plików</item>
+        <item quantity="other">Podziel na %d pliku</item>
+    </plurals>
+    <string name="pages_leave_title">Zapisać zmiany?</string>
+    <plurals name="pages_leave_message">
+        <item quantity="one">Wprowadzono %d zmianę. Zapisanie tworzy nowy plik; ten PDF pozostaje bez zmian.</item>
+        <item quantity="few">Wprowadzono %d zmiany. Zapisanie tworzy nowy plik; ten PDF pozostaje bez zmian.</item>
+        <item quantity="many">Wprowadzono %d zmian. Zapisanie tworzy nowy plik; ten PDF pozostaje bez zmian.</item>
+        <item quantity="other">Wprowadzono %d zmiany. Zapisanie tworzy nowy plik; ten PDF pozostaje bez zmian.</item>
+    </plurals>
+    <string name="pages_leave_save">Zapisz jako nowy plik</string>
+    <string name="pages_leave_discard">Odrzuć zmiany</string>
+    <string name="pages_leave_keep">Edytuj dalej</string>
+    <string name="pages_notice_last">PDF musi mieć co najmniej jedną stronę</string>
+    <string name="pages_notice_other_protected">Ten PDF ma hasło, więc nie można dodać jego stron</string>
+    <string name="pages_notice_other_damaged">Nie można odczytać tego PDF-a</string>
+    <string name="pages_notice_image_failed">Nie udało się odczytać obrazu</string>
+    <string name="pages_notice_folder_failed">W tym folderze nie można tworzyć nowych plików</string>
+    <string name="pages_edited_name">%s (edytowany).pdf</string>
+    <string name="pages_extracted_name">%s (strony).pdf</string>
+    <string name="no_app_for_files">Żadna aplikacja na tym telefonie nie umożliwia wybierania plików</string>
+
+    <string name="work_saving">Zapisywanie nowego pliku…</string>
+    <string name="work_extracting">Wyodrębnianie stron…</string>
+    <string name="work_splitting">Dzielenie PDF-a…</string>
+    <string name="work_creating">Tworzenie PDF-a…</string>
+    <string name="work_preparing">Przygotowywanie…</string>
+    <string name="work_page_of">Strona %1$d z %2$d</string>
+    <string name="work_file_page_of">Plik %1$d z %2$d · strona %3$d z %4$d</string>
+    <string name="work_adding">Dodawanie: %1$s · %2$d z %3$d</string>
+    <string name="work_note_pages">Spis treści, linki i pola formularzy nie są zachowywane w nowym pliku.</string>
+    <string name="work_note_text">Tekst, Markdown i HTML są układane na stronach %s.</string>
+    <string name="work_cancel_edits">Anuluj zatrzymuje tutaj. Twoje zmiany pozostają bez zmian.</string>
+    <string name="work_cancel_list">Anuluj zatrzymuje tutaj. Twoja lista pozostaje bez zmian.</string>
+    <string name="work_saved">Zapisano</string>
+    <plurals name="work_new_files">
+        <item quantity="one">%d nowy plik</item>
+        <item quantity="few">%d nowe pliki</item>
+        <item quantity="many">%d nowych plików</item>
+        <item quantity="other">%d nowego pliku</item>
+    </plurals>
+    <string name="work_original_same">Oryginalny PDF nie został zmieniony.</string>
+    <plurals name="work_files_same">
+        <item quantity="one">Twój plik nie został zmieniony.</item>
+        <item quantity="few">Twoje %d pliki nie zostały zmienione.</item>
+        <item quantity="many">Twoje %d plików nie zostało zmienionych.</item>
+        <item quantity="other">Twoje %d pliku nie zostało zmienionych.</item>
+    </plurals>
+    <string name="work_done">Gotowe</string>
+    <string name="work_open">Otwórz</string>
+    <string name="work_failed_save">Nie udało się zapisać pliku</string>
+    <string name="work_failed_create">Nie udało się utworzyć PDF-a</string>
+    <string name="work_why_protected">%s ma hasło, więc jego stron nie można użyć.</string>
+    <string name="work_why_protected_this">Ten PDF ma hasło, więc jego stron nie można użyć.</string>
+    <string name="work_why_damaged">%s jest uszkodzony, więc jego stron nie można bezpiecznie odtworzyć.</string>
+    <string name="work_why_damaged_this">Ten PDF jest uszkodzony, więc jego stron nie można bezpiecznie odtworzyć.</string>
+    <string name="work_why_unreadable">Nie można już odczytać pliku %s. Mógł zostać przeniesiony lub usunięty.</string>
+    <string name="work_why_unreadable_this">Nie można już odczytać pliku. Mógł zostać przeniesiony lub usunięty.</string>
+    <string name="work_why_memory">Telefonowi zabrakło pamięci na to zadanie. Może pomóc zamknięcie innych aplikacji.</string>
+    <string name="work_why_write">Nie udało się zapisać pliku.</string>
+    <string name="work_why_space">Na telefonie nie ma dość wolnego miejsca.</string>
+    <string name="work_edits_here">Twoje zmiany nadal tu są.</string>
+    <string name="work_list_here">Twoja lista nadal tu jest.</string>
+    <string name="work_needed_free">Potrzeba %1$s · wolne %2$s</string>
+    <string name="work_try_again">Spróbuj ponownie</string>
+    <string name="work_save_elsewhere">Zapisz gdzie indziej</string>
+    <string name="work_remove_file">Usuń ten plik</string>
+    <string name="work_close">Zamknij</string>
+</resources>

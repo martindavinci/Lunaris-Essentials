@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pages_title">页面</string>
+    <string name="pages_save">保存</string>
+    <string name="pages_no_changes">尚无更改</string>
+    <plurals name="pages_changes">
+        <item quantity="other">%d 处更改</item>
+    </plurals>
+    <string name="pages_note">保存会生成新文件。目录、链接和表单域不会保留。</string>
+    <string name="pages_loading">正在加载页面… 你已经可以选择和移动它们。</string>
+    <string name="pages_save_annotations_first">请先保存批注</string>
+    <string name="pages_add">添加页面</string>
+    <string name="pages_split">拆分</string>
+    <plurals name="pages_selected">
+        <item quantity="other">已选择 %d 页</item>
+    </plurals>
+    <string name="pages_select_all">全选</string>
+    <string name="pages_clear_selection">取消选择</string>
+    <string name="pages_rotate">旋转</string>
+    <string name="pages_delete">删除</string>
+    <string name="pages_extract">提取</string>
+    <plurals name="pages_move_after">
+        <item quantity="other">将 %1$d 页移到第 %2$d 页之后</item>
+    </plurals>
+    <plurals name="pages_move_start">
+        <item quantity="other">将 %d 页移到开头</item>
+    </plurals>
+    <string name="pages_page_label">第 %d 页</string>
+    <string name="pages_back_to_reading">返回阅读</string>
+    <string name="pages_protected_title">此 PDF 有密码保护</string>
+    <string name="pages_protected_message">你可以阅读它，但无法移动、删除或提取其中的页面。Lunaris 从不移除密码。</string>
+    <string name="pages_damaged_title">无法整理此 PDF</string>
+    <string name="pages_damaged_message">文件有一部分已损坏，无法安全地重建页面。没有做任何更改。</string>
+    <string name="pages_add_title">添加页面</string>
+    <string name="pages_insert_after">插入到</string>
+    <string name="pages_insert_start">开头</string>
+    <string name="pages_add_blank">空白页</string>
+    <string name="pages_add_blank_detail">与第 %d 页大小相同</string>
+    <string name="pages_add_blank_first">与第一页大小相同</string>
+    <string name="pages_add_pdf">来自其他 PDF 的页面</string>
+    <string name="pages_add_pdf_detail">先选择文件，再选择页面</string>
+    <string name="pages_add_image">图片</string>
+    <string name="pages_add_image_detail">JPG、PNG 或 WebP · 每张图片一页</string>
+    <string name="pages_pick_title">选择页面</string>
+    <plurals name="pages_pick_add">
+        <item quantity="other">添加 %d 页</item>
+    </plurals>
+    <string name="pages_split_title">拆分 PDF</string>
+    <string name="pages_split_ranges">按页码范围</string>
+    <string name="pages_split_ranges_detail">由你决定在哪里拆分</string>
+    <string name="pages_split_every">每页一个文件</string>
+    <plurals name="pages_split_files">
+        <item quantity="other">%d 个文件</item>
+    </plurals>
+    <string name="pages_split_row">文件 %d</string>
+    <string name="pages_split_hint">1-3, 5</string>
+    <plurals name="pages_split_count">
+        <item quantity="other">%d 页</item>
+    </plurals>
+    <string name="pages_split_wrong">请检查页码</string>
+    <string name="pages_split_remove_row">移除此范围</string>
+    <string name="pages_split_add_range">添加范围</string>
+    <plurals name="pages_split_note">
+        <item quantity="other">将生成 %d 个新文件。此 PDF 保持不变。</item>
+    </plurals>
+    <plurals name="pages_split_go">
+        <item quantity="other">拆分为 %d 个文件</item>
+    </plurals>
+    <string name="pages_leave_title">要保存更改吗?</string>
+    <plurals name="pages_leave_message">
+        <item quantity="other">你做了 %d 处更改。保存会生成新文件，此 PDF 保持不变。</item>
+    </plurals>
+    <string name="pages_leave_save">另存为新文件</string>
+    <string name="pages_leave_discard">放弃更改</string>
+    <string name="pages_leave_keep">继续编辑</string>
+    <string name="pages_notice_last">PDF 至少需要一页</string>
+    <string name="pages_notice_other_protected">该 PDF 有密码，无法添加其页面</string>
+    <string name="pages_notice_other_damaged">无法读取该 PDF</string>
+    <string name="pages_notice_image_failed">有一张图片无法读取</string>
+    <string name="pages_notice_folder_failed">无法在该文件夹中创建新文件</string>
+    <string name="pages_edited_name">%s (已编辑).pdf</string>
+    <string name="pages_extracted_name">%s (页面).pdf</string>
+    <string name="no_app_for_files">此手机上没有可以选择文件的应用</string>
+
+    <string name="work_saving">正在保存新文件…</string>
+    <string name="work_extracting">正在提取页面…</string>
+    <string name="work_splitting">正在拆分 PDF…</string>
+    <string name="work_creating">正在创建 PDF…</string>
+    <string name="work_preparing">正在准备…</string>
+    <string name="work_page_of">第 %1$d 页，共 %2$d 页</string>
+    <string name="work_file_page_of">文件 %1$d/%2$d · 第 %3$d 页，共 %4$d 页</string>
+    <string name="work_adding">正在添加 %1$s · %2$d/%3$d</string>
+    <string name="work_note_pages">目录、链接和表单域不会保留在新文件中。</string>
+    <string name="work_note_text">文本、Markdown 和 HTML 会排版为 %s 页面。</string>
+    <string name="work_cancel_edits">取消会在此停止。你的编辑保持原样。</string>
+    <string name="work_cancel_list">取消会在此停止。你的列表保持原样。</string>
+    <string name="work_saved">已保存</string>
+    <plurals name="work_new_files">
+        <item quantity="other">%d 个新文件</item>
+    </plurals>
+    <string name="work_original_same">原 PDF 没有改变。</string>
+    <plurals name="work_files_same">
+        <item quantity="other">你的 %d 个文件没有改变。</item>
+    </plurals>
+    <string name="work_done">完成</string>
+    <string name="work_open">打开</string>
+    <string name="work_failed_save">无法保存文件</string>
+    <string name="work_failed_create">无法创建 PDF</string>
+    <string name="work_why_protected">%s 有密码，无法使用其页面。</string>
+    <string name="work_why_protected_this">此 PDF 有密码，无法使用其页面。</string>
+    <string name="work_why_damaged">%s 已损坏，无法安全地重建其页面。</string>
+    <string name="work_why_damaged_this">此 PDF 已损坏，无法安全地重建其页面。</string>
+    <string name="work_why_unreadable">无法再读取 %s。它可能已被移动或删除。</string>
+    <string name="work_why_unreadable_this">无法再读取该文件。它可能已被移动或删除。</string>
+    <string name="work_why_memory">手机没有足够的内存完成此任务。关闭其他应用可能有帮助。</string>
+    <string name="work_why_write">无法写入文件。</string>
+    <string name="work_why_space">手机可用空间不足。</string>
+    <string name="work_edits_here">你的编辑仍然保留。</string>
+    <string name="work_list_here">你的列表仍然保留。</string>
+    <string name="work_needed_free">需要 %1$s · 可用 %2$s</string>
+    <string name="work_try_again">重试</string>
+    <string name="work_save_elsewhere">保存到其他位置</string>
+    <string name="work_remove_file">移除该文件</string>
+    <string name="work_close">关闭</string>
+</resources>

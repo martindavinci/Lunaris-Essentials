@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_title">Criar PDF</string>
+    <string name="create_entry">Criar um PDF</string>
+    <string name="create_entry_detail">A partir de PDF, imagens e ficheiros de texto</string>
+    <string name="create_entry_link">Criar um PDF a partir de ficheiros</string>
+    <string name="create_empty_title">Juntar ficheiros num só PDF</string>
+    <string name="create_empty_message">Adicione PDF, imagens, texto, Markdown ou HTML, pela ordem que quiser. Os seus ficheiros não são alterados.</string>
+    <string name="create_add_files">Adicionar ficheiros</string>
+    <string name="create_remove">Remover</string>
+    <string name="create_removed">Removido da lista</string>
+    <string name="create_note">Cria um ficheiro novo. Os seus ficheiros não são alterados.</string>
+    <string name="create_meta_pdf">PDF · %s</string>
+    <string name="create_meta_image">Imagem · 1 página</string>
+    <string name="create_meta_markdown">Markdown · %s</string>
+    <string name="create_meta_html">HTML · %s</string>
+    <string name="create_meta_text">Texto · %s</string>
+    <plurals name="create_about_pages">
+        <item quantity="one">cerca de %d página</item>
+        <item quantity="many">cerca de %d páginas</item>
+        <item quantity="other">cerca de %d páginas</item>
+    </plurals>
+    <plurals name="create_unusable">
+        <item quantity="one">%d não pode ser usado</item>
+        <item quantity="many">%d não podem ser usados</item>
+        <item quantity="other">%d não podem ser usados</item>
+    </plurals>
+    <plurals name="create_remove_them">
+        <item quantity="one">%d ficheiro não pode ser usado. Remova-o para criar o PDF.</item>
+        <item quantity="many">%d ficheiros não podem ser usados. Remova-os para criar o PDF.</item>
+        <item quantity="other">%d ficheiros não podem ser usados. Remova-os para criar o PDF.</item>
+    </plurals>
+    <string name="create_problem_protected">Protegido por palavra-passe, não pode ser adicionado</string>
+    <string name="create_problem_damaged">Danificado, não pode ser adicionado</string>
+    <string name="create_problem_unsupported">Não suportado. Use PDF, imagens, texto, Markdown ou HTML.</string>
+    <string name="create_layout">Formato dos ficheiros de texto</string>
+    <string name="create_layout_size">Tamanho da página</string>
+    <string name="create_layout_direction">Orientação</string>
+    <string name="create_layout_margins">Margens</string>
+    <string name="create_format_a4">A4</string>
+    <string name="create_format_letter">Carta</string>
+    <string name="create_portrait">Vertical</string>
+    <string name="create_landscape">Horizontal</string>
+    <string name="create_margins_narrow">Estreitas</string>
+    <string name="create_margins_normal">Normais</string>
+    <string name="create_margins_wide">Largas</string>
+    <string name="create_summary_narrow">margens estreitas</string>
+    <string name="create_summary_normal">margens normais</string>
+    <string name="create_summary_wide">margens largas</string>
+    <string name="create_leave_title">Sair desta lista?</string>
+    <string name="create_leave_message">Os ficheiros ficam onde estão, mas a lista não será mantida.</string>
+    <string name="create_leave">Sair</string>
+    <string name="create_keep">Ficar</string>
+</resources>

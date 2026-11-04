@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_title">PDF を作成</string>
+    <string name="create_entry">PDF を作成</string>
+    <string name="create_entry_detail">PDF、画像、テキストファイルから</string>
+    <string name="create_entry_link">ファイルから PDF を作成</string>
+    <string name="create_empty_title">ファイルを1つの PDF にまとめる</string>
+    <string name="create_empty_message">PDF、画像、テキスト、Markdown、HTML を好きな順に追加できます。元のファイルは変更されません。</string>
+    <string name="create_add_files">ファイルを追加</string>
+    <string name="create_remove">削除</string>
+    <string name="create_removed">リストから削除しました</string>
+    <string name="create_note">新しいファイルを作成します。元のファイルは変更されません。</string>
+    <string name="create_meta_pdf">PDF · %s</string>
+    <string name="create_meta_image">画像 · 1 ページ</string>
+    <string name="create_meta_markdown">Markdown · %s</string>
+    <string name="create_meta_html">HTML · %s</string>
+    <string name="create_meta_text">テキスト · %s</string>
+    <plurals name="create_about_pages">
+        <item quantity="other">約 %d ページ</item>
+    </plurals>
+    <plurals name="create_unusable">
+        <item quantity="other">%d 個は使用できません</item>
+    </plurals>
+    <plurals name="create_remove_them">
+        <item quantity="other">使用できないファイルが %d 個あります。PDF を作成するには削除してください。</item>
+    </plurals>
+    <string name="create_problem_protected">パスワードで保護されているため追加できません</string>
+    <string name="create_problem_damaged">壊れているため追加できません</string>
+    <string name="create_problem_unsupported">対応していません。PDF、画像、テキスト、Markdown、HTML を使ってください。</string>
+    <string name="create_layout">テキストファイルのレイアウト</string>
+    <string name="create_layout_size">ページサイズ</string>
+    <string name="create_layout_direction">向き</string>
+    <string name="create_layout_margins">余白</string>
+    <string name="create_format_a4">A4</string>
+    <string name="create_format_letter">レター</string>
+    <string name="create_portrait">縦</string>
+    <string name="create_landscape">横</string>
+    <string name="create_margins_narrow">狭い</string>
+    <string name="create_margins_normal">標準</string>
+    <string name="create_margins_wide">広い</string>
+    <string name="create_summary_narrow">余白 狭い</string>
+    <string name="create_summary_normal">余白 標準</string>
+    <string name="create_summary_wide">余白 広い</string>
+    <string name="create_leave_title">このリストを閉じますか?</string>
+    <string name="create_leave_message">ファイルはそのまま残りますが、リストは保存されません。</string>
+    <string name="create_leave">閉じる</string>
+    <string name="create_keep">閉じない</string>
+</resources>

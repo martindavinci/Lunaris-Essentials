@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pages_title">Seiten</string>
+    <string name="pages_save">Speichern</string>
+    <string name="pages_no_changes">Noch keine Änderungen</string>
+    <plurals name="pages_changes">
+        <item quantity="one">%d Änderung</item>
+        <item quantity="other">%d Änderungen</item>
+    </plurals>
+    <string name="pages_note">Beim Speichern entsteht eine neue Datei. Inhaltsverzeichnis, Links und Formularfelder bleiben nicht erhalten.</string>
+    <string name="pages_loading">Seiten werden geladen… Du kannst sie schon auswählen und verschieben.</string>
+    <string name="pages_save_annotations_first">Speichere zuerst deine Anmerkungen</string>
+    <string name="pages_add">Seiten hinzufügen</string>
+    <string name="pages_split">Teilen</string>
+    <plurals name="pages_selected">
+        <item quantity="one">%d Seite ausgewählt</item>
+        <item quantity="other">%d Seiten ausgewählt</item>
+    </plurals>
+    <string name="pages_select_all">Alle auswählen</string>
+    <string name="pages_clear_selection">Auswahl aufheben</string>
+    <string name="pages_rotate">Drehen</string>
+    <string name="pages_delete">Löschen</string>
+    <string name="pages_extract">Extrahieren</string>
+    <plurals name="pages_move_after">
+        <item quantity="one">%1$d Seite hinter Seite %2$d verschieben</item>
+        <item quantity="other">%1$d Seiten hinter Seite %2$d verschieben</item>
+    </plurals>
+    <plurals name="pages_move_start">
+        <item quantity="one">%d Seite an den Anfang verschieben</item>
+        <item quantity="other">%d Seiten an den Anfang verschieben</item>
+    </plurals>
+    <string name="pages_page_label">Seite %d</string>
+    <string name="pages_back_to_reading">Zurück zum Lesen</string>
+    <string name="pages_protected_title">Dieses PDF ist passwortgeschützt</string>
+    <string name="pages_protected_message">Du kannst es lesen, aber seine Seiten lassen sich nicht verschieben, entfernen oder extrahieren. Lunaris entfernt nie Passwörter.</string>
+    <string name="pages_damaged_title">Dieses PDF lässt sich nicht organisieren</string>
+    <string name="pages_damaged_message">Ein Teil der Datei ist beschädigt, daher lassen sich die Seiten nicht sicher neu aufbauen. Es wurde nichts geändert.</string>
+    <string name="pages_add_title">Seiten hinzufügen</string>
+    <string name="pages_insert_after">Einfügen nach</string>
+    <string name="pages_insert_start">Am Anfang</string>
+    <string name="pages_add_blank">Leere Seite</string>
+    <string name="pages_add_blank_detail">Gleiche Größe wie Seite %d</string>
+    <string name="pages_add_blank_first">Gleiche Größe wie die erste Seite</string>
+    <string name="pages_add_pdf">Seiten aus einem anderen PDF</string>
+    <string name="pages_add_pdf_detail">Datei wählen, dann die Seiten auswählen</string>
+    <string name="pages_add_image">Bild</string>
+    <string name="pages_add_image_detail">JPG, PNG oder WebP · eine Seite pro Bild</string>
+    <string name="pages_pick_title">Seiten auswählen</string>
+    <plurals name="pages_pick_add">
+        <item quantity="one">%d Seite hinzufügen</item>
+        <item quantity="other">%d Seiten hinzufügen</item>
+    </plurals>
+    <string name="pages_split_title">PDF teilen</string>
+    <string name="pages_split_ranges">Nach Seitenbereichen</string>
+    <string name="pages_split_ranges_detail">Du bestimmst, wo geteilt wird</string>
+    <string name="pages_split_every">Eine Datei pro Seite</string>
+    <plurals name="pages_split_files">
+        <item quantity="one">%d Datei</item>
+        <item quantity="other">%d Dateien</item>
+    </plurals>
+    <string name="pages_split_row">Datei %d</string>
+    <string name="pages_split_hint">1-3, 5</string>
+    <plurals name="pages_split_count">
+        <item quantity="one">%d Seite</item>
+        <item quantity="other">%d Seiten</item>
+    </plurals>
+    <string name="pages_split_wrong">Prüfe die Zahlen</string>
+    <string name="pages_split_remove_row">Diesen Bereich entfernen</string>
+    <string name="pages_split_add_range">Bereich hinzufügen</string>
+    <plurals name="pages_split_note">
+        <item quantity="one">%d neue Datei. Dieses PDF bleibt unverändert.</item>
+        <item quantity="other">%d neue Dateien. Dieses PDF bleibt unverändert.</item>
+    </plurals>
+    <plurals name="pages_split_go">
+        <item quantity="one">In %d Datei teilen</item>
+        <item quantity="other">In %d Dateien teilen</item>
+    </plurals>
+    <string name="pages_leave_title">Änderungen speichern?</string>
+    <plurals name="pages_leave_message">
+        <item quantity="one">Du hast %d Änderung gemacht. Beim Speichern entsteht eine neue Datei; dieses PDF bleibt unverändert.</item>
+        <item quantity="other">Du hast %d Änderungen gemacht. Beim Speichern entsteht eine neue Datei; dieses PDF bleibt unverändert.</item>
+    </plurals>
+    <string name="pages_leave_save">Als neue Datei speichern</string>
+    <string name="pages_leave_discard">Änderungen verwerfen</string>
+    <string name="pages_leave_keep">Weiter bearbeiten</string>
+    <string name="pages_notice_last">Ein PDF braucht mindestens eine Seite</string>
+    <string name="pages_notice_other_protected">Dieses PDF hat ein Passwort, daher lassen sich seine Seiten nicht hinzufügen</string>
+    <string name="pages_notice_other_damaged">Dieses PDF lässt sich nicht lesen</string>
+    <string name="pages_notice_image_failed">Ein Bild konnte nicht gelesen werden</string>
+    <string name="pages_notice_folder_failed">In diesem Ordner lassen sich keine neuen Dateien erstellen</string>
+    <string name="pages_edited_name">%s (bearbeitet).pdf</string>
+    <string name="pages_extracted_name">%s (Seiten).pdf</string>
+    <string name="no_app_for_files">Keine App auf diesem Telefon kann Dateien auswählen</string>
+
+    <string name="work_saving">Neue Datei wird gespeichert…</string>
+    <string name="work_extracting">Seiten werden extrahiert…</string>
+    <string name="work_splitting">PDF wird geteilt…</string>
+    <string name="work_creating">PDF wird erstellt…</string>
+    <string name="work_preparing">Wird vorbereitet…</string>
+    <string name="work_page_of">Seite %1$d von %2$d</string>
+    <string name="work_file_page_of">Datei %1$d von %2$d · Seite %3$d von %4$d</string>
+    <string name="work_adding">%1$s wird hinzugefügt · %2$d von %3$d</string>
+    <string name="work_note_pages">Inhaltsverzeichnis, Links und Formularfelder bleiben in der neuen Datei nicht erhalten.</string>
+    <string name="work_note_text">Text, Markdown und HTML werden auf %s-Seiten gesetzt.</string>
+    <string name="work_cancel_edits">Mit Abbrechen hörst du hier auf. Deine Änderungen bleiben unverändert.</string>
+    <string name="work_cancel_list">Mit Abbrechen hörst du hier auf. Deine Liste bleibt unverändert.</string>
+    <string name="work_saved">Gespeichert</string>
+    <plurals name="work_new_files">
+        <item quantity="one">%d neue Datei</item>
+        <item quantity="other">%d neue Dateien</item>
+    </plurals>
+    <string name="work_original_same">Das ursprüngliche PDF wurde nicht verändert.</string>
+    <plurals name="work_files_same">
+        <item quantity="one">Deine Datei wurde nicht verändert.</item>
+        <item quantity="other">Deine %d Dateien wurden nicht verändert.</item>
+    </plurals>
+    <string name="work_done">Fertig</string>
+    <string name="work_open">Öffnen</string>
+    <string name="work_failed_save">Die Datei konnte nicht gespeichert werden</string>
+    <string name="work_failed_create">Das PDF konnte nicht erstellt werden</string>
+    <string name="work_why_protected">%s hat ein Passwort, daher lassen sich die Seiten nicht verwenden.</string>
+    <string name="work_why_protected_this">Dieses PDF hat ein Passwort, daher lassen sich die Seiten nicht verwenden.</string>
+    <string name="work_why_damaged">%s ist beschädigt, daher lassen sich die Seiten nicht sicher neu aufbauen.</string>
+    <string name="work_why_damaged_this">Dieses PDF ist beschädigt, daher lassen sich die Seiten nicht sicher neu aufbauen.</string>
+    <string name="work_why_unreadable">%s lässt sich nicht mehr lesen. Die Datei wurde vielleicht verschoben oder gelöscht.</string>
+    <string name="work_why_unreadable_this">Die Datei lässt sich nicht mehr lesen. Sie wurde vielleicht verschoben oder gelöscht.</string>
+    <string name="work_why_memory">Dem Telefon ist dafür der Speicher ausgegangen. Das Schließen anderer Apps kann helfen.</string>
+    <string name="work_why_write">Die Datei konnte nicht geschrieben werden.</string>
+    <string name="work_why_space">Auf dem Telefon ist nicht genug Speicherplatz frei.</string>
+    <string name="work_edits_here">Deine Änderungen sind noch da.</string>
+    <string name="work_list_here">Deine Liste ist noch da.</string>
+    <string name="work_needed_free">Benötigt %1$s · frei %2$s</string>
+    <string name="work_try_again">Erneut versuchen</string>
+    <string name="work_save_elsewhere">Anderswo speichern</string>
+    <string name="work_remove_file">Diese Datei entfernen</string>
+    <string name="work_close">Schließen</string>
+</resources>
