@@ -31,6 +31,13 @@ Apache License 2.0 (full text below)
 - JSpecify annotations - Copyright The JSpecify Authors
 - Okio - Copyright Square, Inc.
 
+MIT License (full text below)
+- pdf-lib, @pdf-lib/standard-fonts, @pdf-lib/upng - Copyright Andrew Dillon and
+  the pdf-lib contributors
+  https://github.com/Hopding/pdf-lib
+- pako - Copyright Andrey Tupitsin and Vitaly Puzrin (MIT, with zlib for its port)
+- tslib - Copyright Microsoft Corporation (0BSD)
+
 Shipped with PDF.js, each under the license text below
 - PDFium JBIG2 decoder - Copyright The PDFium Authors
 - OpenJPEG - Copyright the OpenJPEG contributors

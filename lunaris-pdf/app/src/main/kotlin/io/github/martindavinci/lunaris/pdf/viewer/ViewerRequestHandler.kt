@@ -19,10 +19,12 @@ data class ViewerResponse(
 class ViewerRequestHandler(
     private val assets: (String) -> InputStream?,
     private val document: () -> DocumentSource?,
+    private val source: (Int) -> DocumentSource? = { null },
 ) {
     fun handle(host: String, path: String, range: String?): ViewerResponse = when {
         host != VIRTUAL_HOST -> ViewerResponse(STATUS_FORBIDDEN, MIME_TEXT)
-        path == DOCUMENT_PATH -> serveDocument(range)
+        path == DOCUMENT_PATH -> serve(document(), range)
+        path.startsWith(SOURCE_PREFIX) -> serve(path.removePrefix(SOURCE_PREFIX).toIntOrNull()?.let(source), null)
         else -> serveAsset(path)
     }
 
@@ -38,8 +40,8 @@ class ViewerRequestHandler(
         return ViewerResponse(STATUS_OK, mimeOf(path), headers, body)
     }
 
-    private fun serveDocument(range: String?): ViewerResponse {
-        val source = document() ?: return notFound()
+    private fun serve(source: DocumentSource?, range: String?): ViewerResponse {
+        source ?: return notFound()
         return try {
             val size = source.size()
             when {
@@ -99,8 +101,10 @@ class ViewerRequestHandler(
     companion object {
         const val VIRTUAL_HOST = "appassets.androidplatform.net"
         const val VIEWER_URL = "https://$VIRTUAL_HOST/viewer.html"
+        const val WORK_URL = "https://$VIRTUAL_HOST/work.html"
         const val DOCUMENT_PATH = "/document.pdf"
 
+        private const val SOURCE_PREFIX = "/source/"
         private const val END = -1
         private const val ASSET_ROOT = "viewer/"
         private const val STATUS_OK = 200

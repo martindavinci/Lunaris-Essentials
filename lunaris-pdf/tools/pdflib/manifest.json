@@ -1,0 +1,7 @@
+{
+  "package": "pdf-lib",
+  "version": "1.17.1",
+  "sha256": "a7cc1eaf12e41e612a7be581162a63b18118aefc01e90f6a1f35347b1f324a1c",
+  "from": "dist/pdf-lib.min.js",
+  "to": "pdf-lib.min.js"
+}

@@ -21,6 +21,20 @@ class ViewerRequestHandlerTest {
 
     private fun ViewerResponse.bodyBytes() = checkNotNull(body).use { it.readBytes() }
 
+    @Test fun aSourceIsServedFromItsOwnPath() {
+        val handler = ViewerRequestHandler(assets = { null }, document = { null }, source = { if (it == 1) source() else null })
+        val response = handler.handle(ViewerRequestHandler.VIRTUAL_HOST, "/source/1", null)
+        assertThat(response.status).isEqualTo(200)
+        assertThat(response.bodyBytes()).isEqualTo(bytes)
+    }
+
+    @Test fun aSourceThatIsNotThereIsNotFound() {
+        val handler = ViewerRequestHandler(assets = { null }, document = { null }, source = { if (it == 1) source() else null })
+        listOf("/source/0", "/source/x", "/source/", "/source/1/..").forEach { path ->
+            assertThat(handler.handle(ViewerRequestHandler.VIRTUAL_HOST, path, null).status).isEqualTo(404)
+        }
+    }
+
     @Test fun otherHost_gets403() {
         assertThat(handler().handle("example.com", "/x", null).status).isEqualTo(403)
     }
