@@ -24,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -98,7 +99,9 @@ internal fun RecentsList(
     val section: LazyListScope.(String, List<RecentEntry>) -> Unit = { title, entries ->
         item(key = title) { SectionTitle(title) }
         items(entries, key = { it.uri }) { entry ->
-            RecentRow(entry, thumbnail, onClick = { onAction(RecentsAction.OpenEntry(entry)) }, onMore = { onMore(entry) })
+            SwipeToRemove(onRemove = { onAction(RecentsAction.RemoveEntry(entry)) }, modifier = Modifier.animateItem()) {
+                RecentRow(entry, thumbnail, onClick = { onAction(RecentsAction.OpenEntry(entry)) }, onMore = { onMore(entry) })
+            }
         }
     }
     val pinned = stringResource(R.string.recents_pinned)
@@ -119,7 +122,14 @@ internal fun RecentsList(
         home.results?.let { section(results, it) }
         if (home.pinned.isNotEmpty()) section(pinned, home.pinned)
         home.resume?.let { entry ->
-            item(key = RESUME_KEY) { ResumeCard(entry, thumbnail, onClick = { onAction(RecentsAction.OpenEntry(entry)) }) }
+            item(key = RESUME_KEY) {
+                // The next document takes this place when one slides away, and must not arrive slid away too.
+                key(entry.uri) {
+                    SwipeToRemove(onRemove = { onAction(RecentsAction.RemoveEntry(entry)) }, modifier = Modifier.animateItem()) {
+                        ResumeCard(entry, thumbnail, onClick = { onAction(RecentsAction.OpenEntry(entry)) })
+                    }
+                }
+            }
         }
         if (home.all.isNotEmpty()) section(all, home.all)
     }

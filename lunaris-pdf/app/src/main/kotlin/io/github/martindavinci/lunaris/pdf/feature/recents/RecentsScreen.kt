@@ -125,10 +125,13 @@ private fun RecentsMessages(state: RecentsUiState, snackbar: SnackbarHostState, 
             when (notice) {
                 RecentsNotice.PinLimit -> snackbar.showSnackbar(pinLimit)
                 RecentsNotice.ShareFailed -> snackbar.showSnackbar(shareFailed)
-                is RecentsNotice.Removed ->
+                is RecentsNotice.Removed -> {
+                    // Several in a row must not queue up: each would wait for its turn on screen.
+                    snackbar.currentSnackbarData?.dismiss()
                     if (snackbar.showSnackbar(removed, actionLabel = undo) == SnackbarResult.ActionPerformed) {
                         onAction(RecentsAction.UndoRemove(notice.entry))
                     }
+                }
             }
         }
     }
