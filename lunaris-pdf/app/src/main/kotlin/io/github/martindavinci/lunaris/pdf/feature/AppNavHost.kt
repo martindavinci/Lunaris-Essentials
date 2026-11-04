@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import io.github.martindavinci.lunaris.pdf.feature.create.CreateRoute
 import io.github.martindavinci.lunaris.pdf.feature.pages.PagesRoute
 import io.github.martindavinci.lunaris.pdf.feature.reader.ReaderRoute
 import io.github.martindavinci.lunaris.pdf.feature.recents.RecentsRoute
@@ -20,14 +21,37 @@ import kotlinx.coroutines.flow.Flow
  * leaving it calls [onExit], which returns to that app. Nothing stands between opening and reading.
  */
 @Composable
-fun AppNavHost(startAtReader: Boolean, readerRequests: Flow<Unit>, onExit: () -> Unit) {
+fun AppNavHost(
+    startAtReader: Boolean,
+    startAtCreate: Boolean,
+    readerRequests: Flow<Unit>,
+    createRequests: Flow<Unit>,
+    onExit: () -> Unit,
+) {
     val nav = rememberNavController()
-    val start = rememberSaveable { if (startAtReader) Routes.READER else Routes.RECENTS }
+    val start = rememberSaveable {
+        when {
+            startAtReader -> Routes.READER
+            startAtCreate -> Routes.CREATE
+            else -> Routes.RECENTS
+        }
+    }
     LaunchedEffect(nav) { readerRequests.collect { nav.openReader() } }
+    LaunchedEffect(nav) {
+        createRequests.collect {
+            nav.navigate(Routes.CREATE) {
+                popUpTo(Routes.CREATE) { inclusive = true }
+            }
+        }
+    }
     Surface(color = MaterialTheme.colorScheme.background) {
         NavHost(navController = nav, startDestination = start) {
             composable(Routes.RECENTS) {
-                RecentsRoute(onOpenReader = nav::openReader, onOpenSettings = { nav.navigate(Routes.SETTINGS) })
+                RecentsRoute(
+                    onOpenReader = nav::openReader,
+                    onOpenSettings = { nav.navigate(Routes.SETTINGS) },
+                    onOpenCreate = { nav.navigate(Routes.CREATE) },
+                )
             }
             composable(Routes.SETTINGS) { entry ->
                 SettingsRoute(onBack = { if (nav.currentBackStackEntry == entry) nav.popBackStack() })
@@ -42,6 +66,20 @@ fun AppNavHost(startAtReader: Boolean, readerRequests: Flow<Unit>, onExit: () ->
                         }
                     },
                     onOpenPages = { if (nav.currentBackStackEntry == entry) nav.navigate(Routes.PAGES) },
+                )
+            }
+            composable(Routes.CREATE) { entry ->
+                CreateRoute(
+                    onBack = {
+                        if (nav.currentBackStackEntry == entry) {
+                            if (nav.previousBackStackEntry == null) onExit() else nav.popBackStack()
+                        }
+                    },
+                    onOpenReader = {
+                        nav.navigate(Routes.READER) {
+                            popUpTo(Routes.CREATE) { inclusive = true }
+                        }
+                    },
                 )
             }
             composable(Routes.PAGES) { entry ->
@@ -59,6 +97,7 @@ object Routes {
     const val READER = "reader"
     const val SETTINGS = "settings"
     const val PAGES = "pages"
+    const val CREATE = "create"
 }
 
 /** A new Reader for the new document, replacing the one on screen if any. */

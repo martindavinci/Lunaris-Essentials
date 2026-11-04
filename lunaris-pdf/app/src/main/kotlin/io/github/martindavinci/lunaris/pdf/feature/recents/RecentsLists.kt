@@ -1,5 +1,6 @@
 package io.github.martindavinci.lunaris.pdf.feature.recents
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,12 +18,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.FolderOpen
+import androidx.compose.material.icons.filled.LibraryAdd
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
@@ -38,6 +43,10 @@ import io.github.martindavinci.lunaris.pdf.recents.RecentEntry
 
 /** The document in the card is in the list too, which keys its rows by uri. */
 private const val RESUME_KEY = "resume"
+private const val CREATE_KEY = "create"
+private val EntryShape = RoundedCornerShape(16.dp)
+private val EntryPadding = 16.dp
+private val EntrySpacing = 4.dp
 private val ListBottomPadding = 96.dp
 private val EmptyPadding = 32.dp
 private val EmptySpacing = 16.dp
@@ -49,7 +58,7 @@ private val EmptyButtonSpacing = 12.dp
 
 /** With nothing to show, the one thing to do takes the whole screen. */
 @Composable
-internal fun RecentsEmpty(onPickFile: () -> Unit) {
+internal fun RecentsEmpty(onPickFile: () -> Unit, onCreatePdf: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(EmptyPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -85,6 +94,32 @@ internal fun RecentsEmpty(onPickFile: () -> Unit) {
                 Text(stringResource(R.string.recents_open))
             }
         }
+        TextButton(onClick = onCreatePdf) {
+            Icon(Icons.Filled.LibraryAdd, contentDescription = null)
+            Text(stringResource(R.string.create_entry_link), modifier = Modifier.padding(start = EmptyButtonSpacing))
+        }
+    }
+}
+
+/** Under what is being read: the second thing this screen is for, and it looks it. */
+@Composable
+private fun CreateEntry(onClick: () -> Unit) {
+    val colors = MaterialTheme.colorScheme
+    Surface(
+        onClick = onClick,
+        shape = EntryShape,
+        color = colors.background,
+        border = BorderStroke(1.dp, colors.outline),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = EntryPadding, vertical = EntrySpacing),
+    ) {
+        Row(Modifier.padding(EntryPadding), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(EmptyButtonSpacing)) {
+            Icon(Icons.Filled.LibraryAdd, contentDescription = null, tint = colors.primary)
+            Column(Modifier.weight(1f)) {
+                Text(stringResource(R.string.create_entry), style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.create_entry_detail), style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant)
+            }
+            Icon(Icons.Filled.ChevronRight, contentDescription = null, tint = colors.onSurfaceVariant)
+        }
     }
 }
 
@@ -94,6 +129,7 @@ internal fun RecentsList(
     thumbnail: suspend (String) -> ImageBitmap?,
     onAction: (RecentsAction) -> Unit,
     onMore: (RecentEntry) -> Unit,
+    onCreatePdf: () -> Unit,
 ) {
     val home = state.home
     val section: LazyListScope.(String, List<RecentEntry>) -> Unit = { title, entries ->
@@ -131,6 +167,7 @@ internal fun RecentsList(
                 }
             }
         }
+        if (state.query == null) item(key = CREATE_KEY) { CreateEntry(onCreatePdf) }
         if (home.all.isNotEmpty()) section(all, home.all)
     }
 }

@@ -114,6 +114,7 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
     implementation(libs.androidx.webkit)
+    implementation(libs.commonmark)
 
     testImplementation(libs.junit)
     testImplementation(libs.truth)

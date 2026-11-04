@@ -6,9 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.martindavinci.lunaris.pdf.feature.work.JobKind
-import io.github.martindavinci.lunaris.pdf.feature.work.JobPlan
 import io.github.martindavinci.lunaris.pdf.feature.work.JobSession
-import io.github.martindavinci.lunaris.pdf.feature.work.JobTarget
 import io.github.martindavinci.lunaris.pdf.feature.work.WorkState
 import io.github.martindavinci.lunaris.pdf.open.DocumentOpener
 import io.github.martindavinci.lunaris.pdf.pages.ContentImagePages
@@ -16,7 +14,6 @@ import io.github.martindavinci.lunaris.pdf.pages.ContentOutputFiles
 import io.github.martindavinci.lunaris.pdf.pages.ImagePages
 import io.github.martindavinci.lunaris.pdf.pages.OutputFiles
 import io.github.martindavinci.lunaris.pdf.pages.PageEdits
-import io.github.martindavinci.lunaris.pdf.pages.PageJob
 import io.github.martindavinci.lunaris.pdf.pages.PagePictures
 import io.github.martindavinci.lunaris.pdf.pages.PageSlot
 import io.github.martindavinci.lunaris.pdf.pages.PageThumbnails
@@ -78,6 +75,7 @@ class PagesViewModel internal constructor(
         markUnsaved()
     }
     private val adding = PagesAdding(pictures, images, sources) { change -> mutableState.update(change) }
+    private val jobs = PagesJobs(viewModelScope, session, files, sources, { ui }) { change -> mutableState.update(change) }
 
     init {
         saved[KEY_URI] = documentUri
@@ -117,19 +115,18 @@ class PagesViewModel internal constructor(
             PagesAction.PickAll -> adding.chooseAll()
             PagesAction.ConfirmPick -> ui.pick?.let { pick -> insert(pick.insertAfter, adding.confirm(pick)); keepSources() }
             PagesAction.CancelPick -> mutableState.update { it.copy(pick = null) }
-            is PagesAction.SetSplitEveryPage -> splitting { it.copy(everyPage = action.on) }
-            is PagesAction.SetSplitRow -> splitting { plan -> plan.copy(rows = plan.rows.mapIndexed { i, row -> if (i == action.row) action.text else row }) }
-            PagesAction.AddSplitRow -> splitting { it.copy(rows = it.rows + "") }
-            is PagesAction.RemoveSplitRow -> splitting { plan ->
+            is PagesAction.SetSplitEveryPage -> jobs.splitting { it.copy(everyPage = action.on) }
+            is PagesAction.SetSplitRow -> jobs.splitting { plan -> plan.copy(rows = plan.rows.mapIndexed { i, row -> if (i == action.row) action.text else row }) }
+            PagesAction.AddSplitRow -> jobs.splitting { it.copy(rows = it.rows + "") }
+            is PagesAction.RemoveSplitRow -> jobs.splitting { plan ->
                 plan.copy(rows = plan.rows.filterIndexed { i, _ -> i != action.row }.ifEmpty { listOf("") })
             }
-            is PagesAction.SaveTo -> save(action.uri, action.name)
-            is PagesAction.ExtractTo -> {
-                closeFailed()
-                val chosen = ui.slots.filter { it.id in ui.selected }
-                runJob(JobKind.EXTRACT, listOf(JobTarget(action.uri, action.name)), listOf(chosen))
+            is PagesAction.SaveTo -> {
+                if (ui.askingToLeave) leaveWhenSaved = true
+                jobs.save(action.uri, action.name)
             }
-            is PagesAction.SplitInto -> split(action.folder)
+            is PagesAction.ExtractTo -> jobs.extract(action.uri, action.name)
+            is PagesAction.SplitInto -> jobs.split(action.folder, documentName)
             PagesAction.RequestLeave -> requestLeave()
             PagesAction.KeepEditing -> mutableState.update { it.copy(askingToLeave = false) }
             PagesAction.DiscardAndLeave -> mutableState.update { it.copy(askingToLeave = false, close = true) }
@@ -202,45 +199,6 @@ class PagesViewModel internal constructor(
     private fun defaultInsertAfter(): Int {
         val at = ui.slots.indexOfFirst { it.id == lastTouched }
         return if (at >= 0) at + 1 else ui.slots.size
-    }
-
-    private fun splitting(change: (SplitPlan) -> SplitPlan) {
-        val panel = ui.panel as? PagesPanel.Split ?: return
-        mutableState.update { it.copy(panel = PagesPanel.Split(change(panel.plan))) }
-    }
-
-    private fun split(folder: String) {
-        val plan = (ui.panel as? PagesPanel.Split)?.plan ?: return
-        val outputs = plan.outputs(ui.slots) ?: return
-        mutableState.update { it.copy(panel = null) }
-        viewModelScope.launch {
-            val targets = plan.fileNames(documentName, ui.slots.size).map { name ->
-                val made = files.createIn(folder, name)
-                if (made == null) {
-                    mutableState.update { it.copy(notice = PagesNotice.FOLDER_FAILED) }
-                    return@launch
-                }
-                JobTarget(made, name)
-            }
-            runJob(JobKind.SPLIT, targets, outputs)
-        }
-    }
-
-    private fun save(uri: String, name: String) {
-        closeFailed()
-        if (ui.askingToLeave) leaveWhenSaved = true
-        mutableState.update { it.copy(askingToLeave = false) }
-        runJob(JobKind.SAVE, listOf(JobTarget(uri, name)), listOf(ui.slots))
-    }
-
-    /** The one left open by "save somewhere else" is forgotten, and so is its target. */
-    private fun closeFailed() {
-        if (ui.work is WorkState.Failed) session.closeFailure()
-    }
-
-    private fun runJob(kind: JobKind, targets: List<JobTarget>, outputs: List<List<PageSlot>>) {
-        val plan = JobPlan(PageJob(sources.kinds, outputs), sources.uris)
-        session.start(kind, targets) { plan }
     }
 
     private fun requestLeave() {

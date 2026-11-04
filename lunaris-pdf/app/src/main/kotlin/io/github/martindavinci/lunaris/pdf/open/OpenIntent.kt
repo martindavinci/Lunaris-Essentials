@@ -6,12 +6,20 @@ import android.content.Intent
 object OpenIntent {
     private const val CONTENT = "content:"
     private const val FILE = "file:"
+    private const val IMAGE = "image/"
 
     /** `file:` only from VIEW: a share could otherwise point this app at its own private files. */
     fun uriFrom(action: String?, type: String?, data: String?, stream: String?): String? = when (action) {
         Intent.ACTION_VIEW -> data?.takeIf { it.startsWith(CONTENT) || it.startsWith(FILE) }
-        Intent.ACTION_SEND -> stream?.takeIf { it.startsWith(CONTENT) && type != null }
+        Intent.ACTION_SEND -> stream?.takeIf { it.startsWith(CONTENT) && type != null && !type.startsWith(IMAGE) }
         else -> null
+    }
+
+    /** Files for the Create PDF list: several of them, or one image. One PDF is there to be read. */
+    fun filesFrom(action: String?, type: String?, streams: List<String>): List<String> {
+        val many = action == Intent.ACTION_SEND_MULTIPLE
+        val oneImage = action == Intent.ACTION_SEND && type?.startsWith(IMAGE) == true
+        return if (many || oneImage) streams.filter { it.startsWith(CONTENT) } else emptyList()
     }
 
     /**

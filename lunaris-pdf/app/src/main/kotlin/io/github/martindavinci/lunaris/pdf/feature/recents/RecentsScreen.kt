@@ -12,6 +12,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
@@ -45,6 +46,7 @@ internal fun RecentsScreen(
     onOpenSettings: () -> Unit,
     onPickFile: () -> Unit,
     thumbnail: suspend (String) -> ImageBitmap?,
+    onCreatePdf: () -> Unit = {},
 ) {
     var confirmClear by remember { mutableStateOf(false) }
     var selected by remember { mutableStateOf<RecentEntry?>(null) }
@@ -62,9 +64,9 @@ internal fun RecentsScreen(
                 onAction = onAction,
             )
             if (state.entries.isEmpty()) {
-                RecentsEmpty(onPickFile)
+                RecentsEmpty(onPickFile, onCreatePdf)
             } else {
-                RecentsList(state, thumbnail, onAction, onMore = { selected = it })
+                RecentsList(state, thumbnail, onAction, onMore = { selected = it }, onCreatePdf = onCreatePdf)
             }
         }
         if (state.entries.isNotEmpty()) {
@@ -128,7 +130,8 @@ private fun RecentsMessages(state: RecentsUiState, snackbar: SnackbarHostState, 
                 is RecentsNotice.Removed -> {
                     // Several in a row must not queue up: each would wait for its turn on screen.
                     snackbar.currentSnackbarData?.dismiss()
-                    if (snackbar.showSnackbar(removed, actionLabel = undo) == SnackbarResult.ActionPerformed) {
+                    // With an action it would otherwise stay until something else takes its place.
+                    if (snackbar.showSnackbar(removed, actionLabel = undo, duration = SnackbarDuration.Long) == SnackbarResult.ActionPerformed) {
                         onAction(RecentsAction.UndoRemove(notice.entry))
                     }
                 }

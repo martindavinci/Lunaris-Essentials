@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_title">Create PDF</string>
+    <string name="create_entry">Create a PDF</string>
+    <string name="create_entry_detail">From PDFs, images and text files</string>
+    <string name="create_entry_link">Create a PDF from files</string>
+    <string name="create_empty_title">Combine files into one PDF</string>
+    <string name="create_empty_message">Add PDFs, images, text, Markdown or HTML, in any order. Your files are not changed.</string>
+    <string name="create_add_files">Add files</string>
+    <string name="create_remove">Remove</string>
+    <string name="create_removed">Removed from the list</string>
+    <string name="create_note">Makes a new file. Your files are not changed.</string>
+    <string name="create_meta_pdf">PDF · %s</string>
+    <string name="create_meta_image">Image · 1 page</string>
+    <string name="create_meta_markdown">Markdown · %s</string>
+    <string name="create_meta_html">HTML · %s</string>
+    <string name="create_meta_text">Text · %s</string>
+    <plurals name="create_about_pages">
+        <item quantity="one">about %d page</item>
+        <item quantity="other">about %d pages</item>
+    </plurals>
+    <plurals name="create_unusable">
+        <item quantity="one">%d can\'t be used</item>
+        <item quantity="other">%d can\'t be used</item>
+    </plurals>
+    <plurals name="create_remove_them">
+        <item quantity="one">%d file can\'t be used. Remove it to create the PDF.</item>
+        <item quantity="other">%d files can\'t be used. Remove them to create the PDF.</item>
+    </plurals>
+    <string name="create_problem_protected">Password-protected, so it can\'t be added</string>
+    <string name="create_problem_damaged">Damaged, so it can\'t be added</string>
+    <string name="create_problem_unsupported">Not supported. Use PDF, images, text, Markdown or HTML.</string>
+    <string name="create_layout">Layout for text files</string>
+    <string name="create_layout_size">Page size</string>
+    <string name="create_layout_direction">Direction</string>
+    <string name="create_layout_margins">Margins</string>
+    <string name="create_format_a4">A4</string>
+    <string name="create_format_letter">Letter</string>
+    <string name="create_portrait">Portrait</string>
+    <string name="create_landscape">Landscape</string>
+    <string name="create_margins_narrow">Narrow</string>
+    <string name="create_margins_normal">Normal</string>
+    <string name="create_margins_wide">Wide</string>
+    <string name="create_summary_narrow">narrow margins</string>
+    <string name="create_summary_normal">normal margins</string>
+    <string name="create_summary_wide">wide margins</string>
+    <string name="create_leave_title">Leave this list?</string>
+    <string name="create_leave_message">The files stay where they are, but the list will not be kept.</string>
+    <string name="create_leave">Leave</string>
+    <string name="create_keep">Stay</string>
+</resources>

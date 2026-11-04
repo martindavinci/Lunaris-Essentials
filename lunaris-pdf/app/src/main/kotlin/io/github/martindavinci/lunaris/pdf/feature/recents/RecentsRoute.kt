@@ -17,7 +17,7 @@ import io.github.martindavinci.lunaris.pdf.R
 private const val PDF_MIME = "application/pdf"
 
 @Composable
-fun RecentsRoute(onOpenReader: () -> Unit, onOpenSettings: () -> Unit) {
+fun RecentsRoute(onOpenReader: () -> Unit, onOpenSettings: () -> Unit, onOpenCreate: () -> Unit) {
     val viewModel: RecentsViewModel = hiltViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
@@ -58,5 +58,6 @@ fun RecentsRoute(onOpenReader: () -> Unit, onOpenSettings: () -> Unit) {
             }
         },
         thumbnail = viewModel::thumbnailOf,
+        onCreatePdf = onOpenCreate,
     )
 }

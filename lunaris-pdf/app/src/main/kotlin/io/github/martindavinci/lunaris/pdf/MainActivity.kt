@@ -39,7 +39,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         val fresh = OpenIntent.isFresh(recreated = savedInstanceState != null, flags = intent?.flags ?: 0)
-        val startAtReader = fresh && open(intent)
+        val startAtCreate = fresh && toCreateList(intent)
+        val startAtReader = fresh && !startAtCreate && open(intent)
         setContent {
             LaunchedEffect(viewModel) {
                 viewModel.refusedDocuments.collect {
@@ -59,7 +60,7 @@ class MainActivity : ComponentActivity() {
                 var screensUp by remember { mutableStateOf(false) }
                 if (!state.opening || screensUp) {
                     screensUp = true
-                    AppNavHost(startAtReader, viewModel.readerRequests, onExit = ::finish)
+                    AppNavHost(startAtReader, startAtCreate, viewModel.readerRequests, viewModel.createRequests, onExit = ::finish)
                 }
             }
         }
@@ -68,7 +69,15 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        open(intent)
+        if (!toCreateList(intent)) open(intent)
+    }
+
+    /** True if the intent shares files for the Create PDF list. */
+    private fun toCreateList(intent: Intent?): Boolean {
+        val files = OpenIntent.filesFrom(intent?.action, intent?.type, intent?.streamUris().orEmpty())
+        if (files.isEmpty()) return false
+        viewModel.shareToCreate(files)
+        return true
     }
 
     /** True if the intent asks to open a document. */
@@ -81,6 +90,20 @@ class MainActivity : ComponentActivity() {
         ) ?: return false
         viewModel.openFromIntent(uri)
         return true
+    }
+
+    @Suppress("DEPRECATION")
+    private fun Intent.streamUris(): List<String> = try {
+        val many = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            getParcelableArrayListExtra(Intent.EXTRA_STREAM, Uri::class.java)
+        } else if (action == Intent.ACTION_SEND_MULTIPLE) {
+            getParcelableArrayListExtra<Uri>(Intent.EXTRA_STREAM)
+        } else {
+            null
+        }
+        (many?.toList() ?: listOfNotNull(streamUri())).map { it.toString() }
+    } catch (_: RuntimeException) {
+        emptyList()
     }
 
     /** Any app can send anything here: an extra of another type, or one that cannot be unpacked at all. */
