@@ -14,6 +14,7 @@ import io.github.rosemoe.sora.langs.textmate.TextMateLanguage
 import io.github.rosemoe.sora.langs.textmate.registry.ThemeRegistry
 import io.github.rosemoe.sora.widget.CodeEditor
 import tools.lunaris.texteditor.syntax.TextMateBootstrap
+import tools.lunaris.texteditor.ui.keepHolderVisibleToAccessibility
 
 /**
  * Above this many characters, TextMate highlighting is dropped (plain text). Grammar tokenizing a
@@ -53,6 +54,7 @@ fun CodeEditorView(
         modifier = modifier,
         factory = { context ->
             CodeEditor(context).also { editor ->
+                editor.keepHolderVisibleToAccessibility()
                 editor.isLineNumberEnabled = lineNumbers
                 holder.appliedLineNumbers = lineNumbers
                 editor.setTextSize(fontSizeSp)

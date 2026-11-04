@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import tools.lunaris.texteditor.R
+import tools.lunaris.texteditor.ui.keepHolderVisibleToAccessibility
 
 @Composable
 fun PreviewScreen(
@@ -99,6 +100,7 @@ fun PreviewScreen(
                             settings.blockNetworkLoads = true
                             @Suppress("DEPRECATION")
                             settings.allowFileAccess = false
+                            keepHolderVisibleToAccessibility()
                             webRef.value = this
                         }
                     },
