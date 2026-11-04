@@ -140,6 +140,17 @@ class JobSessionTest {
     }
 
     @Test
+    fun `a provider that has not caught up on the size says nothing rather than zero`() = runTest(UnconfinedTestDispatcher()) {
+        files.sizes = mapOf(target.uri to 0L)
+        val session = session(backgroundScope)
+        session.start(JobKind.SAVE, listOf(target)) { plan }
+        channel.report(WorkEvent.Ready)
+        channel.makeOutput(0)
+        channel.report(WorkEvent.Done)
+        assertThat((state as WorkState.Saved).bytes).isNull()
+    }
+
+    @Test
     fun `closing the saved sheet ends the state`() = runTest(UnconfinedTestDispatcher()) {
         val session = session(backgroundScope)
         session.start(JobKind.SAVE, listOf(target)) { plan }

@@ -159,7 +159,7 @@ class JobSession(
         if (targets.size == 1) files.remember(target.uri, name, pages)
         madeForThis = emptyList()
         onSaved(kind)
-        update(WorkState.Saved(kind, name, info?.folder, pages, info?.bytes, targets.size, target.uri))
+        update(WorkState.Saved(kind, name, info?.folder, pages, info?.bytes?.takeIf { it > 0 }, targets.size, target.uri))
     }
 
     private suspend fun endCancelled() {
