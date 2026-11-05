@@ -31,7 +31,13 @@
     <string name="document_format_pdf" translatable="false">PDF</string>
     <string name="document_format_jpeg" translatable="false">JPG</string>
     <string name="document_format_png" translatable="false">PNG</string>
-    <string name="document_format_per_page">%1$s, one file per page</string>
+    <string name="document_save_title">Save as</string>
+    <string name="document_format_pdf_one">A document to print or send</string>
+    <string name="document_format_pdf_pages">All the pages in one document</string>
+    <string name="document_format_jpeg_one">A picture, small file</string>
+    <string name="document_format_jpeg_pages">One small picture per page, in a folder you choose</string>
+    <string name="document_format_png_one">A picture, best quality, larger file</string>
+    <string name="document_format_png_pages">One picture per page at best quality, in a folder you choose</string>
     <string name="document_share">Share</string>
     <string name="document_saved">Saved</string>
     <string name="document_save_failed">Could not save the file</string>

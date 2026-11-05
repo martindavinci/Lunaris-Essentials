@@ -27,7 +27,13 @@
     <string name="document_delete_page">删除页面</string>
     <string name="document_add_page">添加页面</string>
     <string name="document_save">保存</string>
-    <string name="document_format_per_page">%1$s（每页一个文件）</string>
+    <string name="document_save_title">保存为</string>
+    <string name="document_format_pdf_one">可打印或发送的文档</string>
+    <string name="document_format_pdf_pages">所有页面合为一个文档</string>
+    <string name="document_format_jpeg_one">图片，文件较小</string>
+    <string name="document_format_jpeg_pages">每页一张小图片，保存到你选择的文件夹</string>
+    <string name="document_format_png_one">图片，最佳画质，文件较大</string>
+    <string name="document_format_png_pages">每页一张最佳画质图片，保存到你选择的文件夹</string>
     <string name="document_share">分享</string>
     <string name="document_saved">已保存</string>
     <string name="document_save_failed">无法保存文件</string>

@@ -27,7 +27,13 @@
     <string name="document_delete_page">ページを削除</string>
     <string name="document_add_page">ページを追加</string>
     <string name="document_save">保存</string>
-    <string name="document_format_per_page">%1$s（ページごとに 1 ファイル）</string>
+    <string name="document_save_title">形式を選んで保存</string>
+    <string name="document_format_pdf_one">印刷や送信に使える文書</string>
+    <string name="document_format_pdf_pages">すべてのページを 1 つの文書に</string>
+    <string name="document_format_jpeg_one">画像、小さいファイル</string>
+    <string name="document_format_jpeg_pages">ページごとに小さい画像を 1 つ、選んだフォルダに</string>
+    <string name="document_format_png_one">画像、最高画質、大きいファイル</string>
+    <string name="document_format_png_pages">ページごとに最高画質の画像を 1 つ、選んだフォルダに</string>
     <string name="document_share">共有</string>
     <string name="document_saved">保存しました</string>
     <string name="document_save_failed">ファイルを保存できませんでした</string>

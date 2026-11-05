@@ -27,7 +27,13 @@
     <string name="document_delete_page">페이지 삭제</string>
     <string name="document_add_page">페이지 추가</string>
     <string name="document_save">저장</string>
-    <string name="document_format_per_page">%1$s(페이지당 파일 1개)</string>
+    <string name="document_save_title">다른 형식으로 저장</string>
+    <string name="document_format_pdf_one">인쇄하거나 보낼 수 있는 문서</string>
+    <string name="document_format_pdf_pages">모든 페이지를 문서 하나로</string>
+    <string name="document_format_jpeg_one">이미지, 작은 파일</string>
+    <string name="document_format_jpeg_pages">페이지마다 작은 이미지 하나씩, 선택한 폴더에</string>
+    <string name="document_format_png_one">이미지, 최고 화질, 큰 파일</string>
+    <string name="document_format_png_pages">페이지마다 최고 화질 이미지 하나씩, 선택한 폴더에</string>
     <string name="document_share">공유</string>
     <string name="document_saved">저장됨</string>
     <string name="document_save_failed">파일을 저장할 수 없습니다</string>

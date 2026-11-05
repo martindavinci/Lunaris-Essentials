@@ -27,7 +27,13 @@
     <string name="document_delete_page">Seite löschen</string>
     <string name="document_add_page">Seite hinzufügen</string>
     <string name="document_save">Speichern</string>
-    <string name="document_format_per_page">%1$s, eine Datei pro Seite</string>
+    <string name="document_save_title">Speichern als</string>
+    <string name="document_format_pdf_one">Ein Dokument zum Drucken oder Versenden</string>
+    <string name="document_format_pdf_pages">Alle Seiten in einem Dokument</string>
+    <string name="document_format_jpeg_one">Ein Bild, kleine Datei</string>
+    <string name="document_format_jpeg_pages">Ein kleines Bild pro Seite, in einem Ordner deiner Wahl</string>
+    <string name="document_format_png_one">Ein Bild, beste Qualität, größere Datei</string>
+    <string name="document_format_png_pages">Ein Bild pro Seite in bester Qualität, in einem Ordner deiner Wahl</string>
     <string name="document_share">Teilen</string>
     <string name="document_saved">Gespeichert</string>
     <string name="document_save_failed">Datei konnte nicht gespeichert werden</string>

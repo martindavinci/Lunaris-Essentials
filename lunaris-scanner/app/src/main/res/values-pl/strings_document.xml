@@ -27,7 +27,13 @@
     <string name="document_delete_page">Usuń stronę</string>
     <string name="document_add_page">Dodaj stronę</string>
     <string name="document_save">Zapisz</string>
-    <string name="document_format_per_page">%1$s, jeden plik na stronę</string>
+    <string name="document_save_title">Zapisz jako</string>
+    <string name="document_format_pdf_one">Dokument do wydrukowania lub wysłania</string>
+    <string name="document_format_pdf_pages">Wszystkie strony w jednym dokumencie</string>
+    <string name="document_format_jpeg_one">Obraz, mały plik</string>
+    <string name="document_format_jpeg_pages">Jeden mały obraz na stronę, w wybranym folderze</string>
+    <string name="document_format_png_one">Obraz, najlepsza jakość, większy plik</string>
+    <string name="document_format_png_pages">Jeden obraz na stronę w najlepszej jakości, w wybranym folderze</string>
     <string name="document_share">Udostępnij</string>
     <string name="document_saved">Zapisano</string>
     <string name="document_save_failed">Nie można zapisać pliku</string>
