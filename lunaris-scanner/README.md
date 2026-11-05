@@ -60,12 +60,19 @@ since other Lunaris apps publish their releases here too.
 - MaxiCode is the exception: it is read only from a clean image that the symbol fills, not from the camera or a photo
 - Also reads inverted codes, light on a dark background
 
+**Reading in a row**
+- A code read goes on a card over the camera, which stays on: aim at the next one and the card follows
+- The card stays still for two seconds and while your finger is on it, so nothing changes as you reach for a button
+- The same code does not count twice, and a list holds what you read since you opened the camera; Copy all gives
+  one per line
+
 **Results**
 - Recognizes links, Wi-Fi networks, contacts, email addresses, phone numbers, SMS, locations, calendar events and
   product codes; anything else is shown as plain text
 - Warns about a link that is not HTTPS, uses punycode or non-ASCII characters in its host, points to an IP address,
   embeds a username or password, or uses an unusual port
-- Only `http` and `https` links can be opened
+- Only `http` and `https` links can be opened, and only a link with no warnings opens straight from the card; the
+  others, Wi-Fi networks and contacts open on their full page first
 
 **Generating**
 - QR codes and barcodes from text, links, Wi-Fi networks, contacts (vCard), email addresses, phone numbers and SMS
