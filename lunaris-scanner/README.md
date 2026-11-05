@@ -4,7 +4,7 @@
 
 <h1 align="center">Lunaris Scanner</h1>
 
-<p align="center"><b>A QR code and barcode scanner and generator for Android that works offline and shows no ads.</b></p>
+<p align="center"><b>A QR code, barcode and document scanner for Android that works offline and shows no ads.</b></p>
 
 <p align="center">by <a href="https://github.com/martindavinci">Martin DaVinci</a></p>
 
@@ -23,6 +23,10 @@
   <img src="docs/screenshots/history.webp" width="32%" alt="The history of scans, with a search field, a type icon and the format of each code">
   <img src="docs/screenshots/create.webp" width="32%" alt="Creating a QR code from a web address, with Save PNG, Share and Copy">
   <img src="docs/screenshots/settings.webp" width="32%" alt="The settings: appearance, scanning and about">
+</p>
+<p align="center">
+  <img src="docs/screenshots/corners.webp" width="32%" alt="Setting the four corners of a photographed page, with a loupe showing what the finger covers">
+  <img src="docs/screenshots/document.webp" width="32%" alt="The same page straightened and cleaned, with the choices of clean-up and paper, Add page and Save PDF">
 </p>
 
 ## Download
@@ -61,6 +65,16 @@ since other Lunaris apps publish their releases here too.
 - QR codes and barcodes from text, links, Wi-Fi networks, contacts (vCard), email addresses, phone numbers and SMS
 - Checks the length, the allowed characters and the check digit against the chosen format before generating
 
+**Documents**
+- Photograph a page, or pick a photo, and set its four corners; a loupe shows what your finger is covering
+- Straightens the page, whitens the paper and lifts the shadows: clean colour, greyscale, black and white, or
+  straighten only
+- Keeps the page's own proportions, or A4 or Letter at 300 dots per inch
+- Several pages in one PDF, which you can turn, put in order and delete; a single page can also go out as PNG or JPEG
+- It does not find the corners by itself, flatten a curved book page or read the text: the PDF holds a picture of
+  each page, with no author, date or software name inside
+- Pages with large dark areas, such as photographs, are lightened by the clean-up; use straighten only for those
+
 **History and settings**
 - Keeps your last 500 scans on the phone, newest first; you can delete single entries, clear them all or turn the
   history off
@@ -68,8 +82,12 @@ since other Lunaris apps publish their releases here too.
 
 ## Privacy
 
-The only system permission the app asks for is the camera, and it is there for one thing: the live view that codes
-are read from. Each frame is decoded on the phone and then discarded; the app takes no photos and records no video.
+The only system permission the app asks for is the camera, and it is there for two things: the live view that codes
+are read from, and the photos you take of a document. Each frame of the live view is decoded on the phone and then
+discarded. A photo is taken only when you press the button, and stays in the app's private storage while you work on
+the scan: it is deleted when you leave it, and nothing is kept unless you save or share it. A PDF you share stays in
+that private storage until the next share or the next start of the app, since the app receiving it may still be
+reading it. The app records no video.
 Images you pick from the gallery or share to the app go through Android's own picker and sharing, which need no
 permission at all.
 
