@@ -25,8 +25,8 @@
   <img src="docs/screenshots/settings.webp" width="32%" alt="The settings: appearance, scanning and about">
 </p>
 <p align="center">
-  <img src="docs/screenshots/corners.webp" width="32%" alt="Setting the four corners of a photographed page, with a loupe showing what the finger covers">
-  <img src="docs/screenshots/document.webp" width="32%" alt="The same page straightened and cleaned, with the choices of clean-up and paper, Add page and Save PDF">
+  <img src="docs/screenshots/corners.webp" width="32%" alt="A tilted invoice on a dark table, found by the app, with a point on each corner and in the middle of each edge">
+  <img src="docs/screenshots/document.webp" width="32%" alt="The same invoice straightened and cleaned in greyscale, with the choices of clean-up and paper, Add page and Save">
 </p>
 
 ## Download
@@ -66,13 +66,18 @@ since other Lunaris apps publish their releases here too.
 - Checks the length, the allowed characters and the check digit against the chosen format before generating
 
 **Documents**
-- Photograph a page, or pick a photo, and set its four corners; a loupe shows what your finger is covering
+- Photograph a page, or pick a photo: the app looks for the sheet and sets its corners, which you check and can move;
+  a loupe shows what your finger is covering
+- A sheet that is not flat can be followed too: each edge has a point in its middle, which the app places by itself
+  when the edge is clearly curved
 - Straightens the page, whitens the paper and lifts the shadows: clean colour, greyscale, black and white, or
-  straighten only
+  straighten only. Plain text starts in black and white, and a page with a stamp, a coloured signature or a photograph
+  in clean colour; once you choose, the next pages follow your choice
 - Keeps the page's own proportions, or A4 or Letter at 300 dots per inch
-- Several pages in one PDF, which you can turn, put in order and delete; a single page can also go out as PNG or JPEG
-- It does not find the corners by itself, flatten a curved book page or read the text: the PDF holds a picture of
-  each page, with no author, date or software name inside
+- Save as one PDF with all the pages, or as JPG or PNG with one file per page; pages can be turned, put in order and
+  deleted
+- White paper on a white table has edges too faint to find: set the corners by hand there. A crumpled sheet will not
+  come out flat, and the text is not read: each page holds a picture, with no author, date or software name inside
 - Pages with large dark areas, such as photographs, are lightened by the clean-up; use straighten only for those
 
 **History and settings**

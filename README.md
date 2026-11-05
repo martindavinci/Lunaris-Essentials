@@ -39,7 +39,7 @@ been: they work offline, show nothing but your work, and stay out of your data.
 <a href="lunaris-scanner/"><img src="lunaris-scanner/docs/screenshots/contact.webp" width="104" alt="A contact from a code"></a>
 <a href="lunaris-scanner/"><img src="lunaris-scanner/docs/screenshots/history.webp" width="104" alt="The history of scans"></a>
 <a href="lunaris-scanner/"><img src="lunaris-scanner/docs/screenshots/create.webp" width="104" alt="Creating a QR code"></a>
-<a href="lunaris-scanner/"><img src="lunaris-scanner/docs/screenshots/document.webp" width="104" alt="A page straightened and cleaned, ready to save as PDF"></a>
+<a href="lunaris-scanner/"><img src="lunaris-scanner/docs/screenshots/document.webp" width="104" alt="An invoice straightened and cleaned, ready to save"></a>
 </td>
 </tr>
 <tr>
