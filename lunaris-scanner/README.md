@@ -25,6 +25,7 @@
   <img src="docs/screenshots/settings.webp" width="32%" alt="The settings: appearance, scanning and about">
 </p>
 <p align="center">
+  <img src="docs/screenshots/choice.webp" width="32%" alt="The Scan tab divided in two: Code above, for QR codes and barcodes, and Document below, for a sheet as PDF or picture">
   <img src="docs/screenshots/corners.webp" width="32%" alt="A tilted invoice on a dark table, found by the app, with a point on each corner and in the middle of each edge">
   <img src="docs/screenshots/document.webp" width="32%" alt="The same invoice straightened and cleaned in greyscale, with the choices of clean-up and paper, Add page and Save">
 </p>
@@ -43,6 +44,11 @@ up for you. To add it by hand, use this repository's URL and filter the release 
 since other Lunaris apps publish their releases here too.
 
 ## What it does
+
+**Choosing**
+- The Scan tab asks first: a code or a document. The camera starts only after that
+- Back, or the Scan tab, returns to the choice. Coming back to the app within five minutes finds things as they were
+- Hold the app's icon to go straight to scanning a code, scanning a document or the history
 
 **Scanning**
 - 2D codes: QR Code, Aztec, Data Matrix, PDF417, MaxiCode
@@ -74,6 +80,7 @@ since other Lunaris apps publish their releases here too.
   straighten only. Plain text starts in black and white, and a page with a stamp, a coloured signature or a photograph
   in clean colour; once you choose, the next pages follow your choice
 - Keeps the page's own proportions, or A4 or Letter at 300 dots per inch
+- Page after page in two taps each: the shutter, then Another page. Done takes you to the review
 - Save as one PDF with all the pages, or as JPG or PNG with one file per page; pages can be turned, put in order and
   deleted
 - White paper on a white table has edges too faint to find: set the corners by hand there. A crumpled sheet will not
