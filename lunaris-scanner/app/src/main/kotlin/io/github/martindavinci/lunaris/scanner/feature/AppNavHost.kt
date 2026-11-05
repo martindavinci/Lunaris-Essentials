@@ -64,7 +64,7 @@ fun AppNavHost(startAtResult: Boolean, shortcut: AppShortcut?, onShortcutHandled
             composable(Routes.SCAN) {
                 ScanRoute(
                     request = ScanRequest(scanRequestId, scanRequestCodes).takeIf { scanRequestId > 0 },
-                    onCodeScanned = openResult,
+                    onOpenResult = openResult,
                     onDocumentChosen = { nav.navigate(Routes.DOCUMENT) { launchSingleTop = true } },
                 )
             }

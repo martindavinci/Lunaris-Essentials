@@ -34,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
@@ -81,8 +82,9 @@ internal fun CameraPanel(analyzer: CameraAnalyzer, onUnavailable: () -> Unit, on
         }
     }
 
+    // Clipped: to fill the panel the preview scales past its bounds, and would show over the status bar.
     Box(
-        Modifier.fillMaxSize().onSizeChanged { size ->
+        Modifier.fillMaxSize().clipToBounds().onSizeChanged { size ->
             val window = ViewfinderWindow.of(size.width.toFloat(), size.height.toFloat())
             analyzer.setWindow(window.width / size.width, window.height / size.height)
         },

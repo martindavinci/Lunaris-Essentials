@@ -10,4 +10,16 @@
     <string name="scan_permission_denied">Dostęp do aparatu jest wyłączony. Włącz go w ustawieniach aplikacji, aby skanować aparatem, lub zeskanuj kod z obrazu.</string>
     <string name="scan_permission_settings">Otwórz ustawienia</string>
     <string name="scan_camera_unavailable">Aparat jest niedostępny. Nadal możesz zeskanować kod z obrazu.</string>
+    <string name="scan_open">Otwórz</string>
+    <string name="scan_open_details">Otwórz…</string>
+    <string name="scan_card_details">Pokaż wszystko</string>
+    <string name="scan_card_pause">Nowe odczyty wstrzymane, gdy dotykasz karty</string>
+    <string name="scan_copy_all">Kopiuj wszystkie</string>
+    <string name="scan_keep_scanning">Skanuj dalej</string>
+    <plurals name="scan_session_count">
+        <item quantity="one">%d kod odczytany</item>
+        <item quantity="few">%d kody odczytane</item>
+        <item quantity="many">%d kodów odczytanych</item>
+        <item quantity="other">%d kodu odczytanego</item>
+    </plurals>
 </resources>

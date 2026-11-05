@@ -10,4 +10,15 @@
     <string name="scan_permission_denied">L\'accès à l\'appareil photo est désactivé. Activez-le dans les paramètres de l\'application pour scanner avec l\'appareil photo, ou scannez un code depuis une image.</string>
     <string name="scan_permission_settings">Ouvrir les paramètres</string>
     <string name="scan_camera_unavailable">L\'appareil photo n\'est pas disponible. Vous pouvez quand même scanner un code depuis une image.</string>
+    <string name="scan_open">Ouvrir</string>
+    <string name="scan_open_details">Ouvrir…</string>
+    <string name="scan_card_details">Tout afficher</string>
+    <string name="scan_card_pause">Nouvelles lectures en pause tant que vous touchez la carte</string>
+    <string name="scan_copy_all">Tout copier</string>
+    <string name="scan_keep_scanning">Continuer à scanner</string>
+    <plurals name="scan_session_count">
+        <item quantity="one">%d code lu</item>
+        <item quantity="many">%d codes lus</item>
+        <item quantity="other">%d codes lus</item>
+    </plurals>
 </resources>

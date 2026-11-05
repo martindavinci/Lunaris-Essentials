@@ -3,25 +3,29 @@ package io.github.martindavinci.lunaris.scanner.scan
 import io.github.martindavinci.lunaris.scanner.model.ScannedCode
 
 /**
- * Keeps a code that is still in front of the camera from reopening its result the moment the user
- * comes back. The same code passes again only once it has been out of sight for [quietMillis].
+ * Keeps a code that is still in front of the camera from coming back the moment the camera reads again.
+ * Each code passes again only once it has been out of sight for [quietMillis], so two codes side by
+ * side in the viewfinder do not take turns.
  */
 class RepeatGuard(private val quietMillis: Long = DEFAULT_QUIET_MILLIS) {
-    private var lastCode: ScannedCode? = null
-    private var lastSeenMillis = 0L
+    private val lastSeen = mutableMapOf<ScannedCode, Long>()
 
     @Synchronized
     fun accept(code: ScannedCode, nowMillis: Long): Boolean {
-        val repeat = code == lastCode && nowMillis - lastSeenMillis < quietMillis
-        lastCode = code
-        lastSeenMillis = nowMillis
-        return !repeat
+        lastSeen.values.removeAll { nowMillis - it >= quietMillis }
+        return lastSeen.put(code, nowMillis) == null
     }
 
-    /** Starts the quiet time over: the code last seen before leaving may still be in view. */
+    /** Starts the quiet time over: the codes last seen before leaving may still be in view. */
     @Synchronized
     fun rearm(nowMillis: Long) {
-        lastSeenMillis = nowMillis
+        lastSeen.replaceAll { _, _ -> nowMillis }
+    }
+
+    /** Nobody got to see it, so it counts as not read at all. */
+    @Synchronized
+    fun forget(code: ScannedCode) {
+        lastSeen.remove(code)
     }
 
     private companion object {

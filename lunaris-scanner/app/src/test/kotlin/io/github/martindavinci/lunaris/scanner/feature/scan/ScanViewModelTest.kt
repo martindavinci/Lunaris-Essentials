@@ -112,14 +112,14 @@ class ScanViewModelTest {
         assertThat(viewModel.state.value.cameraAccess).isEqualTo(CameraAccess.GRANTED)
     }
 
-    @Test fun cameraHit_recordsSetsTheResultAndReports() = runBlocking {
+    @Test fun cameraHit_recordsAndReports_leavingTheResultAlone() = runBlocking {
         val viewModel = viewModel()
 
         viewModel.onAction(ScanAction.CodeDetected(code))
 
         assertThat(viewModel.hits.first()).isEqualTo(ScanHit(vibrate = true))
         assertThat(recorded).containsExactly(code)
-        assertThat(currentResult.code.value).isEqualTo(code)
+        assertThat(currentResult.code.value).isNull()
     }
 
     @Test fun vibrationSwitchedOff_isReported() = runBlocking {
@@ -138,7 +138,7 @@ class ScanViewModelTest {
 
         assertThat(viewModel.hits.first()).isEqualTo(ScanHit(vibrate = true))
         assertThat(recorded).containsExactly(code)
-        assertThat(currentResult.code.value).isEqualTo(code)
+        assertThat(currentResult.code.value).isNull()
         assertThat(viewModel.state.first { !it.decodingImage }.noCodeFound).isFalse()
     }
 

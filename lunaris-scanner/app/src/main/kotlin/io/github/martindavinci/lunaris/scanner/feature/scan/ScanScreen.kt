@@ -1,7 +1,6 @@
 package io.github.martindavinci.lunaris.scanner.feature.scan
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -23,18 +22,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.github.martindavinci.lunaris.scanner.R
 import io.github.martindavinci.lunaris.scanner.feature.ScreenTopBar
+import io.github.martindavinci.lunaris.scanner.feature.result.ResultAction
+import io.github.martindavinci.lunaris.scanner.model.CodeFormat
+import io.github.martindavinci.lunaris.scanner.model.ScannedCode
 import io.github.martindavinci.lunaris.scanner.ui.theme.LunarisScannerTheme
+import kotlinx.coroutines.launch
 
 private val ControlsPadding = 16.dp
-private val ControlsSpacing = 8.dp
 private val ButtonIconSpacing = 8.dp
 
 /** Stateless: [camera] is the live preview and [torch] its button, which only the route can provide. */
@@ -46,10 +50,19 @@ internal fun ScanScreen(
     onOpenSettings: () -> Unit,
     onPickImage: () -> Unit,
     onNoCodeMessageShown: () -> Unit,
+    onAction: (ScanAction) -> Unit,
+    onDetails: (ScannedCode) -> Unit,
+    onRun: (ResultAction) -> Int?,
     torch: @Composable () -> Unit,
     camera: @Composable () -> Unit,
 ) {
     val snackbarHost = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val run = { action: ResultAction ->
+        onRun(action)?.let { message -> scope.launch { snackbarHost.showSnackbar(context.getString(message)) } }
+        Unit
+    }
     val noCodeMessage = stringResource(R.string.scan_no_code_found)
     LaunchedEffect(state.noCodeFound) {
         if (state.noCodeFound) {
@@ -64,7 +77,7 @@ internal fun ScanScreen(
             onBack = onBack,
             actions = {
                 if (cameraRuns) {
-                    IconButton(onClick = onPickImage, enabled = !state.decodingImage) {
+                    IconButton(onClick = onPickImage, enabled = !state.decodingImage && !state.listOpen) {
                         Icon(Icons.Filled.PhotoLibrary, contentDescription = stringResource(R.string.scan_pick_image))
                     }
                     torch()
@@ -75,19 +88,35 @@ internal fun ScanScreen(
             CameraGate(state.cameraAccess, state.cameraUnavailable, onRequestPermission, onOpenSettings, camera)
             if (state.decodingImage) CircularProgressIndicator(Modifier.align(Alignment.Center))
             Column(
-                modifier = Modifier.align(Alignment.BottomCenter).padding(ControlsPadding),
-                verticalArrangement = Arrangement.spacedBy(ControlsSpacing),
+                modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 SnackbarHost(snackbarHost)
                 // Without a camera this is all that is left, and reading a picture needs no permission.
                 if (!cameraRuns) {
-                    FilledTonalButton(onClick = onPickImage, enabled = !state.decodingImage) {
+                    FilledTonalButton(
+                        onClick = onPickImage,
+                        enabled = !state.decodingImage,
+                        modifier = Modifier.padding(ControlsPadding),
+                    ) {
                         Icon(Icons.Filled.Image, contentDescription = null)
                         Spacer(Modifier.width(ButtonIconSpacing))
                         Text(stringResource(R.string.scan_pick_image))
                     }
                 }
+                state.session.firstOrNull()?.let { entry ->
+                    CodePanel(
+                        state = state,
+                        entry = entry,
+                        onHeld = { onAction(ScanAction.CardHeld(it)) },
+                        onDetails = onDetails,
+                        onRun = run,
+                        onOpenList = { onAction(ScanAction.ListOpened) },
+                    )
+                }
+            }
+            if (state.listOpen) {
+                SessionList(state.session, onClose = { onAction(ScanAction.ListClosed) }, onDetails = onDetails, onRun = run)
             }
         }
     }
@@ -98,12 +127,20 @@ internal fun ScanScreen(
 private fun ScanScreenCameraPreview() {
     LunarisScannerTheme {
         ScanScreen(
-            state = ScanUiState(choosing = false, cameraAccess = CameraAccess.GRANTED),
+            state = ScanUiState(
+                choosing = false,
+                cameraAccess = CameraAccess.GRANTED,
+                session = listOf(SessionCode(ScannedCode("http://192.168.4.20/login", CodeFormat.QR_CODE), 0)),
+                pauseRunning = true,
+            ),
             onBack = {},
             onRequestPermission = {},
             onOpenSettings = {},
             onPickImage = {},
             onNoCodeMessageShown = {},
+            onAction = {},
+            onDetails = {},
+            onRun = { null },
             torch = {},
             camera = {
                 Box(Modifier.fillMaxSize().background(Color.DarkGray))
@@ -124,6 +161,9 @@ private fun ScanScreenDeniedPreview() {
             onOpenSettings = {},
             onPickImage = {},
             onNoCodeMessageShown = {},
+            onAction = {},
+            onDetails = {},
+            onRun = { null },
             torch = {},
             camera = {},
         )

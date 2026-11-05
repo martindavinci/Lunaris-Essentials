@@ -27,7 +27,7 @@ fun HistoryEntry.toItem(content: ParsedContent): HistoryItem = HistoryItem(
     id = id,
     code = ScannedCode(text, format),
     kind = content.kind(),
-    summary = content.summary().replace(WHITESPACE, " ").trim().take(SUMMARY_MAX_CHARS).withVisibleBidiControls(),
+    summary = content.oneLine(),
     searchText = if (content is ParsedContent.Wifi) content.ssid else text,
     timestampMillis = timestampMillis,
 )
@@ -37,7 +37,11 @@ fun List<HistoryItem>.matching(query: String): List<HistoryItem> {
     return if (needle.isEmpty()) this else filter { it.searchText.contains(needle, ignoreCase = true) }
 }
 
-private fun ParsedContent.kind(): HistoryKind = when (this) {
+/** What a row or a card shows of a code, on one line. Never the password of a Wi-Fi code. */
+internal fun ParsedContent.oneLine(): String =
+    summary().replace(WHITESPACE, " ").trim().take(SUMMARY_MAX_CHARS).withVisibleBidiControls()
+
+internal fun ParsedContent.kind(): HistoryKind = when (this) {
     is ParsedContent.Url -> HistoryKind.URL
     is ParsedContent.Wifi -> HistoryKind.WIFI
     is ParsedContent.Contact -> HistoryKind.CONTACT

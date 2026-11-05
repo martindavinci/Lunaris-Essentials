@@ -20,14 +20,27 @@ internal class CameraAccessCheck {
     }
 }
 
-/** [choosing] is the first thing on the tab: the camera starts only once the user has said what it is for. */
+/** After each reading the card stays still for this long, so that nothing changes under a finger on its way to it. */
+internal const val READ_PAUSE_MILLIS = 2_000L
+
+/**
+ * [choosing] is the first thing on the tab: the camera starts only once the user has said what it is for.
+ * [session] holds what was read since, the newest first, and [readings] tells one reading from the next.
+ */
 data class ScanUiState(
     val choosing: Boolean = true,
     val cameraAccess: CameraAccess = CameraAccess.CHECKING,
     val cameraUnavailable: Boolean = false,
     val decodingImage: Boolean = false,
     val noCodeFound: Boolean = false,
-)
+    val session: List<SessionCode> = emptyList(),
+    val readings: Int = 0,
+    val pauseRunning: Boolean = false,
+    val cardHeld: Boolean = false,
+    val listOpen: Boolean = false,
+) {
+    val readingPaused: Boolean get() = pauseRunning || cardHeld || listOpen
+}
 
 /** Asked from outside the screen, by a tap on its tab or a shortcut. [id] tells a new request from one seen before. */
 data class ScanRequest(val id: Int, val codes: Boolean)
@@ -51,6 +64,14 @@ sealed interface ScanAction {
 
     data class Requested(val request: ScanRequest) : ScanAction
 
+    data class DetailsAsked(val code: ScannedCode) : ScanAction
+
+    data class CardHeld(val held: Boolean) : ScanAction
+
+    data object ListOpened : ScanAction
+
+    data object ListClosed : ScanAction
+
     data object CameraUnavailable : ScanAction
 
     /** The screen went out of sight, for instance to open a link. A rotation does not count. */
@@ -62,5 +83,5 @@ sealed interface ScanAction {
     data object ScreenLeft : ScanAction
 }
 
-/** A code was filed and is ready to show. Sent once per code. */
+/** A code was read and filed. Sent once per reading. */
 data class ScanHit(val vibrate: Boolean)

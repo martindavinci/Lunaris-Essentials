@@ -10,4 +10,14 @@
     <string name="scan_permission_denied">Cameratoegang staat uit. Schakel die in bij de app-instellingen om met de camera te scannen, of scan een code uit een afbeelding.</string>
     <string name="scan_permission_settings">Instellingen openen</string>
     <string name="scan_camera_unavailable">De camera is niet beschikbaar. Je kunt wel een code uit een afbeelding scannen.</string>
+    <string name="scan_open">Openen</string>
+    <string name="scan_open_details">Openen…</string>
+    <string name="scan_card_details">Alles tonen</string>
+    <string name="scan_card_pause">Nieuwe scans gepauzeerd zolang je de kaart aanraakt</string>
+    <string name="scan_copy_all">Alles kopiëren</string>
+    <string name="scan_keep_scanning">Doorgaan met scannen</string>
+    <plurals name="scan_session_count">
+        <item quantity="one">%d code gelezen</item>
+        <item quantity="other">%d codes gelezen</item>
+    </plurals>
 </resources>

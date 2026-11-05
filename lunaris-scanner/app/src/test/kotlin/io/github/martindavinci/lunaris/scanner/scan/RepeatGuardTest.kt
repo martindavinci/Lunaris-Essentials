@@ -26,6 +26,41 @@ class RepeatGuardTest {
         assertThat(guard.accept(other, nowMillis = 1L)).isTrue()
     }
 
+    @Test fun twoCodesInViewTogether_eachPassOnlyOnce() {
+        assertThat(guard.accept(code, nowMillis = 0L)).isTrue()
+        assertThat(guard.accept(other, nowMillis = 100L)).isTrue()
+
+        assertThat(guard.accept(code, nowMillis = 200L)).isFalse()
+        assertThat(guard.accept(other, nowMillis = 300L)).isFalse()
+    }
+
+    @Test fun rearming_holdsBackEveryCodeLastSeen() {
+        guard.accept(code, nowMillis = 0L)
+        guard.accept(other, nowMillis = 0L)
+
+        guard.rearm(nowMillis = 100_000L)
+
+        assertThat(guard.accept(code, nowMillis = 100_001L)).isFalse()
+        assertThat(guard.accept(other, nowMillis = 100_002L)).isFalse()
+    }
+
+    @Test fun aForgottenCode_passesAgainAtOnce() {
+        guard.accept(code, nowMillis = 0L)
+
+        guard.forget(code)
+
+        assertThat(guard.accept(code, nowMillis = 1L)).isTrue()
+    }
+
+    @Test fun forgettingOneCode_leavesTheOthersHeldBack() {
+        guard.accept(code, nowMillis = 0L)
+        guard.accept(other, nowMillis = 0L)
+
+        guard.forget(code)
+
+        assertThat(guard.accept(other, nowMillis = 1L)).isFalse()
+    }
+
     @Test fun sameCodeAfterTheQuietTime_passes() {
         guard.accept(code, nowMillis = 0L)
 

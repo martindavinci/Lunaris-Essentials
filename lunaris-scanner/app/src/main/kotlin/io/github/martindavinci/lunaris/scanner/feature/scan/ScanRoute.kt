@@ -13,7 +13,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
@@ -22,15 +21,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import io.github.martindavinci.lunaris.scanner.feature.result.ResultActionRunner
 
-/** [request] comes from outside the screen. A document scan is a screen of its own, opened by [onDocumentChosen]. */
+/** [request] comes from outside the screen. A document scan is a screen of its own, opened by [onDocumentChosen]; [onOpenResult] shows a code in full. */
 @Composable
-fun ScanRoute(request: ScanRequest?, onCodeScanned: () -> Unit, onDocumentChosen: () -> Unit) {
+fun ScanRoute(request: ScanRequest?, onOpenResult: () -> Unit, onDocumentChosen: () -> Unit) {
     val viewModel: ScanViewModel = hiltViewModel()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    HitEffect(viewModel, onCodeScanned)
+    HitEffect(viewModel)
     LaunchedEffect(request) { request?.let { viewModel.onAction(ScanAction.Requested(it)) } }
 
     DisposableEffect(viewModel) {
@@ -44,9 +44,9 @@ fun ScanRoute(request: ScanRequest?, onCodeScanned: () -> Unit, onDocumentChosen
         }
     }
 
-    // Frames count only while this screen is in front, and not while a picked image is being read.
-    LifecycleResumeEffect(viewModel.analyzer, state.decodingImage) {
-        if (!state.decodingImage) viewModel.analyzer.resume()
+    // Frames count only while this screen is in front, not while a picked image is being read, and not during a pause.
+    LifecycleResumeEffect(viewModel.analyzer, state.decodingImage, state.readingPaused) {
+        if (!state.decodingImage && !state.readingPaused) viewModel.analyzer.resume()
         onPauseOrDispose { viewModel.analyzer.pause() }
     }
 
@@ -74,10 +74,13 @@ fun ScanRoute(request: ScanRequest?, onCodeScanned: () -> Unit, onDocumentChosen
     }
 
     BackHandler { viewModel.onAction(ScanAction.ChoiceAsked) }
+    BackHandler(enabled = state.listOpen) { viewModel.onAction(ScanAction.ListClosed) }
     val imagePicker = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
         if (uri != null) viewModel.onAction(ScanAction.ImagePicked(uri.toString()))
     }
     var camera by remember { mutableStateOf<Camera?>(null) }
+    // Nothing from a card needs a result back: that is for joining a Wi-Fi network, on the full page.
+    val runner = remember(context) { ResultActionRunner(context) {} }
     ScanScreen(
         state = state,
         onBack = { viewModel.onAction(ScanAction.ChoiceAsked) },
@@ -87,6 +90,12 @@ fun ScanRoute(request: ScanRequest?, onCodeScanned: () -> Unit, onDocumentChosen
             imagePicker.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         },
         onNoCodeMessageShown = { viewModel.onAction(ScanAction.NoCodeMessageShown) },
+        onAction = viewModel::onAction,
+        onDetails = {
+            viewModel.onAction(ScanAction.DetailsAsked(it))
+            onOpenResult()
+        },
+        onRun = runner::run,
         torch = { TorchAction(camera) },
         camera = {
             CameraPanel(
@@ -99,13 +108,11 @@ fun ScanRoute(request: ScanRequest?, onCodeScanned: () -> Unit, onDocumentChosen
 }
 
 @Composable
-private fun HitEffect(viewModel: ScanViewModel, onCodeScanned: () -> Unit) {
+private fun HitEffect(viewModel: ScanViewModel) {
     val haptics = LocalHapticFeedback.current
-    val currentOnCodeScanned by rememberUpdatedState(onCodeScanned)
     LaunchedEffect(viewModel) {
         viewModel.hits.collect { hit ->
             if (hit.vibrate) haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-            currentOnCodeScanned()
         }
     }
 }

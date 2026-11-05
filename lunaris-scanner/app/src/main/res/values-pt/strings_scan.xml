@@ -10,4 +10,15 @@
     <string name="scan_permission_denied">O acesso à câmara está desativado. Ative-o nas definições da aplicação para ler com a câmara, ou leia um código a partir de uma imagem.</string>
     <string name="scan_permission_settings">Abrir definições</string>
     <string name="scan_camera_unavailable">A câmara não está disponível. Ainda pode ler um código a partir de uma imagem.</string>
+    <string name="scan_open">Abrir</string>
+    <string name="scan_open_details">Abrir…</string>
+    <string name="scan_card_details">Ver tudo</string>
+    <string name="scan_card_pause">Novas leituras em pausa enquanto toca no cartão</string>
+    <string name="scan_copy_all">Copiar tudo</string>
+    <string name="scan_keep_scanning">Continuar a digitalizar</string>
+    <plurals name="scan_session_count">
+        <item quantity="one">%d código lido</item>
+        <item quantity="many">%d códigos lidos</item>
+        <item quantity="other">%d códigos lidos</item>
+    </plurals>
 </resources>

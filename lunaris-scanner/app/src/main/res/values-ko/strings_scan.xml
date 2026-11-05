@@ -10,4 +10,13 @@
     <string name="scan_permission_denied">카메라 액세스가 꺼져 있습니다. 카메라로 스캔하려면 앱 설정에서 켜거나 이미지에서 코드를 스캔하세요.</string>
     <string name="scan_permission_settings">설정 열기</string>
     <string name="scan_camera_unavailable">카메라를 사용할 수 없습니다. 이미지에서 코드를 스캔할 수는 있습니다.</string>
+    <string name="scan_open">열기</string>
+    <string name="scan_open_details">열기…</string>
+    <string name="scan_card_details">전체 보기</string>
+    <string name="scan_card_pause">카드를 터치하는 동안 읽기가 일시 중지됩니다</string>
+    <string name="scan_copy_all">모두 복사</string>
+    <string name="scan_keep_scanning">계속 스캔</string>
+    <plurals name="scan_session_count">
+        <item quantity="other">읽은 코드 %d개</item>
+    </plurals>
 </resources>

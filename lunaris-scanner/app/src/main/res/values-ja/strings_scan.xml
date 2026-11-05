@@ -10,4 +10,13 @@
     <string name="scan_permission_denied">カメラへのアクセスがオフになっています。カメラでスキャンするにはアプリの設定でオンにするか、画像からスキャンしてください。</string>
     <string name="scan_permission_settings">設定を開く</string>
     <string name="scan_camera_unavailable">カメラを使用できません。画像からのスキャンは可能です。</string>
+    <string name="scan_open">開く</string>
+    <string name="scan_open_details">開く…</string>
+    <string name="scan_card_details">すべて表示</string>
+    <string name="scan_card_pause">カードに触れている間は読み取りを一時停止します</string>
+    <string name="scan_copy_all">すべてコピー</string>
+    <string name="scan_keep_scanning">スキャンを続ける</string>
+    <plurals name="scan_session_count">
+        <item quantity="other">読み取り %d 件</item>
+    </plurals>
 </resources>

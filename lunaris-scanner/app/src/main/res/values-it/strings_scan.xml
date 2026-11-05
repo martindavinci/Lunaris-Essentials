@@ -9,4 +9,15 @@
     <string name="scan_permission_denied">L\'accesso alla fotocamera è disattivato. Attivalo nelle impostazioni dell\'app per scansionare con la fotocamera, oppure scansiona un codice da un\'immagine.</string>
     <string name="scan_permission_settings">Apri impostazioni</string>
     <string name="scan_camera_unavailable">La fotocamera non è disponibile. Puoi comunque scansionare un codice da un\'immagine.</string>
+    <string name="scan_open">Apri</string>
+    <string name="scan_open_details">Apri…</string>
+    <string name="scan_card_details">Mostra tutto</string>
+    <string name="scan_card_pause">Nuove letture in pausa finché tocchi la scheda</string>
+    <string name="scan_copy_all">Copia tutti</string>
+    <string name="scan_keep_scanning">Continua a scansionare</string>
+    <plurals name="scan_session_count">
+        <item quantity="one">%d codice letto</item>
+        <item quantity="many">%d codici letti</item>
+        <item quantity="other">%d codici letti</item>
+    </plurals>
 </resources>

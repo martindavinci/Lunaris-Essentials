@@ -72,7 +72,7 @@ class ScanViewModelLeavingTest {
     @Test fun leaving_discardsAHitNobodyReceived() = runBlocking<Unit> {
         val viewModel = viewModel()
         viewModel.onAction(ScanAction.CodeDetected(code))
-        currentResult.code.first { it != null }
+        viewModel.state.first { it.session.isNotEmpty() }
         delay(SETTLE_MILLIS)
 
         viewModel.onAction(ScanAction.ScreenLeft)
@@ -87,7 +87,7 @@ class ScanViewModelLeavingTest {
         viewModel.onAction(ScanAction.CodeDetected(code))
 
         assertThat(viewModel.hits.first()).isEqualTo(ScanHit(vibrate = true))
-        assertThat(currentResult.code.value).isEqualTo(code)
+        assertThat(viewModel.state.value.session.single().code).isEqualTo(code)
     }
 
     private companion object {

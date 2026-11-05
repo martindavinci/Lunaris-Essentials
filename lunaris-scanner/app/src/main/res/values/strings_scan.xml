@@ -9,4 +9,14 @@
     <string name="scan_permission_denied">Camera access is turned off. Turn it on in the app settings to scan with the camera, or scan a code from an image.</string>
     <string name="scan_permission_settings">Open settings</string>
     <string name="scan_camera_unavailable">The camera is not available. You can still scan a code from an image.</string>
+    <string name="scan_open">Open</string>
+    <string name="scan_open_details">Open…</string>
+    <string name="scan_card_details">Show in full</string>
+    <string name="scan_card_pause">New reads paused while you touch the card</string>
+    <string name="scan_copy_all">Copy all</string>
+    <string name="scan_keep_scanning">Continue scanning</string>
+    <plurals name="scan_session_count">
+        <item quantity="one">%d code read</item>
+        <item quantity="other">%d codes read</item>
+    </plurals>
 </resources>

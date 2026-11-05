@@ -10,4 +10,13 @@
     <string name="scan_permission_denied">相机权限已关闭。请在应用设置中开启以使用相机扫描，或从图片中扫描代码。</string>
     <string name="scan_permission_settings">打开设置</string>
     <string name="scan_camera_unavailable">相机不可用。您仍可从图片中扫描代码。</string>
+    <string name="scan_open">打开</string>
+    <string name="scan_open_details">打开…</string>
+    <string name="scan_card_details">查看全部</string>
+    <string name="scan_card_pause">触摸卡片时暂停新的读取</string>
+    <string name="scan_copy_all">全部复制</string>
+    <string name="scan_keep_scanning">继续扫描</string>
+    <plurals name="scan_session_count">
+        <item quantity="other">已读取 %d 个代码</item>
+    </plurals>
 </resources>

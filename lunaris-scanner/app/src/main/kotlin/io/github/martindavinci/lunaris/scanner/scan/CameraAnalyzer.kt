@@ -52,6 +52,11 @@ class CameraAnalyzer(
         paused.set(true)
     }
 
+    /** The code handed over was not taken: it may be read again as soon as frames count. */
+    fun forget(code: ScannedCode) {
+        repeatGuard.forget(code)
+    }
+
     /**
      * ZXing reads barcodes only along the pixel rows and camera sensors are mounted sideways, so a
      * barcode level on a portrait screen runs across the rows. The frame is tried as the user sees

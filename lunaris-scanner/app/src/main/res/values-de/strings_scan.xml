@@ -9,4 +9,14 @@
     <string name="scan_permission_denied">Der Kamerazugriff ist deaktiviert. Aktiviere ihn in den App-Einstellungen, um mit der Kamera zu scannen, oder scanne einen Code aus einem Bild.</string>
     <string name="scan_permission_settings">Einstellungen öffnen</string>
     <string name="scan_camera_unavailable">Die Kamera ist nicht verfügbar. Du kannst aber einen Code aus einem Bild scannen.</string>
+    <string name="scan_open">Öffnen</string>
+    <string name="scan_open_details">Öffnen…</string>
+    <string name="scan_card_details">Alles anzeigen</string>
+    <string name="scan_card_pause">Neue Scans pausiert, solange du die Karte berührst</string>
+    <string name="scan_copy_all">Alle kopieren</string>
+    <string name="scan_keep_scanning">Weiter scannen</string>
+    <plurals name="scan_session_count">
+        <item quantity="one">%d Code gelesen</item>
+        <item quantity="other">%d Codes gelesen</item>
+    </plurals>
 </resources>
