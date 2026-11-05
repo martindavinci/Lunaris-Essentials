@@ -26,10 +26,8 @@
     <string name="document_move_later">Naar achteren</string>
     <string name="document_delete_page">Pagina verwijderen</string>
     <string name="document_add_page">Pagina toevoegen</string>
-    <string name="document_more">Meer</string>
-    <string name="document_save_png">Pagina opslaan als PNG</string>
-    <string name="document_save_jpeg">Pagina opslaan als JPEG</string>
-    <string name="document_save_pdf">PDF opslaan</string>
+    <string name="document_save">Opslaan</string>
+    <string name="document_format_per_page">%1$s, één bestand per pagina</string>
     <string name="document_share">Delen</string>
     <string name="document_saved">Opgeslagen</string>
     <string name="document_save_failed">Bestand kon niet worden opgeslagen</string>

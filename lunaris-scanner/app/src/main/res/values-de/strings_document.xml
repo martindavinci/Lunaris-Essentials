@@ -26,10 +26,8 @@
     <string name="document_move_later">Nach hinten</string>
     <string name="document_delete_page">Seite löschen</string>
     <string name="document_add_page">Seite hinzufügen</string>
-    <string name="document_more">Mehr</string>
-    <string name="document_save_png">Seite als PNG speichern</string>
-    <string name="document_save_jpeg">Seite als JPEG speichern</string>
-    <string name="document_save_pdf">PDF speichern</string>
+    <string name="document_save">Speichern</string>
+    <string name="document_format_per_page">%1$s, eine Datei pro Seite</string>
     <string name="document_share">Teilen</string>
     <string name="document_saved">Gespeichert</string>
     <string name="document_save_failed">Datei konnte nicht gespeichert werden</string>

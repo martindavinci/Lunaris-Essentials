@@ -12,18 +12,23 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.io.OutputStream
+import java.time.LocalDateTime
 import java.util.UUID
 import javax.inject.Inject
 
-enum class PictureFormat { PNG, JPEG }
+enum class PictureFormat(val extension: String, val mimeType: String) {
+    PNG("png", "image/png"),
+    JPEG("jpg", "image/jpeg"),
+}
 
-/** A page of the scan under way. [thumbnail] is there once it has been rendered. */
+/** A page of the scan under way. [thumbnail] is there once it has been rendered, [found] if the page was recognized on its photo. */
 data class DocumentPage(
     val id: Long,
     val photoPath: String,
     val workSize: PageSize,
     val settings: PageSettings,
     val thumbnail: PagePixels? = null,
+    val found: PageCorners? = null,
 )
 
 /** Writes the finished pages, one at a time, with no storage permission. */
@@ -31,6 +36,9 @@ interface DocumentFiles {
     suspend fun savePdf(uri: String, pages: List<DocumentPage>): Boolean
 
     suspend fun savePicture(uri: String, page: DocumentPage, format: PictureFormat): Boolean
+
+    /** One file per page, in a folder the user picked. All or nothing: when one fails, the others written go too. */
+    suspend fun savePictures(folderUri: String, pages: List<DocumentPage>, format: PictureFormat): Boolean
 
     /** Removes a document the user picked, which the picker has already created empty. */
     suspend fun discard(uri: String)
@@ -58,26 +66,47 @@ class ContentDocumentFiles @Inject constructor(
     }
 
     override suspend fun savePicture(uri: String, page: DocumentPage, format: PictureFormat): Boolean = guarded {
-        toDocument(uri) { out ->
-            val bitmap = fullPage(page) ?: return@toDocument false
-            val written = when (format) {
-                PictureFormat.PNG -> bitmap.compress(Bitmap.CompressFormat.PNG, PNG_QUALITY, out)
-                PictureFormat.JPEG -> bitmap.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, out)
-            }
-            bitmap.recycle()
-            written
-        }
+        toDocument(uri) { writePicture(page, format, it) }
     }
 
-    override suspend fun discard(uri: String) = withContext(Dispatchers.IO) {
+    override suspend fun savePictures(folderUri: String, pages: List<DocumentPage>, format: PictureFormat): Boolean = guarded {
+        val tree = folderUri.toUri()
+        val folder = DocumentsContract.buildDocumentUriUsingTree(tree, DocumentsContract.getTreeDocumentId(tree))
+        val at = LocalDateTime.now()
+        val written = mutableListOf<String>()
+        var done = false
+        try {
+            done = pages.withIndex().all { (index, page) ->
+                val name = scanFileName(format.extension, at, page = index + 1)
+                val file = DocumentsContract.createDocument(context.contentResolver, folder, format.mimeType, name)?.toString()
+                file != null && written.add(file) && toDocument(file) { writePicture(page, format, it) }
+            }
+        } finally {
+            if (!done) written.forEach(::deleteQuietly)
+        }
+        done
+    }
+
+    override suspend fun discard(uri: String) = withContext(Dispatchers.IO) { deleteQuietly(uri) }
+
+    private fun deleteQuietly(uri: String) {
         try {
             DocumentsContract.deleteDocument(context.contentResolver, uri.toUri())
-            Unit
         } catch (_: IOException) {
             // Nothing more to try: the message about the failed save is already on its way.
         } catch (_: RuntimeException) {
             // Likewise: a document provider may refuse in many ways.
         }
+    }
+
+    private suspend fun writePicture(page: DocumentPage, format: PictureFormat, out: OutputStream): Boolean {
+        val bitmap = fullPage(page) ?: return false
+        val written = when (format) {
+            PictureFormat.PNG -> bitmap.compress(Bitmap.CompressFormat.PNG, PNG_QUALITY, out)
+            PictureFormat.JPEG -> bitmap.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, out)
+        }
+        bitmap.recycle()
+        return written
     }
 
     override suspend fun cachePdfForSharing(pages: List<DocumentPage>): String? = withContext(Dispatchers.IO) {

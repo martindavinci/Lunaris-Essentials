@@ -82,6 +82,8 @@ sealed interface DocumentAction {
 
     data class SavePictureTo(val uri: String, val format: PictureFormat) : DocumentAction
 
+    data class SavePicturesTo(val folderUri: String, val format: PictureFormat) : DocumentAction
+
     data object SharePdf : DocumentAction
 
     data object ShareHandled : DocumentAction

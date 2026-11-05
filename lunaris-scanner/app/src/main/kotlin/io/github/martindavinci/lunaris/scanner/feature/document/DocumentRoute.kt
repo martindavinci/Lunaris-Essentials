@@ -24,8 +24,11 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,11 +44,7 @@ import io.github.martindavinci.lunaris.scanner.feature.scan.cameraPermissionStat
 import java.time.LocalDateTime
 
 private const val PDF_MIME_TYPE = "application/pdf"
-private const val PNG_MIME_TYPE = "image/png"
-private const val JPEG_MIME_TYPE = "image/jpeg"
 private const val PDF_EXTENSION = "pdf"
-private const val PNG_EXTENSION = "png"
-private const val JPEG_EXTENSION = "jpg"
 private const val BUSY_SCRIM_ALPHA = 0.4f
 
 /** A scan under way, from its first photo to the saved file. The steps share one screen and one back stack entry. */
@@ -83,11 +82,15 @@ fun DocumentRoute(onClose: () -> Unit) {
     val savePdf = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(PDF_MIME_TYPE)) { uri ->
         if (uri != null) viewModel.onAction(DocumentAction.SavePdfTo(uri.toString()))
     }
-    val savePng = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(PNG_MIME_TYPE)) { uri ->
+    val savePng = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(PictureFormat.PNG.mimeType)) { uri ->
         if (uri != null) viewModel.onAction(DocumentAction.SavePictureTo(uri.toString(), PictureFormat.PNG))
     }
-    val saveJpeg = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(JPEG_MIME_TYPE)) { uri ->
+    val saveJpeg = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(PictureFormat.JPEG.mimeType)) { uri ->
         if (uri != null) viewModel.onAction(DocumentAction.SavePictureTo(uri.toString(), PictureFormat.JPEG))
+    }
+    var folderFormat by rememberSaveable { mutableStateOf(PictureFormat.JPEG) }
+    val saveToFolder = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
+        if (uri != null) viewModel.onAction(DocumentAction.SavePicturesTo(uri.toString(), folderFormat))
     }
 
     Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
@@ -109,8 +112,16 @@ fun DocumentRoute(onClose: () -> Unit) {
                         }
                     },
                     onSavePdf = { savePdf.launch(scanFileName(PDF_EXTENSION, LocalDateTime.now())) },
-                    onSavePng = { savePng.launch(scanFileName(PNG_EXTENSION, LocalDateTime.now())) },
-                    onSaveJpeg = { saveJpeg.launch(scanFileName(JPEG_EXTENSION, LocalDateTime.now())) },
+                    onSavePicture = { format ->
+                        when {
+                            state.pages.size > 1 -> {
+                                folderFormat = format
+                                saveToFolder.launch(null)
+                            }
+                            format == PictureFormat.PNG -> savePng.launch(scanFileName(format.extension, LocalDateTime.now()))
+                            else -> saveJpeg.launch(scanFileName(format.extension, LocalDateTime.now()))
+                        }
+                    },
                 )
             }
         }

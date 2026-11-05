@@ -18,13 +18,25 @@ class ScanFileNameTest {
         assertThat(name).isEqualTo("lunaris-scan-20270102-030405.png")
     }
 
+    @Test fun aPageOfSeveral_addsItsNumberToTheName() {
+        val name = scanFileName("jpg", LocalDateTime.of(2026, 11, 5, 11, 53, 9), page = 3)
+
+        assertThat(name).isEqualTo("lunaris-scan-20261105-115309-03.jpg")
+    }
+
+    @Test fun pageNumbersPastNinetyNine_stayWhole() {
+        val name = scanFileName("png", LocalDateTime.of(2026, 11, 5, 11, 53, 9), page = 120)
+
+        assertThat(name).isEqualTo("lunaris-scan-20261105-115309-120.png")
+    }
+
     @Test fun theDigitsStayLatinInAnyLanguage() {
         val before = Locale.getDefault()
         Locale.setDefault(Locale.forLanguageTag("ar-EG-u-nu-arab"))
         try {
-            val name = scanFileName("jpg", LocalDateTime.of(2026, 11, 5, 11, 53, 9))
+            val name = scanFileName("jpg", LocalDateTime.of(2026, 11, 5, 11, 53, 9), page = 2)
 
-            assertThat(name).isEqualTo("lunaris-scan-20261105-115309.jpg")
+            assertThat(name).isEqualTo("lunaris-scan-20261105-115309-02.jpg")
         } finally {
             Locale.setDefault(before)
         }

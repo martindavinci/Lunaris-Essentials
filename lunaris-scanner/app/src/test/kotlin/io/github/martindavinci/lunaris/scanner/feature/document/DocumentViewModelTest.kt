@@ -11,6 +11,7 @@ import io.github.martindavinci.lunaris.scanner.document.ImportedPhoto
 import io.github.martindavinci.lunaris.scanner.document.PageCorners
 import io.github.martindavinci.lunaris.scanner.document.PagePixels
 import io.github.martindavinci.lunaris.scanner.document.PagePoint
+import io.github.martindavinci.lunaris.scanner.document.PageReading
 import io.github.martindavinci.lunaris.scanner.document.PageRendering
 import io.github.martindavinci.lunaris.scanner.document.PageSettings
 import io.github.martindavinci.lunaris.scanner.document.PageSize
@@ -67,6 +68,13 @@ class DocumentViewModelTest {
             return works
         }
 
+        val folders = mutableListOf<Triple<String, List<DocumentPage>, PictureFormat>>()
+
+        override suspend fun savePictures(folderUri: String, pages: List<DocumentPage>, format: PictureFormat): Boolean {
+            folders += Triple(folderUri, pages, format)
+            return works
+        }
+
         override suspend fun discard(uri: String) {
             discarded += uri
         }
@@ -85,13 +93,28 @@ class DocumentViewModelTest {
     }
     private val tilted = PageCorners(PagePoint(0.1f, 0.2f), PagePoint(0.9f, 0.1f), PagePoint(0.8f, 0.9f), PagePoint(0.2f, 0.8f))
 
+    private class FakeReading : PageReading {
+        var found: PageCorners? = null
+        var suggestion = CleanMode.COLOUR
+        var suggestions = 0
+
+        override suspend fun find(photo: PagePixels) = found
+
+        override suspend fun suggestClean(photo: PagePixels, corners: PageCorners): CleanMode {
+            suggestions++
+            return suggestion
+        }
+    }
+
+    private val reading = FakeReading()
+
     @Before fun setUp() = Dispatchers.setMain(UnconfinedTestDispatcher())
 
     @After fun tearDown() = Dispatchers.resetMain()
 
     private fun viewModel(first: Boolean = true): DocumentViewModel {
         if (first) inbox.put(ImportedPhoto("first", PageSize(40, 20)))
-        return DocumentViewModel(inbox, photos, files, rendering)
+        return DocumentViewModel(inbox, photos, files, rendering, reading)
     }
 
     private fun DocumentViewModel.confirmCorners() = onAction(DocumentAction.CornersDone)
@@ -104,6 +127,118 @@ class DocumentViewModelTest {
     }
 
     private val DocumentViewModel.now get() = state.value
+
+    @Test fun aPageFoundOnThePhoto_setsTheCorners() {
+        reading.found = tilted
+
+        val viewModel = viewModel()
+
+        assertThat(viewModel.now.corners).isEqualTo(tilted)
+        assertThat(viewModel.now.photo).isNotNull()
+    }
+
+    @Test fun nothingFound_leavesTheStartingCorners() {
+        assertThat(viewModel().now.corners).isEqualTo(PageCorners.START)
+    }
+
+    @Test fun reset_goesBackToWhatWasFound() {
+        reading.found = tilted
+        val viewModel = viewModel()
+        viewModel.onAction(DocumentAction.CornerMoved(0, PagePoint(0.5f, 0.5f)))
+
+        viewModel.onAction(DocumentAction.CornersReset)
+
+        assertThat(viewModel.now.corners).isEqualTo(tilted)
+    }
+
+    @Test fun reset_withNothingFound_goesBackToTheStart() {
+        val viewModel = viewModel()
+        viewModel.onAction(DocumentAction.CornerMoved(0, PagePoint(0.5f, 0.5f)))
+
+        viewModel.onAction(DocumentAction.CornersReset)
+
+        assertThat(viewModel.now.corners).isEqualTo(PageCorners.START)
+    }
+
+    @Test fun editingTheCornersLater_startsFromThoseConfirmed_andResetFromThoseFound() {
+        reading.found = tilted
+        val viewModel = viewModel()
+        viewModel.onAction(DocumentAction.CornerMoved(0, PagePoint(0.15f, 0.2f)))
+        val confirmed = viewModel.now.corners
+        viewModel.confirmCorners()
+
+        viewModel.onAction(DocumentAction.EditCorners)
+        assertThat(viewModel.now.corners).isEqualTo(confirmed)
+
+        viewModel.onAction(DocumentAction.CornersReset)
+        assertThat(viewModel.now.corners).isEqualTo(tilted)
+    }
+
+    @Test fun eachNewPage_isLookedForOnItsOwnPhoto() {
+        reading.found = tilted
+        val viewModel = reviewing()
+        val other = PageCorners(PagePoint(0.2f, 0.2f), PagePoint(0.8f, 0.2f), PagePoint(0.8f, 0.8f), PagePoint(0.2f, 0.8f))
+        reading.found = other
+
+        viewModel.onAction(DocumentAction.PhotoPicked("second"))
+
+        assertThat(viewModel.now.corners).isEqualTo(other)
+    }
+
+    @Test fun lookingAtAnotherPage_doesNotSearchItAgain() {
+        reading.found = tilted
+        val viewModel = reviewing()
+        viewModel.addPage()
+        reading.found = null
+
+        viewModel.onAction(DocumentAction.PageSelected(0))
+        viewModel.onAction(DocumentAction.EditCorners)
+
+        assertThat(viewModel.now.corners).isEqualTo(tilted)
+    }
+
+    @Test fun aNewPage_getsTheCleanThatSuitsIt() {
+        reading.suggestion = CleanMode.BLACK_AND_WHITE
+
+        val viewModel = reviewing()
+
+        assertThat(viewModel.now.currentPage!!.settings.clean).isEqualTo(CleanMode.BLACK_AND_WHITE)
+        assertThat(rendered.last().clean).isEqualTo(CleanMode.BLACK_AND_WHITE)
+    }
+
+    @Test fun whileNothingWasChosen_eachPageGetsItsOwnClean() {
+        reading.suggestion = CleanMode.BLACK_AND_WHITE
+        val viewModel = reviewing()
+        reading.suggestion = CleanMode.COLOUR
+
+        viewModel.addPage()
+
+        assertThat(viewModel.now.pages.map { it.settings.clean })
+            .containsExactly(CleanMode.BLACK_AND_WHITE, CleanMode.COLOUR).inOrder()
+    }
+
+    @Test fun aCleanChosenByHand_staysAndPassesToTheNextPages() {
+        reading.suggestion = CleanMode.BLACK_AND_WHITE
+        val viewModel = reviewing()
+        viewModel.onAction(DocumentAction.CleanChosen(CleanMode.GREY))
+        val before = reading.suggestions
+
+        viewModel.addPage()
+
+        assertThat(viewModel.now.pages.map { it.settings.clean }).containsExactly(CleanMode.GREY, CleanMode.GREY).inOrder()
+        assertThat(reading.suggestions).isEqualTo(before)
+    }
+
+    @Test fun confirmingTheCornersAgain_leavesTheCleanAlone() {
+        reading.suggestion = CleanMode.BLACK_AND_WHITE
+        val viewModel = reviewing()
+        reading.suggestion = CleanMode.COLOUR
+
+        viewModel.onAction(DocumentAction.EditCorners)
+        viewModel.confirmCorners()
+
+        assertThat(viewModel.now.currentPage!!.settings.clean).isEqualTo(CleanMode.BLACK_AND_WHITE)
+    }
 
     @Test fun nothingInTheInbox_closes() {
         assertThat(viewModel(first = false).now.closed).isTrue()
@@ -470,6 +605,42 @@ class DocumentViewModelTest {
 
         assertThat(viewModel.now.message).isEqualTo(DocumentMessage.CAMERA_FAILED)
         assertThat(viewModel.now.step).isEqualTo(DocumentStep.REVIEW)
+    }
+
+    @Test fun savingPicturesToAFolder_writesEveryPageInOrder() {
+        val viewModel = reviewing()
+        viewModel.addPage()
+
+        viewModel.onAction(DocumentAction.SavePicturesTo("folder", PictureFormat.JPEG))
+
+        val (folder, pages, format) = files.folders.single()
+        assertThat(folder).isEqualTo("folder")
+        assertThat(pages.map { it.photoPath }).containsExactly("first", "from-second").inOrder()
+        assertThat(format).isEqualTo(PictureFormat.JPEG)
+        assertThat(viewModel.now.message).isEqualTo(DocumentMessage.SAVED)
+    }
+
+    @Test fun savingPicturesOfEveryPage_leavesWithoutAsking() {
+        val viewModel = reviewing()
+        viewModel.addPage()
+        viewModel.onAction(DocumentAction.SavePicturesTo("folder", PictureFormat.PNG))
+
+        viewModel.onAction(DocumentAction.BackPressed)
+
+        assertThat(viewModel.now.closed).isTrue()
+    }
+
+    @Test fun picturesThatCouldNotBeSaved_sayNoAndKeepAsking() {
+        val viewModel = reviewing()
+        viewModel.addPage()
+        files.works = false
+
+        viewModel.onAction(DocumentAction.SavePicturesTo("folder", PictureFormat.PNG))
+        viewModel.onAction(DocumentAction.BackPressed)
+
+        assertThat(viewModel.now.message).isEqualTo(DocumentMessage.SAVE_FAILED)
+        assertThat(viewModel.now.confirm).isEqualTo(DocumentConfirm.DISCARD)
+        assertThat(files.discarded).isEmpty()
     }
 
     @Test fun savingAPdf_writesEveryPageInOrder() {

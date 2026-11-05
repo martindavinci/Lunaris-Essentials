@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Crop
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -48,6 +47,7 @@ import io.github.martindavinci.lunaris.scanner.R
 import io.github.martindavinci.lunaris.scanner.document.CleanMode
 import io.github.martindavinci.lunaris.scanner.document.DocumentPage
 import io.github.martindavinci.lunaris.scanner.document.PaperSize
+import io.github.martindavinci.lunaris.scanner.document.PictureFormat
 import io.github.martindavinci.lunaris.scanner.feature.create.ChoiceChips
 
 private val Spacing = 8.dp
@@ -63,6 +63,7 @@ internal fun ReviewControls(
     onPickImage: () -> Unit,
     onTakePhoto: () -> Unit,
     onSavePdf: () -> Unit,
+    onSavePicture: (PictureFormat) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val settings = state.currentPage?.settings ?: return
@@ -87,9 +88,7 @@ internal fun ReviewControls(
                 Spacer(Modifier.width(Spacing))
                 Text(stringResource(R.string.document_share))
             }
-            Button(onClick = onSavePdf, modifier = Modifier.weight(1f)) {
-                Text(stringResource(R.string.document_save_pdf))
-            }
+            SaveButton(state.pages.size, onSavePdf, onSavePicture, Modifier.weight(1f))
         }
     }
 }

@@ -27,10 +27,11 @@
     <string name="document_move_later">Move later</string>
     <string name="document_delete_page">Delete page</string>
     <string name="document_add_page">Add page</string>
-    <string name="document_more">More</string>
-    <string name="document_save_png">Save page as PNG</string>
-    <string name="document_save_jpeg">Save page as JPEG</string>
-    <string name="document_save_pdf">Save PDF</string>
+    <string name="document_save">Save</string>
+    <string name="document_format_pdf" translatable="false">PDF</string>
+    <string name="document_format_jpeg" translatable="false">JPG</string>
+    <string name="document_format_png" translatable="false">PNG</string>
+    <string name="document_format_per_page">%1$s, one file per page</string>
     <string name="document_share">Share</string>
     <string name="document_saved">Saved</string>
     <string name="document_save_failed">Could not save the file</string>

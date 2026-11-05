@@ -26,10 +26,8 @@
     <string name="document_move_later">后移</string>
     <string name="document_delete_page">删除页面</string>
     <string name="document_add_page">添加页面</string>
-    <string name="document_more">更多</string>
-    <string name="document_save_png">将页面保存为 PNG</string>
-    <string name="document_save_jpeg">将页面保存为 JPEG</string>
-    <string name="document_save_pdf">保存 PDF</string>
+    <string name="document_save">保存</string>
+    <string name="document_format_per_page">%1$s（每页一个文件）</string>
     <string name="document_share">分享</string>
     <string name="document_saved">已保存</string>
     <string name="document_save_failed">无法保存文件</string>

@@ -26,10 +26,8 @@
     <string name="document_move_later">뒤로 이동</string>
     <string name="document_delete_page">페이지 삭제</string>
     <string name="document_add_page">페이지 추가</string>
-    <string name="document_more">더보기</string>
-    <string name="document_save_png">페이지를 PNG로 저장</string>
-    <string name="document_save_jpeg">페이지를 JPEG로 저장</string>
-    <string name="document_save_pdf">PDF 저장</string>
+    <string name="document_save">저장</string>
+    <string name="document_format_per_page">%1$s(페이지당 파일 1개)</string>
     <string name="document_share">공유</string>
     <string name="document_saved">저장됨</string>
     <string name="document_save_failed">파일을 저장할 수 없습니다</string>

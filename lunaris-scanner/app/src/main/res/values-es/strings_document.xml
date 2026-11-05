@@ -26,10 +26,8 @@
     <string name="document_move_later">Mover después</string>
     <string name="document_delete_page">Eliminar página</string>
     <string name="document_add_page">Añadir página</string>
-    <string name="document_more">Más</string>
-    <string name="document_save_png">Guardar página como PNG</string>
-    <string name="document_save_jpeg">Guardar página como JPEG</string>
-    <string name="document_save_pdf">Guardar PDF</string>
+    <string name="document_save">Guardar</string>
+    <string name="document_format_per_page">%1$s, un archivo por página</string>
     <string name="document_share">Compartir</string>
     <string name="document_saved">Guardado</string>
     <string name="document_save_failed">No se pudo guardar el archivo</string>

@@ -26,10 +26,8 @@
     <string name="document_move_later">Déplacer après</string>
     <string name="document_delete_page">Supprimer la page</string>
     <string name="document_add_page">Ajouter une page</string>
-    <string name="document_more">Plus</string>
-    <string name="document_save_png">Enregistrer la page en PNG</string>
-    <string name="document_save_jpeg">Enregistrer la page en JPEG</string>
-    <string name="document_save_pdf">Enregistrer le PDF</string>
+    <string name="document_save">Enregistrer</string>
+    <string name="document_format_per_page">%1$s, un fichier par page</string>
     <string name="document_share">Partager</string>
     <string name="document_saved">Enregistré</string>
     <string name="document_save_failed">Impossible d\'enregistrer le fichier</string>
