@@ -9,17 +9,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,26 +26,12 @@ import io.github.martindavinci.lunaris.scanner.document.PagePixels
 import io.github.martindavinci.lunaris.scanner.document.PageSettings
 import io.github.martindavinci.lunaris.scanner.document.PageSize
 import io.github.martindavinci.lunaris.scanner.document.PictureFormat
+import io.github.martindavinci.lunaris.scanner.feature.ScreenTopBar
 import io.github.martindavinci.lunaris.scanner.ui.theme.LunarisScannerTheme
 
-private val TopBarMinHeight = 56.dp
 private val PreviewPadding = 12.dp
 private val ControlsSpacing = 8.dp
 private val ControlsPadding = 12.dp
-
-/** The bar of the full-screen steps. Insets were consumed by the app scaffold around the routes. */
-@Composable
-internal fun DocumentTopBar(title: String, onBack: () -> Unit) {
-    Row(
-        modifier = Modifier.fillMaxWidth().heightIn(min = TopBarMinHeight),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        IconButton(onClick = onBack) {
-            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
-        }
-        Text(title, style = MaterialTheme.typography.titleLarge, modifier = Modifier.weight(1f))
-    }
-}
 
 /** On a wide screen the page and its controls stand side by side, since they would not fit one over the other. */
 @Composable
@@ -65,7 +44,7 @@ internal fun ReviewScreen(
     onSavePicture: (PictureFormat) -> Unit,
 ) {
     Column(Modifier.fillMaxSize()) {
-        DocumentTopBar(
+        ScreenTopBar(
             title = stringResource(R.string.document_page_of, state.current + 1, state.pages.size),
             onBack = { onAction(DocumentAction.BackPressed) },
         )

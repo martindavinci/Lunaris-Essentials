@@ -44,4 +44,15 @@
     <string name="document_discard_title">이 스캔을 버릴까요?</string>
     <string name="document_discard_message">저장하지 않은 페이지는 사라집니다.</string>
     <string name="document_discard">버리기</string>
+    <string name="scan_code_title">코드 스캔</string>
+    <string name="shortcut_scan_document">문서 스캔</string>
+    <string name="scan_mode_code_detail">QR 코드와 바코드</string>
+    <string name="scan_mode_document_detail">종이를 PDF나 이미지로</string>
+    <string name="scan_mode_or">또는</string>
+    <string name="document_corners_found">모서리를 자동으로 찾았습니다</string>
+    <string name="document_corners_to_fix">모서리를 조정하세요</string>
+    <string name="document_corners_not_found">용지를 찾지 못했습니다. 점을 용지 모서리로 끌어다 놓거나 다시 촬영하세요.</string>
+    <string name="document_retake">다시 촬영</string>
+    <string name="document_another_page">다음 페이지</string>
+    <string name="document_finish">완료</string>
 </resources>

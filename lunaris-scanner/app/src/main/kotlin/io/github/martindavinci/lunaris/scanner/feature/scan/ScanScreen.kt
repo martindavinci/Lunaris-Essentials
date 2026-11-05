@@ -6,18 +6,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.NoPhotography
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -28,31 +27,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.github.martindavinci.lunaris.scanner.R
+import io.github.martindavinci.lunaris.scanner.feature.ScreenTopBar
 import io.github.martindavinci.lunaris.scanner.ui.theme.LunarisScannerTheme
 
 private val ControlsPadding = 16.dp
 private val ControlsSpacing = 8.dp
-private val PanelPadding = 32.dp
-private val PanelSpacing = 16.dp
-private val PanelIconSize = 48.dp
-private val PanelBottomClearance = 96.dp
 private val ButtonIconSpacing = 8.dp
 
-/** Stateless: [camera] is the live preview, which only the route can provide. */
+/** Stateless: [camera] is the live preview and [torch] its button, which only the route can provide. */
 @Composable
 internal fun ScanScreen(
     state: ScanUiState,
+    onBack: () -> Unit,
     onRequestPermission: () -> Unit,
     onOpenSettings: () -> Unit,
     onPickImage: () -> Unit,
     onNoCodeMessageShown: () -> Unit,
-    onAction: (ScanAction) -> Unit,
-    shutterReady: Boolean,
-    onShutter: () -> Unit,
+    torch: @Composable () -> Unit,
     camera: @Composable () -> Unit,
 ) {
     val snackbarHost = remember { SnackbarHostState() }
@@ -63,86 +57,39 @@ internal fun ScanScreen(
             onNoCodeMessageShown()
         }
     }
-    val documentFailure = stringResource(R.string.document_read_failed)
-    LaunchedEffect(state.documentPhotoFailed) {
-        if (state.documentPhotoFailed) {
-            snackbarHost.showSnackbar(documentFailure)
-            onAction(ScanAction.DocumentFailureShown)
-        }
-    }
-    Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-        when {
-            state.cameraAccess == CameraAccess.RATIONALE -> CameraMessage(
-                message = stringResource(R.string.scan_permission_rationale),
-                actionLabel = stringResource(R.string.scan_permission_allow),
-                onAction = onRequestPermission,
-            )
-            state.cameraAccess == CameraAccess.PERMANENTLY_DENIED -> CameraMessage(
-                message = stringResource(R.string.scan_permission_denied),
-                actionLabel = stringResource(R.string.scan_permission_settings),
-                onAction = onOpenSettings,
-                // Dismissing the system dialog looks just like a final refusal, so asking again stays open.
-                secondaryActionLabel = stringResource(R.string.scan_permission_allow),
-                onSecondaryAction = onRequestPermission,
-            )
-            state.cameraAccess != CameraAccess.GRANTED -> Unit
-            state.cameraUnavailable -> CameraMessage(stringResource(R.string.scan_camera_unavailable))
-            else -> camera()
-        }
-        if (state.decodingImage) CircularProgressIndicator(Modifier.align(Alignment.Center))
-        Column(
-            modifier = Modifier.align(Alignment.BottomCenter).padding(ControlsPadding),
-            verticalArrangement = Arrangement.spacedBy(ControlsSpacing),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            SnackbarHost(snackbarHost)
-            if (state.mode == ScanMode.DOCUMENT && state.cameraAccess == CameraAccess.GRANTED && !state.cameraUnavailable) {
-                ShutterButton(enabled = shutterReady && !state.decodingImage, onClick = onShutter)
-            }
-            // Always here: reading a picture needs no permission and no camera.
-            FilledTonalButton(onClick = onPickImage, enabled = !state.decodingImage) {
-                Icon(Icons.Filled.Image, contentDescription = null)
-                Spacer(Modifier.width(ButtonIconSpacing))
-                Text(stringResource(if (state.mode == ScanMode.CODE) R.string.scan_pick_image else R.string.document_pick_image))
-            }
-            ScanModeChips(state.mode, enabled = !state.decodingImage) { onAction(ScanAction.ModeSelected(it)) }
-        }
-    }
-}
-
-/** Takes the place of the camera when it cannot run, with room left for the controls below it. */
-@Composable
-private fun CameraMessage(
-    message: String,
-    actionLabel: String? = null,
-    onAction: () -> Unit = {},
-    secondaryActionLabel: String? = null,
-    onSecondaryAction: () -> Unit = {},
-) {
-    Column(
-        modifier = Modifier.fillMaxSize().padding(
-            start = PanelPadding,
-            end = PanelPadding,
-            top = PanelPadding,
-            bottom = PanelBottomClearance,
-        ),
-        verticalArrangement = Arrangement.spacedBy(PanelSpacing, Alignment.CenterVertically),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Icon(
-            imageVector = Icons.Filled.NoPhotography,
-            contentDescription = null,
-            modifier = Modifier.size(PanelIconSize),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+    val cameraRuns = state.cameraAccess == CameraAccess.GRANTED && !state.cameraUnavailable
+    Column(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+        ScreenTopBar(
+            title = stringResource(R.string.scan_code_title),
+            onBack = onBack,
+            actions = {
+                if (cameraRuns) {
+                    IconButton(onClick = onPickImage, enabled = !state.decodingImage) {
+                        Icon(Icons.Filled.PhotoLibrary, contentDescription = stringResource(R.string.scan_pick_image))
+                    }
+                    torch()
+                }
+            },
         )
-        Text(
-            text = message,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onBackground,
-            textAlign = TextAlign.Center,
-        )
-        if (actionLabel != null) Button(onClick = onAction) { Text(actionLabel) }
-        if (secondaryActionLabel != null) OutlinedButton(onClick = onSecondaryAction) { Text(secondaryActionLabel) }
+        Box(Modifier.weight(1f).fillMaxWidth()) {
+            CameraGate(state.cameraAccess, state.cameraUnavailable, onRequestPermission, onOpenSettings, camera)
+            if (state.decodingImage) CircularProgressIndicator(Modifier.align(Alignment.Center))
+            Column(
+                modifier = Modifier.align(Alignment.BottomCenter).padding(ControlsPadding),
+                verticalArrangement = Arrangement.spacedBy(ControlsSpacing),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                SnackbarHost(snackbarHost)
+                // Without a camera this is all that is left, and reading a picture needs no permission.
+                if (!cameraRuns) {
+                    FilledTonalButton(onClick = onPickImage, enabled = !state.decodingImage) {
+                        Icon(Icons.Filled.Image, contentDescription = null)
+                        Spacer(Modifier.width(ButtonIconSpacing))
+                        Text(stringResource(R.string.scan_pick_image))
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -151,14 +98,13 @@ private fun CameraMessage(
 private fun ScanScreenCameraPreview() {
     LunarisScannerTheme {
         ScanScreen(
-            state = ScanUiState(cameraAccess = CameraAccess.GRANTED),
+            state = ScanUiState(choosing = false, cameraAccess = CameraAccess.GRANTED),
+            onBack = {},
             onRequestPermission = {},
             onOpenSettings = {},
             onPickImage = {},
             onNoCodeMessageShown = {},
-            onAction = {},
-            shutterReady = false,
-            onShutter = {},
+            torch = {},
             camera = {
                 Box(Modifier.fillMaxSize().background(Color.DarkGray))
                 ViewfinderOverlay(Modifier.fillMaxSize())
@@ -172,14 +118,13 @@ private fun ScanScreenCameraPreview() {
 private fun ScanScreenDeniedPreview() {
     LunarisScannerTheme {
         ScanScreen(
-            state = ScanUiState(cameraAccess = CameraAccess.PERMANENTLY_DENIED),
+            state = ScanUiState(choosing = false, cameraAccess = CameraAccess.PERMANENTLY_DENIED),
+            onBack = {},
             onRequestPermission = {},
             onOpenSettings = {},
             onPickImage = {},
             onNoCodeMessageShown = {},
-            onAction = {},
-            shutterReady = false,
-            onShutter = {},
+            torch = {},
             camera = {},
         )
     }

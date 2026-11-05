@@ -44,4 +44,15 @@
     <string name="document_discard_title">Deze scan weggooien?</string>
     <string name="document_discard_message">Niet-opgeslagen pagina\'s gaan verloren.</string>
     <string name="document_discard">Weggooien</string>
+    <string name="scan_code_title">Code scannen</string>
+    <string name="shortcut_scan_document">Document scannen</string>
+    <string name="scan_mode_code_detail">QR- en streepjescodes</string>
+    <string name="scan_mode_document_detail">Een vel, als pdf of afbeelding</string>
+    <string name="scan_mode_or">of</string>
+    <string name="document_corners_found">Hoeken automatisch gevonden</string>
+    <string name="document_corners_to_fix">Hoeken aanpassen</string>
+    <string name="document_corners_not_found">Vel niet gevonden. Sleep de punten naar de hoeken van het vel of maak de foto opnieuw.</string>
+    <string name="document_retake">Opnieuw</string>
+    <string name="document_another_page">Nog een pagina</string>
+    <string name="document_finish">Klaar</string>
 </resources>

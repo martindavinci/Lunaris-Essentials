@@ -20,11 +20,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.martindavinci.lunaris.scanner.feature.AppNavHost
+import io.github.martindavinci.lunaris.scanner.feature.AppShortcut
 import io.github.martindavinci.lunaris.scanner.settings.AppLocales
 import io.github.martindavinci.lunaris.scanner.ui.theme.LunarisScannerTheme
 import io.github.martindavinci.lunaris.scanner.ui.theme.isDark
@@ -33,6 +36,7 @@ import io.github.martindavinci.lunaris.scanner.ui.theme.isDark
 class MainActivity : ComponentActivity() {
 
     private val viewModel: MainViewModel by viewModels()
+    private var shortcut by mutableStateOf<AppShortcut?>(null)
 
     // Below Android 13 the in-app language is applied here; above, the system does it.
     override fun attachBaseContext(newBase: Context) {
@@ -44,6 +48,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         if (isFreshLaunchIntent(recreated = savedInstanceState != null, flags = intent?.flags ?: 0)) {
             handleShare(intent)
+            shortcut = AppShortcut.of(intent?.action)
         }
         setContent {
             val state by viewModel.state.collectAsStateWithLifecycle()
@@ -63,13 +68,19 @@ class MainActivity : ComponentActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         handleShare(intent)
+        shortcut = AppShortcut.of(intent.action)
     }
 
     @Composable
     private fun MainContent(sharedImage: SharedImageState) {
         when (sharedImage) {
             SharedImageState.NONE, SharedImageState.FOUND ->
-                AppNavHost(startAtResult = sharedImage == SharedImageState.FOUND, onExit = ::finish)
+                AppNavHost(
+                    startAtResult = sharedImage == SharedImageState.FOUND,
+                    shortcut = shortcut,
+                    onShortcutHandled = { shortcut = null },
+                    onExit = ::finish,
+                )
             SharedImageState.DECODING -> SharedImageProgress()
             SharedImageState.NOT_FOUND -> {
                 SharedImageProgress()

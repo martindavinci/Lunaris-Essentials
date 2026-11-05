@@ -1,5 +1,6 @@
 package io.github.martindavinci.lunaris.scanner.feature.document
 
+import io.github.martindavinci.lunaris.scanner.document.CleanMode
 import io.github.martindavinci.lunaris.scanner.document.DocumentPhotos
 import io.github.martindavinci.lunaris.scanner.document.PageReading
 import io.github.martindavinci.lunaris.scanner.document.PageRendering
@@ -24,6 +25,11 @@ internal class PageDisplay(
     private val state: MutableStateFlow<DocumentUiState>,
 ) {
     private var job: Job? = null
+
+    /** The page on its way is not wanted any more. */
+    fun cancel() {
+        job?.cancel()
+    }
 
     /** With [findPage] the corners are set with the photo, so that the user never sees them jump. */
     fun loadPhoto(renderAfter: Boolean, findPage: Boolean = false) {
@@ -60,6 +66,35 @@ internal class PageDisplay(
             if (suggestClean) applySuggestedClean()
             renderNow()
         }
+    }
+
+    /**
+     * For a page left behind while the next one is taken: its clean-up and its thumbnail, on their own, so that
+     * nothing shown afterwards stops them. [stillSuggesting] may turn false in the meantime.
+     */
+    fun prepareInBackground(suggestClean: Boolean, stillSuggesting: () -> Boolean) {
+        val now = state.value
+        val page = now.currentPage ?: return
+        val photo = now.photo ?: return
+        scope.launch {
+            if (suggestClean) {
+                val clean = reading.suggestClean(photo, page.settings.corners)
+                if (stillSuggesting()) setClean(page.id, clean)
+            }
+            val settings = state.value.pages.firstOrNull { it.id == page.id }?.settings ?: return@launch
+            val thumbnail = rendering.render(photo, settings, page.workSize, THUMBNAIL_LONG_SIDE) ?: return@launch
+            state.update { current ->
+                current.copy(pages = current.pages.map { if (it.id == page.id) it.copy(thumbnail = thumbnail) else it })
+            }
+        }
+    }
+
+    /** If that page is on show by now, it was rendered with the clean-up it had before. */
+    private fun setClean(pageId: Long, clean: CleanMode) {
+        state.update { current ->
+            current.copy(pages = current.pages.map { if (it.id == pageId) it.copy(settings = it.settings.copy(clean = clean)) else it })
+        }
+        if (state.value.step == DocumentStep.REVIEW && state.value.currentPage?.id == pageId) render()
     }
 
     private suspend fun applySuggestedClean() {

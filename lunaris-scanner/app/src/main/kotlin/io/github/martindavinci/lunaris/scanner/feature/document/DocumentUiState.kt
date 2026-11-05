@@ -8,6 +8,7 @@ import io.github.martindavinci.lunaris.scanner.document.PagePixels
 import io.github.martindavinci.lunaris.scanner.document.PagePoint
 import io.github.martindavinci.lunaris.scanner.document.PaperSize
 import io.github.martindavinci.lunaris.scanner.document.PictureFormat
+import io.github.martindavinci.lunaris.scanner.feature.scan.CameraAccess
 
 enum class DocumentStep { CAMERA, CORNERS, REVIEW }
 
@@ -17,10 +18,11 @@ enum class DocumentConfirm { DELETE_PAGE, DISCARD }
 
 /**
  * [photo] is a screen-sized copy of the current page's photo, [corners] the ones being moved, [result]
- * the current page as it will come out. [busy] covers reading a photo and writing files.
+ * the current page as it will come out. [busy] covers reading a photo and writing files. [newPage] is a page
+ * just taken, whose corners are being set for the first time.
  */
 data class DocumentUiState(
-    val step: DocumentStep = DocumentStep.CORNERS,
+    val step: DocumentStep = DocumentStep.CAMERA,
     val pages: List<DocumentPage> = emptyList(),
     val current: Int = 0,
     val photo: PagePixels? = null,
@@ -32,9 +34,15 @@ data class DocumentUiState(
     val confirm: DocumentConfirm? = null,
     val shareUri: String? = null,
     val closed: Boolean = false,
+    val newPage: Boolean = false,
+    val cameraAccess: CameraAccess = CameraAccess.CHECKING,
+    val cameraUnavailable: Boolean = false,
 ) {
     val currentPage: DocumentPage? get() = pages.getOrNull(current)
     val cornersProblem: CornersProblem? get() = corners.problem()
+
+    /** Nothing was found on the photo, and the user has not started on the corners yet. */
+    val cornersNotFound: Boolean get() = photo != null && currentPage?.found == null && corners == PageCorners.START
 }
 
 sealed interface DocumentAction {
@@ -46,7 +54,21 @@ sealed interface DocumentAction {
 
     data object CameraFailed : DocumentAction
 
-    data object CameraRefused : DocumentAction
+    data object CameraUnavailable : DocumentAction
+
+    data class CameraPermissionChecked(val granted: Boolean, val showRationale: Boolean) : DocumentAction
+
+    data object CameraPermissionRequested : DocumentAction
+
+    data object ScreenHidden : DocumentAction
+
+    data object ScreenShown : DocumentAction
+
+    data object AnotherPage : DocumentAction
+
+    data object RetakePhoto : DocumentAction
+
+    data object FinishPages : DocumentAction
 
     data object BackPressed : DocumentAction
 

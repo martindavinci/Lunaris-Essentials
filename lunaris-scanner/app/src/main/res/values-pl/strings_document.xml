@@ -44,4 +44,15 @@
     <string name="document_discard_title">Odrzucić ten skan?</string>
     <string name="document_discard_message">Niezapisane strony zostaną utracone.</string>
     <string name="document_discard">Odrzuć</string>
+    <string name="scan_code_title">Skanuj kod</string>
+    <string name="shortcut_scan_document">Skanuj dokument</string>
+    <string name="scan_mode_code_detail">Kody QR i kreskowe</string>
+    <string name="scan_mode_document_detail">Kartka jako PDF lub obraz</string>
+    <string name="scan_mode_or">lub</string>
+    <string name="document_corners_found">Rogi znalezione automatycznie</string>
+    <string name="document_corners_to_fix">Rogi do poprawy</string>
+    <string name="document_corners_not_found">Nie znaleziono kartki. Przeciągnij punkty na rogi kartki lub powtórz zdjęcie.</string>
+    <string name="document_retake">Powtórz</string>
+    <string name="document_another_page">Kolejna strona</string>
+    <string name="document_finish">Gotowe</string>
 </resources>

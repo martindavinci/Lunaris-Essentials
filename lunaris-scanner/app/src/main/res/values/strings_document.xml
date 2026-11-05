@@ -48,4 +48,15 @@
     <string name="document_discard_title">Discard this scan?</string>
     <string name="document_discard_message">The pages you have not saved will be lost.</string>
     <string name="document_discard">Discard</string>
+    <string name="scan_code_title">Scan code</string>
+    <string name="shortcut_scan_document">Scan document</string>
+    <string name="scan_mode_code_detail">QR codes and barcodes</string>
+    <string name="scan_mode_document_detail">A sheet, as PDF or picture</string>
+    <string name="scan_mode_or">or</string>
+    <string name="document_corners_found">Corners found automatically</string>
+    <string name="document_corners_to_fix">Corners to fix</string>
+    <string name="document_corners_not_found">Sheet not found. Drag the points onto the corners of the sheet, or retake the photo.</string>
+    <string name="document_retake">Retake</string>
+    <string name="document_another_page">Another page</string>
+    <string name="document_finish">Done</string>
 </resources>

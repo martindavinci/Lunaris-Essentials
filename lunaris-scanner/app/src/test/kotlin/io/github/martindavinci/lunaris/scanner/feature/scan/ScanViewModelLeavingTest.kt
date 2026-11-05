@@ -2,7 +2,6 @@ package io.github.martindavinci.lunaris.scanner.feature.scan
 
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import com.google.common.truth.Truth.assertThat
-import io.github.martindavinci.lunaris.scanner.document.DocumentInbox
 import io.github.martindavinci.lunaris.scanner.model.CodeFormat
 import io.github.martindavinci.lunaris.scanner.model.ScannedCode
 import io.github.martindavinci.lunaris.scanner.scan.CodeDecoder
@@ -51,8 +50,7 @@ class ScanViewModelLeavingTest {
         settingsStore = SettingsStore(
             PreferenceDataStoreFactory.create(scope = scope) { File(folder.root, "test.preferences_pb") },
         ),
-        documentPhotos = NoDocumentPhotos(),
-        documentInbox = DocumentInbox(),
+        clock = { 0L },
     ).also { viewModels += it }
 
     @Test fun leavingWhileAnImageIsRead_dropsIt() = runBlocking<Unit> {

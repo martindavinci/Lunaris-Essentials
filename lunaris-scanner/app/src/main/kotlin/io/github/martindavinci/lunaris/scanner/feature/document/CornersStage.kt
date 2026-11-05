@@ -11,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -32,9 +33,11 @@ import io.github.martindavinci.lunaris.scanner.document.PagePixels
 import io.github.martindavinci.lunaris.scanner.document.PagePoint
 import io.github.martindavinci.lunaris.scanner.document.PhotoFit
 import io.github.martindavinci.lunaris.scanner.document.outline
+import kotlin.math.atan2
 
 private val HandleRadius = 11.dp
-private val EdgeHandleRadius = 7.dp
+private val EdgePillLength = 22.dp
+private val EdgePillWidth = 8.dp
 private val HandleReach = 56.dp
 private val EdgeWidth = 2.dp
 private val LoupeRadius = 64.dp
@@ -47,20 +50,21 @@ private const val CORNER_HANDLES = 4
 private const val OUTLINE_STEPS = 16
 
 /**
- * The photo with the page outlined over it, with a handle at each corner and a smaller one halfway
- * along each edge, to follow a sheet that is not flat. A finger hides the handle it moves, so a loupe
+ * The photo with the page outlined over it, with a handle at each corner and a pill halfway along
+ * each edge, to follow a sheet that is not flat. A finger hides the handle it moves, so a loupe
  * shows what lies under it, on the side away from the finger.
  */
 @Composable
 internal fun CornersStage(
     photo: PagePixels,
     corners: PageCorners,
+    faulty: Boolean,
     description: String,
     onMove: (Int, PagePoint) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val image = rememberPageImage(photo)
-    val accent = MaterialTheme.colorScheme.primary
+    val accent = if (faulty) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.primary
     val onAccent = MaterialTheme.colorScheme.onPrimary
     var stage by remember { mutableStateOf(IntSize.Zero) }
     var dragged by remember { mutableStateOf<Int?>(null) }
@@ -100,10 +104,14 @@ internal fun CornersStage(
         drawPhoto(image, fit)
         drawPageOutline(inStage, fit, photo, accent)
         val handles = inStage.handles
-        handles.forEachIndexed { index, point ->
-            val radius = if (index < CORNER_HANDLES) HandleRadius.toPx() else EdgeHandleRadius.toPx()
-            drawCircle(onAccent, radius + EdgeWidth.toPx(), point.toOffset())
-            drawCircle(accent, radius, point.toOffset())
+        inStage.points.forEach { point ->
+            drawCircle(onAccent, HandleRadius.toPx() + EdgeWidth.toPx(), point.toOffset())
+            drawCircle(accent, HandleRadius.toPx(), point.toOffset())
+        }
+        if (inStage.convex) {
+            handles.drop(CORNER_HANDLES).forEachIndexed { edge, point ->
+                drawEdgePill(inStage.points[edge], inStage.points[(edge + 1) % CORNER_HANDLES], point.toOffset(), accent, onAccent)
+            }
         }
         dragged?.let { index -> drawLoupe(image, fit, handles[index].toOffset(), accent) }
     }
@@ -119,6 +127,24 @@ private fun PageCorners.onStage(fit: PhotoFit, photo: PagePixels): PageCorners {
 private fun Offset.toPoint() = PagePoint(x, y)
 
 private fun PagePoint.toOffset() = Offset(x, y)
+
+/** Lies along its edge, as a plain sign of which way it pulls. */
+private fun DrawScope.drawEdgePill(from: PagePoint, to: PagePoint, centre: Offset, accent: Color, ring: Color) {
+    val degrees = Math.toDegrees(atan2((to.y - from.y).toDouble(), (to.x - from.x).toDouble())).toFloat()
+    withTransform({ rotate(degrees, centre) }) {
+        pill(centre, EdgePillLength.toPx() + EdgeWidth.toPx() * HALF, EdgePillWidth.toPx() + EdgeWidth.toPx() * HALF, ring)
+        pill(centre, EdgePillLength.toPx(), EdgePillWidth.toPx(), accent)
+    }
+}
+
+private fun DrawScope.pill(centre: Offset, length: Float, width: Float, color: Color) {
+    drawRoundRect(
+        color = color,
+        topLeft = Offset(centre.x - length / HALF, centre.y - width / HALF),
+        size = Size(length, width),
+        cornerRadius = CornerRadius(width / HALF),
+    )
+}
 
 private fun DrawScope.drawPhoto(image: ImageBitmap, fit: PhotoFit) {
     withTransform({

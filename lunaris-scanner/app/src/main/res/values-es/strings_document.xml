@@ -44,4 +44,15 @@
     <string name="document_discard_title">¿Descartar este escaneo?</string>
     <string name="document_discard_message">Las páginas sin guardar se perderán.</string>
     <string name="document_discard">Descartar</string>
+    <string name="scan_code_title">Escanear código</string>
+    <string name="shortcut_scan_document">Escanear documento</string>
+    <string name="scan_mode_code_detail">QR y códigos de barras</string>
+    <string name="scan_mode_document_detail">Una hoja, en PDF o imagen</string>
+    <string name="scan_mode_or">o</string>
+    <string name="document_corners_found">Esquinas encontradas automáticamente</string>
+    <string name="document_corners_to_fix">Esquinas por ajustar</string>
+    <string name="document_corners_not_found">Hoja no encontrada. Arrastra los puntos a las esquinas de la hoja o repite la foto.</string>
+    <string name="document_retake">Repetir</string>
+    <string name="document_another_page">Otra página</string>
+    <string name="document_finish">Listo</string>
 </resources>

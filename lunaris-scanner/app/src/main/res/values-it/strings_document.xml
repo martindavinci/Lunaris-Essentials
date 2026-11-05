@@ -44,4 +44,15 @@
     <string name="document_discard_title">Scartare questa scansione?</string>
     <string name="document_discard_message">Le pagine non salvate andranno perse.</string>
     <string name="document_discard">Scarta</string>
+    <string name="scan_code_title">Scansiona codice</string>
+    <string name="shortcut_scan_document">Scansiona documento</string>
+    <string name="scan_mode_code_detail">QR e codici a barre</string>
+    <string name="scan_mode_document_detail">Un foglio, in PDF o immagine</string>
+    <string name="scan_mode_or">o</string>
+    <string name="document_corners_found">Angoli trovati automaticamente</string>
+    <string name="document_corners_to_fix">Angoli da sistemare</string>
+    <string name="document_corners_not_found">Foglio non trovato. Trascina i punti sugli angoli del foglio, oppure rifai la foto.</string>
+    <string name="document_retake">Rifai</string>
+    <string name="document_another_page">Altra pagina</string>
+    <string name="document_finish">Fine</string>
 </resources>

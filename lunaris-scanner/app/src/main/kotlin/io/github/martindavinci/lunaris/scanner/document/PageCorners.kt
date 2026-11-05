@@ -98,9 +98,9 @@ data class PageCorners(
         return PageCorners(scale(topLeft), scale(topRight), scale(bottomRight), scale(bottomLeft), bends.map(::scale))
     }
 
-    /** The index of the one of the [handles] nearest to [point], if one is within [reach]. */
+    /** The index of the one of the [handles] nearest to [point], if one is within [reach]. While crossed there are no edges to bend. */
     fun nearest(point: PagePoint, reach: Float): Int? {
-        val distances = handles.map { hypot(it.x - point.x, it.y - point.y) }
+        val distances = (if (convex) handles else points).map { hypot(it.x - point.x, it.y - point.y) }
         val closest = distances.indices.minBy { distances[it] }
         return closest.takeIf { distances[it] <= reach }
     }

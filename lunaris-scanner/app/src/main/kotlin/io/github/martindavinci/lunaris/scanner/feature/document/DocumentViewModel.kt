@@ -4,14 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.martindavinci.lunaris.scanner.document.DocumentFiles
-import io.github.martindavinci.lunaris.scanner.document.DocumentInbox
-import io.github.martindavinci.lunaris.scanner.document.DocumentPage
 import io.github.martindavinci.lunaris.scanner.document.DocumentPhotos
 import io.github.martindavinci.lunaris.scanner.document.ImportedPhoto
 import io.github.martindavinci.lunaris.scanner.document.PageCorners
 import io.github.martindavinci.lunaris.scanner.document.PageReading
 import io.github.martindavinci.lunaris.scanner.document.PageRendering
 import io.github.martindavinci.lunaris.scanner.document.PageSettings
+import io.github.martindavinci.lunaris.scanner.feature.scan.CameraAccess
+import io.github.martindavinci.lunaris.scanner.feature.scan.CameraAccessCheck
+import io.github.martindavinci.lunaris.scanner.session.AwayTimer
+import io.github.martindavinci.lunaris.scanner.session.MonotonicClock
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,43 +23,55 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DocumentViewModel @Inject constructor(
-    inbox: DocumentInbox,
     private val photos: DocumentPhotos,
     files: DocumentFiles,
     rendering: PageRendering,
     reading: PageReading,
+    clock: MonotonicClock,
 ) : ViewModel() {
 
     private val mutableState = MutableStateFlow(DocumentUiState())
     val state: StateFlow<DocumentUiState> = mutableState.asStateFlow()
 
-    private var nextPageId = 0L
-    private var editingNewPage = false
-
     /** Until the user picks a clean-up, each page gets the one that suits it. From then on, theirs. */
     private var cleanChosen = false
+
+    /** Leaving a camera opened from the review goes back there, and nothing is at risk. */
+    private var cameFromReview = false
     private val display = PageDisplay(viewModelScope, photos, rendering, reading, mutableState)
     private val saving = DocumentSaving(viewModelScope, files, mutableState)
-
-    init {
-        // Nothing there when the process was lost: the scan went with it.
-        val first = inbox.take()
-        if (first != null) addPage(first) else close()
-    }
+    private val pages = DocumentPages(photos, mutableState) { saving.savedSinceChange = false }
+    private val access = CameraAccessCheck()
+    private val away = AwayTimer(clock)
 
     fun onAction(action: DocumentAction) {
         when (action) {
             is DocumentAction.PhotoPicked -> import { photos.imported(action.uri) }
             is DocumentAction.PhotoTaken -> photoTaken(action.path)
-            DocumentAction.OpenCamera -> mutableState.update { it.copy(step = DocumentStep.CAMERA) }
-            DocumentAction.CameraFailed -> if (state.value.step == DocumentStep.CAMERA) leaveCamera(DocumentMessage.CAMERA_FAILED)
-            DocumentAction.CameraRefused -> leaveCamera(DocumentMessage.CAMERA_FAILED)
+            DocumentAction.OpenCamera -> {
+                cameFromReview = true
+                mutableState.update { it.copy(step = DocumentStep.CAMERA) }
+            }
+            DocumentAction.CameraFailed -> if (state.value.step == DocumentStep.CAMERA) say(DocumentMessage.CAMERA_FAILED)
+            DocumentAction.CameraUnavailable -> mutableState.update { it.copy(cameraUnavailable = true) }
+            is DocumentAction.CameraPermissionChecked -> mutableState.update {
+                it.copy(cameraAccess = access.accessFor(action.granted, action.showRationale))
+            }
+            DocumentAction.CameraPermissionRequested -> {
+                access.asking()
+                mutableState.update { it.copy(cameraAccess = CameraAccess.CHECKING) }
+            }
+            DocumentAction.ScreenHidden -> away.hidden()
+            DocumentAction.ScreenShown -> if (away.cameBackLate() && state.value.pages.isEmpty()) close()
             DocumentAction.BackPressed -> back()
             is DocumentAction.CornerMoved -> mutableState.update { it.copy(corners = it.corners.moved(action.index, action.to)) }
             DocumentAction.CornersReset -> mutableState.update { it.copy(corners = it.currentPage?.found ?: PageCorners.START) }
             DocumentAction.CornersDone -> confirmCorners()
+            DocumentAction.AnotherPage -> anotherPage()
+            DocumentAction.RetakePhoto -> retake()
+            DocumentAction.FinishPages -> toReview()
             DocumentAction.EditCorners -> mutableState.update {
-                it.copy(step = DocumentStep.CORNERS, corners = it.currentPage?.settings?.corners ?: PageCorners.START)
+                it.copy(step = DocumentStep.CORNERS, newPage = false, corners = it.currentPage?.settings?.corners ?: PageCorners.START)
             }
             is DocumentAction.CleanChosen -> {
                 cleanChosen = true
@@ -67,8 +81,8 @@ class DocumentViewModel @Inject constructor(
             DocumentAction.TurnLeft -> changePage { it.turnedLeft() }
             DocumentAction.TurnRight -> changePage { it.turnedRight() }
             is DocumentAction.PageSelected -> showPage(action.index)
-            DocumentAction.MovePageEarlier -> movePage(-1)
-            DocumentAction.MovePageLater -> movePage(1)
+            DocumentAction.MovePageEarlier -> pages.moveCurrent(-1)
+            DocumentAction.MovePageLater -> pages.moveCurrent(1)
             DocumentAction.DeletePage -> mutableState.update { it.copy(confirm = DocumentConfirm.DELETE_PAGE) }
             DocumentAction.Confirmed -> confirmed()
             DocumentAction.Dismissed -> mutableState.update { it.copy(confirm = null) }
@@ -81,14 +95,23 @@ class DocumentViewModel @Inject constructor(
         }
     }
 
-    /** Only this scan's own: the next one may have begun while this screen was still leaving. */
     override fun onCleared() = state.value.pages.forEach { photos.delete(it.photoPath) }
+
+    /** The scan is safe in a file: the next one starts on the camera. */
+    private fun startOver() {
+        cameFromReview = false
+        pages.clear()
+        cleanChosen = false
+    }
 
     private fun close() = mutableState.update { it.copy(closed = true) }
 
+    private fun say(message: DocumentMessage) = mutableState.update { it.copy(message = message) }
+
     /** The shutter may have been pressed just before leaving the camera: that photo is not wanted any more. */
     private fun photoTaken(path: String) {
-        if (state.value.step == DocumentStep.CAMERA) import { photos.captured(path) } else photos.delete(path)
+        val now = state.value
+        if (now.step == DocumentStep.CAMERA && !now.closed) import { photos.captured(path) } else photos.delete(path)
     }
 
     private fun import(read: suspend () -> ImportedPhoto?) {
@@ -96,35 +119,13 @@ class DocumentViewModel @Inject constructor(
         viewModelScope.launch {
             val photo = read()
             mutableState.update { it.copy(busy = false) }
-            if (photo != null) addPage(photo) else leaveCamera(DocumentMessage.PHOTO_FAILED)
+            if (photo != null) {
+                pages.add(photo, keepClean = cleanChosen)
+                display.loadPhoto(renderAfter = false, findPage = true)
+            } else {
+                say(DocumentMessage.PHOTO_FAILED)
+            }
         }
-    }
-
-    private fun leaveCamera(message: DocumentMessage) {
-        mutableState.update { it.copy(step = if (it.step == DocumentStep.CAMERA) DocumentStep.REVIEW else it.step, message = message) }
-    }
-
-    /** A page in a run usually wants the paper of the last one, and its clean-up if chosen, but its photo is framed anew. */
-    private fun addPage(photo: ImportedPhoto) {
-        val last = state.value.pages.lastOrNull()?.settings ?: PageSettings()
-        val page = DocumentPage(
-            id = nextPageId++,
-            photoPath = photo.path,
-            workSize = photo.size,
-            settings = if (cleanChosen) PageSettings(clean = last.clean, paper = last.paper) else PageSettings(paper = last.paper),
-        )
-        editingNewPage = true
-        saving.savedSinceChange = false
-        mutableState.update {
-            it.copy(
-                step = DocumentStep.CORNERS,
-                pages = it.pages + page,
-                current = it.pages.size,
-                corners = PageCorners.START,
-                result = null,
-            )
-        }
-        display.loadPhoto(renderAfter = false, findPage = true)
     }
 
     /** While a file is being written leaving would cut it short, and the pages it is made from would go. */
@@ -132,9 +133,13 @@ class DocumentViewModel @Inject constructor(
         val now = state.value
         if (now.busy) return
         when (now.step) {
-            DocumentStep.CAMERA -> mutableState.update { it.copy(step = DocumentStep.REVIEW) }
-            DocumentStep.CORNERS -> if (editingNewPage) dropCurrentPage() else mutableState.update { it.copy(step = DocumentStep.REVIEW) }
-            DocumentStep.REVIEW -> if (saving.savedSinceChange) close() else mutableState.update { it.copy(confirm = DocumentConfirm.DISCARD) }
+            DocumentStep.CAMERA -> when {
+                now.pages.isEmpty() -> close()
+                cameFromReview -> toReview()
+                else -> mutableState.update { it.copy(confirm = DocumentConfirm.DISCARD) }
+            }
+            DocumentStep.CORNERS -> if (now.newPage) retake() else mutableState.update { it.copy(step = DocumentStep.REVIEW) }
+            DocumentStep.REVIEW -> if (saving.savedSinceChange) startOver() else mutableState.update { it.copy(confirm = DocumentConfirm.DISCARD) }
         }
     }
 
@@ -142,48 +147,63 @@ class DocumentViewModel @Inject constructor(
         val confirm = state.value.confirm
         mutableState.update { it.copy(confirm = null) }
         when (confirm) {
-            DocumentConfirm.DELETE_PAGE -> dropCurrentPage()
+            DocumentConfirm.DELETE_PAGE -> deleteCurrentPage()
             DocumentConfirm.DISCARD -> close()
             null -> Unit
         }
     }
 
-    private fun dropCurrentPage() {
-        val now = state.value
-        val page = now.currentPage ?: return
-        photos.delete(page.photoPath)
-        editingNewPage = false
-        saving.savedSinceChange = false
-        val left = now.pages - page
-        if (left.isEmpty()) {
-            mutableState.update { it.copy(pages = left) }
-            close()
-            return
+    /** Back on the camera, for this page again. */
+    private fun retake() {
+        display.cancel()
+        pages.dropCurrent()
+        forgetCleanIfNoPagesLeft()
+        mutableState.update { it.copy(step = DocumentStep.CAMERA, newPage = false, photo = null, result = null) }
+    }
+
+    /** With no page left the next one is the start of a scan. */
+    private fun forgetCleanIfNoPagesLeft() {
+        if (state.value.pages.isEmpty()) cleanChosen = false
+    }
+
+    private fun deleteCurrentPage() {
+        display.cancel()
+        pages.dropCurrent()
+        forgetCleanIfNoPagesLeft()
+        if (state.value.pages.isEmpty()) {
+            mutableState.update { it.copy(step = DocumentStep.CAMERA, photo = null, result = null) }
+        } else {
+            mutableState.update { it.copy(step = DocumentStep.REVIEW, result = null) }
+            display.loadPhoto(renderAfter = true)
         }
-        mutableState.update { it.copy(step = DocumentStep.REVIEW, pages = left, current = now.current.coerceAtMost(left.size - 1), result = null) }
+    }
+
+    private fun toReview() {
+        mutableState.update { it.copy(step = DocumentStep.REVIEW, newPage = false, current = it.current.coerceAtMost(it.pages.size - 1), result = null) }
         display.loadPhoto(renderAfter = true)
     }
 
     private fun confirmCorners() {
         val now = state.value
         if (now.cornersProblem != null || now.photo == null) return
-        val suggest = editingNewPage && !cleanChosen
-        editingNewPage = false
-        replaceCurrentPage { it.copy(settings = it.settings.copy(corners = now.corners)) }
-        mutableState.update { it.copy(step = DocumentStep.REVIEW) }
+        val suggest = now.newPage && !cleanChosen
+        pages.changeCurrent { it.copy(corners = now.corners) }
+        mutableState.update { it.copy(step = DocumentStep.REVIEW, newPage = false) }
         display.render(suggestClean = suggest)
     }
 
-    private fun changePage(change: (PageSettings) -> PageSettings) {
-        replaceCurrentPage { it.copy(settings = change(it.settings)) }
-        display.render()
+    private fun anotherPage() {
+        val now = state.value
+        if (now.cornersProblem != null || now.photo == null) return
+        val suggest = now.newPage && !cleanChosen
+        pages.changeCurrent { it.copy(corners = now.corners) }
+        display.prepareInBackground(suggest) { !cleanChosen }
+        mutableState.update { it.copy(step = DocumentStep.CAMERA, newPage = false) }
     }
 
-    private fun replaceCurrentPage(change: (DocumentPage) -> DocumentPage) {
-        saving.savedSinceChange = false
-        mutableState.update { now ->
-            now.copy(pages = now.pages.mapIndexed { index, page -> if (index == now.current) change(page) else page })
-        }
+    private fun changePage(change: (PageSettings) -> PageSettings) {
+        pages.changeCurrent(change)
+        display.render()
     }
 
     private fun showPage(index: Int) {
@@ -192,12 +212,4 @@ class DocumentViewModel @Inject constructor(
         display.loadPhoto(renderAfter = true)
     }
 
-    private fun movePage(by: Int) {
-        val now = state.value
-        val target = now.current + by
-        if (target !in now.pages.indices) return
-        saving.savedSinceChange = false
-        val reordered = now.pages.toMutableList().apply { add(target, removeAt(now.current)) }
-        mutableState.update { it.copy(pages = reordered, current = target) }
-    }
 }

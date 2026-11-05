@@ -44,4 +44,15 @@
     <string name="document_discard_title">このスキャンを破棄しますか?</string>
     <string name="document_discard_message">保存していないページは失われます。</string>
     <string name="document_discard">破棄</string>
+    <string name="scan_code_title">コードをスキャン</string>
+    <string name="shortcut_scan_document">文書をスキャン</string>
+    <string name="scan_mode_code_detail">QR コードとバーコード</string>
+    <string name="scan_mode_document_detail">紙を PDF か画像に</string>
+    <string name="scan_mode_or">または</string>
+    <string name="document_corners_found">角を自動で検出しました</string>
+    <string name="document_corners_to_fix">角を調整してください</string>
+    <string name="document_corners_not_found">用紙が見つかりません。点を用紙の角までドラッグするか、撮り直してください。</string>
+    <string name="document_retake">撮り直す</string>
+    <string name="document_another_page">次のページ</string>
+    <string name="document_finish">完了</string>
 </resources>

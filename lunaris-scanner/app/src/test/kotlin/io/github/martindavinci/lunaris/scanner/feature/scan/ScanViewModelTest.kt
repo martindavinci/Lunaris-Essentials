@@ -2,7 +2,6 @@ package io.github.martindavinci.lunaris.scanner.feature.scan
 
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import com.google.common.truth.Truth.assertThat
-import io.github.martindavinci.lunaris.scanner.document.DocumentInbox
 import io.github.martindavinci.lunaris.scanner.model.CodeFormat
 import io.github.martindavinci.lunaris.scanner.model.ScannedCode
 import io.github.martindavinci.lunaris.scanner.scan.CodeDecoder
@@ -49,8 +48,7 @@ class ScanViewModelTest {
         scanRecorder = { recorded += it },
         currentResult = currentResult,
         settingsStore = settingsStore,
-        documentPhotos = NoDocumentPhotos(),
-        documentInbox = DocumentInbox(),
+        clock = { 0L },
     ).also { viewModels += it }
 
     private fun ScanViewModel.check(granted: Boolean, showRationale: Boolean) =

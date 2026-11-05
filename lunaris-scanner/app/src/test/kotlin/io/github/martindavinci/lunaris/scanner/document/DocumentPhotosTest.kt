@@ -30,14 +30,4 @@ class DocumentPhotosTest {
         assertThat(workSize(3000, 4500, 4000)).isEqualTo(PageSize(2667, 4000))
         assertThat(workSize(1000, 500, 4000)).isEqualTo(PageSize(1000, 500))
     }
-
-    @Test fun inbox_givesAPhotoOnlyOnce() {
-        val inbox = DocumentInbox()
-        val photo = ImportedPhoto("path", PageSize(1, 1))
-
-        inbox.put(photo)
-
-        assertThat(inbox.take()).isEqualTo(photo)
-        assertThat(inbox.take()).isNull()
-    }
 }

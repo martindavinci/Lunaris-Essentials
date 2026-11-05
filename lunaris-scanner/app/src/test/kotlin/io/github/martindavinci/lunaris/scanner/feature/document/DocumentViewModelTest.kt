@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModelStore
 import com.google.common.truth.Truth.assertThat
 import io.github.martindavinci.lunaris.scanner.document.CleanMode
 import io.github.martindavinci.lunaris.scanner.document.DocumentFiles
-import io.github.martindavinci.lunaris.scanner.document.DocumentInbox
 import io.github.martindavinci.lunaris.scanner.document.DocumentPage
 import io.github.martindavinci.lunaris.scanner.document.DocumentPhotos
 import io.github.martindavinci.lunaris.scanner.document.ImportedPhoto
@@ -17,6 +16,7 @@ import io.github.martindavinci.lunaris.scanner.document.PageSettings
 import io.github.martindavinci.lunaris.scanner.document.PageSize
 import io.github.martindavinci.lunaris.scanner.document.PaperSize
 import io.github.martindavinci.lunaris.scanner.document.PictureFormat
+import io.github.martindavinci.lunaris.scanner.feature.scan.CameraAccess
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -34,7 +34,7 @@ class DocumentViewModelTest {
         var importsWork = true
         var loadsWork = true
 
-        override suspend fun imported(uri: String) = if (importsWork) ImportedPhoto("from-$uri", PageSize(40, 20)) else null
+        override suspend fun imported(uri: String) = if (importsWork) ImportedPhoto(if (uri == "first") uri else "from-$uri", PageSize(40, 20)) else null
 
         override suspend fun captured(path: String) = if (importsWork) ImportedPhoto("work-$path", PageSize(40, 20)) else null
 
@@ -84,7 +84,7 @@ class DocumentViewModelTest {
 
     private val photos = FakePhotos()
     private val files = FakeFiles()
-    private val inbox = DocumentInbox()
+    private var nowMillis = 0L
     private val rendered = mutableListOf<PageSettings>()
     private var renderWorks = true
     private val rendering = PageRendering { _, settings, _, _ ->
@@ -97,11 +97,13 @@ class DocumentViewModelTest {
         var found: PageCorners? = null
         var suggestion = CleanMode.COLOUR
         var suggestions = 0
+        var gate: CompletableDeferred<Unit>? = null
 
         override suspend fun find(photo: PagePixels) = found
 
         override suspend fun suggestClean(photo: PagePixels, corners: PageCorners): CleanMode {
             suggestions++
+            gate?.await()
             return suggestion
         }
     }
@@ -113,8 +115,9 @@ class DocumentViewModelTest {
     @After fun tearDown() = Dispatchers.resetMain()
 
     private fun viewModel(first: Boolean = true): DocumentViewModel {
-        if (first) inbox.put(ImportedPhoto("first", PageSize(40, 20)))
-        return DocumentViewModel(inbox, photos, files, rendering, reading)
+        val viewModel = DocumentViewModel(photos, files, rendering, reading) { nowMillis }
+        if (first) viewModel.onAction(DocumentAction.PhotoPicked("first"))
+        return viewModel
     }
 
     private fun DocumentViewModel.confirmCorners() = onAction(DocumentAction.CornersDone)
@@ -240,18 +243,273 @@ class DocumentViewModelTest {
         assertThat(viewModel.now.currentPage!!.settings.clean).isEqualTo(CleanMode.BLACK_AND_WHITE)
     }
 
-    @Test fun nothingInTheInbox_closes() {
-        assertThat(viewModel(first = false).now.closed).isTrue()
+    @Test fun itStartsOnTheCamera_withNoPages() {
+        val state = viewModel(first = false).now
+
+        assertThat(state.step).isEqualTo(DocumentStep.CAMERA)
+        assertThat(state.pages).isEmpty()
+        assertThat(state.closed).isFalse()
     }
 
-    @Test fun startsOnTheCornersOfThePhotoFromTheInbox() {
+    @Test fun backFromTheCameraWithNoPages_closes() {
+        val viewModel = viewModel(first = false)
+
+        viewModel.onAction(DocumentAction.BackPressed)
+
+        assertThat(viewModel.now.closed).isTrue()
+        assertThat(viewModel.now.confirm).isNull()
+    }
+
+    @Test fun aNewPageIsMarkedSo_andAPageBeingEditedIsNot() {
+        val viewModel = viewModel()
+        assertThat(viewModel.now.newPage).isTrue()
+
+        viewModel.confirmCorners()
+        viewModel.onAction(DocumentAction.EditCorners)
+
+        assertThat(viewModel.now.newPage).isFalse()
+    }
+
+    @Test fun anotherPage_keepsThisOneAndReopensTheCamera() {
+        reading.suggestion = CleanMode.BLACK_AND_WHITE
+        val viewModel = viewModel()
+        viewModel.onAction(DocumentAction.CornerMoved(0, PagePoint(0.2f, 0.2f)))
+        val set = viewModel.now.corners
+
+        viewModel.onAction(DocumentAction.AnotherPage)
+
+        assertThat(viewModel.now.step).isEqualTo(DocumentStep.CAMERA)
+        val page = viewModel.now.pages.single()
+        assertThat(page.settings.corners).isEqualTo(set)
+        assertThat(page.settings.clean).isEqualTo(CleanMode.BLACK_AND_WHITE)
+        assertThat(page.thumbnail).isNotNull()
+    }
+
+    @Test fun aPageStillBeingPrepared_isNotStoppedByTheNextOne() {
+        reading.suggestion = CleanMode.BLACK_AND_WHITE
+        val gate = CompletableDeferred<Unit>()
+        reading.gate = gate
+        val viewModel = viewModel()
+        viewModel.onAction(DocumentAction.AnotherPage)
+
+        viewModel.onAction(DocumentAction.PhotoPicked("second"))
+        reading.gate = null
+        gate.complete(Unit)
+
+        assertThat(viewModel.now.pages.first().settings.clean).isEqualTo(CleanMode.BLACK_AND_WHITE)
+        assertThat(viewModel.now.pages.first().thumbnail).isNotNull()
+    }
+
+    @Test fun anotherPage_isRefusedWhileTheCornersAreCrossed() {
+        val viewModel = viewModel()
+        viewModel.onAction(DocumentAction.CornerMoved(0, PagePoint(0.99f, 0.99f)))
+
+        viewModel.onAction(DocumentAction.AnotherPage)
+
+        assertThat(viewModel.now.step).isEqualTo(DocumentStep.CORNERS)
+    }
+
+    @Test fun aCleanChosenWhileAPageIsPrepared_isNotOverwritten() {
+        reading.suggestion = CleanMode.BLACK_AND_WHITE
+        val gate = CompletableDeferred<Unit>()
+        reading.gate = gate
+        val viewModel = viewModel()
+        viewModel.onAction(DocumentAction.AnotherPage)
+        viewModel.onAction(DocumentAction.FinishPages)
+
+        viewModel.onAction(DocumentAction.CleanChosen(CleanMode.GREY))
+        gate.complete(Unit)
+
+        assertThat(viewModel.now.currentPage!!.settings.clean).isEqualTo(CleanMode.GREY)
+    }
+
+    @Test fun finishing_opensTheReviewOnTheLastPage() {
+        val viewModel = viewModel()
+        viewModel.onAction(DocumentAction.AnotherPage)
+        viewModel.onAction(DocumentAction.PhotoPicked("second"))
+        viewModel.onAction(DocumentAction.AnotherPage)
+
+        viewModel.onAction(DocumentAction.FinishPages)
+
+        assertThat(viewModel.now.step).isEqualTo(DocumentStep.REVIEW)
+        assertThat(viewModel.now.current).isEqualTo(1)
+        assertThat(viewModel.now.result).isNotNull()
+    }
+
+    @Test fun retaking_dropsThisPhotoAndReopensTheCamera() {
+        val viewModel = viewModel()
+        viewModel.onAction(DocumentAction.AnotherPage)
+        viewModel.onAction(DocumentAction.PhotoPicked("second"))
+
+        viewModel.onAction(DocumentAction.RetakePhoto)
+
+        assertThat(viewModel.now.step).isEqualTo(DocumentStep.CAMERA)
+        assertThat(viewModel.now.pages.map { it.photoPath }).containsExactly("first")
+        assertThat(photos.deleted).containsExactly("from-second")
+    }
+
+    @Test fun backFromTheCameraWithPages_asksBeforeDiscarding() {
+        val viewModel = viewModel()
+        viewModel.onAction(DocumentAction.AnotherPage)
+
+        viewModel.onAction(DocumentAction.BackPressed)
+
+        assertThat(viewModel.now.confirm).isEqualTo(DocumentConfirm.DISCARD)
+        assertThat(viewModel.now.closed).isFalse()
+    }
+
+    @Test fun notFound_isSaidUntilAPointIsMoved() {
+        val viewModel = viewModel()
+        assertThat(viewModel.now.cornersNotFound).isTrue()
+
+        viewModel.onAction(DocumentAction.CornerMoved(0, PagePoint(0.1f, 0.1f)))
+        assertThat(viewModel.now.cornersNotFound).isFalse()
+
+        viewModel.onAction(DocumentAction.CornersReset)
+        assertThat(viewModel.now.cornersNotFound).isTrue()
+    }
+
+    @Test fun aPageThatWasFound_saysNothingOfThatKind() {
+        reading.found = tilted
+
+        assertThat(viewModel().now.cornersNotFound).isFalse()
+    }
+
+    @Test fun cameBackAfterALongWhileWithNoPages_closes() {
+        val viewModel = viewModel(first = false)
+
+        viewModel.onAction(DocumentAction.ScreenHidden)
+        nowMillis += 5 * 60_000
+        viewModel.onAction(DocumentAction.ScreenShown)
+
+        assertThat(viewModel.now.closed).isTrue()
+    }
+
+    @Test fun cameBackSoonWithNoPages_staysOnTheCamera() {
+        val viewModel = viewModel(first = false)
+
+        viewModel.onAction(DocumentAction.ScreenHidden)
+        nowMillis += 4 * 60_000
+        viewModel.onAction(DocumentAction.ScreenShown)
+
+        assertThat(viewModel.now.closed).isFalse()
+    }
+
+    @Test fun cameBackAfterALongWhileWithPages_keepsThem() {
+        val viewModel = viewModel()
+        viewModel.onAction(DocumentAction.AnotherPage)
+
+        viewModel.onAction(DocumentAction.ScreenHidden)
+        nowMillis += 60 * 60_000
+        viewModel.onAction(DocumentAction.ScreenShown)
+
+        assertThat(viewModel.now.closed).isFalse()
+        assertThat(viewModel.now.pages).hasSize(1)
+    }
+
+    @Test fun aPhotoArrivingAfterClosing_isDeleted() {
+        val viewModel = viewModel(first = false)
+        viewModel.onAction(DocumentAction.BackPressed)
+
+        viewModel.onAction(DocumentAction.PhotoTaken("shot"))
+
+        assertThat(photos.deleted).containsExactly("shot")
+        assertThat(viewModel.now.pages).isEmpty()
+    }
+
+    @Test fun retakingWhileThePhotoIsLoading_saysNothingAboutIt() {
+        val gate = CompletableDeferred<Unit>()
+        photos.loadGate = gate
+        photos.loadsWork = false
+        val viewModel = viewModel()
+
+        viewModel.onAction(DocumentAction.RetakePhoto)
+        gate.complete(Unit)
+
+        assertThat(viewModel.now.message).isNull()
+        assertThat(viewModel.now.photo).isNull()
+    }
+
+    @Test fun deletingTheLastPageWhileItIsLoading_saysNothingAboutIt() {
+        val viewModel = reviewing()
+        val gate = CompletableDeferred<Unit>()
+        photos.loadGate = gate
+        photos.loadsWork = false
+        viewModel.onAction(DocumentAction.PhotoPicked("second"))
+        viewModel.onAction(DocumentAction.RetakePhoto)
+        viewModel.onAction(DocumentAction.FinishPages)
+        viewModel.onAction(DocumentAction.DeletePage)
+
+        viewModel.onAction(DocumentAction.Confirmed)
+        gate.complete(Unit)
+
+        assertThat(viewModel.now.step).isEqualTo(DocumentStep.CAMERA)
+        assertThat(viewModel.now.message).isNull()
+    }
+
+    @Test fun aNewScanAfterSaving_getsTheCleanThatSuitsIt_again() {
+        reading.suggestion = CleanMode.BLACK_AND_WHITE
+        val viewModel = reviewing()
+        viewModel.onAction(DocumentAction.CleanChosen(CleanMode.GREY))
+        viewModel.onAction(DocumentAction.SavePdfTo("uri"))
+        viewModel.onAction(DocumentAction.BackPressed)
+
+        viewModel.onAction(DocumentAction.PhotoPicked("second"))
+        viewModel.confirmCorners()
+
+        assertThat(viewModel.now.currentPage!!.settings.clean).isEqualTo(CleanMode.BLACK_AND_WHITE)
+    }
+
+    @Test fun deletingEveryPage_alsoForgetsTheCleanChosen() {
+        reading.suggestion = CleanMode.BLACK_AND_WHITE
+        val viewModel = reviewing()
+        viewModel.onAction(DocumentAction.CleanChosen(CleanMode.GREY))
+        viewModel.onAction(DocumentAction.DeletePage)
+        viewModel.onAction(DocumentAction.Confirmed)
+
+        viewModel.onAction(DocumentAction.PhotoPicked("second"))
+        viewModel.confirmCorners()
+
+        assertThat(viewModel.now.currentPage!!.settings.clean).isEqualTo(CleanMode.BLACK_AND_WHITE)
+    }
+
+    @Test fun whileThePermissionIsBeingAsked_itIsNotAskedAgain() {
+        val viewModel = viewModel(first = false)
+        viewModel.onAction(DocumentAction.CameraPermissionChecked(granted = false, showRationale = false))
+
+        viewModel.onAction(DocumentAction.CameraPermissionRequested)
+
+        assertThat(viewModel.now.cameraAccess).isEqualTo(CameraAccess.CHECKING)
+    }
+
+    @Test fun theCameraAsksForThePermissionOnce_thenTakesAnAnswerAsFinal() {
+        val viewModel = viewModel(first = false)
+        viewModel.onAction(DocumentAction.CameraPermissionChecked(granted = false, showRationale = false))
+        assertThat(viewModel.now.cameraAccess).isEqualTo(CameraAccess.NEEDS_REQUEST)
+
+        viewModel.onAction(DocumentAction.CameraPermissionRequested)
+        viewModel.onAction(DocumentAction.CameraPermissionChecked(granted = false, showRationale = false))
+
+        assertThat(viewModel.now.cameraAccess).isEqualTo(CameraAccess.PERMANENTLY_DENIED)
+    }
+
+    @Test fun aCameraThatCannotRun_isShownSo_andTheGalleryStillWorks() {
+        val viewModel = viewModel(first = false)
+
+        viewModel.onAction(DocumentAction.CameraUnavailable)
+        assertThat(viewModel.now.cameraUnavailable).isTrue()
+
+        viewModel.onAction(DocumentAction.PhotoPicked("first"))
+        assertThat(viewModel.now.step).isEqualTo(DocumentStep.CORNERS)
+    }
+
+    @Test fun theFirstPhoto_opensItsCorners() {
         val state = viewModel().now
 
         assertThat(state.step).isEqualTo(DocumentStep.CORNERS)
         assertThat(state.corners).isEqualTo(PageCorners.START)
         assertThat(state.photo).isNotNull()
         assertThat(state.pages.map { it.photoPath }).containsExactly("first")
-        assertThat(inbox.take()).isNull()
     }
 
     @Test fun movingACorner_isHeldUntilConfirmed() {
@@ -295,25 +553,15 @@ class DocumentViewModelTest {
         assertThat(viewModel.now.corners).isEqualTo(PageCorners.START)
     }
 
-    @Test fun backFromTheOnlyNewPage_dropsItAndCloses() {
+    @Test fun backFromANewPage_dropsItAndReopensTheCamera() {
         val viewModel = viewModel()
 
         viewModel.onAction(DocumentAction.BackPressed)
 
-        assertThat(viewModel.now.closed).isTrue()
+        assertThat(viewModel.now.step).isEqualTo(DocumentStep.CAMERA)
+        assertThat(viewModel.now.pages).isEmpty()
         assertThat(photos.deleted).containsExactly("first")
-    }
-
-    @Test fun backFromASecondNewPage_returnsToTheFirst() {
-        val viewModel = reviewing()
-        viewModel.onAction(DocumentAction.PhotoPicked("second"))
-
-        viewModel.onAction(DocumentAction.BackPressed)
-
-        assertThat(viewModel.now.step).isEqualTo(DocumentStep.REVIEW)
-        assertThat(viewModel.now.pages.map { it.photoPath }).containsExactly("first")
-        assertThat(viewModel.now.current).isEqualTo(0)
-        assertThat(viewModel.now.result).isNotNull()
+        assertThat(viewModel.now.closed).isFalse()
     }
 
     @Test fun backFromEditingCorners_forgetsTheMoves() {
@@ -411,26 +659,14 @@ class DocumentViewModelTest {
         assertThat(viewModel.now.confirm).isNull()
     }
 
-    @Test fun aCameraThatFails_saysSo_andReturnsToTheReview() {
+    @Test fun aPhotoThatFails_saysSo_andStaysOnTheCamera() {
         val viewModel = reviewing()
         viewModel.onAction(DocumentAction.OpenCamera)
 
         viewModel.onAction(DocumentAction.CameraFailed)
 
         assertThat(viewModel.now.message).isEqualTo(DocumentMessage.CAMERA_FAILED)
-        assertThat(viewModel.now.step).isEqualTo(DocumentStep.REVIEW)
-    }
-
-    @Test fun selectingAPage_showsIt() {
-        val viewModel = reviewing()
-        viewModel.addPage()
-        rendered.clear()
-
-        viewModel.onAction(DocumentAction.PageSelected(0))
-
-        assertThat(viewModel.now.current).isEqualTo(0)
-        assertThat(rendered).hasSize(1)
-        assertThat(viewModel.now.result).isNotNull()
+        assertThat(viewModel.now.step).isEqualTo(DocumentStep.CAMERA)
     }
 
     @Test fun aChoiceMadeWhileThePhotoIsStillLoading_isNotLost() {
@@ -482,23 +718,24 @@ class DocumentViewModelTest {
         assertThat(viewModel.now.result).isNotNull()
     }
 
-    @Test fun deletingTheOnlyPage_closes() {
+    @Test fun deletingTheOnlyPage_reopensTheCamera() {
         val viewModel = reviewing()
-
         viewModel.onAction(DocumentAction.DeletePage)
+
         viewModel.onAction(DocumentAction.Confirmed)
 
-        assertThat(viewModel.now.closed).isTrue()
+        assertThat(viewModel.now.step).isEqualTo(DocumentStep.CAMERA)
+        assertThat(viewModel.now.pages).isEmpty()
+        assertThat(viewModel.now.closed).isFalse()
     }
 
-    @Test fun dismissingTheQuestion_changesNothing() {
+    @Test fun startingANewScan_removesThePhotosOfTheLastOne() {
         val viewModel = reviewing()
-        viewModel.onAction(DocumentAction.DeletePage)
+        viewModel.onAction(DocumentAction.SavePdfTo("uri"))
 
-        viewModel.onAction(DocumentAction.Dismissed)
+        viewModel.onAction(DocumentAction.BackPressed)
 
-        assertThat(viewModel.now.confirm).isNull()
-        assertThat(viewModel.now.pages).hasSize(1)
+        assertThat(photos.deleted).containsExactly("first")
     }
 
     @Test fun backFromAnUnsavedReview_asksBeforeDiscarding() {
@@ -512,13 +749,16 @@ class DocumentViewModelTest {
         assertThat(viewModel.now.closed).isTrue()
     }
 
-    @Test fun backAfterSaving_leavesWithoutAsking() {
+    @Test fun backAfterSaving_startsANewScanWithoutAsking() {
         val viewModel = reviewing()
         viewModel.onAction(DocumentAction.SavePdfTo("uri"))
 
         viewModel.onAction(DocumentAction.BackPressed)
 
-        assertThat(viewModel.now.closed).isTrue()
+        assertThat(viewModel.now.closed).isFalse()
+        assertThat(viewModel.now.confirm).isNull()
+        assertThat(viewModel.now.step).isEqualTo(DocumentStep.CAMERA)
+        assertThat(viewModel.now.pages).isEmpty()
     }
 
     @Test fun aChangeAfterSaving_asksAgain() {
@@ -542,13 +782,16 @@ class DocumentViewModelTest {
         assertThat(viewModel.now.closed).isFalse()
     }
 
-    @Test fun savingThePictureOfTheOnlyPage_leavesWithoutAsking() {
+    @Test fun savingThePictureOfTheOnlyPage_startsANewScanOnBack() {
         val viewModel = reviewing()
         viewModel.onAction(DocumentAction.SavePictureTo("uri", PictureFormat.JPEG))
 
         viewModel.onAction(DocumentAction.BackPressed)
 
-        assertThat(viewModel.now.closed).isTrue()
+        assertThat(viewModel.now.closed).isFalse()
+        assertThat(viewModel.now.confirm).isNull()
+        assertThat(viewModel.now.step).isEqualTo(DocumentStep.CAMERA)
+        assertThat(viewModel.now.pages).isEmpty()
     }
 
     @Test fun sharing_stillAsksOnBack_sinceTheSheetMayHaveBeenDismissed() {
@@ -598,15 +841,6 @@ class DocumentViewModelTest {
         assertThat(viewModel.now.message).isNull()
     }
 
-    @Test fun aCameraPermissionRefused_saysSo() {
-        val viewModel = reviewing()
-
-        viewModel.onAction(DocumentAction.CameraRefused)
-
-        assertThat(viewModel.now.message).isEqualTo(DocumentMessage.CAMERA_FAILED)
-        assertThat(viewModel.now.step).isEqualTo(DocumentStep.REVIEW)
-    }
-
     @Test fun savingPicturesToAFolder_writesEveryPageInOrder() {
         val viewModel = reviewing()
         viewModel.addPage()
@@ -620,14 +854,17 @@ class DocumentViewModelTest {
         assertThat(viewModel.now.message).isEqualTo(DocumentMessage.SAVED)
     }
 
-    @Test fun savingPicturesOfEveryPage_leavesWithoutAsking() {
+    @Test fun savingPicturesOfEveryPage_startsANewScanOnBack() {
         val viewModel = reviewing()
         viewModel.addPage()
         viewModel.onAction(DocumentAction.SavePicturesTo("folder", PictureFormat.PNG))
 
         viewModel.onAction(DocumentAction.BackPressed)
 
-        assertThat(viewModel.now.closed).isTrue()
+        assertThat(viewModel.now.closed).isFalse()
+        assertThat(viewModel.now.confirm).isNull()
+        assertThat(viewModel.now.step).isEqualTo(DocumentStep.CAMERA)
+        assertThat(viewModel.now.pages).isEmpty()
     }
 
     @Test fun picturesThatCouldNotBeSaved_sayNoAndKeepAsking() {

@@ -20,11 +20,10 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FlashOff
 import androidx.compose.material.icons.filled.FlashOn
-import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -34,14 +33,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.doOnLayout
 import androidx.lifecycle.LifecycleOwner
@@ -58,11 +55,9 @@ import kotlin.coroutines.resume
 private const val ANALYSIS_WIDTH_PX = 1920
 private const val ANALYSIS_HEIGHT_PX = 1080
 
-private val TorchButtonPadding = 16.dp
-
 /** The live camera with its gestures and controls. The camera runs for as long as this is composed. */
 @Composable
-internal fun CameraPanel(analyzer: CameraAnalyzer, onUnavailable: () -> Unit) {
+internal fun CameraPanel(analyzer: CameraAnalyzer, onUnavailable: () -> Unit, onCamera: (Camera?) -> Unit) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val previewView = remember {
@@ -71,10 +66,14 @@ internal fun CameraPanel(analyzer: CameraAnalyzer, onUnavailable: () -> Unit) {
     }
     var camera by remember { mutableStateOf<Camera?>(null) }
     val currentOnUnavailable by rememberUpdatedState(onUnavailable)
+    val currentOnCamera by rememberUpdatedState(onCamera)
 
     LaunchedEffect(lifecycleOwner, analyzer) {
         try {
-            runCamera(context, lifecycleOwner, previewView, analyzer) { camera = it }
+            runCamera(context, lifecycleOwner, previewView, analyzer) {
+                camera = it
+                currentOnCamera(it)
+            }
         } catch (_: InitializationException) {
             currentOnUnavailable()
         } catch (_: IllegalArgumentException) {
@@ -91,9 +90,6 @@ internal fun CameraPanel(analyzer: CameraAnalyzer, onUnavailable: () -> Unit) {
         AndroidView(factory = { previewView }, modifier = Modifier.fillMaxSize())
         camera?.let { Box(Modifier.fillMaxSize().cameraGestures(it, previewView)) }
         ViewfinderOverlay(Modifier.fillMaxSize())
-        camera?.takeIf { it.cameraInfo.hasFlashUnit() }?.let {
-            TorchButton(it, lifecycleOwner, Modifier.align(Alignment.TopEnd).padding(TorchButtonPadding))
-        }
     }
 }
 
@@ -157,16 +153,22 @@ private fun Camera.focusAt(previewView: PreviewView, position: Offset) {
     cameraControl.startFocusAndMetering(FocusMeteringAction.Builder(point).build())
 }
 
+/** The button for a bar, when the camera is running and has a torch at all. */
+@Composable
+internal fun TorchAction(camera: Camera?) {
+    camera?.takeIf { it.cameraInfo.hasFlashUnit() }?.let { TorchButton(it, LocalLifecycleOwner.current) }
+}
+
 /** Shows what the camera reports: the torch also goes off by itself when the camera stops. */
 @Composable
-internal fun TorchButton(camera: Camera, lifecycleOwner: LifecycleOwner, modifier: Modifier = Modifier) {
+private fun TorchButton(camera: Camera, lifecycleOwner: LifecycleOwner) {
     var torchOn by remember(camera) { mutableStateOf(false) }
     DisposableEffect(camera, lifecycleOwner) {
         val observer = Observer<Int> { torchOn = it == TorchState.ON }
         camera.cameraInfo.torchState.observe(lifecycleOwner, observer)
         onDispose { camera.cameraInfo.torchState.removeObserver(observer) }
     }
-    FilledTonalIconButton(onClick = { camera.cameraControl.enableTorch(!torchOn) }, modifier = modifier) {
+    IconButton(onClick = { camera.cameraControl.enableTorch(!torchOn) }) {
         Icon(
             imageVector = if (torchOn) Icons.Filled.FlashOn else Icons.Filled.FlashOff,
             contentDescription = stringResource(if (torchOn) R.string.scan_torch_off else R.string.scan_torch_on),

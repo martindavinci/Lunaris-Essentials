@@ -113,6 +113,13 @@ class PageCornersTest {
         assertThat(inPixels.nearest(PagePoint(50f, 96f), 20f)).isEqualTo(6)
     }
 
+    @Test fun whileCrossed_onlyTheCornersCanBeGrabbed() {
+        val crossed = corners(0.9f, 0.1f, 0.1f, 0.1f, 0.9f, 0.9f, 0.1f, 0.9f).inPixels(100, 100)
+
+        assertThat(crossed.nearest(PagePoint(50f, 10f), 20f)).isNull()
+        assertThat(crossed.nearest(PagePoint(88f, 12f), 20f)).isEqualTo(0)
+    }
+
     @Test fun theOutline_goesThroughEveryHandleInOrder() {
         val bent = corners(0.1f, 0.1f, 0.9f, 0.1f, 0.9f, 0.9f, 0.1f, 0.9f).moved(4, PagePoint(0.5f, 0.02f))
 

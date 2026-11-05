@@ -13,14 +13,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -36,18 +33,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.martindavinci.lunaris.scanner.R
 import io.github.martindavinci.lunaris.scanner.document.PictureFormat
 import io.github.martindavinci.lunaris.scanner.document.scanFileName
+import io.github.martindavinci.lunaris.scanner.feature.scan.CameraAccess
 import io.github.martindavinci.lunaris.scanner.feature.scan.cameraPermissionState
+import io.github.martindavinci.lunaris.scanner.feature.scan.findActivity
+import io.github.martindavinci.lunaris.scanner.feature.scan.openAppSettings
 import java.time.LocalDateTime
 
 private const val PDF_MIME_TYPE = "application/pdf"
 private const val PDF_EXTENSION = "pdf"
 private const val BUSY_SCRIM_ALPHA = 0.4f
 
-/** A scan under way, from its first photo to the saved file. The steps share one screen and one back stack entry. */
+/** A scan under way, from the camera to the saved file. The steps share one screen and one back stack entry. */
 @Composable
 fun DocumentRoute(onClose: () -> Unit) {
     val viewModel: DocumentViewModel = hiltViewModel()
@@ -76,9 +78,30 @@ fun DocumentRoute(onClose: () -> Unit) {
     val gallery = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) viewModel.onAction(DocumentAction.PhotoPicked(uri.toString()))
     }
-    val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-        viewModel.onAction(if (granted) DocumentAction.OpenCamera else DocumentAction.CameraRefused)
+    val checkPermission = {
+        val now = context.cameraPermissionState()
+        viewModel.onAction(DocumentAction.CameraPermissionChecked(now.granted, now.showRationale))
     }
+    val permission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { checkPermission() }
+    val requestPermission = {
+        viewModel.onAction(DocumentAction.CameraPermissionRequested)
+        permission.launch(Manifest.permission.CAMERA)
+    }
+    LifecycleStartEffect(viewModel) {
+        onStopOrDispose {
+            if (context.findActivity()?.isChangingConfigurations != true) viewModel.onAction(DocumentAction.ScreenHidden)
+        }
+    }
+    // On every return to the screen: the user may have changed the permission in system settings.
+    LifecycleResumeEffect(Unit) {
+        viewModel.onAction(DocumentAction.ScreenShown)
+        checkPermission()
+        onPauseOrDispose {}
+    }
+    LaunchedEffect(state.cameraAccess, state.step) {
+        if (state.step == DocumentStep.CAMERA && state.cameraAccess == CameraAccess.NEEDS_REQUEST) requestPermission()
+    }
+    val pickImage = { gallery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)) }
     val savePdf = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(PDF_MIME_TYPE)) { uri ->
         if (uri != null) viewModel.onAction(DocumentAction.SavePdfTo(uri.toString()))
     }
@@ -95,22 +118,14 @@ fun DocumentRoute(onClose: () -> Unit) {
 
     Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         when (state.step) {
-            DocumentStep.CAMERA -> DocumentCameraStep(viewModel::onAction)
+            DocumentStep.CAMERA -> DocumentCameraStep(state, viewModel::onAction, requestPermission, context::openAppSettings, pickImage)
             DocumentStep.CORNERS -> CornersScreen(state, viewModel::onAction)
             DocumentStep.REVIEW -> if (state.currentPage != null) {
                 ReviewScreen(
                     state = state,
                     onAction = viewModel::onAction,
-                    onPickImage = {
-                        gallery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
-                    },
-                    onTakePhoto = {
-                        if (context.cameraPermissionState().granted) {
-                            viewModel.onAction(DocumentAction.OpenCamera)
-                        } else {
-                            permission.launch(Manifest.permission.CAMERA)
-                        }
-                    },
+                    onPickImage = pickImage,
+                    onTakePhoto = { viewModel.onAction(DocumentAction.OpenCamera) },
                     onSavePdf = { savePdf.launch(scanFileName(PDF_EXTENSION, LocalDateTime.now())) },
                     onSavePicture = { format ->
                         when {
@@ -143,43 +158,6 @@ private fun BusyCover() {
     ) {
         CircularProgressIndicator()
     }
-}
-
-@Composable
-private fun ConfirmDialog(confirm: DocumentConfirm, onAction: (DocumentAction) -> Unit) {
-    AlertDialog(
-        onDismissRequest = { onAction(DocumentAction.Dismissed) },
-        title = {
-            Text(
-                stringResource(
-                    when (confirm) {
-                        DocumentConfirm.DELETE_PAGE -> R.string.document_delete_title
-                        DocumentConfirm.DISCARD -> R.string.document_discard_title
-                    },
-                ),
-            )
-        },
-        text = if (confirm == DocumentConfirm.DISCARD) {
-            { Text(stringResource(R.string.document_discard_message)) }
-        } else {
-            null
-        },
-        confirmButton = {
-            TextButton(onClick = { onAction(DocumentAction.Confirmed) }) {
-                Text(
-                    stringResource(
-                        when (confirm) {
-                            DocumentConfirm.DELETE_PAGE -> R.string.delete
-                            DocumentConfirm.DISCARD -> R.string.document_discard
-                        },
-                    ),
-                )
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = { onAction(DocumentAction.Dismissed) }) { Text(stringResource(R.string.cancel)) }
-        },
-    )
 }
 
 private fun messageOf(message: DocumentMessage): Int = when (message) {

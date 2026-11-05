@@ -10,6 +10,8 @@ import io.github.martindavinci.lunaris.scanner.settings.ThemeMode
 private val DarkColors = darkColorScheme(
     primary = LunarisAccent,
     onPrimary = LunarisOnAccent,
+    primaryContainer = LunarisAccentDeep,
+    onPrimaryContainer = LunarisAccentPale,
     secondary = LunarisAccent,
     onSecondary = LunarisOnAccent,
     background = LunarisBackground,
@@ -23,6 +25,8 @@ private val DarkColors = darkColorScheme(
 
 private val LightColors = lightColorScheme(
     primary = LunarisAccent,
+    primaryContainer = LunarisAccentPale,
+    onPrimaryContainer = LunarisAccentDeep,
 )
 
 @Composable

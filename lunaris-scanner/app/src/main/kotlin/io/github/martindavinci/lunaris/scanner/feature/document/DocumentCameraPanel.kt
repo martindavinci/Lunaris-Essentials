@@ -1,4 +1,4 @@
-package io.github.martindavinci.lunaris.scanner.feature.scan
+package io.github.martindavinci.lunaris.scanner.feature.document
 
 import android.content.Context
 import android.util.Size
@@ -17,11 +17,6 @@ import androidx.camera.view.PreviewView
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PhotoCamera
-import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -44,15 +39,14 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import io.github.martindavinci.lunaris.scanner.R
 import io.github.martindavinci.lunaris.scanner.document.newPhotoFile
+import io.github.martindavinci.lunaris.scanner.feature.scan.awaitLayout
+import io.github.martindavinci.lunaris.scanner.feature.scan.cameraGestures
 import kotlinx.coroutines.awaitCancellation
 
 /** Enough for a page at 300 dots per inch. A larger photo would only be scaled down afterwards. */
 private const val PHOTO_WIDTH_PX = 4000
 private const val PHOTO_HEIGHT_PX = 3000
 
-private val ShutterSize = 72.dp
-private val ShutterIconSize = 32.dp
-private val TorchPadding = 16.dp
 private val HintPadding = 12.dp
 private val HintInnerPadding = 8.dp
 private const val HINT_ALPHA = 0.85f
@@ -94,7 +88,7 @@ internal class DocumentCapture(private val context: Context) {
 
 /** The camera for pages: the whole frame in view, since whatever it sees ends up in the photo. */
 @Composable
-internal fun DocumentCameraPanel(capture: DocumentCapture, onUnavailable: () -> Unit) {
+internal fun DocumentCameraPanel(capture: DocumentCapture, onUnavailable: () -> Unit, onCamera: (Camera?) -> Unit) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val previewView = remember {
@@ -105,10 +99,14 @@ internal fun DocumentCameraPanel(capture: DocumentCapture, onUnavailable: () -> 
     }
     var camera by remember { mutableStateOf<Camera?>(null) }
     val currentOnUnavailable by rememberUpdatedState(onUnavailable)
+    val currentOnCamera by rememberUpdatedState(onCamera)
 
     LaunchedEffect(lifecycleOwner, capture) {
         try {
-            runDocumentCamera(context, lifecycleOwner, previewView, capture) { camera = it }
+            runDocumentCamera(context, lifecycleOwner, previewView, capture) {
+                camera = it
+                currentOnCamera(it)
+            }
         } catch (_: InitializationException) {
             currentOnUnavailable()
         } catch (_: IllegalArgumentException) {
@@ -120,7 +118,7 @@ internal fun DocumentCameraPanel(capture: DocumentCapture, onUnavailable: () -> 
         AndroidView(factory = { previewView }, modifier = Modifier.fillMaxSize())
         camera?.let { Box(Modifier.fillMaxSize().cameraGestures(it, previewView)) }
         Surface(
-            modifier = Modifier.align(Alignment.TopStart).padding(HintPadding),
+            modifier = Modifier.align(Alignment.BottomCenter).padding(HintPadding),
             shape = MaterialTheme.shapes.small,
             color = MaterialTheme.colorScheme.surface.copy(alpha = HINT_ALPHA),
         ) {
@@ -129,9 +127,6 @@ internal fun DocumentCameraPanel(capture: DocumentCapture, onUnavailable: () -> 
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(HintInnerPadding),
             )
-        }
-        camera?.takeIf { it.cameraInfo.hasFlashUnit() }?.let {
-            TorchButton(it, lifecycleOwner, Modifier.align(Alignment.TopEnd).padding(TorchPadding))
         }
     }
 }
@@ -175,14 +170,3 @@ private fun photoResolution() = ResolutionSelector.Builder()
         ),
     )
     .build()
-
-@Composable
-internal fun ShutterButton(enabled: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    FilledIconButton(onClick = onClick, enabled = enabled, modifier = modifier.size(ShutterSize)) {
-        Icon(
-            imageVector = Icons.Filled.PhotoCamera,
-            contentDescription = stringResource(R.string.document_take_photo),
-            modifier = Modifier.size(ShutterIconSize),
-        )
-    }
-}

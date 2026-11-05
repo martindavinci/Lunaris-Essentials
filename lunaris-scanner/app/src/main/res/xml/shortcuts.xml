@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_code"
+        android:shortcutId="scan_code"
+        android:shortcutShortLabel="@string/scan_code_title">
+        <intent
+            android:action="io.github.martindavinci.lunaris.scanner.action.SCAN_CODE"
+            android:targetClass="io.github.martindavinci.lunaris.scanner.MainActivity"
+            android:targetPackage="io.github.martindavinci.lunaris.scanner" />
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_document"
+        android:shortcutId="scan_document"
+        android:shortcutShortLabel="@string/shortcut_scan_document">
+        <intent
+            android:action="io.github.martindavinci.lunaris.scanner.action.SCAN_DOCUMENT"
+            android:targetClass="io.github.martindavinci.lunaris.scanner.MainActivity"
+            android:targetPackage="io.github.martindavinci.lunaris.scanner" />
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_shortcut_history"
+        android:shortcutId="history"
+        android:shortcutShortLabel="@string/nav_history">
+        <intent
+            android:action="io.github.martindavinci.lunaris.scanner.action.HISTORY"
+            android:targetClass="io.github.martindavinci.lunaris.scanner.MainActivity"
+            android:targetPackage="io.github.martindavinci.lunaris.scanner" />
+    </shortcut>
+</shortcuts>

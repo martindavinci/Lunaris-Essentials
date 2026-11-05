@@ -44,4 +44,15 @@
     <string name="document_discard_title">Abandonner ce scan ?</string>
     <string name="document_discard_message">Les pages non enregistrées seront perdues.</string>
     <string name="document_discard">Abandonner</string>
+    <string name="scan_code_title">Scanner un code</string>
+    <string name="shortcut_scan_document">Scanner un document</string>
+    <string name="scan_mode_code_detail">QR et codes-barres</string>
+    <string name="scan_mode_document_detail">Une feuille, en PDF ou image</string>
+    <string name="scan_mode_or">ou</string>
+    <string name="document_corners_found">Coins trouvés automatiquement</string>
+    <string name="document_corners_to_fix">Coins à ajuster</string>
+    <string name="document_corners_not_found">Feuille introuvable. Faites glisser les points sur les coins de la feuille ou reprenez la photo.</string>
+    <string name="document_retake">Refaire</string>
+    <string name="document_another_page">Autre page</string>
+    <string name="document_finish">Terminé</string>
 </resources>

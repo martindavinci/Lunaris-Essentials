@@ -3,14 +3,13 @@ package io.github.martindavinci.lunaris.scanner.feature.scan
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.github.martindavinci.lunaris.scanner.document.DocumentInbox
-import io.github.martindavinci.lunaris.scanner.document.DocumentPhotos
-import io.github.martindavinci.lunaris.scanner.document.ImportedPhoto
 import io.github.martindavinci.lunaris.scanner.model.ScannedCode
 import io.github.martindavinci.lunaris.scanner.scan.CameraAnalyzer
 import io.github.martindavinci.lunaris.scanner.scan.CodeDecoder
 import io.github.martindavinci.lunaris.scanner.scan.ImageDecoder
+import io.github.martindavinci.lunaris.scanner.session.AwayTimer
 import io.github.martindavinci.lunaris.scanner.session.CurrentResult
+import io.github.martindavinci.lunaris.scanner.session.MonotonicClock
 import io.github.martindavinci.lunaris.scanner.settings.SettingsStore
 import io.github.martindavinci.lunaris.scanner.share.ScanRecorder
 import kotlinx.coroutines.SupervisorJob
@@ -34,8 +33,7 @@ class ScanViewModel @Inject constructor(
     private val scanRecorder: ScanRecorder,
     private val currentResult: CurrentResult,
     private val settingsStore: SettingsStore,
-    private val documentPhotos: DocumentPhotos,
-    private val documentInbox: DocumentInbox,
+    clock: MonotonicClock,
 ) : ViewModel() {
 
     private val mutableState = MutableStateFlow(ScanUiState())
@@ -44,55 +42,46 @@ class ScanViewModel @Inject constructor(
     private val hitChannel = Channel<ScanHit>(Channel.BUFFERED)
     val hits: Flow<ScanHit> = hitChannel.receiveAsFlow()
 
-    private val documentChannel = Channel<Unit>(Channel.BUFFERED)
-
-    /** The first photo of a scan is in the inbox, and the Document screen can open. */
-    val documents: Flow<Unit> = documentChannel.receiveAsFlow()
-
     /** Kept here so that it remembers the last code across rotations and trips to the Result screen. */
     val analyzer = CameraAnalyzer(decoder) { onAction(ScanAction.CodeDetected(it)) }
 
     /** The parent of whatever may end in a hit, so that leaving the screen can stop it all. */
     private val pendingHits = SupervisorJob(viewModelScope.coroutineContext.job)
 
-    private var permissionAsked = false
-
-    /** Whether anyone still wants the photo the camera is taking. */
-    private var photoAwaited = false
+    private val access = CameraAccessCheck()
+    private val away = AwayTimer(clock)
+    private var lastRequest = 0
 
     fun onAction(action: ScanAction) {
         when (action) {
             is ScanAction.PermissionChecked -> mutableState.update {
-                it.copy(cameraAccess = cameraAccessFor(action.granted, action.showRationale))
+                it.copy(cameraAccess = access.accessFor(action.granted, action.showRationale))
             }
             ScanAction.PermissionRequested -> {
-                permissionAsked = true
+                access.asking()
                 mutableState.update { it.copy(cameraAccess = CameraAccess.CHECKING) }
             }
             is ScanAction.CodeDetected -> viewModelScope.launch(pendingHits) { fileHit(action.code) }
             is ScanAction.ImagePicked -> readImage(action.uri)
             ScanAction.NoCodeMessageShown -> mutableState.update { it.copy(noCodeFound = false) }
-            is ScanAction.ModeSelected -> {
-                photoAwaited = false
-                mutableState.update { it.copy(mode = action.mode) }
-            }
-            ScanAction.ShutterPressed -> photoAwaited = true
-            is ScanAction.DocumentImagePicked -> startDocument { documentPhotos.imported(action.uri) }
-            is ScanAction.DocumentPhotoTaken -> photoTaken(action.path)
-            ScanAction.DocumentPhotoFailed -> mutableState.update { it.copy(documentPhotoFailed = photoAwaited) }
-            ScanAction.DocumentFailureShown -> mutableState.update { it.copy(documentPhotoFailed = false) }
+            ScanAction.CodeChosen -> mutableState.update { it.copy(choosing = false) }
+            ScanAction.ChoiceAsked -> mutableState.update { it.copy(choosing = true) }
+            is ScanAction.Requested -> requested(action.request)
+            ScanAction.ScreenHidden -> away.hidden()
+            ScanAction.ScreenShown -> if (away.cameBackLate()) mutableState.update { it.copy(choosing = true) }
             ScanAction.CameraUnavailable -> mutableState.update { it.copy(cameraUnavailable = true) }
-            ScanAction.ScreenLeft -> dropPendingHits()
+            ScanAction.ScreenLeft -> {
+                dropPendingHits()
+                away.forget()
+            }
         }
     }
 
-    // The system cannot tell "never asked" from "denied for good": both have no rationale. Only
-    // asking tells them apart, and once denied for good the request fails without any dialog.
-    private fun cameraAccessFor(granted: Boolean, showRationale: Boolean) = when {
-        granted -> CameraAccess.GRANTED
-        showRationale -> CameraAccess.RATIONALE
-        permissionAsked -> CameraAccess.PERMANENTLY_DENIED
-        else -> CameraAccess.NEEDS_REQUEST
+    /** The same request comes back whenever the screen does: it counts only the first time. */
+    private fun requested(request: ScanRequest) {
+        if (request.id == lastRequest) return
+        lastRequest = request.id
+        mutableState.update { it.copy(choosing = !request.codes) }
     }
 
     private fun readImage(uri: String) {
@@ -101,23 +90,6 @@ class ScanViewModel @Inject constructor(
             val code = imageDecoder.decode(uri)
             if (code != null) fileHit(code)
             mutableState.update { it.copy(decodingImage = false, noCodeFound = code == null) }
-        }
-    }
-
-    private fun photoTaken(path: String) {
-        if (photoAwaited) startDocument { documentPhotos.captured(path) } else documentPhotos.delete(path)
-        photoAwaited = false
-    }
-
-    private fun startDocument(read: suspend () -> ImportedPhoto?) {
-        mutableState.update { it.copy(decodingImage = true) }
-        viewModelScope.launch(pendingHits) {
-            val photo = read()
-            if (photo != null) {
-                documentInbox.put(photo)
-                documentChannel.send(Unit)
-            }
-            mutableState.update { it.copy(decodingImage = false, documentPhotoFailed = photo == null) }
         }
     }
 
@@ -132,8 +104,6 @@ class ScanViewModel @Inject constructor(
     private fun dropPendingHits() {
         pendingHits.cancelChildren()
         while (hitChannel.tryReceive().isSuccess) Unit
-        while (documentChannel.tryReceive().isSuccess) Unit
-        photoAwaited = false
-        mutableState.update { it.copy(decodingImage = false, documentPhotoFailed = false) }
+        mutableState.update { it.copy(decodingImage = false) }
     }
 }
