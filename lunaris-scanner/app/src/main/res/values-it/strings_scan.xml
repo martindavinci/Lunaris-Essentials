@@ -4,7 +4,7 @@
     <string name="scan_no_code_found">Nessun codice trovato in questa immagine</string>
     <string name="scan_torch_on">Accendi la torcia</string>
     <string name="scan_torch_off">Spegni la torcia</string>
-    <string name="scan_permission_rationale">La fotocamera serve solo a leggere i codici e ciò che riprende non lascia il telefono. Puoi anche scansionare un codice da un\'immagine.</string>
+    <string name="scan_permission_rationale">La fotocamera serve solo a leggere codici e fotografare documenti, e nulla di ciò che vede lascia il telefono. Puoi anche partire da un\'immagine.</string>
     <string name="scan_permission_allow">Consenti fotocamera</string>
     <string name="scan_permission_denied">L\'accesso alla fotocamera è disattivato. Attivalo nelle impostazioni dell\'app per scansionare con la fotocamera, oppure scansiona un codice da un\'immagine.</string>
     <string name="scan_permission_settings">Apri impostazioni</string>

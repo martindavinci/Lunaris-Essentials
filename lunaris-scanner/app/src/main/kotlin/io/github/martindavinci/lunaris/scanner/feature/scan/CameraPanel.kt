@@ -129,7 +129,7 @@ private suspend fun runCamera(
     }
 }
 
-private suspend fun PreviewView.awaitLayout() = suspendCancellableCoroutine { continuation ->
+internal suspend fun PreviewView.awaitLayout() = suspendCancellableCoroutine { continuation ->
     doOnLayout { continuation.resume(Unit) }
 }
 
@@ -143,7 +143,7 @@ private fun analysisResolution() = ResolutionSelector.Builder()
     )
     .build()
 
-private fun Modifier.cameraGestures(camera: Camera, previewView: PreviewView) = this
+internal fun Modifier.cameraGestures(camera: Camera, previewView: PreviewView) = this
     .pointerInput(camera) { detectTransformGestures { _, _, zoom, _ -> camera.zoomBy(zoom) } }
     .pointerInput(camera) { detectTapGestures { camera.focusAt(previewView, it) } }
 
@@ -159,7 +159,7 @@ private fun Camera.focusAt(previewView: PreviewView, position: Offset) {
 
 /** Shows what the camera reports: the torch also goes off by itself when the camera stops. */
 @Composable
-private fun TorchButton(camera: Camera, lifecycleOwner: LifecycleOwner, modifier: Modifier = Modifier) {
+internal fun TorchButton(camera: Camera, lifecycleOwner: LifecycleOwner, modifier: Modifier = Modifier) {
     var torchOn by remember(camera) { mutableStateOf(false) }
     DisposableEffect(camera, lifecycleOwner) {
         val observer = Observer<Int> { torchOn = it == TorchState.ON }

@@ -5,7 +5,7 @@
     <string name="scan_no_code_found">Nenhum código encontrado nesta imagem</string>
     <string name="scan_torch_on">Ligar a lanterna</string>
     <string name="scan_torch_off">Desligar a lanterna</string>
-    <string name="scan_permission_rationale">A câmara é usada apenas para ler códigos, e nada do que capta sai do seu telemóvel. Também pode ler um código a partir de uma imagem.</string>
+    <string name="scan_permission_rationale">A câmara é usada apenas para ler códigos e fotografar documentos, e nada do que vê sai do seu telemóvel. Também pode partir de uma imagem.</string>
     <string name="scan_permission_allow">Permitir câmara</string>
     <string name="scan_permission_denied">O acesso à câmara está desativado. Ative-o nas definições da aplicação para ler com a câmara, ou leia um código a partir de uma imagem.</string>
     <string name="scan_permission_settings">Abrir definições</string>

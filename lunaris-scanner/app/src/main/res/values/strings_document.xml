@@ -1,0 +1,43 @@
+<resources>
+    <string name="scan_mode_code">Code</string>
+    <string name="scan_mode_document">Document</string>
+    <string name="document_take_photo">Take a photo</string>
+    <string name="document_pick_image">Choose from gallery</string>
+    <string name="document_read_failed">This image cannot be read</string>
+    <string name="document_camera_hint">Frame the whole page</string>
+    <string name="document_corners_title">Set the corners</string>
+    <string name="document_corners_hint">Drag each corner onto a corner of the page</string>
+    <string name="document_corners_crossed">The corners cross. Put each one on its own corner of the page.</string>
+    <string name="document_corners_too_small">The corners enclose almost nothing. Spread them out.</string>
+    <string name="document_corners_reset">Reset</string>
+    <string name="document_next">Next</string>
+    <string name="document_page_of">Page %1$d of %2$d</string>
+    <string name="document_page_number">Page %1$d</string>
+    <string name="document_clean_colour">Clean colour</string>
+    <string name="document_clean_grey">Greyscale</string>
+    <string name="document_clean_black_white">Black and white</string>
+    <string name="document_clean_none">Straighten only</string>
+    <string name="document_paper_photographed">As photographed</string>
+    <string name="document_paper_a4" translatable="false">A4</string>
+    <string name="document_paper_letter">Letter</string>
+    <string name="document_turn_left">Turn left</string>
+    <string name="document_turn_right">Turn right</string>
+    <string name="document_move_earlier">Move earlier</string>
+    <string name="document_move_later">Move later</string>
+    <string name="document_delete_page">Delete page</string>
+    <string name="document_add_page">Add page</string>
+    <string name="document_more">More</string>
+    <string name="document_save_png">Save page as PNG</string>
+    <string name="document_save_jpeg">Save page as JPEG</string>
+    <string name="document_save_pdf">Save PDF</string>
+    <string name="document_share">Share</string>
+    <string name="document_saved">Saved</string>
+    <string name="document_save_failed">Could not save the file</string>
+    <string name="document_share_failed">Could not prepare the file</string>
+    <string name="document_camera_failed">The camera is not available</string>
+    <string name="document_page_failed">This page could not be prepared</string>
+    <string name="document_delete_title">Delete this page?</string>
+    <string name="document_discard_title">Discard this scan?</string>
+    <string name="document_discard_message">The pages you have not saved will be lost.</string>
+    <string name="document_discard">Discard</string>
+</resources>

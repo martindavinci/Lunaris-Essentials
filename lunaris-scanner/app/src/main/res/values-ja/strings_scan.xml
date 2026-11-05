@@ -5,7 +5,7 @@
     <string name="scan_no_code_found">この画像にコードが見つかりません</string>
     <string name="scan_torch_on">ライトをオン</string>
     <string name="scan_torch_off">ライトをオフ</string>
-    <string name="scan_permission_rationale">カメラはコードの読み取りにのみ使用され、映像が端末の外に送られることはありません。画像からスキャンすることもできます。</string>
+    <string name="scan_permission_rationale">カメラはコードの読み取りと書類の撮影にのみ使用され、写したものがスマートフォンの外に出ることはありません。画像から始めることもできます。</string>
     <string name="scan_permission_allow">カメラを許可</string>
     <string name="scan_permission_denied">カメラへのアクセスがオフになっています。カメラでスキャンするにはアプリの設定でオンにするか、画像からスキャンしてください。</string>
     <string name="scan_permission_settings">設定を開く</string>

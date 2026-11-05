@@ -5,7 +5,7 @@
     <string name="scan_no_code_found">이 이미지에서 코드를 찾을 수 없습니다</string>
     <string name="scan_torch_on">손전등 켜기</string>
     <string name="scan_torch_off">손전등 끄기</string>
-    <string name="scan_permission_rationale">카메라는 코드를 읽는 데만 사용되며, 촬영되는 내용은 휴대전화 밖으로 전송되지 않습니다. 이미지에서 코드를 스캔할 수도 있습니다.</string>
+    <string name="scan_permission_rationale">카메라는 코드를 읽고 문서를 촬영하는 데만 쓰이며, 카메라에 보이는 것은 휴대전화 밖으로 나가지 않습니다. 이미지로 시작할 수도 있습니다.</string>
     <string name="scan_permission_allow">카메라 허용</string>
     <string name="scan_permission_denied">카메라 액세스가 꺼져 있습니다. 카메라로 스캔하려면 앱 설정에서 켜거나 이미지에서 코드를 스캔하세요.</string>
     <string name="scan_permission_settings">설정 열기</string>

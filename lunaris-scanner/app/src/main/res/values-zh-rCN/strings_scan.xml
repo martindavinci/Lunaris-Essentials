@@ -5,7 +5,7 @@
     <string name="scan_no_code_found">此图片中未找到代码</string>
     <string name="scan_torch_on">打开手电筒</string>
     <string name="scan_torch_off">关闭手电筒</string>
-    <string name="scan_permission_rationale">相机仅用于读取代码，拍摄到的任何内容都不会离开您的手机。您也可以从图片中扫描代码。</string>
+    <string name="scan_permission_rationale">相机仅用于读取二维码和拍摄文档,它看到的任何内容都不会离开您的手机。您也可以从图片开始。</string>
     <string name="scan_permission_allow">允许使用相机</string>
     <string name="scan_permission_denied">相机权限已关闭。请在应用设置中开启以使用相机扫描，或从图片中扫描代码。</string>
     <string name="scan_permission_settings">打开设置</string>

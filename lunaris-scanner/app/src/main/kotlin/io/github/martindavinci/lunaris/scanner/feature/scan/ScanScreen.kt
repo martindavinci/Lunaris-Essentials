@@ -50,6 +50,9 @@ internal fun ScanScreen(
     onOpenSettings: () -> Unit,
     onPickImage: () -> Unit,
     onNoCodeMessageShown: () -> Unit,
+    onAction: (ScanAction) -> Unit,
+    shutterReady: Boolean,
+    onShutter: () -> Unit,
     camera: @Composable () -> Unit,
 ) {
     val snackbarHost = remember { SnackbarHostState() }
@@ -58,6 +61,13 @@ internal fun ScanScreen(
         if (state.noCodeFound) {
             snackbarHost.showSnackbar(noCodeMessage)
             onNoCodeMessageShown()
+        }
+    }
+    val documentFailure = stringResource(R.string.document_read_failed)
+    LaunchedEffect(state.documentPhotoFailed) {
+        if (state.documentPhotoFailed) {
+            snackbarHost.showSnackbar(documentFailure)
+            onAction(ScanAction.DocumentFailureShown)
         }
     }
     Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
@@ -86,12 +96,16 @@ internal fun ScanScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             SnackbarHost(snackbarHost)
+            if (state.mode == ScanMode.DOCUMENT && state.cameraAccess == CameraAccess.GRANTED && !state.cameraUnavailable) {
+                ShutterButton(enabled = shutterReady && !state.decodingImage, onClick = onShutter)
+            }
             // Always here: reading a picture needs no permission and no camera.
             FilledTonalButton(onClick = onPickImage, enabled = !state.decodingImage) {
                 Icon(Icons.Filled.Image, contentDescription = null)
                 Spacer(Modifier.width(ButtonIconSpacing))
-                Text(stringResource(R.string.scan_pick_image))
+                Text(stringResource(if (state.mode == ScanMode.CODE) R.string.scan_pick_image else R.string.document_pick_image))
             }
+            ScanModeChips(state.mode, enabled = !state.decodingImage) { onAction(ScanAction.ModeSelected(it)) }
         }
     }
 }
@@ -142,6 +156,9 @@ private fun ScanScreenCameraPreview() {
             onOpenSettings = {},
             onPickImage = {},
             onNoCodeMessageShown = {},
+            onAction = {},
+            shutterReady = false,
+            onShutter = {},
             camera = {
                 Box(Modifier.fillMaxSize().background(Color.DarkGray))
                 ViewfinderOverlay(Modifier.fillMaxSize())
@@ -160,6 +177,9 @@ private fun ScanScreenDeniedPreview() {
             onOpenSettings = {},
             onPickImage = {},
             onNoCodeMessageShown = {},
+            onAction = {},
+            shutterReady = false,
+            onShutter = {},
             camera = {},
         )
     }

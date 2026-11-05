@@ -2,6 +2,9 @@ package io.github.martindavinci.lunaris.scanner.feature.scan
 
 import io.github.martindavinci.lunaris.scanner.model.ScannedCode
 
+/** What the Scan screen is for: reading codes, or photographing the pages of a document. */
+enum class ScanMode { CODE, DOCUMENT }
+
 enum class CameraAccess { CHECKING, NEEDS_REQUEST, GRANTED, RATIONALE, PERMANENTLY_DENIED }
 
 data class ScanUiState(
@@ -9,6 +12,8 @@ data class ScanUiState(
     val cameraUnavailable: Boolean = false,
     val decodingImage: Boolean = false,
     val noCodeFound: Boolean = false,
+    val mode: ScanMode = ScanMode.CODE,
+    val documentPhotoFailed: Boolean = false,
 )
 
 sealed interface ScanAction {
@@ -23,6 +28,18 @@ sealed interface ScanAction {
     data class ImagePicked(val uri: String) : ScanAction
 
     data object NoCodeMessageShown : ScanAction
+
+    data class ModeSelected(val mode: ScanMode) : ScanAction
+
+    data class DocumentImagePicked(val uri: String) : ScanAction
+
+    data object ShutterPressed : ScanAction
+
+    data class DocumentPhotoTaken(val path: String) : ScanAction
+
+    data object DocumentPhotoFailed : ScanAction
+
+    data object DocumentFailureShown : ScanAction
 
     data object CameraUnavailable : ScanAction
 

@@ -12,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import io.github.martindavinci.lunaris.scanner.feature.create.CreateRoute
+import io.github.martindavinci.lunaris.scanner.feature.document.DocumentRoute
 import io.github.martindavinci.lunaris.scanner.feature.history.HistoryRoute
 import io.github.martindavinci.lunaris.scanner.feature.result.ResultRoute
 import io.github.martindavinci.lunaris.scanner.feature.scan.ScanRoute
@@ -42,7 +43,15 @@ fun AppNavHost(startAtResult: Boolean, onExit: () -> Unit) {
             startDestination = if (startAtResult) Routes.RESULT else Routes.SCAN,
             modifier = Modifier.padding(padding).consumeWindowInsets(padding),
         ) {
-            composable(Routes.SCAN) { ScanRoute(onCodeScanned = openResult) }
+            composable(Routes.SCAN) {
+                ScanRoute(
+                    onCodeScanned = openResult,
+                    onDocumentStarted = { nav.navigate(Routes.DOCUMENT) { launchSingleTop = true } },
+                )
+            }
+            composable(Routes.DOCUMENT) { entry ->
+                DocumentRoute(onClose = { if (nav.currentBackStackEntry == entry) nav.popBackStack() })
+            }
             composable(Routes.HISTORY) { HistoryRoute(onOpenEntry = openResult) }
             composable(Routes.CREATE) { CreateRoute() }
             composable(Routes.SETTINGS) { SettingsRoute() }
@@ -67,6 +76,7 @@ object Routes {
     const val CREATE = "create"
     const val SETTINGS = "settings"
     const val RESULT = "result"
+    const val DOCUMENT = "document"
 }
 
 private fun NavHostController.navigateToTab(route: String) {

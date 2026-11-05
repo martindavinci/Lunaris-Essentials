@@ -4,7 +4,7 @@
     <string name="scan_no_code_found">No code found in this image</string>
     <string name="scan_torch_on">Turn on the flashlight</string>
     <string name="scan_torch_off">Turn off the flashlight</string>
-    <string name="scan_permission_rationale">The camera is used only to read codes, and nothing it sees leaves your phone. You can also scan a code from an image.</string>
+    <string name="scan_permission_rationale">The camera is used only to read codes and photograph documents, and nothing it sees leaves your phone. You can also work from an image.</string>
     <string name="scan_permission_allow">Allow camera</string>
     <string name="scan_permission_denied">Camera access is turned off. Turn it on in the app settings to scan with the camera, or scan a code from an image.</string>
     <string name="scan_permission_settings">Open settings</string>

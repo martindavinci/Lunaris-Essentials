@@ -5,7 +5,7 @@
     <string name="scan_no_code_found">Aucun code trouvé dans cette image</string>
     <string name="scan_torch_on">Allumer la lampe torche</string>
     <string name="scan_torch_off">Éteindre la lampe torche</string>
-    <string name="scan_permission_rationale">L\'appareil photo sert uniquement à lire les codes, et rien de ce qu\'il voit ne quitte votre téléphone. Vous pouvez aussi scanner un code depuis une image.</string>
+    <string name="scan_permission_rationale">L\'appareil photo sert uniquement à lire des codes et à photographier des documents, et rien de ce qu\'il voit ne quitte votre téléphone. Vous pouvez aussi partir d\'une image.</string>
     <string name="scan_permission_allow">Autoriser l\'appareil photo</string>
     <string name="scan_permission_denied">L\'accès à l\'appareil photo est désactivé. Activez-le dans les paramètres de l\'application pour scanner avec l\'appareil photo, ou scannez un code depuis une image.</string>
     <string name="scan_permission_settings">Ouvrir les paramètres</string>
