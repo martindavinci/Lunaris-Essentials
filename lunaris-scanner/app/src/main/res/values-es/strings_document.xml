@@ -6,8 +6,9 @@
     <string name="document_read_failed">No se puede leer esta imagen</string>
     <string name="document_camera_hint">Encuadra toda la página</string>
     <string name="document_corners_title">Ajustar las esquinas</string>
-    <string name="document_corners_hint">Arrastra cada punto a una esquina de la página</string>
+    <string name="document_corners_hint">Comprueba los puntos. Si un borde está curvado, arrastra hasta él el punto de su centro.</string>
     <string name="document_corners_crossed">Las esquinas se cruzan. Pon cada una en su propia esquina de la página.</string>
+    <string name="document_corners_edge_crossed">Un borde cruza a otro. Arrastra de vuelta el punto de su centro.</string>
     <string name="document_corners_too_small">Las esquinas no encierran casi nada. Sepáralas.</string>
     <string name="document_corners_reset">Restablecer</string>
     <string name="document_next">Siguiente</string>

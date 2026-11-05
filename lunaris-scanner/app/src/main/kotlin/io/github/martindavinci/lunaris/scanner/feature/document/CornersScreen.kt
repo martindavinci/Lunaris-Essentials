@@ -83,6 +83,7 @@ internal fun CornersScreen(state: DocumentUiState, onAction: (DocumentAction) ->
 private fun cornersMessage(problem: CornersProblem?): Int = when (problem) {
     null -> R.string.document_corners_hint
     CornersProblem.CROSSED -> R.string.document_corners_crossed
+    CornersProblem.EDGE_CROSSED -> R.string.document_corners_edge_crossed
     CornersProblem.TOO_SMALL -> R.string.document_corners_too_small
 }
 

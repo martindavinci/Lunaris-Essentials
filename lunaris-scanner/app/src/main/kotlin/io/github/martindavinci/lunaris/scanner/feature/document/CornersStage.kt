@@ -31,8 +31,10 @@ import io.github.martindavinci.lunaris.scanner.document.PageCorners
 import io.github.martindavinci.lunaris.scanner.document.PagePixels
 import io.github.martindavinci.lunaris.scanner.document.PagePoint
 import io.github.martindavinci.lunaris.scanner.document.PhotoFit
+import io.github.martindavinci.lunaris.scanner.document.outline
 
 private val HandleRadius = 11.dp
+private val EdgeHandleRadius = 7.dp
 private val HandleReach = 56.dp
 private val EdgeWidth = 2.dp
 private val LoupeRadius = 64.dp
@@ -41,10 +43,13 @@ private val CrossArm = 12.dp
 private const val LOUPE_ZOOM = 3f
 private const val WASH_ALPHA = 0.5f
 private const val HALF = 2f
+private const val CORNER_HANDLES = 4
+private const val OUTLINE_STEPS = 16
 
 /**
- * The photo with the page outlined over it. A finger hides the corner it moves, so a loupe shows
- * what lies under it, on the side away from the finger.
+ * The photo with the page outlined over it, with a handle at each corner and a smaller one halfway
+ * along each edge, to follow a sheet that is not flat. A finger hides the handle it moves, so a loupe
+ * shows what lies under it, on the side away from the finger.
  */
 @Composable
 internal fun CornersStage(
@@ -77,7 +82,7 @@ internal fun CornersStage(
                         val inStage = currentCorners.onStage(currentFit, photo)
                         val index = inStage.nearest(start.toPoint(), HandleReach.toPx())
                         dragged = index
-                        if (index != null) grab = inStage.points[index].toOffset() - start
+                        if (index != null) grab = inStage.handles[index].toOffset() - start
                     },
                     onDragEnd = { dragged = null },
                     onDragCancel = { dragged = null },
@@ -94,17 +99,21 @@ internal fun CornersStage(
         val inStage = corners.onStage(fit, photo)
         drawPhoto(image, fit)
         drawPageOutline(inStage, fit, photo, accent)
-        inStage.points.forEach { point ->
-            drawCircle(onAccent, HandleRadius.toPx() + EdgeWidth.toPx(), point.toOffset())
-            drawCircle(accent, HandleRadius.toPx(), point.toOffset())
+        val handles = inStage.handles
+        handles.forEachIndexed { index, point ->
+            val radius = if (index < CORNER_HANDLES) HandleRadius.toPx() else EdgeHandleRadius.toPx()
+            drawCircle(onAccent, radius + EdgeWidth.toPx(), point.toOffset())
+            drawCircle(accent, radius, point.toOffset())
         }
-        dragged?.let { index -> drawLoupe(image, fit, inStage.points[index].toOffset(), accent) }
+        dragged?.let { index -> drawLoupe(image, fit, handles[index].toOffset(), accent) }
     }
 }
 
 private fun PageCorners.onStage(fit: PhotoFit, photo: PagePixels): PageCorners {
     fun place(point: PagePoint) = fit.toStage(point, photo.width, photo.height)
-    return PageCorners(place(topLeft), place(topRight), place(bottomRight), place(bottomLeft))
+    val scale = fit.scale
+    val stageBends = bends.map { PagePoint(it.x * photo.width * scale, it.y * photo.height * scale) }
+    return PageCorners(place(topLeft), place(topRight), place(bottomRight), place(bottomLeft), stageBends)
 }
 
 private fun Offset.toPoint() = PagePoint(x, y)
@@ -122,7 +131,7 @@ private fun DrawScope.drawPhoto(image: ImageBitmap, fit: PhotoFit) {
 
 private fun DrawScope.drawPageOutline(corners: PageCorners, fit: PhotoFit, photo: PagePixels, accent: Color) {
     val outline = Path().apply {
-        corners.points.forEachIndexed { index, point ->
+        corners.outline(OUTLINE_STEPS).forEachIndexed { index, point ->
             if (index == 0) moveTo(point.x, point.y) else lineTo(point.x, point.y)
         }
         close()

@@ -6,8 +6,9 @@
     <string name="document_read_failed">이 이미지를 읽을 수 없습니다</string>
     <string name="document_camera_hint">페이지 전체가 보이게 맞추세요</string>
     <string name="document_corners_title">모서리 설정</string>
-    <string name="document_corners_hint">각 점을 페이지 모서리로 끌어다 놓으세요</string>
+    <string name="document_corners_hint">점을 확인하세요. 가장자리가 휘어 있으면 가운데 점을 가장자리로 끌어다 놓으세요.</string>
     <string name="document_corners_crossed">모서리가 교차합니다. 각각 페이지의 다른 모서리에 놓으세요.</string>
+    <string name="document_corners_edge_crossed">가장자리가 다른 가장자리와 겹칩니다. 가운데 점을 되돌리세요.</string>
     <string name="document_corners_too_small">모서리가 거의 아무것도 둘러싸지 않습니다. 넓혀 주세요.</string>
     <string name="document_corners_reset">재설정</string>
     <string name="document_next">다음</string>

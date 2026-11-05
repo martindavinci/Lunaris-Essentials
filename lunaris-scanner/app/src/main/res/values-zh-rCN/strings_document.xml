@@ -6,8 +6,9 @@
     <string name="document_read_failed">无法读取此图片</string>
     <string name="document_camera_hint">请将整页纳入画面</string>
     <string name="document_corners_title">调整四角</string>
-    <string name="document_corners_hint">将每个点拖到页面的一个角上</string>
+    <string name="document_corners_hint">请检查各点。如果某条边是弯曲的，请将其中间的点拖到边上。</string>
     <string name="document_corners_crossed">四角交叉了。请把每个点放在页面各自的角上。</string>
+    <string name="document_corners_edge_crossed">一条边与另一条边交叉。请将其中间的点拖回去。</string>
     <string name="document_corners_too_small">四角几乎没有围住任何内容。请把它们拉开。</string>
     <string name="document_corners_reset">重置</string>
     <string name="document_next">下一步</string>

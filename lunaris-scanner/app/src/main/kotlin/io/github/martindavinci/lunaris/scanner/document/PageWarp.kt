@@ -63,7 +63,7 @@ internal class PerspectiveMapping private constructor(private val h: DoubleArray
 
 /** Reads each pixel of a flat page of [width] by [height] back from [photo], from its four nearest neighbours. [quad] is in the photo's pixels. */
 internal fun warp(photo: PagePixels, quad: PageCorners, width: Int, height: Int): PagePixels {
-    val mapping = PerspectiveMapping.between(width, height, quad)
+    val surface = PageSurface(width, height, quad)
     val out = IntArray(width * height)
     val source = photo.pixels
     val sourceWidth = photo.width
@@ -73,8 +73,8 @@ internal fun warp(photo: PagePixels, quad: PageCorners, width: Int, height: Int)
         val vv = v + PIXEL_CENTRE
         for (u in 0 until width) {
             val uu = u + PIXEL_CENTRE
-            val x = (mapping.x(uu, vv) - PIXEL_CENTRE).coerceIn(0.0, lastX.coerceAtLeast(0.0))
-            val y = (mapping.y(uu, vv) - PIXEL_CENTRE).coerceIn(0.0, lastY.coerceAtLeast(0.0))
+            val x = (surface.x(uu, vv) - PIXEL_CENTRE).coerceIn(0.0, lastX.coerceAtLeast(0.0))
+            val y = (surface.y(uu, vv) - PIXEL_CENTRE).coerceIn(0.0, lastY.coerceAtLeast(0.0))
             val left = x.toInt()
             val top = y.toInt()
             val shareX = x - left

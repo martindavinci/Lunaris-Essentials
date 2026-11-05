@@ -6,8 +6,9 @@
     <string name="document_read_failed">Nie można odczytać tego obrazu</string>
     <string name="document_camera_hint">Ujmij całą stronę</string>
     <string name="document_corners_title">Ustaw rogi</string>
-    <string name="document_corners_hint">Przeciągnij każdy punkt na róg strony</string>
+    <string name="document_corners_hint">Sprawdź punkty. Jeśli krawędź jest wygięta, przeciągnij na nią punkt z jej środka.</string>
     <string name="document_corners_crossed">Rogi się krzyżują. Umieść każdy na osobnym rogu strony.</string>
+    <string name="document_corners_edge_crossed">Krawędź przecina inną. Przeciągnij z powrotem punkt z jej środka.</string>
     <string name="document_corners_too_small">Rogi nie obejmują prawie niczego. Rozsuń je.</string>
     <string name="document_corners_reset">Resetuj</string>
     <string name="document_next">Dalej</string>

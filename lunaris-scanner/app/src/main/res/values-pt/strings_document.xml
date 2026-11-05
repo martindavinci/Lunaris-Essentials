@@ -6,8 +6,9 @@
     <string name="document_read_failed">Não é possível ler esta imagem</string>
     <string name="document_camera_hint">Enquadre toda a página</string>
     <string name="document_corners_title">Ajustar os cantos</string>
-    <string name="document_corners_hint">Arraste cada ponto para um canto da página</string>
+    <string name="document_corners_hint">Verifique os pontos. Se um lado estiver curvo, arraste para ele o ponto do meio.</string>
     <string name="document_corners_crossed">Os cantos cruzam-se. Coloque cada um no seu próprio canto da página.</string>
+    <string name="document_corners_edge_crossed">Um lado cruza outro. Arraste de volta o ponto do meio.</string>
     <string name="document_corners_too_small">Os cantos não abrangem quase nada. Afaste-os.</string>
     <string name="document_corners_reset">Repor</string>
     <string name="document_next">Seguinte</string>
