@@ -13,6 +13,8 @@ import io.github.martindavinci.lunaris.archives.safety.Limits
 import io.github.martindavinci.lunaris.archives.session.FreeBytes
 import io.github.martindavinci.lunaris.archives.session.OpenArchive
 import java.io.File
+import java.io.IOException
+import kotlinx.coroutines.CancellationException
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -31,6 +33,8 @@ sealed interface CopyResult {
     data object Changed : CopyResult
     data object Unsupported : CopyResult
     data object Rar4Password : CopyResult
+    /** The archive itself can no longer be read: moved, deleted, or its permission given back. */
+    data object Gone : CopyResult
 }
 
 /** The content: URI other apps get for a file of ours (FileProvider on the device). */
@@ -61,8 +65,12 @@ class EntryCopier @Inject constructor(
             write(archive, entry, route, password, target, onProgress)
         } catch (e: Throwable) {
             target.parentFile?.deleteRecursively()
-            if (e is EngineStoppedException || e is OverrunException) return CopyResult.Damaged
-            throw e
+            return when (e) {
+                is EngineStoppedException, is OverrunException -> CopyResult.Damaged
+                is CancellationException -> throw e
+                is IOException, is SecurityException -> CopyResult.Gone
+                else -> throw e
+            }
         }
         if (result != null) {
             target.parentFile?.deleteRecursively()

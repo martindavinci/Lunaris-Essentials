@@ -18,6 +18,8 @@ class FakeArchiveEngine : ArchiveEngine {
     val extractCalls = mutableListOf<Triple<EngineRoute, String?, List<Long>>>()
     /** Thrown by the next list calls, before any answer is taken. */
     val listFailures = ArrayDeque<Exception>()
+    /** Thrown by extract calls: the archive went away or its permission did. */
+    var extractFailure: Exception? = null
     /** When set, every list call waits for it: a slow archive. */
     var listGate: CompletableDeferred<Unit>? = null
 
@@ -32,6 +34,7 @@ class FakeArchiveEngine : ArchiveEngine {
         source: ArchiveSource, route: EngineRoute, password: CharArray?, indices: LongArray, expected: Map<Long, RawPath>,
     ): Flow<EngineEvent> {
         extractCalls += Triple(route, password?.concatToString(), indices.toList())
+        extractFailure?.let { throw it }
         val wanted = indices.toSet()
         var current: Long? = null
         // Like a real engine: only the entries that were asked for come out.

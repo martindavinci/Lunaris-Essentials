@@ -45,6 +45,7 @@ private fun sendIntent(uris: List<String>, mime: String): Intent {
 internal fun BrowserNotice.message(): Pair<Int, String?> = when (this) {
     is BrowserNotice.Damaged -> R.string.notice_damaged to name
     BrowserNotice.TooDeep -> R.string.notice_too_deep to null
+    is BrowserNotice.Gone -> R.string.problem_gone_title to name
     BrowserNotice.NoSpace -> R.string.notice_no_space to null
     BrowserNotice.Changed -> R.string.notice_changed to null
     BrowserNotice.ShareFailed -> R.string.notice_share_failed to null

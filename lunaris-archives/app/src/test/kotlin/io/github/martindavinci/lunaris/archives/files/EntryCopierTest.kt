@@ -85,6 +85,13 @@ class EntryCopierTest {
         assertThat(runCatching { running.await() }.exceptionOrNull()).isInstanceOf(CancellationException::class.java)
         assertThat(temp.root.resolve("open").walk().filter { it.isFile }.toList()).isEmpty()
     }
+    @Test fun archiveGoneWhileOpen_isGone_andNothingIsLeft() = runTest {
+        engine.extractFailure = java.io.FileNotFoundException("gone")
+        assertThat(copier.copy(archive(), notes, null) {}).isEqualTo(CopyResult.Gone)
+        engine.extractFailure = SecurityException("permission released")
+        assertThat(copier.copy(archive(), notes, null) {}).isEqualTo(CopyResult.Gone)
+        assertThat(temp.root.resolve("open").walk().filter { it.isFile }.toList()).isEmpty()
+    }
     @Test fun rar4EncryptedEntry_isRar4Password() = runTest {
         assertThat(copier.copy(archive(ArchiveKind.RAR4), secret, "x".toCharArray()) {}).isEqualTo(CopyResult.Rar4Password)
         assertThat(engine.extractCalls).isEmpty()

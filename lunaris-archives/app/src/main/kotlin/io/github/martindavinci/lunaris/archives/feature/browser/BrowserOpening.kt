@@ -106,6 +106,7 @@ internal class BrowserOpening(
             }
             CopyResult.Damaged, CopyResult.Unsupported -> notice(BrowserNotice.Damaged(row.name))
             CopyResult.NoSpace -> notice(BrowserNotice.NoSpace)
+            CopyResult.Gone -> notice(BrowserNotice.Gone(archive.source.name))
             CopyResult.Rar4Password -> null.also { state.update { it.copy(sheet = BrowserSheet.Rar4) } }
             CopyResult.Changed -> null.also { onChanged() }
             CopyResult.Cancelled -> null

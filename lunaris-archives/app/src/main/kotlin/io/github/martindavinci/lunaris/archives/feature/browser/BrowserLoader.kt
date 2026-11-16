@@ -1,5 +1,6 @@
 package io.github.martindavinci.lunaris.archives.feature.browser
 
+import java.io.IOException
 import io.github.martindavinci.lunaris.archives.safety.Limits
 import io.github.martindavinci.lunaris.archives.session.ArchiveSession
 import io.github.martindavinci.lunaris.archives.session.NoSpaceException
@@ -53,6 +54,10 @@ internal class BrowserLoader(
         } catch (_: NoSpaceException) {
             state.update { it.copy(notice = BrowserNotice.NoSpace, exit = true) }
             return null
+        } catch (_: IOException) {
+            return GONE   // the provider stopped answering half way
+        } catch (_: SecurityException) {
+            return GONE
         }
         state.update { it.copy(loading = LoadState.Reading) }
         return session.open(source, request.parentId, request.nestedEntry, id ?: return GONE)

@@ -79,6 +79,8 @@ sealed interface BrowserNotice {
     data object NoSpace : BrowserNotice
     data object Changed : BrowserNotice
     data object ShareFailed : BrowserNotice
+    /** The open archive cannot be read any more: [name] is the archive's. */
+    data class Gone(val name: String) : BrowserNotice
 }
 
 sealed interface LaunchRequest {

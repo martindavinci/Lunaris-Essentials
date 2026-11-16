@@ -6,6 +6,7 @@ import io.github.martindavinci.lunaris.archives.engine.EngineStoppedException
 import io.github.martindavinci.lunaris.archives.engine.EntryRoutes
 import io.github.martindavinci.lunaris.archives.safety.Limits
 import io.github.martindavinci.lunaris.archives.safety.RatioGuard
+import java.io.FileNotFoundException
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -96,6 +97,13 @@ class ExtractionRunner internal constructor(
                 writer?.abandon()
                 _state.value = ExtractionState.Failed(ExtractFailure.FOLDER_GONE)
             } catch (e: EngineStoppedException) {
+                writer?.abandon()
+                _state.value = ExtractionState.Failed(ExtractFailure.READER_STOPPED)
+            } catch (e: SecurityException) {
+                // The destination maps its own failures to FolderGoneException: this is the archive's permission.
+                writer?.abandon()
+                _state.value = ExtractionState.Failed(ExtractFailure.READER_STOPPED)
+            } catch (e: FileNotFoundException) {
                 writer?.abandon()
                 _state.value = ExtractionState.Failed(ExtractFailure.READER_STOPPED)
             } catch (e: IOException) {

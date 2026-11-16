@@ -185,6 +185,15 @@ class ExtractionRunnerTest {
         runner.run(FakeTree()); advanceUntilIdle()
         assertThat(runner.state.value).isEqualTo(ExtractionState.Failed(ExtractFailure.READER_STOPPED))
     }
+    @Test fun archiveUnreadable_failsAsReaderStopped_notFolderGone() = runTest(dispatcher) {
+        engine.extractFailure = SecurityException("permission released")
+        runner.run(FakeTree()); advanceUntilIdle()
+        assertThat(runner.state.value).isEqualTo(ExtractionState.Failed(ExtractFailure.READER_STOPPED))
+        runner.reset()
+        engine.extractFailure = java.io.FileNotFoundException("gone")
+        runner.run(FakeTree()); advanceUntilIdle()
+        assertThat(runner.state.value).isEqualTo(ExtractionState.Failed(ExtractFailure.READER_STOPPED))
+    }
     @Test fun engineStopped_failsWithReaderStopped() = runTest(dispatcher) {
         engine.extracts[EngineRoute.LIBARCHIVE] = listOf(EngineEvent.Bytes(ByteArray(1), 1))   // bytes outside an entry
         runner.run(FakeTree()); advanceUntilIdle()
