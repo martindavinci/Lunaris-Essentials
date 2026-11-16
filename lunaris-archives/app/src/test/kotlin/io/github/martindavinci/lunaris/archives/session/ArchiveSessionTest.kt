@@ -30,6 +30,16 @@ class ArchiveSessionTest {
     }
     private fun opened(outcome: OpenOutcome) = (outcome as OpenOutcome.Opened).archive
 
+    @Test fun theIndexCacheIsReadAndWrittenOffTheCallersThread() = runTest {
+        val counting = object : kotlinx.coroutines.CoroutineDispatcher() {
+            var used = 0
+            override fun dispatch(context: kotlin.coroutines.CoroutineContext, block: Runnable) { used++; block.run() }
+        }
+        val background = ArchiveSession(engine, IndexCache(temp.root), passwords, IncomingCopy(temp.root), counting)
+        engine.lists.getOrPut(EngineRoute.LIBARCHIVE) { ArrayDeque() } += ListResult.Listed(index("a.md"))
+        background.open(source())
+        assertThat(counting.used).isAtLeast(2)   // the cache read that missed, then the write
+    }
     @Test fun plainZip_opensWithLibarchive() = runTest {
         answer(EngineRoute.LIBARCHIVE, listed)
         assertThat(opened(session.open(source())).route).isEqualTo(EngineRoute.LIBARCHIVE)

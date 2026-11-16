@@ -11,7 +11,11 @@ import io.github.martindavinci.lunaris.archives.engine.EngineStoppedException
 import io.github.martindavinci.lunaris.archives.engine.ListResult
 import io.github.martindavinci.lunaris.archives.safety.Limits
 import java.util.UUID
+import io.github.martindavinci.lunaris.archives.di.Background
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Singleton
 
 /**
@@ -26,6 +30,8 @@ class ArchiveSession @Inject constructor(
     private val cache: IndexCache,
     private val passwords: PasswordMemory,
     private val incoming: IncomingCopy,
+    /** Where the index cache is read and written: 200 000 entries take a while to parse. */
+    @param:Background private val io: CoroutineDispatcher = Dispatchers.Unconfined,
 ) {
     private val open = object : LinkedHashMap<String, OpenArchive>(CAPACITY, LOAD_FACTOR, true) {}
     private val openPasswords = HashMap<String, CharArray>()
@@ -75,7 +81,7 @@ class ArchiveSession @Inject constructor(
             else -> Unit
         }
         val remembered = passwords.get(source.key)
-        cache.read(source.key)?.let { (route, index) ->
+        withContext(io) { cache.read(source.key) }?.let { (route, index) ->
             return OpenOutcome.Opened(store(id, source, route, index, parentId, nestedEntry, remembered))
         }
         return drive(id, PendingOpen(source, EngineRoute.LIBARCHIVE, parentId, nestedEntry), remembered, remember = false)
@@ -106,7 +112,7 @@ class ArchiveSession @Inject constructor(
             when (result) {
                 is ListResult.Listed -> {
                     if (password != null && remember) passwords.put(pending.source.key, password)
-                    if (result.index.encryption != Encryption.HEADERS) cache.write(pending.source.key, pending.route, result.index)
+                    if (result.index.encryption != Encryption.HEADERS) withContext(io) { cache.write(pending.source.key, pending.route, result.index) }
                     return OpenOutcome.Opened(store(id, pending.source, pending.route, result.index, pending.parentId, pending.nestedEntry, password))
                 }
                 is ListResult.Reroute -> pending = pending.copy(route = result.route)
