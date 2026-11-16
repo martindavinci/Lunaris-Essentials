@@ -25,6 +25,12 @@
             </intent-filter>
         </activity>
 
+        <provider
+            android:name=".files.EntryFileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true" />
+
         <service
             android:name=".engine.EngineService"
             android:process=":engine"
