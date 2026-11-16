@@ -6,6 +6,7 @@ object Routes {
     const val HOME = "home"
     const val EXTRACT = "extract"
     const val CREATE = "create"
+    const val SETTINGS = "settings"
     const val BROWSER = "browser/{$ARG_ARCHIVE_ID}"
 
     fun browser(id: String) = "browser/$id"

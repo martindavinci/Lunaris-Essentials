@@ -28,10 +28,11 @@ import io.github.martindavinci.lunaris.archives.extract.SafTarget
 import io.github.martindavinci.lunaris.archives.feature.browser.BrowserRoute
 import io.github.martindavinci.lunaris.archives.feature.create.CreateRoute
 import io.github.martindavinci.lunaris.archives.feature.home.HomeRoute
+import io.github.martindavinci.lunaris.archives.feature.settings.SettingsRoute
 import io.github.martindavinci.lunaris.archives.feature.browser.ExtractArgs
 import io.github.martindavinci.lunaris.archives.feature.extract.ExtractRoute
 
-/** Home, the browser, extraction and New archive. */
+/** Home, the browser, extraction, New archive and Settings. */
 @Composable
 fun AppNavHost(
     onOpenRequest: (Uri) -> String,
@@ -53,8 +54,11 @@ fun AppNavHost(
                     onBrowse = { id -> nav.navigate(Routes.browser(id)) },
                     onExtractAll = { id -> nav.navigate(Routes.browser(id)) },
                     onCreate = { nav.navigate(Routes.CREATE) },
-                    onSettings = {},
+                    onSettings = { nav.navigate(Routes.SETTINGS) },
                 )
+            }
+            composable(Routes.SETTINGS) { entry ->
+                SettingsRoute(onBack = { if (nav.currentBackStackEntry == entry) nav.popBackStack() })
             }
             composable(Routes.CREATE) { entry ->
                 CreateRoute(

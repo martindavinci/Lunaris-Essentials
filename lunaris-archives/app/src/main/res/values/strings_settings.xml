@@ -16,4 +16,8 @@
     <string name="settings_about_author">By Martin DaVinci</string>
     <string name="settings_licences">Licences</string>
     <string name="settings_source">Source code</string>
+    <string name="settings_language_system">System default</string>
+    <string name="settings_cleared">Temporary files cleared</string>
+    <string name="settings_no_browser">No browser on this phone can open the link</string>
+    <string name="source_url" translatable="false">https://github.com/martindavinci/Lunaris-Essentials/tree/main/lunaris-archives</string>
 </resources>
