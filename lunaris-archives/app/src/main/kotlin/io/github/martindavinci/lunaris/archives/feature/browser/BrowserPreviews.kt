@@ -90,6 +90,11 @@ private fun BrowserPasswordWrongPreview() =
 
 @Preview
 @Composable
+private fun BrowserPasswordCheckingPreview() =
+    Show(BrowserUiState(title = "Manuals.rar", badge = "RAR", password = PasswordPrompt("Manuals.rar", PasswordTarget.ENTRY, checking = true)))
+
+@Preview
+@Composable
 private fun BrowserRar4Preview() =
     Show(BrowserUiState(title = "Old backup.rar", badge = "RAR", problem = ArchiveProblem.RAR4_PASSWORD))
 

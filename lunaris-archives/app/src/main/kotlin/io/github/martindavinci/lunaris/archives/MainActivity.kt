@@ -10,6 +10,7 @@ import io.github.martindavinci.lunaris.archives.engine.EngineProcess
 import io.github.martindavinci.lunaris.archives.feature.AppNavHost
 import io.github.martindavinci.lunaris.archives.session.ArchiveSession
 import io.github.martindavinci.lunaris.archives.session.OpenRequest
+import io.github.martindavinci.lunaris.archives.session.PasswordMemory
 import io.github.martindavinci.lunaris.archives.files.CacheJanitor
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -20,6 +21,7 @@ import io.github.martindavinci.lunaris.archives.ui.theme.LunarisArchivesTheme
 class MainActivity : ComponentActivity() {
     @Inject lateinit var cacheJanitor: CacheJanitor
     @Inject lateinit var session: ArchiveSession
+    @Inject lateinit var passwordMemory: PasswordMemory
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +32,12 @@ class MainActivity : ComponentActivity() {
                 AppNavHost(onOpenRequest = { uri -> session.register(OpenRequest(uri.toString(), null, null, null)) })
             }
         }
+    }
+
+    /** "Remember until I close the app" ends here; a rotation is not closing. */
+    override fun onDestroy() {
+        if (isFinishing && !isChangingConfigurations) passwordMemory.forgetAll()
+        super.onDestroy()
     }
 
     /** Old temp copies go at start-up, in the main process only (never in the isolated engine). */
