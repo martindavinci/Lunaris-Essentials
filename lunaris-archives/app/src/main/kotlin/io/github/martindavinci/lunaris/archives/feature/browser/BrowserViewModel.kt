@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.martindavinci.lunaris.archives.browse.EntrySearch
 import io.github.martindavinci.lunaris.archives.browse.FolderRow
-import io.github.martindavinci.lunaris.archives.browse.FolderView
 import io.github.martindavinci.lunaris.archives.browse.SortOrder
 import io.github.martindavinci.lunaris.archives.di.Background
 import io.github.martindavinci.lunaris.archives.engine.ArchiveProblem
@@ -48,9 +47,9 @@ class BrowserViewModel @Inject constructor(
     private val loader = BrowserLoader(session, sources, _state)
     private val opening = BrowserOpening(viewModelScope, session, opener, _state, ::relist)
     private val sharing = BrowserSharing(viewModelScope, session, opener, _state)
+    private val folders = BrowserFolders(viewModelScope, background, _state) { path -> visitedPath.value = path }
     private val archiveId: String? = savedState.get<String>(Routes.ARG_ARCHIVE_ID)
     private var archive: OpenArchive? = null
-    private var view: FolderView? = null
     private var pending: PendingOpen? = null
     private var waitingExtract: LongArray? = null
     private val queries = MutableStateFlow<String?>(null)
@@ -63,7 +62,7 @@ class BrowserViewModel @Inject constructor(
         }
         viewModelScope.launch {
             queries.debounce(SEARCH_DEBOUNCE_MILLIS).collect { query ->
-                val current = view
+                val current = folders.view
                 val hits = if (query == null || current == null) emptyList() else withContext(background) { EntrySearch.search(current, query) }
                 _state.update { it.copy(hits = if (it.query == null) emptyList() else hits) }
             }
@@ -107,7 +106,7 @@ class BrowserViewModel @Inject constructor(
         }
     }
 
-    private fun apply(outcome: OpenOutcome?) {
+    private suspend fun apply(outcome: OpenOutcome?) {
         when (outcome) {
             null -> Unit
             is OpenOutcome.Opened -> show(outcome.archive)
@@ -118,19 +117,18 @@ class BrowserViewModel @Inject constructor(
         }
     }
 
-    private fun show(opened: OpenArchive) {
+    private suspend fun show(opened: OpenArchive) {
         archive = opened
-        val folders = FolderView(opened.index).also { view = it }
+        val tree = folders.load(opened.index)
         val start = loader.takeStart()
         _state.update { state ->
-            val named = state.copy(
-                title = opened.source.name, badge = opened.index.formatLabel, header = BrowserContent.header(opened, folders),
-                loading = LoadState.Ready, hiddenUnsafe = folders.hiddenUnsafe, capped = opened.index.cappedAtLimit,
+            state.copy(
+                title = opened.source.name, badge = opened.index.formatLabel, header = BrowserContent.header(opened, tree),
+                loading = LoadState.Ready, hiddenUnsafe = tree.hiddenUnsafe, capped = opened.index.cappedAtLimit,
                 partial = opened.index.partial, problem = null, password = null,
             )
-            BrowserContent.showFolder(named, folders, start?.startPath.orEmpty())
         }
-        visitedPath.value = _state.value.path
+        folders.show(start?.startPath.orEmpty())
         if (start?.extractAll == true) onAction(BrowserAction.ExtractAll)
     }
 
@@ -224,11 +222,7 @@ class BrowserViewModel @Inject constructor(
         }
     }
 
-    private fun navigate(path: List<String>) {
-        val folders = view ?: return
-        _state.update { BrowserContent.showFolder(it, folders, path) }
-        visitedPath.value = _state.value.path
-    }
+    private fun navigate(path: List<String>) = folders.show(path)
 
     private fun up() {
         val path = _state.value.path
@@ -241,7 +235,8 @@ class BrowserViewModel @Inject constructor(
     }
 
     private fun setSort(order: SortOrder) {
-        _state.update { state -> view?.let { BrowserContent.showFolder(state.copy(sort = order, sheet = null), it, state.path) } ?: state.copy(sort = order) }
+        _state.update { it.copy(sort = order, sheet = null) }
+        folders.show(_state.value.path)
         viewModelScope.launch { preferences.saveSort(order) }
     }
 

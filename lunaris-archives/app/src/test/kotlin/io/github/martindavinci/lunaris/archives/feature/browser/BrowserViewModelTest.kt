@@ -118,12 +118,19 @@ class BrowserViewModelTest {
         engine.listGate!!.complete(Unit); advanceUntilIdle()
         assertThat(vm.state.value.loading).isEqualTo(LoadState.Ready)
     }
-    @Test fun openRowOfAFolder_entersIt_andUpGoesBack() = runTest(dispatcher) {
+    @Test fun aFolderIsSortedInTheBackground() = runTest(dispatcher) {
         listed(); val vm = viewModel(); advanceUntilIdle()
         vm.onAction(BrowserAction.OpenRow(vm.row("docs")))
+        assertThat(vm.state.value.path).isEmpty()
+        advanceUntilIdle()
+        assertThat(vm.state.value.path).containsExactly("docs")
+    }
+    @Test fun openRowOfAFolder_entersIt_andUpGoesBack() = runTest(dispatcher) {
+        listed(); val vm = viewModel(); advanceUntilIdle()
+        vm.onAction(BrowserAction.OpenRow(vm.row("docs"))); advanceUntilIdle()
         assertThat(vm.state.value.path).containsExactly("docs")
         assertThat(vm.state.value.crumbs.map { it.label }).containsExactly("notes.zip", "docs").inOrder()
-        vm.onAction(BrowserAction.Up)
+        vm.onAction(BrowserAction.Up); advanceUntilIdle()
         assertThat(vm.state.value.path).isEmpty()
     }
     @Test fun upAtTheRoot_requestsExit() = runTest(dispatcher) {
@@ -133,8 +140,9 @@ class BrowserViewModelTest {
     }
     @Test fun goToCrumb_jumps() = runTest(dispatcher) {
         listed(); val vm = viewModel(); advanceUntilIdle()
-        vm.onAction(BrowserAction.OpenRow(vm.row("docs"))); vm.onAction(BrowserAction.OpenRow(vm.row("sub")))
-        vm.onAction(BrowserAction.GoToCrumb(1))
+        vm.onAction(BrowserAction.OpenRow(vm.row("docs"))); advanceUntilIdle()
+        vm.onAction(BrowserAction.OpenRow(vm.row("sub"))); advanceUntilIdle()
+        vm.onAction(BrowserAction.GoToCrumb(1)); advanceUntilIdle()
         assertThat(vm.state.value.path).containsExactly("docs")
     }
     @Test fun setSort_appliesAndSaves() = runTest(dispatcher) {
