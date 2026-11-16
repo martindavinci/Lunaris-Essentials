@@ -65,6 +65,16 @@ class FolderView(index: ArchiveIndex) {
         return out
     }
 
+    /** Every row below the root, pre-order: a folder, then what it holds. */
+    fun walk(): Sequence<FolderRow> = walk(emptyList())
+
+    private fun walk(path: List<String>): Sequence<FolderRow> = sequence {
+        for (row in children(path).orEmpty()) {
+            yield(row)
+            if (row.isFolder) yieldAll(walk(row.path))
+        }
+    }
+
     fun folderCount(): Int = folders
 
     fun fileCount(): Int = countFiles(root)
