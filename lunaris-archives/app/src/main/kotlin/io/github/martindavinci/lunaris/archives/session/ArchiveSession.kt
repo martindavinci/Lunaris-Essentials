@@ -44,6 +44,14 @@ class ArchiveSession @Inject constructor(
     @Synchronized
     fun passwordFor(id: String): CharArray? = openPasswords[id]?.copyOf()
 
+    /** A password typed for an entry of [id] worked: keep a copy with the open archive, and for later if asked. */
+    @Synchronized
+    fun keepPassword(id: String, password: CharArray, remember: Boolean) {
+        val archive = open[id] ?: return
+        openPasswords.put(id, password.copyOf())?.fill(WIPED)
+        if (remember) passwords.put(archive.source.key, password)
+    }
+
     /** How many archives deep an archive opened inside [parentId] would be. */
     @Synchronized
     fun depth(parentId: String?): Int = depthOf(parentId)

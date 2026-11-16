@@ -75,6 +75,9 @@ class BrowserViewModel @Inject constructor(
             is BrowserAction.OpenRow -> if (action.row.isFolder) navigate(action.row.path) else openEntry(action.row, chooser = false)
             is BrowserAction.OpenWith -> openEntry(action.row, chooser = true)
             BrowserAction.CancelOpening -> opening.cancel()
+            is BrowserAction.SubmitPassword -> submitPassword(action.password, action.remember)
+            BrowserAction.DismissPassword -> dismissPassword()
+            BrowserAction.PasswordEdited -> _state.update { s -> s.copy(password = s.password?.copy(wrong = false)) }
             BrowserAction.Up -> up()
             is BrowserAction.GoToCrumb -> navigate(_state.value.path.take(action.index))
             is BrowserAction.LongPress -> _state.update { BrowserContent.toggle(BrowserContent.clearSelection(it).copy(selection = emptySet()), action.row) }
@@ -123,7 +126,10 @@ class BrowserViewModel @Inject constructor(
     private fun askPassword(open: PendingOpen, wrong: Boolean) {
         pending = open
         _state.update {
-            it.copy(title = open.source.name, problem = null, password = PasswordPrompt(open.source.name, PasswordTarget.ARCHIVE, wrong))
+            it.copy(
+                title = open.source.name, badge = open.source.kindHint.label, problem = null,
+                password = PasswordPrompt(open.source.name, PasswordTarget.ARCHIVE, wrong),
+            )
         }
     }
 
@@ -139,6 +145,34 @@ class BrowserViewModel @Inject constructor(
         archive = null
         _state.update { it.copy(notice = BrowserNotice.Changed, loading = LoadState.Reading) }
         viewModelScope.launch { apply(loader.load(archiveId)) }
+    }
+
+    /** [typed] is wiped when the attempt is over; it never enters the state. */
+    private fun submitPassword(typed: CharArray, remember: Boolean) {
+        val prompt = _state.value.password
+        val open = archive
+        if (prompt?.target == PasswordTarget.ENTRY && open != null) {
+            opening.retry(open, typed, remember)
+            return
+        }
+        val waiting = pending
+        if (waiting == null) {
+            typed.fill(Char(0))
+            return
+        }
+        _state.update { it.copy(password = prompt?.copy(checking = true, wrong = false)) }
+        viewModelScope.launch {
+            try {
+                apply(session.unlock(waiting, typed, remember, archiveId ?: return@launch))
+            } finally {
+                typed.fill(Char(0))
+            }
+        }
+    }
+
+    private fun dismissPassword() {
+        if (_state.value.password?.target == PasswordTarget.ENTRY) opening.dismissPassword()
+        else _state.update { it.copy(password = null, exit = true) }
     }
 
     private fun navigate(path: List<String>) {

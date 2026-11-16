@@ -31,11 +31,21 @@ internal class BrowserOpening(
     private var job: Job? = null
     private var launchedRow: FolderRow? = null
 
-    /** The row that waits for a password (B6 asks for it). */
-    var waiting: FolderRow? = null
-        private set
+    private var waiting: FolderRow? = null
+    private var waitingChooser = false
 
-    fun open(archive: OpenArchive, row: FolderRow, chooser: Boolean) {
+    /** Tries the entry that asked for a password again with [typed], which is wiped afterwards. */
+    fun retry(archive: OpenArchive, typed: CharArray, remember: Boolean) {
+        val row = waiting
+        if (row == null) {
+            typed.fill(WIPED)
+            return
+        }
+        state.update { s -> s.copy(password = s.password?.copy(checking = true, wrong = false)) }
+        open(archive, row, waitingChooser, typed, remember)
+    }
+
+    fun open(archive: OpenArchive, row: FolderRow, chooser: Boolean, typed: CharArray? = null, remember: Boolean = false) {
         val entry = row.entry ?: return
         val nested = EntryKinds.of(row.name, EntryType.FILE) == EntryKind.ARCHIVE && !chooser
         if (nested && session.depth(archive.id) >= Limits.MAX_NESTING) {
@@ -48,9 +58,18 @@ internal class BrowserOpening(
                 delay(Limits.OPENING_BAR_DELAY_MILLIS)
                 state.update { it.copy(opening = OpeningState(row.name, INDETERMINATE)) }
             }
-            val result = opener.copy(archive, entry, session.passwordFor(archive.id)) { bytes ->
+            val password = typed ?: session.passwordFor(archive.id)
+            val result = try {
+                opener.copy(archive, entry, password) { bytes ->
                 val fraction = entry.size?.takeIf { it > 0 }?.let { (bytes.toFloat() / it).coerceIn(0f, 1f) } ?: INDETERMINATE
-                state.update { s -> s.opening?.let { s.copy(opening = it.copy(fraction = fraction)) } ?: s }
+                    state.update { s -> s.opening?.let { s.copy(opening = it.copy(fraction = fraction)) } ?: s }
+                }
+            } finally {
+                if (typed == null) password?.fill(WIPED)
+            }
+            if (typed != null) {
+                if (result is CopyResult.Ready) session.keepPassword(archive.id, typed, remember)
+                typed.fill(WIPED)
             }
             bar.cancel()
             state.update { it.copy(opening = null) }
@@ -80,6 +99,7 @@ internal class BrowserOpening(
             }
             CopyResult.NeedsPassword, CopyResult.WrongPassword -> {
                 waiting = row
+                waitingChooser = chooser
                 val wrong = result == CopyResult.WrongPassword
                 state.update { it.copy(password = PasswordPrompt(row.name, PasswordTarget.ENTRY, wrong)) }
                 null
@@ -89,6 +109,10 @@ internal class BrowserOpening(
             CopyResult.Rar4Password -> null.also { state.update { it.copy(sheet = BrowserSheet.Rar4) } }
             CopyResult.Changed -> null.also { onChanged() }
             CopyResult.Cancelled -> null
+        }
+        if (result !is CopyResult.NeedsPassword && result !is CopyResult.WrongPassword) {
+            waiting = null
+            state.update { it.copy(password = null) }
         }
         if (launch != null) {
             launchedRow = row
@@ -101,5 +125,13 @@ internal class BrowserOpening(
         return null
     }
 
-    private companion object { const val INDETERMINATE = -1f }
+    fun dismissPassword() {
+        waiting = null
+        state.update { it.copy(password = null) }
+    }
+
+    private companion object {
+        const val INDETERMINATE = -1f
+        val WIPED = Char(0)
+    }
 }
