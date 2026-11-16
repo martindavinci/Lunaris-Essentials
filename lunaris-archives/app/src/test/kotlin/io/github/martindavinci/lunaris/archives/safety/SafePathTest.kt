@@ -1,6 +1,7 @@
 package io.github.martindavinci.lunaris.archives.safety
 
 import com.google.common.truth.Truth.assertThat
+import io.github.martindavinci.lunaris.archives.archive.EntryType
 import io.github.martindavinci.lunaris.archives.safety.SafePath.Result.Ok
 import io.github.martindavinci.lunaris.archives.safety.SafePath.Result.Skipped
 import org.junit.Test
@@ -33,4 +34,20 @@ class SafePathTest {
     }
     @Test fun tooLong_isInvalid() { invalid("a".repeat(Limits.MAX_PATH_BYTES + 1)) }
     @Test fun dotsOnlyName_isNotParent() { assertThat(SafePath.check("...")).isEqualTo(Ok(listOf("..."))) }
+    @Test fun links_areSkippedAsLinks() {
+        assertThat(SafePath.evaluate("docs/a", EntryType.SYMLINK)).isEqualTo(Skipped(SkipReason.LINK))
+        assertThat(SafePath.evaluate("docs/a", EntryType.HARDLINK)).isEqualTo(Skipped(SkipReason.LINK))
+    }
+    @Test fun devices_areSkippedAsDeviceFiles() {
+        listOf(EntryType.CHAR_DEVICE, EntryType.BLOCK_DEVICE, EntryType.FIFO, EntryType.SOCKET).forEach {
+            assertThat(SafePath.evaluate("dev/x", it)).isEqualTo(Skipped(SkipReason.DEVICE_FILE))
+        }
+    }
+    @Test fun typeRuleWins_overPathRule() {
+        assertThat(SafePath.evaluate("../x", EntryType.SYMLINK)).isEqualTo(Skipped(SkipReason.LINK))
+    }
+    @Test fun filesAndFolders_followThePathRules() {
+        assertThat(SafePath.evaluate("docs/a", EntryType.FILE)).isEqualTo(Ok(listOf("docs", "a")))
+        assertThat(SafePath.evaluate("../a", EntryType.DIRECTORY)).isEqualTo(Skipped(SkipReason.OUTSIDE_FOLDER))
+    }
 }
