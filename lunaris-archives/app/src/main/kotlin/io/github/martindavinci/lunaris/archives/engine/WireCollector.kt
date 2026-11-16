@@ -34,12 +34,13 @@ object WireCollector {
                     val entry = message.entry
                     if (entry.index <= lastIndex) throw WireFormatException("entries out of order")
                     lastIndex = entry.index
-                    val size = minOf(entry.rawPath.size, Limits.MAX_PATH_BYTES)
+                    val kept = retained(entry)
+                    val size = kept.rawPath.size
                     if (wire.size >= Limits.MAX_ENTRIES || pathBytes + size > Limits.MAX_INDEX_PATH_BYTES) {
                         dropped = true
                     } else {
                         pathBytes += size
-                        wire += entry
+                        wire += kept
                         if (wire.size % Limits.INDEX_PROGRESS_EVERY_ENTRIES == 0) onEntries(wire.size)
                     }
                 }
@@ -49,6 +50,14 @@ object WireCollector {
             }
         }
     }
+
+    /**
+     * What is kept of an entry until the index is built: the head of its name (one byte more than a
+     * name may have, so "too long" is still seen) and no link target, which nothing reads. A hostile
+     * engine sending 200 000 names of 64 KiB then costs megabytes, not gigabytes.
+     */
+    internal fun retained(entry: WireEntry): WireEntry =
+        entry.copy(rawPath = entry.rawPath.head(Limits.MAX_PATH_BYTES + 1), linkTarget = null)
 
     private fun build(archive: WireArchive, wire: List<WireEntry>, hint: ArchiveKind, dropped: Boolean): ArchiveIndex {
         val kind = if (archive.kind == ArchiveKind.UNKNOWN) hint else archive.kind

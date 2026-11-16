@@ -6,6 +6,7 @@ import io.github.martindavinci.lunaris.archives.archive.Encryption
 import io.github.martindavinci.lunaris.archives.archive.EntryType
 import io.github.martindavinci.lunaris.archives.archive.HostOs
 import io.github.martindavinci.lunaris.archives.archive.RawPath
+import io.github.martindavinci.lunaris.archives.safety.Limits
 import io.github.martindavinci.lunaris.archives.safety.SafePath
 import io.github.martindavinci.lunaris.archives.safety.SkipReason
 import org.junit.Test
@@ -30,6 +31,15 @@ class WireCollectorTest {
         assertThat(idx.formatLabel).isEqualTo("ZIP"); assertThat(idx.comment).isEqualTo("c"); assertThat(idx.createdBy).isEqualTo(HostOs.UNIX)
         assertThat(idx.entries[1].path).isEqualTo(SafePath.Result.Skipped(SkipReason.OUTSIDE_FOLDER))
         assertThat(idx.encryption).isEqualTo(Encryption.SOME_ENTRIES)
+    }
+    @Test fun keptEntries_holdOnlyTheHeadOfLongNames_andNoLinkTarget() {
+        val long = WireEntry(0, RawPath.of(ByteArray(65_536) { 'a'.code.toByte() }), true, EntryType.SYMLINK, 1, null, null, false, null,
+            RawPath.of(ByteArray(65_536) { 'b'.code.toByte() }), HostOs.UNIX)
+        val kept = WireCollector.retained(long)
+        assertThat(kept.rawPath.size).isEqualTo(Limits.MAX_PATH_BYTES + 1)
+        assertThat(kept.linkTarget).isNull()
+        val got = collect(wire { entry(long); archive(archive()); status(EngineStatus.OK) })
+        assertThat(got.index!!.entries.single().path).isEqualTo(SafePath.Result.Skipped(SkipReason.INVALID_NAME))
     }
     @Test fun allFilesEncrypted_isAllEntries() {
         val bytes = wire { entry(e(0, "a", enc = true)); entry(e(1, "b", enc = true)); archive(archive(encryption = Encryption.SOME_ENTRIES)); status(EngineStatus.OK) }
