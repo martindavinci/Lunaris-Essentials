@@ -76,6 +76,7 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+        aidl = true
     }
     // No dependency metadata block in the APK: it is encrypted for Google only, and F-Droid and
     // IzzyOnDroid reject APKs that carry it.
