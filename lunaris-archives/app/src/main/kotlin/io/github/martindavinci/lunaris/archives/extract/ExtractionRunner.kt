@@ -86,7 +86,9 @@ class ExtractionRunner internal constructor(
             try {
                 if (!enoughSpace(job.target, resolved, plan.declaredBytes)) return@launch
                 val built = writer(job, resolved, plan).also { writer = it }
-                _state.value = passes(job, resolved, built)?.let { ExtractionState.Failed(it) } ?: finished(job, plan, resolved, built, stopped = false)
+                val failure = passes(job, resolved, built)
+                if (failure == ExtractFailure.WRONG_PASSWORD) job.onWrongPassword()
+                _state.value = failure?.let { ExtractionState.Failed(it) } ?: finished(job, plan, resolved, built, stopped = false)
             } catch (_: CancellationException) {
                 writer?.abandon()
                 _state.value = writer?.let { finished(job, plan, resolved, it, stopped = true) } ?: ExtractionState.Idle

@@ -52,6 +52,14 @@ class ArchiveSession @Inject constructor(
         if (remember) passwords.put(archive.source.key, password)
     }
 
+    /** The password kept for [id] was wrong after all: it is asked again next time. */
+    @Synchronized
+    fun forgetPassword(id: String) {
+        val archive = open[id] ?: return
+        openPasswords.remove(id)?.fill(WIPED)
+        passwords.forget(archive.source.key)
+    }
+
     /** How many archives deep an archive opened inside [parentId] would be. */
     @Synchronized
     fun depth(parentId: String?): Int = depthOf(parentId)

@@ -81,6 +81,29 @@ class BrowserViewModelTest {
         val gone = viewModel(session.register(OpenRequest("content://a/2", null, null, null, startPath = listOf("nope")))); advanceUntilIdle()
         assertThat(gone.state.value.path).isEmpty()
     }
+    @Test fun extractingProtectedEntriesWithoutAPassword_asksFirst_thenExtractsWithIt() = runTest(dispatcher) {
+        listed(ListResult.Listed(index("a.md", "b.md", encrypted = setOf("b.md"))))
+        val vm = viewModel(); advanceUntilIdle()
+        vm.onAction(BrowserAction.ExtractAll)
+        assertThat(vm.state.value.password?.target).isEqualTo(PasswordTarget.EXTRACT)
+        assertThat(vm.state.value.launch).isNull()
+        vm.onAction(BrowserAction.SubmitPassword("pw".toCharArray(), remember = false)); advanceUntilIdle()
+        assertThat(vm.state.value.password).isNull()
+        assertThat(vm.state.value.launch).isInstanceOf(LaunchRequest.Extract::class.java)
+        assertThat(String(session.passwordFor((vm.state.value.launch as LaunchRequest.Extract).jobArgs.archiveId)!!)).isEqualTo("pw")
+    }
+    @Test fun dismissingTheExtractPassword_extractsNothing_andStays() = runTest(dispatcher) {
+        listed(ListResult.Listed(index("a.md", encrypted = setOf("a.md"))))
+        val vm = viewModel(); advanceUntilIdle()
+        vm.onAction(BrowserAction.ExtractAll); vm.onAction(BrowserAction.DismissPassword)
+        assertThat(vm.state.value.launch).isNull(); assertThat(vm.state.value.exit).isFalse()
+    }
+    @Test fun extractingPlainEntries_needsNoPassword() = runTest(dispatcher) {
+        listed()
+        val vm = viewModel(); advanceUntilIdle()
+        vm.onAction(BrowserAction.ExtractAll)
+        assertThat(vm.state.value.password).isNull(); assertThat(vm.state.value.launch).isNotNull()
+    }
     @Test fun extractAllFromHome_asksForTheFolderOnceOpened() = runTest(dispatcher) {
         listed()
         val vm = viewModel(session.register(OpenRequest("content://a/1", null, null, null, extractAll = true))); advanceUntilIdle()

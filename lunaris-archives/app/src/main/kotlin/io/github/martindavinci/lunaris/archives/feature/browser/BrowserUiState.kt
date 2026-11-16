@@ -61,7 +61,8 @@ sealed interface LoadState {
 /** [fraction] below zero: the size is not known, the bar is indeterminate. */
 data class OpeningState(val name: String, val fraction: Float)
 
-enum class PasswordTarget { ARCHIVE, ENTRY }
+/** What the password is for: opening the archive, one entry, or extracting protected entries. */
+enum class PasswordTarget { ARCHIVE, ENTRY, EXTRACT }
 data class PasswordPrompt(val name: String, val target: PasswordTarget, val wrong: Boolean = false, val checking: Boolean = false)
 
 sealed interface BrowserSheet {

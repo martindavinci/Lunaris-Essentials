@@ -2,6 +2,7 @@ package io.github.martindavinci.lunaris.archives.feature.browser
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import io.github.martindavinci.lunaris.archives.archive.ArchiveKind
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.martindavinci.lunaris.archives.browse.EntrySearch
@@ -51,6 +52,7 @@ class BrowserViewModel @Inject constructor(
     private var archive: OpenArchive? = null
     private var view: FolderView? = null
     private var pending: PendingOpen? = null
+    private var waitingExtract: LongArray? = null
     private val queries = MutableStateFlow<String?>(null)
     private val visitedPath = MutableStateFlow<List<String>?>(null)
 
@@ -162,9 +164,21 @@ class BrowserViewModel @Inject constructor(
         _state.update(BrowserContent::clearSelection)
     }
 
+    /** Protected entries and no password yet: asked first (RAR4 has none to give: its own message comes later). */
     private fun extract(indices: LongArray) {
         val open = archive ?: return
+        if (needsPassword(open, indices)) {
+            waitingExtract = indices
+            _state.update { it.copy(sheet = null, password = PasswordPrompt(open.source.name, PasswordTarget.EXTRACT)) }
+            return
+        }
         _state.update { it.copy(sheet = null, launch = LaunchRequest.Extract(ExtractArgs(open.id, indices))) }
+    }
+
+    private fun needsPassword(open: OpenArchive, indices: LongArray): Boolean {
+        if (open.index.kind == ArchiveKind.RAR4 || session.passwordFor(open.id)?.also { it.fill(Char(0)) } != null) return false
+        val wanted = indices.toHashSet()
+        return open.index.entries.any { it.encrypted && it.index in wanted }
     }
 
     /** [typed] is wiped when the attempt is over; it never enters the state. */
@@ -173,6 +187,15 @@ class BrowserViewModel @Inject constructor(
         val open = archive
         if (prompt?.target == PasswordTarget.ENTRY && open != null) {
             opening.retry(open, typed, remember)
+            return
+        }
+        if (prompt?.target == PasswordTarget.EXTRACT) {
+            val indices = waitingExtract
+            waitingExtract = null
+            if (open != null && indices != null) session.keepPassword(open.id, typed, remember)
+            typed.fill(Char(0))
+            _state.update { it.copy(password = null) }
+            if (open != null && indices != null) _state.update { it.copy(launch = LaunchRequest.Extract(ExtractArgs(open.id, indices))) }
             return
         }
         val waiting = pending
@@ -191,8 +214,14 @@ class BrowserViewModel @Inject constructor(
     }
 
     private fun dismissPassword() {
-        if (_state.value.password?.target == PasswordTarget.ENTRY) opening.dismissPassword()
-        else _state.update { it.copy(password = null, exit = true) }
+        when (_state.value.password?.target) {
+            PasswordTarget.ENTRY -> opening.dismissPassword()
+            PasswordTarget.EXTRACT -> {
+                waitingExtract = null
+                _state.update { it.copy(password = null) }
+            }
+            else -> _state.update { it.copy(password = null, exit = true) }
+        }
     }
 
     private fun navigate(path: List<String>) {

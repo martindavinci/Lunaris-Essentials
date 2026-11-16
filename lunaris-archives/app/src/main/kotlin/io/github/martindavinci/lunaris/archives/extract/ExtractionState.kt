@@ -18,7 +18,11 @@ sealed interface ExtractionState {
 enum class ExtractFailure { NO_SPACE, RAN_OUT_OF_SPACE, FOLDER_GONE, READER_STOPPED, WRONG_PASSWORD }
 
 /** What to extract, where. [password] is a copy the runner wipes when it is done. */
-class ExtractJob(val archive: OpenArchive, val entries: List<ArchiveEntry>, val password: CharArray?, val target: SafTarget)
+/** [onWrongPassword]: the run ended because the password was wrong, so it should not be offered again. */
+class ExtractJob(
+    val archive: OpenArchive, val entries: List<ArchiveEntry>, val password: CharArray?, val target: SafTarget,
+    val onWrongPassword: () -> Unit = {},
+)
 
 /** Remembers the file being written, so a restart after process death can delete it. */
 interface ExtractMarker {

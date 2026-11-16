@@ -26,7 +26,7 @@ class ExtractStarter @Inject constructor(
         val wanted = indices.toHashSet()
         val entries = archive.index.entries.filter { it.index in wanted }
         runner.reset()
-        runner.start(ExtractJob(archive, entries, session.passwordFor(archiveId), target))
+        runner.start(ExtractJob(archive, entries, session.passwordFor(archiveId), target, onWrongPassword = { session.forgetPassword(archiveId) }))
         return true
     }
 

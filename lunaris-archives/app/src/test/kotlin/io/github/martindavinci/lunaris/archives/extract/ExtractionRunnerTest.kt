@@ -166,6 +166,13 @@ class ExtractionRunnerTest {
         assertThat(runner.state.value).isEqualTo(ExtractionState.Failed(ExtractFailure.WRONG_PASSWORD))
         assertThat(engine.extractCalls.single().first).isEqualTo(EngineRoute.ZIP4J)
     }
+    @Test fun wrongPassword_letsTheStarterForgetIt() = runTest(dispatcher) {
+        val list = index("a.md", encrypted = setOf("a.md")).entries
+        var forgotten = 0
+        script(file(0, outcome = EntryOutcome.WRONG_PASSWORD), route = EngineRoute.ZIP4J)
+        runner.start(ExtractJob(archive(list), list, "x".toCharArray(), FakeTree(), onWrongPassword = { forgotten++ })); advanceUntilIdle()
+        assertThat(forgotten).isEqualTo(1)
+    }
     @Test fun totalBeyondTheDeclaredSumPlusSlack_stops() = runTest(dispatcher) {
         val huge = entries.map { it.copy(size = 1) }
         val tree = FakeTree()

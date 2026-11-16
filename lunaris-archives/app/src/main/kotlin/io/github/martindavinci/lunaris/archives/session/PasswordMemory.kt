@@ -17,6 +17,11 @@ class PasswordMemory @Inject constructor() {
     fun get(key: String): CharArray? = stored[key]?.copyOf()
 
     @Synchronized
+    fun forget(key: String) {
+        stored.remove(key)?.fill(WIPED)
+    }
+
+    @Synchronized
     fun forgetAll() {
         stored.values.forEach { it.fill(WIPED) }
         stored.clear()
