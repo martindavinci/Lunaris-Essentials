@@ -46,6 +46,7 @@ class BrowserViewModel @Inject constructor(
 
     private val loader = BrowserLoader(session, sources, _state)
     private val opening = BrowserOpening(viewModelScope, session, opener, _state, ::relist)
+    private val sharing = BrowserSharing(viewModelScope, session, opener, _state)
     private val archiveId: String? = savedState.get<String>(Routes.ARG_ARCHIVE_ID)
     private var archive: OpenArchive? = null
     private var view: FolderView? = null
@@ -75,6 +76,9 @@ class BrowserViewModel @Inject constructor(
             is BrowserAction.OpenRow -> if (action.row.isFolder) navigate(action.row.path) else openEntry(action.row, chooser = false)
             is BrowserAction.OpenWith -> openEntry(action.row, chooser = true)
             BrowserAction.CancelOpening -> opening.cancel()
+            is BrowserAction.Share -> archive?.let { a -> sharing.share(a, action.rows.mapNotNull { it.entry }); _state.update { it.copy(sheet = null) } }
+            BrowserAction.ShareSelection -> archive?.let { sharing.shareSelection(it) }
+            BrowserAction.ShareArchive -> archive?.let(sharing::shareArchive)
             BrowserAction.ExtractAll -> archive?.let { a -> extract(a.index.entries.map { it.index }.toLongArray()) }
             is BrowserAction.ExtractRows -> extractRows(action.rows.filter { !it.isFolder }.mapNotNull { it.entry?.index }, action.rows.filter { it.isFolder }.map { it.path })
             BrowserAction.ExtractSelection -> _state.value.let { extractRows(it.selection.orEmpty(), it.selectedFolders) }
