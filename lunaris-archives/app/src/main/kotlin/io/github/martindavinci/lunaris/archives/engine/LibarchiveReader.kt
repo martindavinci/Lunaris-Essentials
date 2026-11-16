@@ -22,11 +22,12 @@ class LibarchiveReader : IsolatedReader {
             if (sink.closed) throw SinkClosedException()
             val (kind, innerTar) = LibarchiveCodes.kind(sink.format, sink.filters)
             // Only a ZIP has buffered entries; for every other format they are on the wire already.
+            val enriched = ZipEnrichment.apply(kind, volume, sink.buffered)
             out.send {
-                sink.buffered.forEach { entry(it) }
+                enriched.entries.forEach { entry(it) }
                 archive(
                     WireArchive(
-                        kind, innerTar, LibarchiveCodes.encryption(sink.encrypted), comment = null,
+                        kind, innerTar, LibarchiveCodes.encryption(sink.encrypted), enriched.comment,
                         capped = status == EngineStatus.LIMIT_REACHED,
                         partial = status == EngineStatus.TRUNCATED || status == EngineStatus.DAMAGED,
                     ),

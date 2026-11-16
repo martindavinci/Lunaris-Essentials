@@ -4,6 +4,8 @@ package io.github.martindavinci.lunaris.archives.engine
 object IsolatedReaders {
     fun of(route: EngineRoute): IsolatedReader = when (route) {
         EngineRoute.LIBARCHIVE -> LibarchiveReader()
-        EngineRoute.ZIP4J, EngineRoute.SEVEN_Z, EngineRoute.LIB_RAR -> throw UnsupportedOperationException("route $route")
+        EngineRoute.ZIP4J -> ZipCryptoReader()
+        EngineRoute.SEVEN_Z -> SevenZipReader()
+        EngineRoute.LIB_RAR -> RarReader5()
     }
 }
