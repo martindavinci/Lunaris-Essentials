@@ -1,0 +1,15 @@
+[submodule "lunaris-archives/native/libarchive"]
+	path = lunaris-archives/native/libarchive
+	url = https://github.com/libarchive/libarchive.git
+[submodule "lunaris-archives/native/xz"]
+	path = lunaris-archives/native/xz
+	url = https://github.com/tukaani-project/xz.git
+[submodule "lunaris-archives/native/zstd"]
+	path = lunaris-archives/native/zstd
+	url = https://github.com/facebook/zstd.git
+[submodule "lunaris-archives/native/lz4"]
+	path = lunaris-archives/native/lz4
+	url = https://github.com/lz4/lz4.git
+[submodule "lunaris-archives/native/bzip2"]
+	path = lunaris-archives/native/bzip2
+	url = https://sourceware.org/git/bzip2.git
