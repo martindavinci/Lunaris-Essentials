@@ -36,4 +36,48 @@
     </plurals>
     <string name="browser_empty_folder">This folder is empty</string>
     <string name="browser_empty_archive">This archive is empty</string>
+    <!-- Entry panel (frame 05) -->
+    <string name="entry_open_with">Open with…</string>
+    <string name="entry_extract_to">Extract to…</string>
+    <string name="entry_extract_folder">Extract folder to…</string>
+    <string name="entry_size">Size</string>
+    <string name="entry_packed">Packed</string>
+    <string name="entry_modified">Modified</string>
+    <string name="entry_encrypted">Encrypted</string>
+    <string name="entry_contains">Contains %1$s</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <!-- Archive info (frame 16) -->
+    <string name="info_title">Archive info</string>
+    <string name="info_format">Format</string>
+    <string name="info_files">Files</string>
+    <string name="info_folders">Folders</string>
+    <string name="info_packed_value">%1$s (%2$s)</string>
+    <string name="info_encrypted_some">Some files</string>
+    <string name="info_encrypted_all">All files</string>
+    <string name="info_encrypted_names">Files and names</string>
+    <string name="info_created_by">Created by</string>
+    <string name="info_os_windows">Windows</string>
+    <string name="info_os_unix">Unix</string>
+    <string name="info_os_mac">macOS</string>
+    <string name="info_os_msdos">MS-DOS</string>
+    <string name="info_unknown">Unknown</string>
+    <string name="info_comment">Comment</string>
+    <string name="info_more">More</string>
+    <!-- Sort panel -->
+    <string name="sort_title">Sort by</string>
+    <string name="sort_name">Name</string>
+    <string name="sort_size">Size</string>
+    <string name="sort_date">Date modified</string>
+    <string name="sort_type">Type</string>
+    <string name="sort_folders_first">Folders first</string>
+    <string name="sort_ascending_name">A to Z</string>
+    <string name="sort_descending_name">Z to A</string>
+    <string name="sort_smallest">Smallest first</string>
+    <string name="sort_largest">Largest first</string>
+    <string name="sort_oldest">Oldest first</string>
+    <string name="sort_newest">Newest first</string>
+    <!-- No app, protected RAR 4 entry -->
+    <string name="browser_no_app">No app on this phone opens .%1$s files</string>
+    <string name="browser_no_app_plain">No app on this phone opens this file</string>
 </resources>
