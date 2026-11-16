@@ -27,6 +27,7 @@ val releaseKeystore: Properties? = System.getenv("LUNARIS_KEYSTORE_FILE")?.let {
 android {
     namespace = "io.github.martindavinci.lunaris.archives"
     compileSdk = 36
+    ndkVersion = "27.2.12479018"
 
     defaultConfig {
         applicationId = "io.github.martindavinci.lunaris.archives"
@@ -34,6 +35,16 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "0.0.0"
+        ndk { abiFilters += setOf("arm64-v8a", "armeabi-v7a", "x86_64") }
+        externalNativeBuild {
+            cmake { arguments += listOf("-DANDROID_STL=none", "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON") }
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path = file("../native/CMakeLists.txt")
+            version = "3.31.5"
+        }
     }
 
     signingConfigs {
