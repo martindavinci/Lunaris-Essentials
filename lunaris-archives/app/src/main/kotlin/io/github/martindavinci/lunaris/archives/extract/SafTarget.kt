@@ -8,9 +8,6 @@ data class Created(val token: String, val name: String, val existed: Boolean = f
 
 class FolderGoneException : IOException("folder gone")
 
-/** The provider would not open an existing file for a truncating write. */
-class CannotTruncateException : IOException("cannot truncate")
-
 /** The destination tree, small enough to fake in JVM tests (FakeTree). */
 interface SafTarget {
     /** The children of an existing folder, read once per folder; null if the folder does not exist. */
@@ -22,13 +19,16 @@ interface SafTarget {
     /** Creates a file (MIME application/octet-stream, so no provider adds an extension). Never overwrites. */
     fun createFile(folderToken: String, name: String): Created
 
-    /** An existing FILE of that name, to be truncated; null when there is none. A folder is never returned. */
+    /** An existing FILE of that name, replaced only once its new content is complete; null when there is none. A folder is never returned. */
     fun replace(folderToken: String, name: String): Created?
 
-    /** For a [Created] that existed: truncates it, or throws [CannotTruncateException]. */
+    /** Opens a file this run created, for writing. */
     fun open(created: Created): OutputStream
 
     fun delete(created: Created)
+
+    /** Gives [created] the name [name] (free by then); null when the provider cannot rename. */
+    fun rename(created: Created, name: String): Created?
 
     /** Free bytes where the files go; null when it cannot be known (not a local file). */
     fun freeBytes(): Long?

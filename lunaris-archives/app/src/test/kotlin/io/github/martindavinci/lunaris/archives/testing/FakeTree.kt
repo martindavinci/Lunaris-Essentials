@@ -18,6 +18,7 @@ class FakeTree(
     private val free: Long? = null,
     private val goneAfterWrites: Int? = null,
     private val failWithNoSpaceAfterBytes: Long? = null,
+    private val renames: Boolean = true,
 ) : SafTarget {
     val folders = mutableSetOf<List<String>>(emptyList())
     val files = mutableMapOf<List<String>, MutableMap<String, ByteArray>>()
@@ -78,6 +79,14 @@ class FakeTree(
     override fun delete(created: Created) {
         val path = path(created.token)
         files[path.dropLast(1)]?.remove(path.last())
+    }
+
+    override fun rename(created: Created, name: String): Created? {
+        val path = path(created.token)
+        val inFolder = files[path.dropLast(1)] ?: return null
+        if (!renames || inFolder.keys.any { lower(it) == lower(name) }) return null
+        inFolder[name] = inFolder.remove(path.last()) ?: return null
+        return Created(token(path.dropLast(1) + name), name)
     }
 
     fun read(vararg path: String): ByteArray? = files[path.dropLast(1)]?.get(path.last())

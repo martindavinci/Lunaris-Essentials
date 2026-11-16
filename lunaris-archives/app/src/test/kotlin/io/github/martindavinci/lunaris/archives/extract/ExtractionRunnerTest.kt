@@ -77,12 +77,39 @@ class ExtractionRunnerTest {
         runner.cancelConflicts()
         assertThat(runner.state.value).isEqualTo(ExtractionState.Idle); assertThat(engine.extractCalls).isEmpty()
     }
-    @Test fun replace_truncatesTheExistingFile() = runTest(dispatcher) {
+    @Test fun replace_writesTheNewContent() = runTest(dispatcher) {
         val tree = FakeTree(); tree.open(tree.createFile(tree.ensureFolder(emptyList()), "b.txt")).use { it.write(ByteArray(9)) }
         script(file(0), file(1))
         runner.run(tree); advanceUntilIdle()
         runner.resolve((runner.state.value as ExtractionState.Conflicts).pending.associate { it.file to ConflictChoice.REPLACE }); advanceUntilIdle()
         assertThat(tree.read("b.txt")).hasLength(1024)
+    }
+    @Test fun replace_whoseEntryFails_keepsTheOriginal() = runTest(dispatcher) {
+        val tree = FakeTree(); tree.open(tree.createFile(tree.ensureFolder(emptyList()), "b.txt")).use { it.write(ByteArray(9)) }
+        script(file(0), file(1, outcome = EntryOutcome.DAMAGED))
+        runner.run(tree); advanceUntilIdle()
+        runner.resolve((runner.state.value as ExtractionState.Conflicts).pending.associate { it.file to ConflictChoice.REPLACE }); advanceUntilIdle()
+        assertThat(tree.read("b.txt")).hasLength(9)
+        assertThat(tree.files[emptyList()]!!.keys).containsExactly("b.txt")
+    }
+    @Test fun replace_stopped_keepsTheOriginal() = runTest(dispatcher) {
+        val tree = FakeTree(); tree.open(tree.createFile(tree.ensureFolder(emptyList()), "b.txt")).use { it.write(ByteArray(9)) }
+        guard = RatioGuard(checkAfterBytes = 1, maxRatio = 1)          // asks inside file 2: a moment to press Stop
+        script(file(0, ByteArray(10)), listOf(EngineEvent.EntryStarted(1), EngineEvent.Progress(5), EngineEvent.Bytes(ByteArray(900), 900)))
+        runner.run(tree); advanceUntilIdle()
+        runner.resolve((runner.state.value as ExtractionState.Conflicts).pending.associate { it.file to ConflictChoice.REPLACE }); advanceUntilIdle()
+        runner.answerLarge(true); advanceUntilIdle()
+        runner.stop(); advanceUntilIdle()
+        assertThat(tree.read("b.txt")).hasLength(9)
+        assertThat(tree.files[emptyList()]!!.keys).containsExactly("b.txt")
+    }
+    @Test fun replace_leavesOneFileUnderTheOriginalName() = runTest(dispatcher) {
+        val tree = FakeTree(); tree.open(tree.createFile(tree.ensureFolder(emptyList()), "B.TXT")).use { it.write(ByteArray(9)) }
+        script(file(0), file(1))
+        runner.run(tree); advanceUntilIdle()
+        runner.resolve((runner.state.value as ExtractionState.Conflicts).pending.associate { it.file to ConflictChoice.REPLACE }); advanceUntilIdle()
+        assertThat(tree.files[emptyList()]!!.keys).containsExactly("B.TXT")
+        assertThat(tree.read("B.TXT")).hasLength(1024)
     }
     @Test fun providerAppendingAnExtension_doesNotBreakTheRun() = runTest(dispatcher) {
         val tree = FakeTree(appendsExtension = true); script(file(0), file(1))

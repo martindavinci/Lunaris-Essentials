@@ -106,10 +106,13 @@ class ExtractionRunner internal constructor(
         }
     }
 
-    /** Spec step 6: measured on the first file created (where the provider can tell), then removed. */
+    /**
+     * Spec step 6: measured on a file created for that (where the provider can tell), then removed.
+     * It has a name of its own, so it never takes the place of a file the run will write or replace.
+     */
     private fun enoughSpace(target: SafTarget, resolved: List<ResolvedFile>, declared: Long): Boolean {
-        val first = resolved.firstOrNull() ?: return true
-        val probe = target.createFile(target.ensureFolder(first.file.folder), first.targetName)
+        if (resolved.isEmpty()) return true
+        val probe = target.createFile(target.ensureFolder(emptyList()), PROBE_NAME)
         val free = target.freeBytes()
         target.delete(probe)
         if (free == null || free >= declared) return true
@@ -168,5 +171,8 @@ class ExtractionRunner internal constructor(
 
     private class OverTotal : RuntimeException("more bytes than the archive declared")
 
-    private companion object { val WIPED = Char(0) }
+    private companion object {
+        val WIPED = Char(0)
+        const val PROBE_NAME = ".lunaris-space-check"
+    }
 }

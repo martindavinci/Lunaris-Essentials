@@ -27,7 +27,8 @@ internal class ExtractionWriter(
     private val askLarge: suspend (name: String) -> Boolean,
     private val onProgress: (written: Int, bytes: Long, current: String) -> Unit,
 ) {
-    private class Open(val file: ResolvedFile, val created: Created, val stream: OutputStream, val limit: Long) {
+    /** [existing]: the user's file this one replaces; it is touched only after [created] is complete. */
+    private class Open(val file: ResolvedFile, val created: Created, val existing: Created?, val stream: OutputStream, val limit: Long) {
         var bytes = 0L
         var dropped = false
         val name: String get() = file.file.entry.displayPath
@@ -69,20 +70,14 @@ internal class ExtractionWriter(
         val file = files[index] ?: throw EngineStoppedException()   // never asked for: not written
         abandon()
         val folder = folders.getOrPut(file.file.folder) { target.ensureFolder(file.file.folder) }
-        var created = (if (file.replace) target.replace(folder, file.targetName) else null) ?: target.createFile(folder, file.targetName)
+        // A replaced file is written beside the old one, which stays until the new one is complete:
+        // a wrong password, a damaged entry or Stop never costs the user the file they had.
+        val existing = if (file.replace) target.replace(folder, file.targetName) else null
+        val created = target.createFile(folder, file.targetName)
         marker.set(created.token)
-        val stream = try {
-            target.open(created)
-        } catch (_: CannotTruncateException) {
-            // The provider cannot empty the old file. It IS a file (replace() never returns a folder),
-            // and the user chose to replace it: remove it and write a new one.
-            target.delete(created)
-            created = target.createFile(folder, file.targetName)
-            marker.set(created.token)
-            target.open(created)
-        }
+        val stream = target.open(created)
         guard.onEntryStart()
-        open = Open(file, created, stream, limitFor(file.file.entry.size))
+        open = Open(file, created, existing, stream, limitFor(file.file.entry.size))
     }
 
     private suspend fun write(chunk: ByteArray, length: Int) {
@@ -110,6 +105,10 @@ internal class ExtractionWriter(
             } catch (e: IOException) {
                 target.delete(entry.created)
                 throw e
+            }
+            entry.existing?.let { old ->
+                target.delete(old)
+                target.rename(entry.created, old.name)   // when the provider cannot, the new file keeps its name
             }
             written++
             return

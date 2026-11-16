@@ -48,9 +48,9 @@ class DocumentsTarget(private val resolver: ContentResolver, private val tree: U
 
     override fun createFile(folderToken: String, name: String): Created {
         val id = create(folderToken, BINARY, name)
-        // Recorded under the name that was asked for. Asking the provider for the name it really used
-        // costs a query per file; the only loss is a second "same name" entry not seeing a renamed first one.
-        list(folderToken)[key(name)] = Child(id, name, isFolder = false)
+        // Recorded under the name that was asked for, unless that name is taken (then the provider chose
+        // another one). Asking for the name it really used costs a query per file.
+        list(folderToken).putIfAbsent(key(name), Child(id, name, isFolder = false))
         val uri = uriOf(id)
         if (firstCreated == null) firstCreated = uri
         return Created(uri.toString(), name)
@@ -61,22 +61,30 @@ class DocumentsTarget(private val resolver: ContentResolver, private val tree: U
         return Created(uriOf(child.id).toString(), child.name, existed = true)
     }
 
-    override fun open(created: Created): OutputStream {
-        val uri = Uri.parse(created.token)
-        if (!created.existed) return guarded { resolver.openOutputStream(uri, WRITE) } ?: throw FolderGoneException()
-        // "wt", never "w" alone, for a file that has content: "w" keeps the old tail on some providers.
-        // A provider that refuses "wt" is reported as such; the writer then deletes and creates anew.
-        return try {
-            resolver.openOutputStream(uri, TRUNCATE)
-        } catch (_: FileNotFoundException) {
-            null
-        } catch (_: RuntimeException) {
-            null
-        } ?: throw CannotTruncateException()
-    }
+    override fun open(created: Created): OutputStream =
+        guarded { resolver.openOutputStream(Uri.parse(created.token), WRITE) } ?: throw FolderGoneException()
 
     override fun delete(created: Created) {
-        runCatching { DocumentsContract.deleteDocument(resolver, Uri.parse(created.token)) }
+        if (runCatching { DocumentsContract.deleteDocument(resolver, Uri.parse(created.token)) }.getOrDefault(false)) forget(created.token)
+    }
+
+    override fun rename(created: Created, name: String): Created? {
+        val renamed = runCatching { DocumentsContract.renameDocument(resolver, Uri.parse(created.token), name) }.getOrNull() ?: return null
+        val folder = forget(created.token)
+        val id = DocumentsContract.getDocumentId(renamed)
+        if (folder != null) listings[folder]?.set(key(name), Child(id, name, isFolder = false))
+        return Created(renamed.toString(), name)
+    }
+
+    /** Drops a document from the listings; returns the folder it was in. */
+    private fun forget(token: String): String? {
+        val id = runCatching { DocumentsContract.getDocumentId(Uri.parse(token)) }.getOrNull() ?: return null
+        for ((folder, kids) in listings) {
+            val name = kids.entries.firstOrNull { it.value.id == id }?.key ?: continue
+            kids.remove(name)
+            return folder
+        }
+        return null
     }
 
     /** From the first file this run created, and only when it is a regular file (internal storage, SD card). */
@@ -130,7 +138,6 @@ class DocumentsTarget(private val resolver: ContentResolver, private val tree: U
     private companion object {
         const val BINARY = "application/octet-stream"
         const val WRITE = "w"
-        const val TRUNCATE = "wt"
         val COLUMNS = arrayOf(Document.COLUMN_DOCUMENT_ID, Document.COLUMN_DISPLAY_NAME, Document.COLUMN_MIME_TYPE)
     }
 }
