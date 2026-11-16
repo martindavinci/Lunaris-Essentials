@@ -59,9 +59,11 @@ class ArchiveSources @Inject constructor(
     }
 
     /** For incoming and nested copies: a file of our own cache. */
-    fun fromFile(file: File, name: String, uri: String = Uri.fromFile(file).toString()): ArchiveSource {
+    fun fromFile(
+        file: File, name: String, uri: String = Uri.fromFile(file).toString(),
+        key: String = ArchiveKeys.of(uri, file.length(), file.lastModified()),
+    ): ArchiveSource {
         val head = file.inputStream().use { input -> ByteArray(ArchiveSignatures.ISO_PROBE_END).let { it.copyOf(maxOf(0, input.read(it))) } }
-        val key = ArchiveKeys.of(uri, file.length(), file.lastModified())
         return ArchiveSource(uri, name, file.length(), file.lastModified(), key, ArchiveSignatures.detect(head, name)) {
             ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
         }
@@ -76,7 +78,7 @@ class ArchiveSources @Inject constructor(
         val key = ArchiveKeys.of(uri.toString(), size, modified)
         val input = withContext(Dispatchers.IO) { resolver.openInputStream(uri) } ?: throw FileNotFoundException(uri.toString())
         val file = incoming.copy(input, incoming.target(key, name), onProgress)
-        return fromFile(file, name, uri.toString())
+        return fromFile(file, name, uri.toString(), key)
     }
 
     private data class Description(val name: String, val size: Long?, val modified: Long?)

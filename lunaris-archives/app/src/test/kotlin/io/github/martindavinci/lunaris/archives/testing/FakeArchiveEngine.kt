@@ -15,9 +15,12 @@ class FakeArchiveEngine : ArchiveEngine {
     val extracts = mutableMapOf<EngineRoute, List<EngineEvent>>()
     val listCalls = mutableListOf<Pair<EngineRoute, String?>>()
     val extractCalls = mutableListOf<Triple<EngineRoute, String?, List<Long>>>()
+    /** Thrown by the next list calls, before any answer is taken. */
+    val listFailures = ArrayDeque<Exception>()
 
     override suspend fun list(source: ArchiveSource, route: EngineRoute, password: CharArray?, onEntries: (Int) -> Unit): ListResult {
         listCalls += route to password?.concatToString()
+        listFailures.removeFirstOrNull()?.let { throw it }
         return lists[route]?.removeFirstOrNull() ?: error("no list answer for $route")
     }
 
