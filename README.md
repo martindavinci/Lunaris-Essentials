@@ -53,6 +53,11 @@ been: they work offline, show nothing but your work, and stay out of your data.
 <a href="lunaris-pdf/"><img src="lunaris-pdf/docs/screenshots/pages.webp" width="104" alt="All the pages in a grid, three of them selected"></a>
 </td>
 </tr>
+<tr>
+<td width="96" align="center"><a href="lunaris-archives/"><img src="lunaris-archives/app/src/main/ic_launcher-playstore.png" width="72" alt="Lunaris Archives icon"></a></td>
+<td><b><a href="lunaris-archives/">Lunaris Archives</a></b><br>An archive app: open ZIP, 7z, RAR, TAR and more, open one file in another app without extracting the rest, extract safely into a folder you choose, archives with a password, and new ZIP files with AES-256. Archives are read in an isolated process. No system permissions at all.
+</td>
+</tr>
 </table>
 
 More everyday tools will join, one at a time.
