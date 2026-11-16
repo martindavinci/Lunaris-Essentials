@@ -1,0 +1,50 @@
+name: Lunaris Archives CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - lunaris-archives/**
+      - .github/workflows/lunaris-archives-*.yml
+  pull_request:
+    paths:
+      - lunaris-archives/**
+      - .github/workflows/lunaris-archives-*.yml
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lunaris-archives
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: NDK and CMake
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install "ndk;27.2.12479018" "cmake;3.31.5" > /dev/null
+      - name: Unit tests
+        run: ./gradlew --no-daemon :lib-rar:test :app:testDebugUnitTest
+      # Signed with the debug key here: the release key is only handed to the release workflow.
+      - name: Release build
+        run: ./gradlew --no-daemon :app:assembleRelease
+      - name: Engine libraries are 16 KB aligned
+        run: |
+          apk=app/build/outputs/apk/release/app-release.apk
+          bt="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -n 1)"
+          "$bt/zipalign" -c -P 16 4 "$apk"
+          mkdir -p "$RUNNER_TEMP/so" && unzip -o -q "$apk" 'lib/*' -d "$RUNNER_TEMP/so"
+          readelf="$ANDROID_HOME/ndk/27.2.12479018/toolchains/llvm/prebuilt/linux-x86_64/bin/llvm-readelf"
+          for abi in arm64-v8a armeabi-v7a x86_64; do
+            so="$RUNNER_TEMP/so/lib/$abi/liblunaris_engine.so"
+            test -f "$so" || { echo "::error::missing $abi engine library"; exit 1; }
+            if "$readelf" -Wl "$so" | grep LOAD | grep -v '0x4000$'; then echo "::error::$abi not 16 KB aligned"; exit 1; fi
+          done
