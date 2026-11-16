@@ -10,8 +10,9 @@ import io.github.martindavinci.lunaris.archives.recents.UriPermissions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.job
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Rule
@@ -31,7 +32,7 @@ class SettingsStoreTest {
     }
     private val store by lazy { SettingsStore(dataStore, recents, permissions) }
 
-    @After fun stop() = scope.cancel()
+    @After fun stop() = runBlocking { scope.coroutineContext.job.cancelAndJoin() }
 
     @Test fun defaults() = runBlocking<Unit> {
         assertThat(store.settings.first()).isEqualTo(AppSettings(ThemeMode.SYSTEM, rememberRecents = true, sort = SortOrder()))

@@ -6,8 +6,9 @@ import io.github.martindavinci.lunaris.archives.safety.Limits
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.job
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Rule
@@ -21,7 +22,7 @@ class RecentsStoreTest {
     private val store by lazy { RecentsStore(PreferenceDataStoreFactory.create(scope = scope) { File(folder.root, "r.preferences_pb") }) }
     private fun item(n: Int) = RecentArchive("content://a/$n", "a$n.zip", "ZIP", 1, 1, false, n.toLong(), null)
 
-    @After fun stop() = scope.cancel()
+    @After fun stop() = runBlocking { scope.coroutineContext.job.cancelAndJoin() }
 
     @Test fun newestFirst_andTheOldestFallsOffTheEnd() = runBlocking<Unit> {
         (1..Limits.RECENTS_MAX).forEach { store.remember(item(it)) }

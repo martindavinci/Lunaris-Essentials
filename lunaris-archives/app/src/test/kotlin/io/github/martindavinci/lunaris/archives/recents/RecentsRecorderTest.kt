@@ -13,9 +13,10 @@ import io.github.martindavinci.lunaris.archives.testing.index
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.job
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Rule
@@ -40,7 +41,7 @@ class RecentsRecorderTest {
         EngineRoute.LIBARCHIVE, index("a.txt").copy(encryption = encryption), parent, null,
     )
 
-    @After fun stop() = scope.cancel()
+    @After fun stop() = runBlocking { scope.coroutineContext.job.cancelAndJoin() }
 
     @Test fun permissionRefused_isNotRemembered() = runBlocking<Unit> {
         permissions.allow = false

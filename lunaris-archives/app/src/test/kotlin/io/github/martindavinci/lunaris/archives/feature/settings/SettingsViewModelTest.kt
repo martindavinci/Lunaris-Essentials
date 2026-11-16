@@ -1,6 +1,10 @@
 package io.github.martindavinci.lunaris.archives.feature.settings
 
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.google.common.truth.Truth.assertThat
 import io.github.martindavinci.lunaris.archives.files.CacheJanitor
 import io.github.martindavinci.lunaris.archives.recents.RecentArchive
@@ -14,8 +18,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.job
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import org.junit.After
@@ -38,7 +43,10 @@ class SettingsViewModelTest {
     private val store by lazy { SettingsStore(dataStore, recents, permissions) }
     private val cache by lazy { temp.newFolder("cache") }
     private val janitor by lazy { CacheJanitor(cache) }
-    private fun viewModel() = SettingsViewModel(store, janitor, Dispatchers.IO)
+    private val models = ViewModelStore()
+    private fun viewModel(): SettingsViewModel = ViewModelProvider.create(
+        models, viewModelFactory { initializer { SettingsViewModel(store, janitor, Dispatchers.IO) } },
+    )[SettingsViewModel::class]
 
     /** The view model writes on its own scope: wait for the stored value to show up. */
     private fun <T> eventually(read: () -> T, wanted: T) {
@@ -46,7 +54,11 @@ class SettingsViewModelTest {
         assertThat(read()).isEqualTo(wanted)
     }
 
-    @After fun stop() = scope.cancel()
+    /** The view models stop reading before the store's scope ends, or a late failure lands in another test. */
+    @After fun stop() = runBlocking {
+        models.clear()
+        scope.coroutineContext.job.cancelAndJoin()
+    }
 
     @Test fun themeChange_isSaved() {
         viewModel().onAction(SettingsAction.SetTheme(ThemeMode.LIGHT))
