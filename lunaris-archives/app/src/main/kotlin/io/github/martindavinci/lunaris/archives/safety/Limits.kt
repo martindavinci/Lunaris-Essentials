@@ -37,4 +37,6 @@ object Limits {
     const val INDEXES_IN_MEMORY = 2
     const val SNIFF_BYTES = 32 * 1024
     const val TEXT_SNIFF_BYTES = 8 * 1024
+    const val MAX_INDEX_PATH_BYTES = 48L * MIB
+    const val INDEX_PROGRESS_EVERY_ENTRIES = 512
 }

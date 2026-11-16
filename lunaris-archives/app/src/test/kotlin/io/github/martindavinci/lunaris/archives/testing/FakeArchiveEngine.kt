@@ -1,0 +1,30 @@
+package io.github.martindavinci.lunaris.archives.testing
+
+import io.github.martindavinci.lunaris.archives.archive.RawPath
+import io.github.martindavinci.lunaris.archives.engine.ArchiveEngine
+import io.github.martindavinci.lunaris.archives.engine.EngineEvent
+import io.github.martindavinci.lunaris.archives.engine.EngineRoute
+import io.github.martindavinci.lunaris.archives.engine.ListResult
+import io.github.martindavinci.lunaris.archives.session.ArchiveSource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+
+/** Answers from queues the test fills; records every call (passwords as text, for asserts). */
+class FakeArchiveEngine : ArchiveEngine {
+    val lists = mutableMapOf<EngineRoute, ArrayDeque<ListResult>>()
+    val extracts = mutableMapOf<EngineRoute, List<EngineEvent>>()
+    val listCalls = mutableListOf<Pair<EngineRoute, String?>>()
+    val extractCalls = mutableListOf<Triple<EngineRoute, String?, List<Long>>>()
+
+    override suspend fun list(source: ArchiveSource, route: EngineRoute, password: CharArray?, onEntries: (Int) -> Unit): ListResult {
+        listCalls += route to password?.concatToString()
+        return lists[route]?.removeFirstOrNull() ?: error("no list answer for $route")
+    }
+
+    override fun extract(
+        source: ArchiveSource, route: EngineRoute, password: CharArray?, indices: LongArray, expected: Map<Long, RawPath>,
+    ): Flow<EngineEvent> {
+        extractCalls += Triple(route, password?.concatToString(), indices.toList())
+        return (extracts[route] ?: error("no extract answer for $route")).asFlow()
+    }
+}

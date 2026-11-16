@@ -24,5 +24,5 @@ enum class HostOs(val code: Int) {
 data class ArchiveEntry(
     val index: Long, val rawPath: RawPath, val displayPath: String, val path: SafePath.Result,
     val type: EntryType, val size: Long?, val packedSize: Long?, val modifiedMillis: Long?,
-    val encrypted: Boolean, val crc: Long?,
+    val encrypted: Boolean, val crc: Long?, val pathIsUtf8: Boolean = true,
 )
