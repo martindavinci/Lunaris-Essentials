@@ -13,10 +13,18 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 
+/** What Home needs of the recents (RecentsStore; an in-memory fake in tests). */
+interface RecentsRepository {
+    val recents: Flow<List<RecentArchive>>
+    suspend fun remove(uri: String): RecentArchive?
+    suspend fun restore(item: RecentArchive)
+    suspend fun clear(): List<RecentArchive>
+}
+
 /** Recent archives, newest first, in the preferences. Callers release the permissions of what goes. */
 @Singleton
-class RecentsStore @Inject constructor(private val dataStore: DataStore<Preferences>) {
-    val recents: Flow<List<RecentArchive>> = dataStore.dataOrEmpty()
+class RecentsStore @Inject constructor(private val dataStore: DataStore<Preferences>) : RecentsRepository {
+    override val recents: Flow<List<RecentArchive>> = dataStore.dataOrEmpty()
         .map { it[RECENTS].orEmpty() }
         .distinctUntilChanged()
         .map(RecentsCodec::decode)
@@ -29,14 +37,14 @@ class RecentsStore @Inject constructor(private val dataStore: DataStore<Preferen
         return evicted
     }
 
-    suspend fun remove(uri: String): RecentArchive? {
+    override suspend fun remove(uri: String): RecentArchive? {
         var removed: RecentArchive? = null
         update { list -> list.filter { it.uri != uri }.also { removed = list.firstOrNull { it.uri == uri } } }
         return removed
     }
 
     /** Undo of a removal: back in its place by time. */
-    suspend fun restore(item: RecentArchive) {
+    override suspend fun restore(item: RecentArchive) {
         update { list -> (list.filter { it.uri != item.uri } + item).sortedByDescending { it.lastOpenedMillis } }
     }
 
@@ -45,7 +53,7 @@ class RecentsStore @Inject constructor(private val dataStore: DataStore<Preferen
     }
 
     /** Everything that was there, for releasing permissions. */
-    suspend fun clear(): List<RecentArchive> {
+    override suspend fun clear(): List<RecentArchive> {
         var all = emptyList<RecentArchive>()
         update { list -> emptyList<RecentArchive>().also { all = list } }
         return all

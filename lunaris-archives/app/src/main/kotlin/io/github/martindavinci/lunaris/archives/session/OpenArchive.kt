@@ -22,4 +22,10 @@ sealed interface OpenOutcome {
 data class PendingOpen(val source: ArchiveSource, val route: EngineRoute, val parentId: String?, val nestedEntry: Long?)
 
 /** What the browser route was asked to open; its id is the route argument. */
-data class OpenRequest(val uri: String, val parentId: String?, val nestedEntry: Long?, val nestedFile: String?)
+data class OpenRequest(
+    val uri: String, val parentId: String?, val nestedEntry: Long?, val nestedFile: String?,
+    /** Continue: the folder to show first. */
+    val startPath: List<String>? = null,
+    /** "Extract all…" from Home: the browser asks for the folder as soon as the archive is open. */
+    val extractAll: Boolean = false,
+)
