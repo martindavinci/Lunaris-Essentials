@@ -62,9 +62,10 @@ class ArchiveSources @Inject constructor(
     fun fromFile(
         file: File, name: String, uri: String = Uri.fromFile(file).toString(),
         key: String = ArchiveKeys.of(uri, file.length(), file.lastModified()),
+        fromCopy: Boolean = false,
     ): ArchiveSource {
         val head = file.inputStream().use { input -> ByteArray(ArchiveSignatures.ISO_PROBE_END).let { it.copyOf(maxOf(0, input.read(it))) } }
-        return ArchiveSource(uri, name, file.length(), file.lastModified(), key, ArchiveSignatures.detect(head, name)) {
+        return ArchiveSource(uri, name, file.length(), file.lastModified(), key, ArchiveSignatures.detect(head, name), fromCopy) {
             ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY)
         }
     }
@@ -78,7 +79,7 @@ class ArchiveSources @Inject constructor(
         val key = ArchiveKeys.of(uri.toString(), size, modified)
         val input = withContext(Dispatchers.IO) { resolver.openInputStream(uri) } ?: throw FileNotFoundException(uri.toString())
         val file = incoming.copy(input, incoming.target(key, name), onProgress)
-        return fromFile(file, name, uri.toString(), key)
+        return fromFile(file, name, uri.toString(), key, fromCopy = true)
     }
 
     private data class Description(val name: String, val size: Long?, val modified: Long?)

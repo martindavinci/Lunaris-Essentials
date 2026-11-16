@@ -46,7 +46,7 @@ class BrowserOpeningTest {
     private val sources = object : SourcesPort {
         override suspend fun open(uri: String) = SourceResult.Ready(source(uri.length))
         override suspend fun copyIn(uri: String, bytes: Long?, onProgress: (Long) -> Unit): ArchiveSource = error("unused")
-        override fun fromFile(path: String, name: String): ArchiveSource = source(path.length)
+        override fun fromFile(path: String, name: String, uri: String): ArchiveSource = source(path.length)
     }
     private val preferences = object : BrowserPreferences {
         override val settings = flowOf(AppSettings())

@@ -167,7 +167,7 @@ class ExtractionRunner internal constructor(
                 return null
             }
             when (status) {
-                EngineStatus.PATH_MISMATCH -> return ExtractFailure.READER_STOPPED
+                EngineStatus.PATH_MISMATCH, EngineStatus.ACCESS_DENIED -> return ExtractFailure.READER_STOPPED
                 EngineStatus.CANCELLED -> throw CancellationException("engine cancelled")
                 else -> Unit
             }

@@ -120,7 +120,8 @@ class ArchiveSession @Inject constructor(
             when (result) {
                 is ListResult.Listed -> {
                     if (password != null && remember) passwords.put(pending.source.key, password)
-                    if (result.index.encryption != Encryption.HEADERS) withContext(io) { cache.write(pending.source.key, pending.route, result.index) }
+                    // Not for a copy: its key is the original's, which would bring back the unreadable descriptor.
+                    if (result.index.encryption != Encryption.HEADERS && !pending.source.fromCopy) withContext(io) { cache.write(pending.source.key, pending.route, result.index) }
                     return OpenOutcome.Opened(store(id, pending.source, pending.route, result.index, pending.parentId, pending.nestedEntry, password))
                 }
                 is ListResult.Reroute -> pending = pending.copy(route = result.route)

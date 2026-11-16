@@ -47,6 +47,12 @@ class ArchiveSessionTest {
         session.closeAll()
         assertThat(session.get(a.id)).isNull(); assertThat(session.passwordFor(a.id)).isNull()
     }
+    @Test fun aListingReadFromACopy_isNotSaved_soTheCopyIsMadeAgain() = runTest {
+        answer(EngineRoute.LIBARCHIVE, ListResult.Listed(index("a.md")), ListResult.Listed(index("a.md")))
+        session.open(source().copy(fromCopy = true))
+        session.open(source())
+        assertThat(engine.listCalls).hasSize(2)
+    }
     @Test fun plainZip_opensWithLibarchive() = runTest {
         answer(EngineRoute.LIBARCHIVE, listed)
         assertThat(opened(session.open(source())).route).isEqualTo(EngineRoute.LIBARCHIVE)

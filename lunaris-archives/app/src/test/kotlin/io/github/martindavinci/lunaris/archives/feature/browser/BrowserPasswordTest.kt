@@ -45,7 +45,7 @@ class BrowserPasswordTest {
     private val sources = object : SourcesPort {
         override suspend fun open(uri: String) = SourceResult.Ready(ArchiveSource(uri, "secret.7z", 10, 1, key, ArchiveKind.SEVEN_Z) { error("unused") })
         override suspend fun copyIn(uri: String, bytes: Long?, onProgress: (Long) -> Unit): ArchiveSource = error("unused")
-        override fun fromFile(path: String, name: String): ArchiveSource = error("unused")
+        override fun fromFile(path: String, name: String, uri: String): ArchiveSource = error("unused")
     }
     private val preferences = object : BrowserPreferences {
         override val settings = flowOf(AppSettings())

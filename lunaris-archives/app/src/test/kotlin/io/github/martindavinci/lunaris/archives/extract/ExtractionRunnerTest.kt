@@ -205,6 +205,11 @@ class ExtractionRunnerTest {
         runner.run(FakeTree()); advanceUntilIdle()
         assertThat(runner.state.value).isEqualTo(ExtractionState.Failed(ExtractFailure.READER_STOPPED))
     }
+    @Test fun accessDenied_failsAsReaderStopped_insteadOfFinishingEmpty() = runTest(dispatcher) {
+        script(status = EngineStatus.ACCESS_DENIED)
+        runner.run(FakeTree()); advanceUntilIdle()
+        assertThat(runner.state.value).isEqualTo(ExtractionState.Failed(ExtractFailure.READER_STOPPED))
+    }
     @Test fun engineStopped_failsWithReaderStopped() = runTest(dispatcher) {
         engine.extracts[EngineRoute.LIBARCHIVE] = listOf(EngineEvent.Bytes(ByteArray(1), 1))   // bytes outside an entry
         runner.run(FakeTree()); advanceUntilIdle()

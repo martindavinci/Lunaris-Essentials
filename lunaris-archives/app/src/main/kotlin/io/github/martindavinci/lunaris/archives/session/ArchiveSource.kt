@@ -9,5 +9,8 @@ import io.github.martindavinci.lunaris.archives.archive.ArchiveKind
  */
 data class ArchiveSource(
     val uri: String, val name: String, val size: Long?, val modifiedMillis: Long?, val key: String,
-    val kindHint: ArchiveKind, val openFd: () -> ParcelFileDescriptor,
+    val kindHint: ArchiveKind,
+    /** A copy in cache/incoming of an archive that could not be read in place: its listing is not saved. */
+    val fromCopy: Boolean = false,
+    val openFd: () -> ParcelFileDescriptor,
 )
