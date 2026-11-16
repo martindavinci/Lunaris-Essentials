@@ -20,4 +20,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "LunarisArchives"
-include(":app")
+include(":app", ":lib-rar")
