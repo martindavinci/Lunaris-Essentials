@@ -4,6 +4,7 @@ import io.github.martindavinci.lunaris.archives.archive.EntryType
 import io.github.martindavinci.lunaris.archives.browse.EntrySort
 import io.github.martindavinci.lunaris.archives.browse.FolderRow
 import io.github.martindavinci.lunaris.archives.browse.FolderView
+import io.github.martindavinci.lunaris.archives.safety.SafePath
 import io.github.martindavinci.lunaris.archives.session.OpenArchive
 import io.github.martindavinci.lunaris.archives.ui.CrumbSegment
 
@@ -51,4 +52,13 @@ internal object BrowserContent {
 
     private fun withSelection(state: BrowserUiState, files: Set<Long>, folders: Set<List<String>>): BrowserUiState =
         state.copy(selection = files, selectedFolders = folders, canShareSelection = folders.isEmpty() && files.isNotEmpty())
+
+    /** Every entry of the rows: a file itself, a folder with everything under it. */
+    fun indicesFor(archive: OpenArchive, files: Collection<Long>, folders: Collection<List<String>>): LongArray {
+        val under = archive.index.entries.filter { entry ->
+            val path = (entry.path as? SafePath.Result.Ok)?.components ?: return@filter false
+            folders.any { folder -> path.size >= folder.size && path.take(folder.size) == folder }
+        }.map { it.index }
+        return (files + under).distinct().sorted().toLongArray()
+    }
 }

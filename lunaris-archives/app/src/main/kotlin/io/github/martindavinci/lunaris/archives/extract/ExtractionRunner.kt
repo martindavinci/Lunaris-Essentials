@@ -36,6 +36,9 @@ class ExtractionRunner internal constructor(
     val state: StateFlow<ExtractionState> = _state.asStateFlow()
 
     private var job: ExtractJob? = null
+
+    /** The extraction being shown: its archive and destination. */
+    val currentJob: ExtractJob? get() = job
     private var plan: ExtractionPlan? = null
     private var existing: Map<List<String>, ExistingNames> = emptyMap()
     private var running: Job? = null

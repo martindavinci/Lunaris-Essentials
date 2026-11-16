@@ -4,6 +4,7 @@ package io.github.martindavinci.lunaris.archives.feature
 object Routes {
     const val ARG_ARCHIVE_ID = "archiveId"
     const val HOME = "home"
+    const val EXTRACT = "extract"
     const val BROWSER = "browser/{$ARG_ARCHIVE_ID}"
 
     fun browser(id: String) = "browser/$id"

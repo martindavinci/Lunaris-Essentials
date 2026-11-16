@@ -32,6 +32,14 @@ class FakeArchiveEngine : ArchiveEngine {
         source: ArchiveSource, route: EngineRoute, password: CharArray?, indices: LongArray, expected: Map<Long, RawPath>,
     ): Flow<EngineEvent> {
         extractCalls += Triple(route, password?.concatToString(), indices.toList())
-        return (extracts[route] ?: error("no extract answer for $route")).asFlow()
+        val wanted = indices.toSet()
+        var current: Long? = null
+        // Like a real engine: only the entries that were asked for come out.
+        return (extracts[route] ?: error("no extract answer for $route")).filter { event ->
+            if (event is EngineEvent.EntryStarted) current = event.index
+            val keep = current == null || current in wanted
+            if (event is EngineEvent.EntryFinished) current = null
+            keep
+        }.asFlow()
     }
 }

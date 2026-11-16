@@ -9,7 +9,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.martindavinci.lunaris.archives.engine.EngineProcess
+import io.github.martindavinci.lunaris.archives.extract.ExtractStarter
 import io.github.martindavinci.lunaris.archives.extract.PrefsExtractMarker
+import io.github.martindavinci.lunaris.archives.extract.TreeTargets
 import io.github.martindavinci.lunaris.archives.feature.AppNavHost
 import io.github.martindavinci.lunaris.archives.session.ArchiveSession
 import io.github.martindavinci.lunaris.archives.session.OpenRequest
@@ -26,6 +28,8 @@ class MainActivity : ComponentActivity() {
     @Inject lateinit var session: ArchiveSession
     @Inject lateinit var passwordMemory: PasswordMemory
     @Inject lateinit var extractMarker: PrefsExtractMarker
+    @Inject lateinit var treeTargets: TreeTargets
+    @Inject lateinit var extractStarter: ExtractStarter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +37,12 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             LunarisArchivesTheme {
-                AppNavHost(onOpenRequest = { uri -> session.register(OpenRequest(uri.toString(), null, null, null)) })
+                AppNavHost(
+                    onOpenRequest = { uri -> session.register(OpenRequest(uri.toString(), null, null, null)) },
+                    lastTree = treeTargets::last,
+                    openTree = treeTargets::open,
+                    startExtraction = { args, target -> extractStarter.start(args.archiveId, args.indices, target) },
+                )
             }
         }
     }

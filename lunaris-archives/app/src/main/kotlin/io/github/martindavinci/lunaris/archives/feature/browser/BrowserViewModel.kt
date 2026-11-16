@@ -75,6 +75,9 @@ class BrowserViewModel @Inject constructor(
             is BrowserAction.OpenRow -> if (action.row.isFolder) navigate(action.row.path) else openEntry(action.row, chooser = false)
             is BrowserAction.OpenWith -> openEntry(action.row, chooser = true)
             BrowserAction.CancelOpening -> opening.cancel()
+            BrowserAction.ExtractAll -> archive?.let { a -> extract(a.index.entries.map { it.index }.toLongArray()) }
+            is BrowserAction.ExtractRows -> extractRows(action.rows.filter { !it.isFolder }.mapNotNull { it.entry?.index }, action.rows.filter { it.isFolder }.map { it.path })
+            BrowserAction.ExtractSelection -> _state.value.let { extractRows(it.selection.orEmpty(), it.selectedFolders) }
             is BrowserAction.SubmitPassword -> submitPassword(action.password, action.remember)
             BrowserAction.DismissPassword -> dismissPassword()
             BrowserAction.PasswordEdited -> _state.update { s -> s.copy(password = s.password?.copy(wrong = false)) }
@@ -145,6 +148,17 @@ class BrowserViewModel @Inject constructor(
         archive = null
         _state.update { it.copy(notice = BrowserNotice.Changed, loading = LoadState.Reading) }
         viewModelScope.launch { apply(loader.load(archiveId)) }
+    }
+
+    private fun extractRows(files: Collection<Long>, folders: Collection<List<String>>) {
+        val open = archive ?: return
+        extract(BrowserContent.indicesFor(open, files, folders))
+        _state.update(BrowserContent::clearSelection)
+    }
+
+    private fun extract(indices: LongArray) {
+        val open = archive ?: return
+        _state.update { it.copy(sheet = null, launch = LaunchRequest.Extract(ExtractArgs(open.id, indices))) }
     }
 
     /** [typed] is wiped when the attempt is over; it never enters the state. */

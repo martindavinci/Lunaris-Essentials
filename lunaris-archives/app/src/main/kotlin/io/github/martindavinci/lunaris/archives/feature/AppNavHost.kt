@@ -10,6 +10,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -19,12 +23,26 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import io.github.martindavinci.lunaris.archives.R
+import io.github.martindavinci.lunaris.archives.extract.SafTarget
 import io.github.martindavinci.lunaris.archives.feature.browser.BrowserRoute
+import io.github.martindavinci.lunaris.archives.feature.browser.ExtractArgs
+import io.github.martindavinci.lunaris.archives.feature.extract.ExtractRoute
 
 /** Home (for now a single "Open an archive" button) and the browser. */
 @Composable
-fun AppNavHost(onOpenRequest: (Uri) -> String) {
+fun AppNavHost(
+    onOpenRequest: (Uri) -> String,
+    lastTree: () -> Uri?,
+    openTree: (Uri) -> SafTarget,
+    startExtraction: (ExtractArgs, SafTarget) -> Boolean,
+) {
     val nav = rememberNavController()
+    var pendingExtract by remember { mutableStateOf<ExtractArgs?>(null) }
+    val treePicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
+        val args = pendingExtract
+        pendingExtract = null
+        if (uri != null && args != null && startExtraction(args, openTree(uri))) nav.navigate(Routes.EXTRACT)
+    }
     Surface(color = MaterialTheme.colorScheme.background) {
         NavHost(navController = nav, startDestination = Routes.HOME) {
             composable(Routes.HOME) {
@@ -34,8 +52,14 @@ fun AppNavHost(onOpenRequest: (Uri) -> String) {
                 BrowserRoute(
                     onExit = { if (nav.currentBackStackEntry == entry) nav.popBackStack() },
                     onNested = { id -> nav.navigate(Routes.browser(id)) },
-                    onExtract = {},
+                    onExtract = { args ->
+                        pendingExtract = args
+                        treePicker.launch(lastTree())
+                    },
                 )
+            }
+            composable(Routes.EXTRACT) { entry ->
+                ExtractRoute(onExit = { if (nav.currentBackStackEntry == entry) nav.popBackStack() }, openTree = openTree)
             }
         }
     }

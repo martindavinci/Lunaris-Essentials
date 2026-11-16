@@ -9,7 +9,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import io.github.martindavinci.lunaris.archives.extract.ExtractAgain
 import io.github.martindavinci.lunaris.archives.extract.ExtractMarker
+import io.github.martindavinci.lunaris.archives.extract.ExtractStarter
 import io.github.martindavinci.lunaris.archives.extract.KeyValue
 import io.github.martindavinci.lunaris.archives.extract.PrefsExtractMarker
 import io.github.martindavinci.lunaris.archives.files.EntryCopier
@@ -25,6 +27,9 @@ abstract class FilesModule {
 
     @Binds
     abstract fun bindMarker(marker: PrefsExtractMarker): ExtractMarker
+
+    @Binds
+    abstract fun bindAgain(starter: ExtractStarter): ExtractAgain
 
     companion object {
         private const val AUTHORITY_SUFFIX = ".fileprovider"
