@@ -29,6 +29,9 @@ internal class BrowserLoader(
         val request = session.request(id) ?: return GONE
         this.request = request
         return withReadingHint {
+            request.nestedFile?.let { path ->
+                return@withReadingHint session.open(sources.fromFile(path, path.substringAfterLast('/')), request.parentId, request.nestedEntry, id)
+            }
             when (val result = sources.open(request.uri)) {
                 is SourceResult.Ready -> session.open(result.source, request.parentId, request.nestedEntry, id)
                 SourceResult.Gone -> GONE

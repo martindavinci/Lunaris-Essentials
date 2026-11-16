@@ -44,6 +44,10 @@ class ArchiveSession @Inject constructor(
     @Synchronized
     fun passwordFor(id: String): CharArray? = openPasswords[id]?.copyOf()
 
+    /** How many archives deep an archive opened inside [parentId] would be. */
+    @Synchronized
+    fun depth(parentId: String?): Int = depthOf(parentId)
+
     /** Drops the index after the archive changed under us: the next opening lists it again. */
     fun forgetIndex(source: ArchiveSource) = cache.remove(source.key)
 

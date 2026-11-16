@@ -19,6 +19,7 @@ import io.github.martindavinci.lunaris.archives.session.PasswordMemory
 import io.github.martindavinci.lunaris.archives.session.SourceResult
 import io.github.martindavinci.lunaris.archives.settings.AppSettings
 import io.github.martindavinci.lunaris.archives.testing.FakeArchiveEngine
+import io.github.martindavinci.lunaris.archives.testing.FakeEntryOpener
 import io.github.martindavinci.lunaris.archives.testing.MainDispatcherRule
 import io.github.martindavinci.lunaris.archives.testing.index
 import kotlinx.coroutines.CompletableDeferred
@@ -46,6 +47,7 @@ class BrowserViewModelTest {
         override suspend fun open(uri: String) =
             SourceResult.Ready(ArchiveSource(uri, "notes.zip", 10, 1, "%016x".format(uri.length), ArchiveKind.ZIP) { error("unused") })
         override suspend fun copyIn(uri: String, bytes: Long?, onProgress: (Long) -> Unit): ArchiveSource = error("unused")
+        override fun fromFile(path: String, name: String): ArchiveSource = error("unused")
     }
     private val preferences = object : BrowserPreferences {
         override val settings = flowOf(AppSettings())
@@ -56,7 +58,7 @@ class BrowserViewModelTest {
     }
 
     private fun viewModel(id: String = session.register(OpenRequest("content://a/1", null, null, null))) = BrowserViewModel(
-        SavedStateHandle(mapOf(Routes.ARG_ARCHIVE_ID to id)), session, sources, preferences, recents, dispatcher,
+        SavedStateHandle(mapOf(Routes.ARG_ARCHIVE_ID to id)), session, sources, preferences, recents, FakeEntryOpener(), dispatcher,
     )
     private fun listed(result: ListResult = ListResult.Listed(archive)) {
         engine.lists.getOrPut(EngineRoute.LIBARCHIVE) { ArrayDeque() } += result

@@ -5,11 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.martindavinci.lunaris.archives.browse.EntrySearch
+import io.github.martindavinci.lunaris.archives.browse.FolderRow
 import io.github.martindavinci.lunaris.archives.browse.FolderView
 import io.github.martindavinci.lunaris.archives.browse.SortOrder
 import io.github.martindavinci.lunaris.archives.di.Background
 import io.github.martindavinci.lunaris.archives.engine.ArchiveProblem
 import io.github.martindavinci.lunaris.archives.feature.Routes
+import io.github.martindavinci.lunaris.archives.files.EntryOpener
 import io.github.martindavinci.lunaris.archives.session.ArchiveSession
 import io.github.martindavinci.lunaris.archives.session.OpenArchive
 import io.github.martindavinci.lunaris.archives.session.OpenOutcome
@@ -36,12 +38,15 @@ class BrowserViewModel @Inject constructor(
     sources: SourcesPort,
     private val preferences: BrowserPreferences,
     private val recents: RecentsPort,
+    opener: EntryOpener,
     @param:Background private val background: CoroutineDispatcher,
 ) : ViewModel() {
     private val _state = MutableStateFlow(BrowserUiState())
     val state: StateFlow<BrowserUiState> = _state.asStateFlow()
 
     private val loader = BrowserLoader(session, sources, _state)
+    private val opening = BrowserOpening(viewModelScope, session, opener, _state, ::relist)
+    private val archiveId: String? = savedState.get<String>(Routes.ARG_ARCHIVE_ID)
     private var archive: OpenArchive? = null
     private var view: FolderView? = null
     private var pending: PendingOpen? = null
@@ -49,10 +54,9 @@ class BrowserViewModel @Inject constructor(
     private val visitedPath = MutableStateFlow<List<String>?>(null)
 
     init {
-        val id = savedState.get<String>(Routes.ARG_ARCHIVE_ID)
         viewModelScope.launch {
             _state.update { it.copy(sort = preferences.settings.first().sort) }
-            apply(loader.load(id))
+            apply(loader.load(archiveId))
         }
         viewModelScope.launch {
             queries.debounce(SEARCH_DEBOUNCE_MILLIS).collect { query ->
@@ -68,7 +72,9 @@ class BrowserViewModel @Inject constructor(
 
     fun onAction(action: BrowserAction) {
         when (action) {
-            is BrowserAction.OpenRow -> if (action.row.isFolder) navigate(action.row.path)
+            is BrowserAction.OpenRow -> if (action.row.isFolder) navigate(action.row.path) else openEntry(action.row, chooser = false)
+            is BrowserAction.OpenWith -> openEntry(action.row, chooser = true)
+            BrowserAction.CancelOpening -> opening.cancel()
             BrowserAction.Up -> up()
             is BrowserAction.GoToCrumb -> navigate(_state.value.path.take(action.index))
             is BrowserAction.LongPress -> _state.update { BrowserContent.toggle(BrowserContent.clearSelection(it).copy(selection = emptySet()), action.row) }
@@ -83,7 +89,7 @@ class BrowserViewModel @Inject constructor(
             is BrowserAction.ShowRowSheet -> _state.update { it.copy(sheet = BrowserSheet.Row(action.row)) }
             BrowserAction.DismissSheet -> _state.update { it.copy(sheet = null) }
             is BrowserAction.SetSort -> setSort(action.order)
-            is BrowserAction.LaunchHandled -> _state.update { it.copy(launch = null) }
+            is BrowserAction.LaunchHandled -> opening.launchHandled(action.ok)
             BrowserAction.NoticeShown -> _state.update { it.copy(notice = null) }
             else -> Unit
         }
@@ -119,6 +125,20 @@ class BrowserViewModel @Inject constructor(
         _state.update {
             it.copy(title = open.source.name, problem = null, password = PasswordPrompt(open.source.name, PasswordTarget.ARCHIVE, wrong))
         }
+    }
+
+    private fun openEntry(row: FolderRow, chooser: Boolean) {
+        val open = archive ?: return
+        _state.update { it.copy(sheet = null) }
+        opening.open(open, row, chooser)
+    }
+
+    /** The archive is not the one that was listed any more: list it again and say so. */
+    private fun relist() {
+        archive?.let { session.forgetIndex(it.source); session.close(it.id) }
+        archive = null
+        _state.update { it.copy(notice = BrowserNotice.Changed, loading = LoadState.Reading) }
+        viewModelScope.launch { apply(loader.load(archiveId)) }
     }
 
     private fun navigate(path: List<String>) {
