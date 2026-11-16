@@ -1,7 +1,5 @@
 package io.github.martindavinci.lunaris.archives.extract
 
-import android.system.ErrnoException
-import android.system.OsConstants
 import io.github.martindavinci.lunaris.archives.engine.ArchiveEngine
 import io.github.martindavinci.lunaris.archives.engine.EngineStatus
 import io.github.martindavinci.lunaris.archives.engine.EngineStoppedException
@@ -97,7 +95,7 @@ class ExtractionRunner internal constructor(
                 _state.value = ExtractionState.Failed(ExtractFailure.READER_STOPPED)
             } catch (e: IOException) {
                 writer?.abandon()
-                _state.value = ExtractionState.Failed(if (isNoSpace(e)) ExtractFailure.RAN_OUT_OF_SPACE else ExtractFailure.FOLDER_GONE)
+                _state.value = ExtractionState.Failed(if (FreeSpace.isNoSpace(e)) ExtractFailure.RAN_OUT_OF_SPACE else ExtractFailure.FOLDER_GONE)
             } finally {
                 marker.clear()
                 job.password?.fill(WIPED)
@@ -165,14 +163,7 @@ class ExtractionRunner internal constructor(
         }
     }
 
-    private fun isNoSpace(e: Throwable): Boolean = generateSequence(e) { it.cause }.any { cause ->
-        (cause is ErrnoException && cause.errno == OsConstants.ENOSPC) || cause.message?.contains(NO_SPACE_MARK) == true
-    }
-
     private class OverTotal : RuntimeException("more bytes than the archive declared")
 
-    private companion object {
-        const val NO_SPACE_MARK = "ENOSPC"
-        val WIPED = Char(0)
-    }
+    private companion object { val WIPED = Char(0) }
 }

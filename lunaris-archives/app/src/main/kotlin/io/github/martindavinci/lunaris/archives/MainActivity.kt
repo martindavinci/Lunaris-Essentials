@@ -1,12 +1,15 @@
 package io.github.martindavinci.lunaris.archives
 
+import android.net.Uri
 import android.os.Bundle
+import android.provider.DocumentsContract
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.martindavinci.lunaris.archives.engine.EngineProcess
+import io.github.martindavinci.lunaris.archives.extract.PrefsExtractMarker
 import io.github.martindavinci.lunaris.archives.feature.AppNavHost
 import io.github.martindavinci.lunaris.archives.session.ArchiveSession
 import io.github.martindavinci.lunaris.archives.session.OpenRequest
@@ -22,6 +25,7 @@ class MainActivity : ComponentActivity() {
     @Inject lateinit var cacheJanitor: CacheJanitor
     @Inject lateinit var session: ArchiveSession
     @Inject lateinit var passwordMemory: PasswordMemory
+    @Inject lateinit var extractMarker: PrefsExtractMarker
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +48,10 @@ class MainActivity : ComponentActivity() {
     private fun sweepOncePerProcess() {
         if (swept || EngineProcess.isCurrent()) return
         swept = true
-        lifecycleScope.launch(Dispatchers.IO) { cacheJanitor.sweep(System.currentTimeMillis()) }
+        lifecycleScope.launch(Dispatchers.IO) {
+            cacheJanitor.sweep(System.currentTimeMillis())
+            extractMarker.recover { token -> DocumentsContract.deleteDocument(contentResolver, Uri.parse(token)) }
+        }
     }
 
     private companion object {
