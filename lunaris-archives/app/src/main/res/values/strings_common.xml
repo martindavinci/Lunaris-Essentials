@@ -29,4 +29,6 @@
     <string name="password_hide">Hide password</string>
     <string name="password_checking">Checking…</string>
     <string name="password_wrong">Wrong password. Try again.</string>
+    <string name="share_target_create_zip">Create ZIP</string>
+    <string name="incoming_text_only">Share files to make a ZIP</string>
 </resources>
