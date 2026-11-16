@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_title">New archive</string>
+    <string name="create_pick_files">Pick files</string>
+    <string name="create_pick_folder">Pick a folder</string>
+    <!-- what the check on a card means, for a screen reader. -->
+    <string name="create_picked">Added</string>
+    <string name="create_add_more">Add more</string>
+    <string name="create_remove">Remove %1$s</string>
+    <string name="create_name">Name</string>
+    <string name="create_zip_suffix" translatable="false">.zip</string>
+    <string name="create_name_invalid">Use a name without / \\ : * ? \" &lt; &gt; |</string>
+    <string name="create_compression">Compression</string>
+    <string name="create_store">Store</string>
+    <string name="create_normal">Normal</string>
+    <string name="create_maximum">Maximum</string>
+    <string name="create_protect">Protect with a password</string>
+    <string name="create_confirm">Confirm password</string>
+    <string name="create_mismatch">Passwords don\'t match</string>
+    <string name="create_aes_note">AES-256. Without the password nobody can open it, including you.</string>
+    <string name="create_names_visible">File names stay readable.</string>
+    <string name="create_button">Create ZIP</string>
+    <string name="create_save_hint">Next you choose where to save it</string>
+    <string name="create_strength_weak">Weak</string>
+    <string name="create_strength_fair">Fair</string>
+    <string name="create_strength_good">Good</string>
+    <string name="create_strength_strong">Strong</string>
+    <plurals name="create_adding">
+        <item quantity="one">Adding %1$s of %2$s file</item>
+        <item quantity="other">Adding %1$s of %2$s files</item>
+    </plurals>
+    <string name="create_creating">Creating %1$s</string>
+    <string name="create_in">in %1$s</string>
+    <string name="create_done">%1$s created</string>
+    <!-- files that have no content of their own and were left out. -->
+    <plurals name="create_skipped">
+        <item quantity="one">%1$s item has no file to add and was left out:</item>
+        <item quantity="other">%1$s items have no file to add and were left out:</item>
+    </plurals>
+    <string name="create_stop_title">Stop creating the archive?</string>
+    <string name="create_stop_body">The unfinished file is removed.</string>
+</resources>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="browser_search">Search in archive</string>
+    <string name="browser_search_hint">Search in archive</string>
+    <string name="browser_extract_all">Extract all</string>
+    <string name="browser_opening">Opening %1$s…</string>
+    <string name="browser_nested_meta">%1$s · %2$s</string>
+    <string name="browser_menu_extract_all">Extract all…</string>
+    <string name="browser_menu_sort">Sort by</string>
+    <string name="browser_menu_info">Archive info</string>
+    <string name="browser_menu_share">Share archive</string>
+    <string name="selection_cancel">Cancel selection</string>
+    <string name="selection_all">Select all</string>
+    <string name="selection_extract">Extract</string>
+    <plurals name="selection_count">
+        <item quantity="one">%1$s selected</item>
+        <item quantity="other">%1$s selected</item>
+    </plurals>
+    <plurals name="search_results">
+        <item quantity="one">%1$s result in all folders</item>
+        <item quantity="other">%1$s results in all folders</item>
+    </plurals>
+    <string name="search_no_match">Nothing in this archive matches “%1$s”</string>
+    <plurals name="browser_reading">
+        <item quantity="one">Reading the archive… %1$s item</item>
+        <item quantity="other">Reading the archive… %1$s items</item>
+    </plurals>
+    <!-- before the first count arrives (a ZIP is counted only at the end). -->
+    <string name="browser_reading_start">Reading the archive…</string>
+    <string name="browser_copying">Getting the archive ready… %1$s</string>
+    <string name="browser_partial">Only part of this archive could be read.</string>
+    <string name="browser_capped">Only the first 200,000 items are shown.</string>
+    <plurals name="browser_hidden_unsafe">
+        <item quantity="one">%1$s item is hidden because its name isn\'t safe.</item>
+        <item quantity="other">%1$s items are hidden because their names aren\'t safe.</item>
+    </plurals>
+    <string name="browser_empty_folder">This folder is empty</string>
+    <string name="browser_empty_archive">This archive is empty</string>
+</resources>

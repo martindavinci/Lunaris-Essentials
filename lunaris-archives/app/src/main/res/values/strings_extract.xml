@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="extract_title">Extracting %1$s</string>
+    <string name="extract_to">to %1$s</string>
+    <plurals name="extract_files_of">
+        <item quantity="one">%1$s of %2$s file</item>
+        <item quantity="other">%1$s of %2$s files</item>
+    </plurals>
+    <string name="extract_bytes_of">%1$s of %2$s</string>
+    <string name="extract_keep_open">Keep Lunaris Archives open until it finishes.</string>
+    <!-- what a screen reader says for the bar while the "unusually large" question is open. -->
+    <string name="extract_waiting">Waiting for your answer</string>
+    <plurals name="extract_done">
+        <item quantity="one">%1$s file extracted</item>
+        <item quantity="other">%1$s files extracted</item>
+    </plurals>
+    <plurals name="extract_done_partial">
+        <item quantity="one">%1$s of %2$s file extracted</item>
+        <item quantity="other">%1$s of %2$s files extracted</item>
+    </plurals>
+    <plurals name="extract_skipped">
+        <item quantity="one">%1$s item skipped: its name points outside the destination folder.</item>
+        <item quantity="other">%1$s items skipped: their names point outside the destination folder.</item>
+    </plurals>
+    <plurals name="extract_skipped_unsafe">
+        <item quantity="one">%1$s item skipped because it could be unsafe.</item>
+        <item quantity="other">%1$s items skipped because they could be unsafe.</item>
+    </plurals>
+    <string name="extract_details">Details</string>
+    <string name="extract_show_all">Show all</string>
+    <plurals name="extract_damaged">
+        <item quantity="one">%1$s file was damaged and was not written:</item>
+        <item quantity="other">%1$s files were damaged and were not written:</item>
+    </plurals>
+    <!-- the title of the panel behind "Show all". -->
+    <string name="extract_not_written">Not written</string>
+    <string name="skip_reason_link">link</string>
+    <string name="skip_reason_device">device file</string>
+    <string name="skip_reason_invalid">invalid name</string>
+    <!-- a skipped name with its reason. -->
+    <string name="skip_line">%1$s (%2$s)</string>
+    <string name="conflict_title">%1$s already exists in %2$s</string>
+    <!-- when the folder has no name to show. -->
+    <string name="conflict_title_plain">%1$s already exists</string>
+    <string name="conflict_replace">Replace</string>
+    <string name="conflict_keep_both">Keep both</string>
+    <string name="conflict_skip">Skip</string>
+    <plurals name="conflict_apply_all">
+        <item quantity="one">Do this for %1$s conflict</item>
+        <item quantity="other">Do this for all %1$s conflicts</item>
+    </plurals>
+    <string name="extract_stop_title">Stop extracting?</string>
+    <string name="extract_stop_body">Files already extracted stay in the folder.</string>
+    <string name="extract_keep_going">Keep going</string>
+    <string name="extract_stop">Stop</string>
+    <string name="large_title">This file is unusually large</string>
+    <string name="large_body">It grows to much more than its packed size, which harmful archives do. Continue?</string>
+    <string name="space_title">Not enough space</string>
+    <!-- The spec's text has two sizes ("This needs X; the phone has Y free."); ExtractFailure carries none. -->
+    <string name="space_body_before">The folder does not have enough free space for these files.</string>
+    <string name="space_body_during">The destination ran out of space. Files already written stay there.</string>
+    <!-- a title for the folder-gone case when it is shown as a dialog. -->
+    <string name="extract_folder_gone_title">Folder not available</string>
+    <string name="extract_folder_gone">The folder is no longer available. Choose it again.</string>
+    <string name="extract_choose">Choose</string>
+    <string name="extract_password_title">Password needed</string>
+    <string name="extract_password_body">These files are protected. Open one of them first and enter the password, then extract again.</string>
+</resources>

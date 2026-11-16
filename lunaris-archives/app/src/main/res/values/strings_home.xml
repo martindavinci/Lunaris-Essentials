@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_search">Search recent archives</string>
+    <string name="home_clear">Clear recent archives</string>
+    <string name="home_continue">Continue</string>
+    <string name="home_create">Create an archive</string>
+    <string name="home_create_detail">ZIP from files or a folder</string>
+    <string name="home_recents">All recent archives</string>
+    <string name="home_results">Results</string>
+    <string name="home_open">Open an archive</string>
+    <string name="home_locked">Has a password</string>
+    <string name="home_empty_title">Nothing opened yet</string>
+    <string name="home_empty_detail">Your last archive will wait here</string>
+    <string name="home_empty_list">Archives you open appear here</string>
+    <string name="home_recents_off">Recent archives are turned off in Settings</string>
+    <string name="home_no_match">No recent archive matches “%1$s”</string>
+    <string name="home_clear_title">Clear recent archives?</string>
+    <string name="home_clear_message">The archives stay where they are. Only this list is cleared.</string>
+    <string name="home_clear_confirm">Clear</string>
+    <string name="home_menu_remove">Remove from recents</string>
+    <string name="home_menu_extract_all">Extract all…</string>
+    <string name="recents_yesterday">Yesterday</string>
+</resources>

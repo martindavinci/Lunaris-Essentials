@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="problem_rar4_title">This RAR can\'t be opened</string>
+    <string name="problem_rar4_body">It uses the older RAR 4 password protection, which no free app can read. Ask the sender for a ZIP or a newer RAR.</string>
+    <string name="problem_damaged_title">This archive is damaged</string>
+    <string name="problem_damaged_body">It ends too early or its contents don\'t match. Ask for a new copy.</string>
+    <string name="problem_show_readable">Show what could be read</string>
+    <string name="problem_not_archive_title">This isn\'t an archive Lunaris Archives can open</string>
+    <string name="problem_not_archive_body">Formats: ZIP, 7z, RAR, TAR, GZ, BZ2, XZ, ZST, LZ4, ISO, CPIO.</string>
+    <string name="problem_unsupported_title">This archive uses a feature Lunaris Archives can\'t read</string>
+    <string name="problem_unsupported_body">Ask the sender for a ZIP made with standard settings.</string>
+    <string name="problem_split_title">This is one part of a multi-part archive</string>
+    <string name="problem_split_body">Lunaris Archives can\'t open multi-part archives yet.</string>
+    <string name="problem_stopped_title">This archive stopped the reader</string>
+    <string name="problem_stopped_body">It may be damaged, or too big for this phone\'s memory.</string>
+    <string name="problem_gone_title">Can\'t find %1$s</string>
+    <string name="problem_gone_body">It may have been moved or deleted.</string>
+</resources>

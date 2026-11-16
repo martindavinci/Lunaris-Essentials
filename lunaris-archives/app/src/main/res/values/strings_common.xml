@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="back">Back</string>
+    <string name="cancel">Cancel</string>
+    <string name="close">Close</string>
+    <string name="ok">OK</string>
+    <string name="done">Done</string>
+    <string name="open">Open</string>
+    <string name="action_share">Share</string>
+    <string name="action_continue">Continue</string>
+    <string name="more_options">More options</string>
+    <string name="search_clear">Clear</string>
+    <!-- a picked file whose size the provider does not tell. -->
+    <string name="size_unknown">Size unknown</string>
+    <plurals name="count_files">
+        <item quantity="one">%1$s file</item>
+        <item quantity="other">%1$s files</item>
+    </plurals>
+    <plurals name="count_items">
+        <item quantity="one">%1$s item</item>
+        <item quantity="other">%1$s items</item>
+    </plurals>
+    <!-- Password dialog (frames 08) -->
+    <string name="password_title">Password needed</string>
+    <string name="password_body">%1$s is protected.</string>
+    <string name="password_label">Password</string>
+    <string name="password_remember">Remember until I close the app</string>
+    <string name="password_show">Show password</string>
+    <string name="password_hide">Hide password</string>
+    <string name="password_checking">Checking…</string>
+    <string name="password_wrong">Wrong password. Try again.</string>
+</resources>
