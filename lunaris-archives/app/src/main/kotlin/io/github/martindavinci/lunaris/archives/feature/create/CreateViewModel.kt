@@ -14,7 +14,11 @@ import io.github.martindavinci.lunaris.archives.create.ZipPaths
 import io.github.martindavinci.lunaris.archives.session.ArchiveSession
 import io.github.martindavinci.lunaris.archives.session.CreateInbox
 import io.github.martindavinci.lunaris.archives.session.OpenRequest
+import io.github.martindavinci.lunaris.archives.di.Background
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,6 +32,8 @@ class CreateViewModel @Inject constructor(
     private val runner: CreateRunner,
     inbox: CreateInbox,
     private val session: ArchiveSession,
+    /** Where picked files and folders are read: a big folder over SAF takes seconds. */
+    @param:Background private val background: CoroutineDispatcher,
 ) : ViewModel() {
     private val sources = CreateSources(tree)
     private val files = LinkedHashMap<String, List<SourceFile>>()
@@ -67,17 +73,22 @@ class CreateViewModel @Inject constructor(
     }
 
     private fun addFiles(uris: List<String>) {
-        sources.fromFiles(uris).forEach { file -> files[file.uri] = listOf(file) }
-        _state.update { it.copy(pickedFiles = true) }
-        refresh()
+        viewModelScope.launch(start = CoroutineStart.UNDISPATCHED) {
+            val found = withContext(background) { sources.fromFiles(uris) }
+            found.forEach { file -> files[file.uri] = listOf(file) }
+            _state.update { it.copy(pickedFiles = true) }
+            refresh()
+        }
     }
 
     private fun addFolder(uri: String) {
-        val (name, found) = sources.fromFolder(uri)
-        if (found.isNotEmpty()) files[uri] = found
-        folderName = name.takeIf { files.size == 1 && found.isNotEmpty() }
-        _state.update { it.copy(pickedFolder = true) }
-        refresh()
+        viewModelScope.launch(start = CoroutineStart.UNDISPATCHED) {
+            val (name, found) = withContext(background) { sources.fromFolder(uri) }
+            if (found.isNotEmpty()) files[uri] = found
+            folderName = name.takeIf { files.size == 1 && found.isNotEmpty() }
+            _state.update { it.copy(pickedFolder = true) }
+            refresh()
+        }
     }
 
     private fun refresh() {

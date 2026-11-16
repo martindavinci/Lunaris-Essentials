@@ -11,6 +11,7 @@ import io.github.martindavinci.lunaris.archives.session.IncomingCopy
 import io.github.martindavinci.lunaris.archives.session.IndexCache
 import io.github.martindavinci.lunaris.archives.session.PasswordMemory
 import io.github.martindavinci.lunaris.archives.settings.AppSettings
+import io.github.martindavinci.lunaris.archives.testing.CountingDispatcher
 import io.github.martindavinci.lunaris.archives.testing.FakeArchiveEngine
 import io.github.martindavinci.lunaris.archives.testing.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -47,7 +48,8 @@ class HomeViewModelTest {
         override fun remove() = Unit
     })
     private val session by lazy { ArchiveSession(FakeArchiveEngine(), IndexCache(temp.root), PasswordMemory(), IncomingCopy(temp.root)) }
-    private fun viewModel() = HomeViewModel(repo, settings, permissions, session, { readable }, marker)
+    private val background = CountingDispatcher()
+    private fun viewModel() = HomeViewModel(repo, settings, permissions, session, { readable }, marker, background)
 
     @Test fun showsRecentsNewestFirst_andTheFirstAsContinue() = runTest(dispatcher) {
         val s = viewModel().state.value
@@ -75,6 +77,10 @@ class HomeViewModelTest {
         vm.onAction(HomeAction.OpenRecent(item(2, "Photos.zip")))
         assertThat(vm.state.value.notice).isEqualTo(HomeNotice.Gone); assertThat(vm.state.value.navigate).isNull()
         assertThat(repo.recents.value.map { it.uri }).doesNotContain("content://a/2")
+    }
+    @Test fun aRecentIsCheckedInTheBackground() = runTest(dispatcher) {
+        viewModel().onAction(HomeAction.OpenRecent(item(2, "Photos.zip")))
+        assertThat(background.used).isEqualTo(1)
     }
     @Test fun continue_opensAtTheLastPath() = runTest(dispatcher) {
         val vm = viewModel()

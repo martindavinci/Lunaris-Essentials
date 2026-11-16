@@ -14,6 +14,7 @@ import io.github.martindavinci.lunaris.archives.session.CreateInbox
 import io.github.martindavinci.lunaris.archives.session.IncomingCopy
 import io.github.martindavinci.lunaris.archives.session.IndexCache
 import io.github.martindavinci.lunaris.archives.session.PasswordMemory
+import io.github.martindavinci.lunaris.archives.testing.CountingDispatcher
 import io.github.martindavinci.lunaris.archives.testing.FakeArchiveEngine
 import io.github.martindavinci.lunaris.archives.testing.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -47,7 +48,8 @@ class CreateViewModelTest {
     private val runner = CreateRunner(io, dispatcher)
     private val inbox = CreateInbox()
     private val session by lazy { ArchiveSession(FakeArchiveEngine(), IndexCache(temp.root), PasswordMemory(), IncomingCopy(temp.root)) }
-    private fun viewModel() = CreateViewModel(tree, runner, inbox, session)
+    private val background = CountingDispatcher()
+    private fun viewModel() = CreateViewModel(tree, runner, inbox, session, background)
 
     @Test fun startsWithJustTheTwoCards() = runTest(dispatcher) {
         val s = viewModel().state.value
@@ -65,6 +67,11 @@ class CreateViewModelTest {
         vm.onAction(CreateAction.AddFolder("tree:Holiday"))
         val item = vm.state.value.items.single()
         assertThat(item.fileCount).isEqualTo(2); assertThat(item.isFolder).isTrue(); assertThat(vm.state.value.name).isEqualTo("Holiday")
+    }
+    @Test fun foldersAndFilesAreReadInTheBackground() = runTest(dispatcher) {
+        val vm = viewModel()
+        vm.onAction(CreateAction.AddFolder("tree:Holiday")); vm.onAction(CreateAction.AddFiles(listOf("content://x/a.txt")))
+        assertThat(background.used).isEqualTo(2)
     }
     @Test fun removingAnItem_updatesTheTotal() = runTest(dispatcher) {
         val vm = viewModel()

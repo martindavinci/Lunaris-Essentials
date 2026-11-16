@@ -13,7 +13,11 @@ import io.github.martindavinci.lunaris.archives.session.ArchiveSession
 import io.github.martindavinci.lunaris.archives.session.OpenRequest
 import io.github.martindavinci.lunaris.archives.settings.AppSettings
 import java.util.Locale
+import io.github.martindavinci.lunaris.archives.di.Background
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,11 +35,12 @@ class HomeViewModel(
     private val session: ArchiveSession,
     private val readCheck: ReadCheck,
     marker: PrefsExtractMarker,
+    private val background: CoroutineDispatcher,
 ) : ViewModel() {
     @Inject constructor(
         recents: RecentsRepository, settings: SettingsSource, permissions: UriPermissions, session: ArchiveSession,
-        readCheck: ReadCheck, marker: PrefsExtractMarker,
-    ) : this(recents, settings.settings, permissions, session, readCheck, marker)
+        readCheck: ReadCheck, marker: PrefsExtractMarker, @Background background: CoroutineDispatcher,
+    ) : this(recents, settings.settings, permissions, session, readCheck, marker, background)
 
     private val _state = MutableStateFlow(HomeUiState())
     val state: StateFlow<HomeUiState> = _state.asStateFlow()
@@ -76,15 +81,18 @@ class HomeViewModel(
         }
     }
 
+    /** Opening a descriptor can wait on a slow provider: never on the main thread. */
     private fun openRecent(item: RecentArchive, extractAll: Boolean) {
         _state.update { it.copy(menuFor = null) }
-        if (!readCheck.canRead(item.uri)) {
-            viewModelScope.launch { recents.remove(item.uri)?.let { permissions.release(it.uri) } }
-            _state.update { it.copy(notice = HomeNotice.Gone) }
-            return
+        viewModelScope.launch(start = CoroutineStart.UNDISPATCHED) {
+            if (!withContext(background) { readCheck.canRead(item.uri) }) {
+                recents.remove(item.uri)?.let { permissions.release(it.uri) }
+                _state.update { it.copy(notice = HomeNotice.Gone) }
+                return@launch
+            }
+            val id = session.register(OpenRequest(item.uri, null, null, null, startPath = item.lastPath, extractAll = extractAll))
+            navigate(if (extractAll) HomeNav.ExtractAll(id) else HomeNav.Browser(id))
         }
-        val id = session.register(OpenRequest(item.uri, null, null, null, startPath = item.lastPath, extractAll = extractAll))
-        navigate(if (extractAll) HomeNav.ExtractAll(id) else HomeNav.Browser(id))
     }
 
     /** The permission is kept until the undo is no longer possible (the next notice replaces this one). */
