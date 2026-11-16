@@ -15,8 +15,8 @@ import kotlinx.coroutines.flow.Flow
 interface SourcesPort {
     suspend fun open(uri: String): SourceResult
     suspend fun copyIn(uri: String, bytes: Long?, onProgress: (Long) -> Unit): ArchiveSource
-    /** An archive copied out of another one (nested). */
-    fun fromFile(path: String, name: String): ArchiveSource
+    /** An archive copied out of another one (nested); [uri] is its content: URI, the one other apps can read. */
+    fun fromFile(path: String, name: String, uri: String): ArchiveSource
 }
 
 /** The recents, told where the user is in an archive. */
@@ -34,5 +34,5 @@ class SourcesAdapter @Inject constructor(private val sources: ArchiveSources) : 
     override suspend fun open(uri: String): SourceResult = sources.open(Uri.parse(uri))
     override suspend fun copyIn(uri: String, bytes: Long?, onProgress: (Long) -> Unit): ArchiveSource =
         sources.copyIn(Uri.parse(uri), bytes, onProgress)
-    override fun fromFile(path: String, name: String): ArchiveSource = sources.fromFile(File(path), name)
+    override fun fromFile(path: String, name: String, uri: String): ArchiveSource = sources.fromFile(File(path), name, uri)
 }

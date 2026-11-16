@@ -51,7 +51,8 @@ class BrowserViewModelTest {
         override suspend fun open(uri: String) =
             SourceResult.Ready(ArchiveSource(uri, "notes.zip", 10, 1, "%016x".format(uri.length), ArchiveKind.ZIP) { error("unused") })
         override suspend fun copyIn(uri: String, bytes: Long?, onProgress: (Long) -> Unit): ArchiveSource = error("unused")
-        override fun fromFile(path: String, name: String): ArchiveSource = error("unused")
+        override fun fromFile(path: String, name: String, uri: String) =
+            ArchiveSource(uri, name, 10, 1, "%016x".format(path.length), ArchiveKind.ZIP) { error("unused") }
     }
     private val preferences = object : BrowserPreferences {
         override val settings = flowOf(AppSettings())
@@ -138,6 +139,12 @@ class BrowserViewModelTest {
         assertThat(session.get(id)).isNotNull()
         store.clear()
         assertThat(session.get(id)).isNull()
+    }
+    @Test fun aNestedArchive_isSharedThroughItsContentUri() = runTest(dispatcher) {
+        listed()
+        val vm = viewModel(session.register(OpenRequest("content://app.files/open/k/inner.zip", null, 0, "/cache/open/k/inner.zip"))); advanceUntilIdle()
+        vm.onAction(BrowserAction.ShareArchive)
+        assertThat((vm.state.value.launch as LaunchRequest.Send).uris).containsExactly("content://app.files/open/k/inner.zip")
     }
     @Test fun openRowOfAFolder_entersIt_andUpGoesBack() = runTest(dispatcher) {
         listed(); val vm = viewModel(); advanceUntilIdle()
