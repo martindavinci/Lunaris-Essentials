@@ -80,4 +80,12 @@
     <!-- No app, protected RAR 4 entry -->
     <string name="browser_no_app">No app on this phone opens .%1$s files</string>
     <string name="browser_no_app_plain">No app on this phone opens this file</string>
+    <!-- Notices (snackbars) -->
+    <string name="notice_damaged">%1$s couldn\'t be read: that part of the archive is damaged</string>
+    <string name="notice_too_deep">Archives nested this deep aren\'t opened</string>
+    <string name="notice_no_space">Not enough free space on this phone</string>
+    <string name="notice_changed">The archive changed, so it was read again</string>
+    <string name="notice_share_failed">Couldn\'t share these files</string>
+    <!-- Temporary start screen, until Home exists -->
+    <string name="home_open_archive">Open an archive</string>
 </resources>

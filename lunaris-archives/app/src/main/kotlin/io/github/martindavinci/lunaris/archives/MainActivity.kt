@@ -4,12 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.martindavinci.lunaris.archives.engine.EngineProcess
+import io.github.martindavinci.lunaris.archives.feature.AppNavHost
+import io.github.martindavinci.lunaris.archives.session.ArchiveSession
+import io.github.martindavinci.lunaris.archives.session.OpenRequest
 import io.github.martindavinci.lunaris.archives.files.CacheJanitor
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -19,12 +19,17 @@ import io.github.martindavinci.lunaris.archives.ui.theme.LunarisArchivesTheme
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @Inject lateinit var cacheJanitor: CacheJanitor
+    @Inject lateinit var session: ArchiveSession
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sweepOncePerProcess()
         enableEdgeToEdge()
-        setContent { LunarisArchivesTheme { Surface(Modifier.fillMaxSize()) {} } }
+        setContent {
+            LunarisArchivesTheme {
+                AppNavHost(onOpenRequest = { uri -> session.register(OpenRequest(uri.toString(), null, null, null)) })
+            }
+        }
     }
 
     /** Old temp copies go at start-up, in the main process only (never in the isolated engine). */
