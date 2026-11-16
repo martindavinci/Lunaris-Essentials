@@ -1,11 +1,11 @@
 package io.github.martindavinci.lunaris.archives.files
 
 import io.github.martindavinci.lunaris.archives.archive.ArchiveEntry
-import io.github.martindavinci.lunaris.archives.archive.ArchiveKind
 import io.github.martindavinci.lunaris.archives.browse.EntryMime
 import io.github.martindavinci.lunaris.archives.engine.ArchiveEngine
 import io.github.martindavinci.lunaris.archives.engine.EngineEvent
 import io.github.martindavinci.lunaris.archives.engine.EngineRoute
+import io.github.martindavinci.lunaris.archives.engine.EntryRoutes
 import io.github.martindavinci.lunaris.archives.engine.EngineStatus
 import io.github.martindavinci.lunaris.archives.engine.EngineStoppedException
 import io.github.martindavinci.lunaris.archives.engine.EntryOutcome
@@ -52,7 +52,7 @@ class EntryCopier @Inject constructor(
     private val platformMime: PlatformMime,
 ) : EntryOpener {
     override suspend fun copy(archive: OpenArchive, entry: ArchiveEntry, password: CharArray?, onProgress: (Long) -> Unit): CopyResult {
-        val route = routeFor(archive, entry) ?: return CopyResult.Rar4Password
+        val route = EntryRoutes.routeFor(archive, entry) ?: return CopyResult.Rar4Password
         if (entry.encrypted && password == null) return CopyResult.NeedsPassword
         copies.existingCopy(archive.source.key, entry)?.let { return ready(it) }
         if (freeBytes.get() < (entry.size ?: 0) + Limits.CACHE_MARGIN_BYTES) return CopyResult.NoSpace
@@ -70,18 +70,6 @@ class EntryCopier @Inject constructor(
         }
         copies.trim(target, System.currentTimeMillis())
         return ready(target)
-    }
-
-    /** Spec "Instradamento" 2: encrypted entries go to the reader that can decrypt them; null for a protected RAR4. */
-    private fun routeFor(archive: OpenArchive, entry: ArchiveEntry): EngineRoute? {
-        if (!entry.encrypted) return archive.route
-        return when (archive.index.kind) {
-            ArchiveKind.ZIP -> EngineRoute.ZIP4J
-            ArchiveKind.SEVEN_Z -> EngineRoute.SEVEN_Z
-            ArchiveKind.RAR5 -> EngineRoute.LIB_RAR
-            ArchiveKind.RAR4 -> null
-            else -> archive.route
-        }
     }
 
     /** Null when the entry was written whole; else why not. */
