@@ -39,4 +39,8 @@
     </plurals>
     <string name="create_stop_title">Stop creating the archive?</string>
     <string name="create_stop_body">The unfinished file is removed.</string>
+    <string name="create_failed_source">A file could not be read, so the archive was not made.</string>
+    <string name="create_failed_space">Not enough space for the archive.</string>
+    <string name="create_failed_target">The archive could not be saved.</string>
+    <string name="home_new_archive">New archive</string>
 </resources>
