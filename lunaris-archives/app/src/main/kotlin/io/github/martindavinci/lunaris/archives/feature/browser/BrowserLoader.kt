@@ -20,6 +20,10 @@ internal class BrowserLoader(
 ) {
     private var request: OpenRequest? = null
     private var id: String? = null
+    private var started = false
+
+    /** What Home asked for (the first folder, "Extract all" at once), given only on the first showing. */
+    fun takeStart(): OpenRequest? = request.takeUnless { started }.also { started = true }
 
     /** Null when nothing more is to be done (the problem is already in the state). */
     suspend fun load(id: String?): OpenOutcome? {

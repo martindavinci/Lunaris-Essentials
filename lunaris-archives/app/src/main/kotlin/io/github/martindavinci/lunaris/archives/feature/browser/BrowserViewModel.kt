@@ -119,15 +119,17 @@ class BrowserViewModel @Inject constructor(
     private fun show(opened: OpenArchive) {
         archive = opened
         val folders = FolderView(opened.index).also { view = it }
+        val start = loader.takeStart()
         _state.update { state ->
             val named = state.copy(
                 title = opened.source.name, badge = opened.index.formatLabel, header = BrowserContent.header(opened, folders),
                 loading = LoadState.Ready, hiddenUnsafe = folders.hiddenUnsafe, capped = opened.index.cappedAtLimit,
                 partial = opened.index.partial, problem = null, password = null,
             )
-            BrowserContent.showFolder(named, folders, emptyList())
+            BrowserContent.showFolder(named, folders, start?.startPath.orEmpty())
         }
-        visitedPath.value = emptyList()
+        visitedPath.value = _state.value.path
+        if (start?.extractAll == true) onAction(BrowserAction.ExtractAll)
     }
 
     private fun askPassword(open: PendingOpen, wrong: Boolean) {

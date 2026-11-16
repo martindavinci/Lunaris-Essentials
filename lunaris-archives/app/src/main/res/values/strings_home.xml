@@ -20,4 +20,9 @@
     <string name="home_menu_remove">Remove from recents</string>
     <string name="home_menu_extract_all">Extract all…</string>
     <string name="recents_yesterday">Yesterday</string>
+    <string name="home_removed">Removed from recents. The archive is not touched.</string>
+    <string name="home_undo">Undo</string>
+    <string name="home_gone">This archive is no longer available, so it left the list</string>
+    <string name="home_no_picker">No app on this phone can pick files</string>
+    <string name="home_extract_recovered">An extraction was stopped halfway. Its unfinished file was removed.</string>
 </resources>

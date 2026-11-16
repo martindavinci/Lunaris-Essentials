@@ -27,10 +27,11 @@ import io.github.martindavinci.lunaris.archives.R
 import io.github.martindavinci.lunaris.archives.extract.SafTarget
 import io.github.martindavinci.lunaris.archives.feature.browser.BrowserRoute
 import io.github.martindavinci.lunaris.archives.feature.create.CreateRoute
+import io.github.martindavinci.lunaris.archives.feature.home.HomeRoute
 import io.github.martindavinci.lunaris.archives.feature.browser.ExtractArgs
 import io.github.martindavinci.lunaris.archives.feature.extract.ExtractRoute
 
-/** Home (for now a single "Open an archive" button) and the browser. */
+/** Home, the browser, extraction and New archive. */
 @Composable
 fun AppNavHost(
     onOpenRequest: (Uri) -> String,
@@ -48,9 +49,11 @@ fun AppNavHost(
     Surface(color = MaterialTheme.colorScheme.background) {
         NavHost(navController = nav, startDestination = Routes.HOME) {
             composable(Routes.HOME) {
-                OpenArchiveStart(
-                    onPicked = { uri -> nav.navigate(Routes.browser(onOpenRequest(uri))) },
+                HomeRoute(
+                    onBrowse = { id -> nav.navigate(Routes.browser(id)) },
+                    onExtractAll = { id -> nav.navigate(Routes.browser(id)) },
                     onCreate = { nav.navigate(Routes.CREATE) },
+                    onSettings = {},
                 )
             }
             composable(Routes.CREATE) { entry ->
@@ -75,14 +78,3 @@ fun AppNavHost(
         }
     }
 }
-
-@Composable
-private fun OpenArchiveStart(onPicked: (Uri) -> Unit, onCreate: () -> Unit) {
-    val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri -> uri?.let(onPicked) }
-    Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
-        TextButton(onClick = { picker.launch(arrayOf(ANY_TYPE)) }) { Text(stringResource(R.string.home_open_archive)) }
-        TextButton(onClick = onCreate) { Text(stringResource(R.string.home_new_archive)) }
-    }
-}
-
-private const val ANY_TYPE = "*/*"

@@ -74,6 +74,19 @@ class BrowserViewModelTest {
         assertThat(vm.state.value.loading).isEqualTo(LoadState.Ready)
         assertThat(vm.state.value.header!!.fileCount).isEqualTo(5)
     }
+    @Test fun continueOpensAtTheRememberedFolder_andFallsBackToTheRoot() = runTest(dispatcher) {
+        listed(); listed()
+        val there = viewModel(session.register(OpenRequest("content://a/1", null, null, null, startPath = listOf("docs", "sub")))); advanceUntilIdle()
+        assertThat(there.state.value.path).containsExactly("docs", "sub").inOrder()
+        val gone = viewModel(session.register(OpenRequest("content://a/2", null, null, null, startPath = listOf("nope")))); advanceUntilIdle()
+        assertThat(gone.state.value.path).isEmpty()
+    }
+    @Test fun extractAllFromHome_asksForTheFolderOnceOpened() = runTest(dispatcher) {
+        listed()
+        val vm = viewModel(session.register(OpenRequest("content://a/1", null, null, null, extractAll = true))); advanceUntilIdle()
+        val launch = vm.state.value.launch as LaunchRequest.Extract
+        assertThat(launch.jobArgs.indices.size).isEqualTo(archive.entries.size)
+    }
     @Test fun readingHintAppearsOnlyAfter300ms() = runTest(dispatcher) {
         listed(); engine.listGate = CompletableDeferred()
         val vm = viewModel()
