@@ -58,7 +58,7 @@ target_link_libraries(archive PRIVATE ${Z_LIBRARY} bz2 liblzma lz4 zstd)
 
 # Our JNI glue
 add_library(lunaris_engine SHARED
-    jni/engine_jni.c)
+    jni/engine_jni.c jni/engine_read.c jni/engine_sink.c jni/engine_list.c jni/engine_extract.c)
 target_compile_definitions(lunaris_engine PRIVATE _FILE_OFFSET_BITS=64)
 target_include_directories(lunaris_engine PRIVATE jni)
 target_compile_options(lunaris_engine PRIVATE -Wall -Wextra -Werror)
