@@ -9,17 +9,19 @@ Remove-Item -Recurse -Force $src -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force "$src/docs" | Out-Null
 Set-Content -NoNewline -Encoding ascii -Path "$src/docs/secret.md" -Value "# Secret notes`n"
 Set-Content -NoNewline -Encoding ascii -Path "$src/readme.txt" -Value "plain readme`n"
+# Big enough that 7-Zip really compresses it (tiny files are stored).
+Set-Content -NoNewline -Encoding ascii -Path "$src/docs/big.md" -Value ("lunaris archives test line`n" * 400)
 $p = "-pLunaris-2026"
 $targets = "aes.zip", "zipcrypto.zip", "deflate64-aes.zip", "data-enc.7z", "head-enc.7z", "ppmd-enc.7z"
 $targets | ForEach-Object { Remove-Item -Force (Join-Path $out $_) -ErrorAction SilentlyContinue }
 Push-Location $src
 try {
-    & $7z a -tzip -mem=AES256 $p "$out/aes.zip" docs readme.txt | Out-Null
-    & $7z a -tzip -mem=ZipCrypto $p "$out/zipcrypto.zip" docs readme.txt | Out-Null
-    & $7z a -tzip -mm=Deflate64 -mem=AES256 $p "$out/deflate64-aes.zip" docs | Out-Null
-    & $7z a -t7z -mhe=off $p "$out/data-enc.7z" docs readme.txt | Out-Null
-    & $7z a -t7z -mhe=on $p "$out/head-enc.7z" docs readme.txt | Out-Null
-    & $7z a -t7z -m0=PPMd -mhe=off $p "$out/ppmd-enc.7z" docs | Out-Null
+    & $7z a -tzip -mem=AES256 $p "$out/aes.zip" docs/secret.md readme.txt docs/big.md | Out-Null
+    & $7z a -tzip -mem=ZipCrypto $p "$out/zipcrypto.zip" docs/secret.md readme.txt | Out-Null
+    & $7z a -tzip -mm=Deflate64 -mem=AES256 $p "$out/deflate64-aes.zip" docs/big.md | Out-Null
+    & $7z a -t7z -mhe=off $p "$out/data-enc.7z" docs/secret.md readme.txt | Out-Null
+    & $7z a -t7z -mhe=on $p "$out/head-enc.7z" docs/secret.md readme.txt | Out-Null
+    & $7z a -t7z -m0=PPMd -mhe=off $p "$out/ppmd-enc.7z" docs/big.md | Out-Null
 } finally {
     Pop-Location
     Remove-Item -Recurse -Force $src
