@@ -122,6 +122,9 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.xz)
+    implementation(libs.zip4j)
+    implementation(libs.commons.compress)
+    implementation(project(":lib-rar"))
 
     testImplementation(libs.junit)
     testImplementation(libs.truth)

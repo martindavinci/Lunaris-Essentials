@@ -11,3 +11,7 @@
     boolean onProgress(long);
     void onError(int, byte[]);
 }
+# Optional codecs Commons Compress refers to but the app never uses.
+-dontwarn org.objectweb.asm.**
+-dontwarn com.github.luben.zstd.**
+-dontwarn org.brotli.dec.**
