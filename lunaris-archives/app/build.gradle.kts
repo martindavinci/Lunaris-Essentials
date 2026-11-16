@@ -35,6 +35,7 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "0.0.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         ndk { abiFilters += setOf("arm64-v8a", "armeabi-v7a", "x86_64") }
         externalNativeBuild {
             cmake { arguments += listOf("-DANDROID_STL=none", "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON") }
@@ -126,4 +127,7 @@ dependencies {
     testImplementation(libs.truth)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.org.json)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.truth)
 }
