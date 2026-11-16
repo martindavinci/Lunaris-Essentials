@@ -19,7 +19,10 @@ class FakeTree(
     private val goneAfterWrites: Int? = null,
     private val failWithNoSpaceAfterBytes: Long? = null,
     private val renames: Boolean = true,
+    private val goneOnRead: Boolean = false,
 ) : SafTarget {
+    /** How many folders were read: the runner must read them off the caller's thread. */
+    var childrenCalls = 0
     val folders = mutableSetOf<List<String>>(emptyList())
     val files = mutableMapOf<List<String>, MutableMap<String, ByteArray>>()
     private var opened = 0
@@ -30,6 +33,8 @@ class FakeTree(
     override fun freeBytes(): Long? = free
 
     override fun children(folder: List<String>): ExistingNames? {
+        childrenCalls++
+        if (goneOnRead) throw FolderGoneException()
         val path = find(folder) ?: return null
         val subfolders = folders.filter { it.size == path.size + 1 && it.take(path.size) == path }.map { lower(it.last()) }.toSet()
         return ExistingNames(files[path].orEmpty().keys.map(::lower).toSet(), subfolders)

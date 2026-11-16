@@ -45,14 +45,23 @@ class ExtractionRunner internal constructor(
     private var running: Job? = null
     private var large: CompletableDeferred<Boolean>? = null
 
+    /** The plan and one query per destination folder run in the background: a big tree takes seconds. */
     fun start(job: ExtractJob) {
         if (_state.value !is ExtractionState.Idle) return
         this.job = job
-        val planned = ExtractionPlan.of(job.entries).also { plan = it }
-        val folders = (listOf(emptyList<String>()) + planned.folders + planned.files.map { it.folder }).distinct()
-        existing = folders.mapNotNull { folder -> job.target.children(folder)?.let { folder to it } }.toMap()
-        val conflicts = ConflictPlan.conflicts(planned, existing)
-        if (conflicts.isEmpty()) run(emptyMap()) else _state.value = ExtractionState.Conflicts(conflicts, current = 0)
+        _state.value = ExtractionState.Running(0, job.entries.size, 0, 0, "")
+        scope.launch {
+            try {
+                val planned = ExtractionPlan.of(job.entries).also { plan = it }
+                val folders = (listOf(emptyList<String>()) + planned.folders + planned.files.map { it.folder }).distinct()
+                existing = folders.mapNotNull { folder -> job.target.children(folder)?.let { folder to it } }.toMap()
+                val conflicts = ConflictPlan.conflicts(planned, existing)
+                if (conflicts.isEmpty()) run(emptyMap()) else _state.value = ExtractionState.Conflicts(conflicts, current = 0)
+            } catch (_: FolderGoneException) {
+                job.password?.fill(WIPED)
+                _state.value = ExtractionState.Failed(ExtractFailure.FOLDER_GONE)
+            }
+        }
     }
 
     fun resolve(choices: Map<PlannedFile, ConflictChoice>) {

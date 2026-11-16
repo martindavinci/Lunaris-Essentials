@@ -62,6 +62,17 @@ class ExtractionRunnerTest {
         assertThat(finished.skipped).containsExactly(SkippedEntry("../x", SkipReason.OUTSIDE_FOLDER), SkippedEntry("link", SkipReason.LINK))
         assertThat(tree.files.values.flatMap { it.keys }).containsExactly("a.md", "b.txt")
     }
+    @Test fun start_readsTheFolderInTheBackground() = runTest(dispatcher) {
+        val tree = FakeTree(); script(file(0), file(1))
+        runner.run(tree)
+        assertThat(tree.childrenCalls).isEqualTo(0)
+        advanceUntilIdle()
+        assertThat(tree.childrenCalls).isGreaterThan(0); assertThat(finished.written).isEqualTo(2)
+    }
+    @Test fun folderGoneWhilePlanning_failsWithFolderGone() = runTest(dispatcher) {
+        runner.run(FakeTree(goneOnRead = true)); advanceUntilIdle()
+        assertThat(runner.state.value).isEqualTo(ExtractionState.Failed(ExtractFailure.FOLDER_GONE))
+    }
     @Test fun conflicts_stopBeforeWriting_untilResolved() = runTest(dispatcher) {
         val tree = FakeTree(); tree.open(tree.createFile(tree.ensureFolder(emptyList()), "b.txt")).use { it.write(1) }
         script(file(0), file(1))
