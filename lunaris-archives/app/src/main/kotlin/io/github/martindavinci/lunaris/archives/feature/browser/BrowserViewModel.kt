@@ -240,6 +240,11 @@ class BrowserViewModel @Inject constructor(
         viewModelScope.launch { preferences.saveSort(order) }
     }
 
+    /** Leaving the browser closes its archive: the index, the password kept with it and any incoming copy. */
+    override fun onCleared() {
+        archive?.let { session.close(it.id) }
+    }
+
     private companion object {
         const val SEARCH_DEBOUNCE_MILLIS = 150L
         const val VISIT_DEBOUNCE_MILLIS = 1_000L

@@ -1,6 +1,10 @@
 package io.github.martindavinci.lunaris.archives.feature.browser
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.google.common.truth.Truth.assertThat
 import io.github.martindavinci.lunaris.archives.archive.ArchiveKind
 import io.github.martindavinci.lunaris.archives.browse.SortField
@@ -124,6 +128,16 @@ class BrowserViewModelTest {
         assertThat(vm.state.value.path).isEmpty()
         advanceUntilIdle()
         assertThat(vm.state.value.path).containsExactly("docs")
+    }
+    @Test fun leavingTheBrowser_closesItsArchive() = runTest(dispatcher) {
+        listed()
+        val id = session.register(OpenRequest("content://a/1", null, null, null))
+        val store = ViewModelStore()
+        ViewModelProvider.create(store, viewModelFactory { initializer { viewModel(id) } })[BrowserViewModel::class]
+        advanceUntilIdle()
+        assertThat(session.get(id)).isNotNull()
+        store.clear()
+        assertThat(session.get(id)).isNull()
     }
     @Test fun openRowOfAFolder_entersIt_andUpGoesBack() = runTest(dispatcher) {
         listed(); val vm = viewModel(); advanceUntilIdle()

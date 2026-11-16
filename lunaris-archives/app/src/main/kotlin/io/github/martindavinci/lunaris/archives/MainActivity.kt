@@ -27,6 +27,7 @@ import io.github.martindavinci.lunaris.archives.extract.TreeTargets
 import io.github.martindavinci.lunaris.archives.feature.AppNavHost
 import io.github.martindavinci.lunaris.archives.files.CacheJanitor
 import io.github.martindavinci.lunaris.archives.open.OpenIntent
+import io.github.martindavinci.lunaris.archives.session.ArchiveSession
 import io.github.martindavinci.lunaris.archives.session.PasswordMemory
 import io.github.martindavinci.lunaris.archives.settings.AppLocales
 import io.github.martindavinci.lunaris.archives.ui.theme.isDark
@@ -39,6 +40,7 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     @Inject lateinit var cacheJanitor: CacheJanitor
     @Inject lateinit var passwordMemory: PasswordMemory
+    @Inject lateinit var session: ArchiveSession
     @Inject lateinit var extractMarker: PrefsExtractMarker
     @Inject lateinit var treeTargets: TreeTargets
     @Inject lateinit var extractStarter: ExtractStarter
@@ -100,7 +102,10 @@ class MainActivity : ComponentActivity() {
 
     /** "Remember until I close the app" ends here; a rotation is not closing. */
     override fun onDestroy() {
-        if (isFinishing && !isChangingConfigurations) passwordMemory.forgetAll()
+        if (isFinishing && !isChangingConfigurations) {
+            passwordMemory.forgetAll()
+            session.closeAll()
+        }
         super.onDestroy()
     }
 

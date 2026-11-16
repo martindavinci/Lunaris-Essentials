@@ -40,6 +40,13 @@ class ArchiveSessionTest {
         background.open(source())
         assertThat(counting.used).isAtLeast(2)   // the cache read that missed, then the write
     }
+    @Test fun closeAll_forgetsEveryArchiveAndItsPassword() = runTest {
+        answer(EngineRoute.LIBARCHIVE, ListResult.Listed(index("a.md")))
+        val a = opened(session.open(source()))
+        session.keepPassword(a.id, "pw".toCharArray(), remember = false)
+        session.closeAll()
+        assertThat(session.get(a.id)).isNull(); assertThat(session.passwordFor(a.id)).isNull()
+    }
     @Test fun plainZip_opensWithLibarchive() = runTest {
         answer(EngineRoute.LIBARCHIVE, listed)
         assertThat(opened(session.open(source())).route).isEqualTo(EngineRoute.LIBARCHIVE)

@@ -99,6 +99,14 @@ class ArchiveSession @Inject constructor(
         open.values.filter { it.parentId == id }.map { it.id }.forEach(::close)
     }
 
+    /** The app is closing: every archive, its password and its incoming copy go. */
+    @Synchronized
+    fun closeAll() {
+        open.keys.toList().forEach(::close)
+        openPasswords.values.forEach { it.fill(WIPED) }
+        openPasswords.clear()
+    }
+
     private suspend fun drive(id: String, start: PendingOpen, password: CharArray?, remember: Boolean): OpenOutcome {
         var pending = start
         repeat(MAX_ROUNDS) {
