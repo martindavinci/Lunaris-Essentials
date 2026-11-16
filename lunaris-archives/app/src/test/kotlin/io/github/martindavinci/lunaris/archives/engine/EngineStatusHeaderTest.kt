@@ -5,9 +5,14 @@ import org.junit.Test
 import java.io.File
 
 class EngineStatusHeaderTest {
+    private val header = File("../native/jni/engine_status.h").readText()
+    private fun codes(prefix: String) =
+        Regex("""#define ${prefix}_([A-Z0-9_]+) (\d+)""").findAll(header).associate { it.groupValues[1] to it.groupValues[2].toInt() }
+
     @Test fun cHeaderMatchesKotlin() {
-        val header = File("../native/jni/engine_status.h").readText()
-        val c = Regex("""#define ENGINE_([A-Z0-9_]+) (\d+)""").findAll(header).associate { it.groupValues[1] to it.groupValues[2].toInt() }
-        assertThat(c).isEqualTo(EngineStatus.entries.associate { it.name to it.code })
+        assertThat(codes("ENGINE")).isEqualTo(EngineStatus.entries.associate { it.name to it.code })
+    }
+    @Test fun entryOutcomesMatchKotlin() {
+        assertThat(codes("ENTRY")).isEqualTo(EntryOutcome.entries.associate { it.name to it.code })
     }
 }
