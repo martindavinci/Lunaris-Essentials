@@ -33,4 +33,19 @@ class RawPathTest {
         assertThrows(NoSuchElementException::class.java) { Encryption.of(99) }
         assertThrows(NoSuchElementException::class.java) { HostOs.of(99) }
     }
+    @Test fun sameEntry_toleratesHowEachReaderSpellsTheName() {
+        fun p(text: String) = RawPath.of(text.toByteArray(Charsets.UTF_8))
+        val nfc = "Résumé.pdf"
+        val nfd = "Résumé.pdf"
+        assertThat(p(nfd).sameEntryAs(p(nfc))).isTrue()
+        assertThat(p("docs\\a.txt").sameEntryAs(p("docs/a.txt"))).isTrue()
+        assertThat(p("a.txt\u0000tail").sameEntryAs(p("a.txt"))).isTrue()
+        assertThat(p("a.txt").sameEntryAs(p("b.txt"))).isFalse()
+        assertThat(p("a.txt").sameEntryAs(null)).isFalse()
+    }
+    @Test fun sameEntry_ofBytesThatAreNotUtf8_needsTheSameBytes() {
+        val cp437 = RawPath.of(byteArrayOf(0x82.toByte(), 0x41))
+        assertThat(cp437.sameEntryAs(RawPath.of(byteArrayOf(0x82.toByte(), 0x41)))).isTrue()
+        assertThat(cp437.sameEntryAs(RawPath.of(byteArrayOf(0x83.toByte(), 0x41)))).isFalse()
+    }
 }

@@ -46,9 +46,20 @@ class ZipDirectoryTest {
             assertThat(LocalHeader.name(channel, channel.size())).isNull()
         }
     }
+    @Test fun dataInFrontOfTheZip_shiftsTheOffsetsLikeLibarchive() {
+        val zip = Fixtures.file("reordered.zip").readBytes()
+        val prefixed = File.createTempFile("sfx", ".zip").apply { deleteOnExit(); writeBytes(ByteArray(PREFIX) + zip) }
+        FileChannel.open(prefixed.toPath()).use { channel ->
+            val dir = ZipDirectory.read(channel)
+            assertThat(names(dir.inReadOrder)).containsExactly("first.txt", "second.txt", "third.txt").inOrder()
+            dir.inReadOrder.forEach { assertThat(LocalHeader.name(channel, it.localHeaderOffset)).isEqualTo(it.name) }
+        }
+    }
     @Test fun truncatedFile_throws() {
         val f = File.createTempFile("cut", ".zip").apply { writeBytes(Fixtures.bytes("plain.zip").copyOf(40)); deleteOnExit() }
         assertThrows(ZipDirectoryException::class.java) { FileChannel.open(f.toPath()).use { ZipDirectory.read(it) } }
     }
     @Test fun notAZip_throws() { assertThrows(ZipDirectoryException::class.java) { read("not-archive.txt") } }
+
+    private companion object { const val PREFIX = 100 }
 }

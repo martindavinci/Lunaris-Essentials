@@ -59,7 +59,7 @@ class NativeSink(private val out: WireWriter, private val expected: Map<Long, Ra
 
     fun onEntryStart(index: Long, path: ByteArray, size: Long, hasSize: Boolean, archiveBytes: Long): Int {
         val raw = RawPath.owning(path)
-        if (expected != null && expected[index] != raw) return MISMATCH
+        if (expected != null && !raw.sameEntryAs(expected[index])) return MISMATCH
         entryLimit = EntryPump.limitFor(size.takeIf { hasSize })
         entryBytes = 0
         lastErrno = 0

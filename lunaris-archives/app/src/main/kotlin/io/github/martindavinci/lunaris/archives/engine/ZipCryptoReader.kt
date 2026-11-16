@@ -57,7 +57,7 @@ class ZipCryptoReader : IsolatedReader {
             if (index < 0 || index >= ordered.size) return EngineStatus.PATH_MISMATCH
             val cd = ordered[index.toInt()]
             val name = LocalHeader.name(volume.channel, cd.localHeaderOffset) ?: return EngineStatus.PATH_MISMATCH
-            if (expected != null && expected[index] != name) return EngineStatus.PATH_MISMATCH
+            if (expected != null && !name.sameEntryAs(expected[index])) return EngineStatus.PATH_MISMATCH
             out.send { dataStart(index, name); progress(cd.localHeaderOffset) }
             val outcome = copyOne(job, volume.channel, cd, password, out)
             out.send { dataEnd(index, outcome) }

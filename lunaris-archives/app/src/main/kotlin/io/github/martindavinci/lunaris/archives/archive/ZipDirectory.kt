@@ -57,16 +57,22 @@ class ZipDirectory private constructor(val entries: List<ZipCdEntry>, val commen
             var cdSize = tail.getInt(at + EOCD_CD_SIZE).toLong() and MASK_32
             var cdOffset = tail.getInt(at + EOCD_CD_OFFSET).toLong() and MASK_32
             val entryCount = tail.getShort(at + EOCD_ENTRIES).toInt() and MASK_16
+            var zip64 = false
             if (entryCount == MASK_16 || cdSize == MASK_32 || cdOffset == MASK_32) {
-                zip64(channel, end)?.let { (size64, offset64) -> cdSize = size64; cdOffset = offset64 }
+                zip64(channel, end)?.let { (size64, offset64) -> cdSize = size64; cdOffset = offset64; zip64 = true }
             }
             if (cdSize < 0 || cdOffset < 0 || cdOffset > end || cdSize > end - cdOffset) throw ZipDirectoryException("directory out of range")
+            // Data in front of the ZIP (a self-extracting stub): every recorded offset is short by its
+            // length. libarchive corrects them the same way, so both keep naming the same entries.
+            val shift = if (zip64) 0L else (end - cdSize) - cdOffset
+            if (shift > 0) cdOffset += shift
             val commentLength = tail.getShort(at + EOCD_COMMENT_LENGTH).toInt() and MASK_16
             val comment = ByteArray(commentLength).takeIf { commentLength > 0 }?.also {
                 tail.position(at + EOCD_BYTES)
                 tail.get(it)
             }
-            return ZipDirectory(readEntries(channel, cdOffset, cdSize), comment)
+            val entries = readEntries(channel, cdOffset, cdSize)
+            return ZipDirectory(if (shift > 0) entries.map { it.copy(localHeaderOffset = it.localHeaderOffset + shift) } else entries, comment)
         }
 
         private fun readEntries(channel: FileChannel, cdOffset: Long, cdSize: Long): List<ZipCdEntry> {

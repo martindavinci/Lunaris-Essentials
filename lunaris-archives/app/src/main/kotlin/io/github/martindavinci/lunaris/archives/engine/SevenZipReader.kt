@@ -55,7 +55,7 @@ class SevenZipReader : IsolatedReader {
                 if (index < 0 || index >= entries.size) return@open EngineStatus.PATH_MISMATCH
                 val entry = entries[index.toInt()]
                 val name = RawPath.of((entry.name ?: file.defaultName ?: UNNAMED).toByteArray(Charsets.UTF_8))
-                if (expected != null && expected[index] != name) return@open EngineStatus.PATH_MISMATCH
+                if (expected != null && !name.sameEntryAs(expected[index])) return@open EngineStatus.PATH_MISMATCH
                 out.send { dataStart(index, name); progress(volume.channel.position()) }
                 val outcome = copyOne(file, entry, volume, password != null, out)
                 out.send { dataEnd(index, outcome) }

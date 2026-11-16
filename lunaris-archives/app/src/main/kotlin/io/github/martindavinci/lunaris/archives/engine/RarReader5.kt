@@ -70,7 +70,7 @@ class RarReader5 : IsolatedReader {
                 if (index > wanted[next]) return@guarded EngineStatus.PATH_MISMATCH
                 next++
                 val name = RawPath.of(entry.name.toByteArray(Charsets.UTF_8))
-                if (expected != null && expected[index] != name) return@guarded EngineStatus.PATH_MISMATCH
+                if (expected != null && !name.sameEntryAs(expected[index])) return@guarded EngineStatus.PATH_MISMATCH
                 out.send { dataStart(index, name); progress(input.position) }
                 val outcome = copyOne(reader, entry, out) { input.position }
                 out.send { dataEnd(index, outcome) }

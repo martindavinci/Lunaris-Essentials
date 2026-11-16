@@ -97,7 +97,7 @@ object WireCollector {
             when (val message = reader.next() ?: throw WireFormatException("ended without status")) {
                 is WireMessage.DataStart -> {
                     if (open != null || !started.add(message.index)) throw WireFormatException("entry started twice")
-                    if (expected[message.index] != message.rawPath) {
+                    if (!message.rawPath.sameEntryAs(expected[message.index])) {
                         yield(EngineEvent.Finished(EngineStatus.PATH_MISMATCH))
                         return@sequence
                     }

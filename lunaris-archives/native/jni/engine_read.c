@@ -23,6 +23,9 @@ void engine_register(struct archive *a) {
     archive_read_support_filter_xz(a);
     archive_read_support_filter_zstd(a);
     archive_read_support_filter_lz4(a);
+    /* The seekable ZIP reader folds __MACOSX/._* entries into their files by default; the Kotlin
+     * readers (ZipDirectory) list every entry, and an index must mean the same entry in both. */
+    archive_read_set_format_option(a, "zip", "mac-ext", NULL);
 }
 
 static la_ssize_t stop_cancelled(struct archive *a) {
