@@ -29,7 +29,7 @@ import org.junit.Test
 import org.junit.rules.TemporaryFolder
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class SettingsViewModelTest {
+class SettingsLogicTest {
     private val dispatcher = UnconfinedTestDispatcher()
     @get:Rule val main = MainDispatcherRule(dispatcher)
     @get:Rule val temp = TemporaryFolder()
