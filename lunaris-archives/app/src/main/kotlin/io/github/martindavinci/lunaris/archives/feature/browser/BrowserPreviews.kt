@@ -54,6 +54,11 @@ private fun BrowserRootPreview() = Show(Listed.copy(hiddenUnsafe = 2))
 @Composable
 private fun BrowserRootLightPreview() = Show(Listed, ThemeMode.LIGHT)
 
+/** German runs longest: the bars and rows must not clip. */
+@Preview(locale = "de")
+@Composable
+private fun BrowserGermanPreview() = Show(Listed.copy(selection = setOf(0L, 1L, 4L), canShareSelection = true))
+
 @Preview
 @Composable
 private fun BrowserOpeningPreview() = Show(Listed.copy(opening = OpeningState("plan.pdf", OPENING_FRACTION)))

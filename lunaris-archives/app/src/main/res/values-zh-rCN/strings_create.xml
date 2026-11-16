@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_title">新建压缩包</string>
+    <string name="create_pick_files">选择文件</string>
+    <string name="create_pick_folder">选择文件夹</string>
+    <!-- what the check on a card means, for a screen reader. -->
+    <string name="create_picked">已添加</string>
+    <string name="create_add_more">继续添加</string>
+    <string name="create_remove">移除 %1$s</string>
+    <string name="create_name">名称</string>
+    <string name="create_name_invalid">名称中不能包含 / \\ : * ? \" &lt; &gt; |</string>
+    <string name="create_compression">压缩</string>
+    <string name="create_store">仅存储</string>
+    <string name="create_normal">标准</string>
+    <string name="create_maximum">最大</string>
+    <string name="create_protect">用密码保护</string>
+    <string name="create_confirm">确认密码</string>
+    <string name="create_mismatch">两次输入的密码不一致</string>
+    <string name="create_aes_note">AES-256。没有密码，任何人都无法打开，包括你自己。</string>
+    <string name="create_names_visible">文件名不加密，仍可看到。</string>
+    <string name="create_button">创建 ZIP</string>
+    <string name="create_save_hint">接下来选择保存位置</string>
+    <string name="create_strength_weak">弱</string>
+    <string name="create_strength_fair">一般</string>
+    <string name="create_strength_good">良好</string>
+    <string name="create_strength_strong">强</string>
+    <plurals name="create_adding">
+        <item quantity="other">正在添加第 %1$s 个文件，共 %2$s 个</item>
+    </plurals>
+    <string name="create_creating">正在创建 %1$s</string>
+    <string name="create_in">位置：%1$s</string>
+    <string name="create_done">已创建 %1$s</string>
+    <!-- files that have no content of their own and were left out. -->
+    <plurals name="create_skipped">
+        <item quantity="other">有 %1$s 项没有可添加的文件，已略过：</item>
+    </plurals>
+    <string name="create_stop_title">要停止创建压缩包吗？</string>
+    <string name="create_stop_body">未完成的文件会被删除。</string>
+    <string name="create_failed_source">有文件无法读取，因此未创建压缩包。</string>
+    <string name="create_failed_space">空间不足，无法存放压缩包。</string>
+    <string name="create_failed_target">无法保存压缩包。</string>
+    <string name="home_new_archive">新建压缩包</string>
+</resources>

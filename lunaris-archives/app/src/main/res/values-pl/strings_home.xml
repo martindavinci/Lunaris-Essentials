@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_search">Szukaj w ostatnich archiwach</string>
+    <string name="home_clear">Wyczyść ostatnie archiwa</string>
+    <string name="home_continue">Kontynuuj</string>
+    <string name="home_create">Utwórz archiwum</string>
+    <string name="home_create_detail">ZIP z plików lub folderu</string>
+    <string name="home_recents">Wszystkie ostatnie archiwa</string>
+    <string name="home_results">Wyniki</string>
+    <string name="home_open">Otwórz archiwum</string>
+    <string name="home_locked">Chronione hasłem</string>
+    <string name="home_empty_title">Nic jeszcze nie otwarto</string>
+    <string name="home_empty_detail">Tutaj będzie czekać ostatnie archiwum</string>
+    <string name="home_empty_list">Tutaj pojawią się otwierane archiwa</string>
+    <string name="home_recents_off">Ostatnie archiwa są wyłączone w Ustawieniach</string>
+    <string name="home_no_match">Żadne ostatnie archiwum nie pasuje do „%1$s”</string>
+    <string name="home_clear_title">Wyczyścić ostatnie archiwa?</string>
+    <string name="home_clear_message">Archiwa zostają na swoim miejscu. Czyszczona jest tylko ta lista.</string>
+    <string name="home_clear_confirm">Wyczyść</string>
+    <string name="home_menu_remove">Usuń z ostatnich</string>
+    <string name="home_menu_extract_all">Wypakuj wszystko…</string>
+    <string name="recents_yesterday">Wczoraj</string>
+    <string name="home_removed">Usunięto z ostatnich. Archiwum pozostaje nietknięte.</string>
+    <string name="home_undo">Cofnij</string>
+    <string name="home_gone">To archiwum nie jest już dostępne, więc zniknęło z listy</string>
+    <string name="home_no_picker">Żadna aplikacja na tym telefonie nie umożliwia wybierania plików</string>
+    <string name="home_extract_recovered">Wypakowywanie zostało przerwane w połowie. Niedokończony plik został usunięty.</string>
+</resources>

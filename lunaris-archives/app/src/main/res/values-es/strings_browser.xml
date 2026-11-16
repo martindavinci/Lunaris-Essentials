@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="browser_search">Buscar en el archivo comprimido</string>
+    <string name="browser_search_hint">Buscar en el archivo comprimido</string>
+    <string name="browser_extract_all">Extraer todo</string>
+    <string name="browser_opening">Abriendo %1$s…</string>
+    <string name="browser_nested_meta">%1$s · %2$s</string>
+    <string name="browser_menu_extract_all">Extraer todo…</string>
+    <string name="browser_menu_sort">Ordenar por</string>
+    <string name="browser_menu_info">Información del archivo</string>
+    <string name="browser_menu_share">Compartir archivo comprimido</string>
+    <string name="selection_cancel">Cancelar selección</string>
+    <string name="selection_all">Seleccionar todo</string>
+    <string name="selection_extract">Extraer</string>
+    <plurals name="selection_count">
+        <item quantity="one">%1$s seleccionado</item>
+        <item quantity="many">%1$s seleccionados</item>
+        <item quantity="other">%1$s seleccionados</item>
+    </plurals>
+    <plurals name="search_results">
+        <item quantity="one">%1$s resultado en todas las carpetas</item>
+        <item quantity="many">%1$s resultados en todas las carpetas</item>
+        <item quantity="other">%1$s resultados en todas las carpetas</item>
+    </plurals>
+    <string name="search_no_match">Nada en este archivo comprimido coincide con «%1$s»</string>
+    <plurals name="browser_reading">
+        <item quantity="one">Leyendo el archivo comprimido… %1$s elemento</item>
+        <item quantity="many">Leyendo el archivo comprimido… %1$s elementos</item>
+        <item quantity="other">Leyendo el archivo comprimido… %1$s elementos</item>
+    </plurals>
+    <!-- before the first count arrives (a ZIP is counted only at the end). -->
+    <string name="browser_reading_start">Leyendo el archivo comprimido…</string>
+    <string name="browser_copying">Preparando el archivo comprimido… %1$s</string>
+    <string name="browser_partial">Solo se ha podido leer una parte de este archivo comprimido.</string>
+    <string name="browser_capped">Solo se muestran los primeros 200.000 elementos.</string>
+    <plurals name="browser_hidden_unsafe">
+        <item quantity="one">%1$s elemento está oculto porque su nombre no es seguro.</item>
+        <item quantity="many">%1$s elementos están ocultos porque sus nombres no son seguros.</item>
+        <item quantity="other">%1$s elementos están ocultos porque sus nombres no son seguros.</item>
+    </plurals>
+    <string name="browser_empty_folder">Esta carpeta está vacía</string>
+    <string name="browser_empty_archive">Este archivo comprimido está vacío</string>
+    <!-- Entry panel (frame 05) -->
+    <string name="entry_open_with">Abrir con…</string>
+    <string name="entry_extract_to">Extraer en…</string>
+    <string name="entry_extract_folder">Extraer carpeta en…</string>
+    <string name="entry_size">Tamaño</string>
+    <string name="entry_packed">Comprimido</string>
+    <string name="entry_modified">Modificado</string>
+    <string name="entry_encrypted">Cifrado</string>
+    <string name="entry_contains">Contiene %1$s</string>
+    <string name="yes">Sí</string>
+    <string name="no">No</string>
+    <!-- Archive info (frame 16) -->
+    <string name="info_title">Información del archivo</string>
+    <string name="info_format">Formato</string>
+    <string name="info_files">Archivos</string>
+    <string name="info_folders">Carpetas</string>
+    <string name="info_packed_value">%1$s (%2$s)</string>
+    <string name="info_encrypted_some">Algunos archivos</string>
+    <string name="info_encrypted_all">Todos los archivos</string>
+    <string name="info_encrypted_names">Archivos y nombres</string>
+    <string name="info_created_by">Creado en</string>
+    <string name="info_os_windows">Windows</string>
+    <string name="info_os_unix">Unix</string>
+    <string name="info_os_mac">macOS</string>
+    <string name="info_os_msdos">MS-DOS</string>
+    <string name="info_unknown">Desconocido</string>
+    <string name="info_comment">Comentario</string>
+    <string name="info_more">Más</string>
+    <!-- Sort panel -->
+    <string name="sort_title">Ordenar por</string>
+    <string name="sort_name">Nombre</string>
+    <string name="sort_size">Tamaño</string>
+    <string name="sort_date">Fecha de modificación</string>
+    <string name="sort_type">Tipo</string>
+    <string name="sort_folders_first">Carpetas primero</string>
+    <string name="sort_ascending_name">De la A a la Z</string>
+    <string name="sort_descending_name">De la Z a la A</string>
+    <string name="sort_smallest">Más pequeños primero</string>
+    <string name="sort_largest">Más grandes primero</string>
+    <string name="sort_oldest">Más antiguos primero</string>
+    <string name="sort_newest">Más recientes primero</string>
+    <!-- No app, protected RAR 4 entry -->
+    <string name="browser_no_app">Ninguna aplicación de este teléfono abre archivos .%1$s</string>
+    <string name="browser_no_app_plain">Ninguna aplicación de este teléfono abre este archivo</string>
+    <!-- Notices (snackbars) -->
+    <string name="notice_damaged">No se ha podido leer %1$s: esa parte del archivo comprimido está dañada</string>
+    <string name="notice_too_deep">No se abren archivos comprimidos anidados a tanta profundidad</string>
+    <string name="notice_no_space">No hay suficiente espacio libre en este teléfono</string>
+    <string name="notice_changed">El archivo comprimido ha cambiado, así que se ha vuelto a leer</string>
+    <string name="notice_share_failed">No se han podido compartir estos archivos</string>
+    <!-- Temporary start screen, until Home exists -->
+    <string name="home_open_archive">Abrir un archivo comprimido</string>
+</resources>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="problem_rar4_title">Dieses RAR kann nicht geöffnet werden</string>
+    <string name="problem_rar4_body">Es nutzt den älteren Passwortschutz von RAR 4, den keine kostenlose App lesen kann. Bitte den Absender um ein ZIP oder ein neueres RAR.</string>
+    <string name="problem_damaged_title">Dieses Archiv ist beschädigt</string>
+    <string name="problem_damaged_body">Es endet zu früh oder sein Inhalt stimmt nicht. Bitte um eine neue Kopie.</string>
+    <string name="problem_show_readable">Lesbaren Teil anzeigen</string>
+    <string name="problem_not_archive_title">Dies ist kein Archiv, das Lunaris Archives öffnen kann</string>
+    <string name="problem_not_archive_body">Formate: ZIP, 7z, RAR, TAR, GZ, BZ2, XZ, ZST, LZ4, ISO, CPIO.</string>
+    <string name="problem_unsupported_title">Dieses Archiv nutzt eine Funktion, die Lunaris Archives nicht lesen kann</string>
+    <string name="problem_unsupported_body">Bitte den Absender um ein ZIP mit Standardeinstellungen.</string>
+    <string name="problem_split_title">Dies ist ein Teil eines mehrteiligen Archivs</string>
+    <string name="problem_split_body">Lunaris Archives kann mehrteilige Archive noch nicht öffnen.</string>
+    <string name="problem_stopped_title">Dieses Archiv hat das Lesen gestoppt</string>
+    <string name="problem_stopped_body">Es ist vielleicht beschädigt oder zu groß für den Speicher dieses Telefons.</string>
+    <string name="problem_gone_title">%1$s nicht gefunden</string>
+    <string name="problem_gone_body">Die Datei wurde vielleicht verschoben oder gelöscht.</string>
+</resources>

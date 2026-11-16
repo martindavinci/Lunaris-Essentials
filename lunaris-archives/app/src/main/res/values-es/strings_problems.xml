@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="problem_rar4_title">No se puede abrir este RAR</string>
+    <string name="problem_rar4_body">Usa la antigua protección con contraseña de RAR 4, que ninguna aplicación gratuita puede leer. Pide a quien te lo envió un ZIP o un RAR más reciente.</string>
+    <string name="problem_damaged_title">Este archivo comprimido está dañado</string>
+    <string name="problem_damaged_body">Termina antes de tiempo o su contenido no coincide. Pide una copia nueva.</string>
+    <string name="problem_show_readable">Mostrar lo que se ha podido leer</string>
+    <string name="problem_not_archive_title">Este no es un archivo comprimido que Lunaris Archives pueda abrir</string>
+    <string name="problem_not_archive_body">Formatos: ZIP, 7z, RAR, TAR, GZ, BZ2, XZ, ZST, LZ4, ISO, CPIO.</string>
+    <string name="problem_unsupported_title">Este archivo comprimido usa una función que Lunaris Archives no puede leer</string>
+    <string name="problem_unsupported_body">Pide a quien te lo envió un ZIP creado con los ajustes estándar.</string>
+    <string name="problem_split_title">Esta es una parte de un archivo comprimido dividido</string>
+    <string name="problem_split_body">Lunaris Archives aún no puede abrir archivos comprimidos divididos en varias partes.</string>
+    <string name="problem_stopped_title">Este archivo comprimido detuvo la lectura</string>
+    <string name="problem_stopped_body">Puede que esté dañado o que sea demasiado grande para la memoria de este teléfono.</string>
+    <string name="problem_gone_title">No se encuentra %1$s</string>
+    <string name="problem_gone_body">Puede que se haya movido o eliminado.</string>
+</resources>

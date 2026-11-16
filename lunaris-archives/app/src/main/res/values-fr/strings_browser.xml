@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="browser_search">Rechercher dans l\'archive</string>
+    <string name="browser_search_hint">Rechercher dans l\'archive</string>
+    <string name="browser_extract_all">Tout extraire</string>
+    <string name="browser_opening">Ouverture de %1$s…</string>
+    <string name="browser_nested_meta">%1$s · %2$s</string>
+    <string name="browser_menu_extract_all">Tout extraire…</string>
+    <string name="browser_menu_sort">Trier par</string>
+    <string name="browser_menu_info">Infos sur l\'archive</string>
+    <string name="browser_menu_share">Partager l\'archive</string>
+    <string name="selection_cancel">Annuler la sélection</string>
+    <string name="selection_all">Tout sélectionner</string>
+    <string name="selection_extract">Extraire</string>
+    <plurals name="selection_count">
+        <item quantity="one">%1$s sélectionné</item>
+        <item quantity="many">%1$s sélectionnés</item>
+        <item quantity="other">%1$s sélectionnés</item>
+    </plurals>
+    <plurals name="search_results">
+        <item quantity="one">%1$s résultat dans tous les dossiers</item>
+        <item quantity="many">%1$s résultats dans tous les dossiers</item>
+        <item quantity="other">%1$s résultats dans tous les dossiers</item>
+    </plurals>
+    <string name="search_no_match">Rien dans cette archive ne correspond à « %1$s »</string>
+    <plurals name="browser_reading">
+        <item quantity="one">Lecture de l\'archive… %1$s élément</item>
+        <item quantity="many">Lecture de l\'archive… %1$s éléments</item>
+        <item quantity="other">Lecture de l\'archive… %1$s éléments</item>
+    </plurals>
+    <!-- before the first count arrives (a ZIP is counted only at the end). -->
+    <string name="browser_reading_start">Lecture de l\'archive…</string>
+    <string name="browser_copying">Préparation de l\'archive… %1$s</string>
+    <string name="browser_partial">Seule une partie de cette archive a pu être lue.</string>
+    <string name="browser_capped">Seuls les 200 000 premiers éléments sont affichés.</string>
+    <plurals name="browser_hidden_unsafe">
+        <item quantity="one">%1$s élément est masqué, car son nom n\'est pas sûr.</item>
+        <item quantity="many">%1$s éléments sont masqués, car leurs noms ne sont pas sûrs.</item>
+        <item quantity="other">%1$s éléments sont masqués, car leurs noms ne sont pas sûrs.</item>
+    </plurals>
+    <string name="browser_empty_folder">Ce dossier est vide</string>
+    <string name="browser_empty_archive">Cette archive est vide</string>
+    <!-- Entry panel (frame 05) -->
+    <string name="entry_open_with">Ouvrir avec…</string>
+    <string name="entry_extract_to">Extraire vers…</string>
+    <string name="entry_extract_folder">Extraire le dossier vers…</string>
+    <string name="entry_size">Taille</string>
+    <string name="entry_packed">Compressé</string>
+    <string name="entry_modified">Modifié</string>
+    <string name="entry_encrypted">Chiffré</string>
+    <string name="entry_contains">Contient %1$s</string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+    <!-- Archive info (frame 16) -->
+    <string name="info_title">Infos sur l\'archive</string>
+    <string name="info_format">Format</string>
+    <string name="info_files">Fichiers</string>
+    <string name="info_folders">Dossiers</string>
+    <string name="info_packed_value">%1$s (%2$s)</string>
+    <string name="info_encrypted_some">Certains fichiers</string>
+    <string name="info_encrypted_all">Tous les fichiers</string>
+    <string name="info_encrypted_names">Fichiers et noms</string>
+    <string name="info_created_by">Créée sous</string>
+    <string name="info_os_windows">Windows</string>
+    <string name="info_os_unix">Unix</string>
+    <string name="info_os_mac">macOS</string>
+    <string name="info_os_msdos">MS-DOS</string>
+    <string name="info_unknown">Inconnu</string>
+    <string name="info_comment">Commentaire</string>
+    <string name="info_more">Plus</string>
+    <!-- Sort panel -->
+    <string name="sort_title">Trier par</string>
+    <string name="sort_name">Nom</string>
+    <string name="sort_size">Taille</string>
+    <string name="sort_date">Date de modification</string>
+    <string name="sort_type">Type</string>
+    <string name="sort_folders_first">Dossiers en premier</string>
+    <string name="sort_ascending_name">De A à Z</string>
+    <string name="sort_descending_name">De Z à A</string>
+    <string name="sort_smallest">Plus petits d\'abord</string>
+    <string name="sort_largest">Plus grands d\'abord</string>
+    <string name="sort_oldest">Plus anciens d\'abord</string>
+    <string name="sort_newest">Plus récents d\'abord</string>
+    <!-- No app, protected RAR 4 entry -->
+    <string name="browser_no_app">Aucune application de ce téléphone n\'ouvre les fichiers .%1$s</string>
+    <string name="browser_no_app_plain">Aucune application de ce téléphone n\'ouvre ce fichier</string>
+    <!-- Notices (snackbars) -->
+    <string name="notice_damaged">Impossible de lire %1$s : cette partie de l\'archive est endommagée</string>
+    <string name="notice_too_deep">Les archives imbriquées aussi profondément ne sont pas ouvertes</string>
+    <string name="notice_no_space">Espace libre insuffisant sur ce téléphone</string>
+    <string name="notice_changed">L\'archive a changé, elle a donc été relue</string>
+    <string name="notice_share_failed">Impossible de partager ces fichiers</string>
+    <!-- Temporary start screen, until Home exists -->
+    <string name="home_open_archive">Ouvrir une archive</string>
+</resources>

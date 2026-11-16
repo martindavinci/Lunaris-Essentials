@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="problem_rar4_title">无法打开此 RAR</string>
+    <string name="problem_rar4_body">它使用旧版 RAR 4 密码保护，任何免费应用都无法读取。请向发送者索取 ZIP 或较新的 RAR。</string>
+    <string name="problem_damaged_title">此压缩包已损坏</string>
+    <string name="problem_damaged_body">文件提前结束或内容不一致。请重新索取一份。</string>
+    <string name="problem_show_readable">显示可读取的内容</string>
+    <string name="problem_not_archive_title">这不是 Lunaris Archives 能打开的压缩包</string>
+    <string name="problem_not_archive_body">支持的格式：ZIP、7z、RAR、TAR、GZ、BZ2、XZ、ZST、LZ4、ISO、CPIO。</string>
+    <string name="problem_unsupported_title">此压缩包使用了 Lunaris Archives 无法读取的功能</string>
+    <string name="problem_unsupported_body">请向发送者索取使用标准设置创建的 ZIP。</string>
+    <string name="problem_split_title">这是分卷压缩包中的一卷</string>
+    <string name="problem_split_body">Lunaris Archives 暂时无法打开分卷压缩包。</string>
+    <string name="problem_stopped_title">此压缩包使读取中止</string>
+    <string name="problem_stopped_body">它可能已损坏，或对此手机的内存来说太大。</string>
+    <string name="problem_gone_title">找不到 %1$s</string>
+    <string name="problem_gone_body">它可能已被移动或删除。</string>
+</resources>

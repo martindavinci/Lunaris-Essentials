@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="browser_search">Pesquisar no arquivo</string>
+    <string name="browser_search_hint">Pesquisar no arquivo</string>
+    <string name="browser_extract_all">Extrair tudo</string>
+    <string name="browser_opening">A abrir %1$s…</string>
+    <string name="browser_nested_meta">%1$s · %2$s</string>
+    <string name="browser_menu_extract_all">Extrair tudo…</string>
+    <string name="browser_menu_sort">Ordenar por</string>
+    <string name="browser_menu_info">Informações do arquivo</string>
+    <string name="browser_menu_share">Partilhar arquivo</string>
+    <string name="selection_cancel">Cancelar seleção</string>
+    <string name="selection_all">Selecionar tudo</string>
+    <string name="selection_extract">Extrair</string>
+    <plurals name="selection_count">
+        <item quantity="one">%1$s selecionado</item>
+        <item quantity="many">%1$s selecionados</item>
+        <item quantity="other">%1$s selecionados</item>
+    </plurals>
+    <plurals name="search_results">
+        <item quantity="one">%1$s resultado em todas as pastas</item>
+        <item quantity="many">%1$s resultados em todas as pastas</item>
+        <item quantity="other">%1$s resultados em todas as pastas</item>
+    </plurals>
+    <string name="search_no_match">Nada neste arquivo corresponde a “%1$s”</string>
+    <plurals name="browser_reading">
+        <item quantity="one">A ler o arquivo… %1$s item</item>
+        <item quantity="many">A ler o arquivo… %1$s itens</item>
+        <item quantity="other">A ler o arquivo… %1$s itens</item>
+    </plurals>
+    <!-- before the first count arrives (a ZIP is counted only at the end). -->
+    <string name="browser_reading_start">A ler o arquivo…</string>
+    <string name="browser_copying">A preparar o arquivo… %1$s</string>
+    <string name="browser_partial">Só foi possível ler parte deste arquivo.</string>
+    <string name="browser_capped">Só são mostrados os primeiros 200 000 itens.</string>
+    <plurals name="browser_hidden_unsafe">
+        <item quantity="one">%1$s item está oculto porque o nome não é seguro.</item>
+        <item quantity="many">%1$s itens estão ocultos porque os nomes não são seguros.</item>
+        <item quantity="other">%1$s itens estão ocultos porque os nomes não são seguros.</item>
+    </plurals>
+    <string name="browser_empty_folder">Esta pasta está vazia</string>
+    <string name="browser_empty_archive">Este arquivo está vazio</string>
+    <!-- Entry panel (frame 05) -->
+    <string name="entry_open_with">Abrir com…</string>
+    <string name="entry_extract_to">Extrair para…</string>
+    <string name="entry_extract_folder">Extrair pasta para…</string>
+    <string name="entry_size">Tamanho</string>
+    <string name="entry_packed">Comprimido</string>
+    <string name="entry_modified">Modificado</string>
+    <string name="entry_encrypted">Encriptado</string>
+    <string name="entry_contains">Contém %1$s</string>
+    <string name="yes">Sim</string>
+    <string name="no">Não</string>
+    <!-- Archive info (frame 16) -->
+    <string name="info_title">Informações do arquivo</string>
+    <string name="info_format">Formato</string>
+    <string name="info_files">Ficheiros</string>
+    <string name="info_folders">Pastas</string>
+    <string name="info_packed_value">%1$s (%2$s)</string>
+    <string name="info_encrypted_some">Alguns ficheiros</string>
+    <string name="info_encrypted_all">Todos os ficheiros</string>
+    <string name="info_encrypted_names">Ficheiros e nomes</string>
+    <string name="info_created_by">Criado em</string>
+    <string name="info_os_windows">Windows</string>
+    <string name="info_os_unix">Unix</string>
+    <string name="info_os_mac">macOS</string>
+    <string name="info_os_msdos">MS-DOS</string>
+    <string name="info_unknown">Desconhecido</string>
+    <string name="info_comment">Comentário</string>
+    <string name="info_more">Mais</string>
+    <!-- Sort panel -->
+    <string name="sort_title">Ordenar por</string>
+    <string name="sort_name">Nome</string>
+    <string name="sort_size">Tamanho</string>
+    <string name="sort_date">Data de modificação</string>
+    <string name="sort_type">Tipo</string>
+    <string name="sort_folders_first">Pastas primeiro</string>
+    <string name="sort_ascending_name">De A a Z</string>
+    <string name="sort_descending_name">De Z a A</string>
+    <string name="sort_smallest">Mais pequenos primeiro</string>
+    <string name="sort_largest">Maiores primeiro</string>
+    <string name="sort_oldest">Mais antigos primeiro</string>
+    <string name="sort_newest">Mais recentes primeiro</string>
+    <!-- No app, protected RAR 4 entry -->
+    <string name="browser_no_app">Nenhuma aplicação neste telemóvel abre ficheiros .%1$s</string>
+    <string name="browser_no_app_plain">Nenhuma aplicação neste telemóvel abre este ficheiro</string>
+    <!-- Notices (snackbars) -->
+    <string name="notice_damaged">Não foi possível ler %1$s: essa parte do arquivo está danificada</string>
+    <string name="notice_too_deep">Arquivos aninhados a esta profundidade não são abertos</string>
+    <string name="notice_no_space">Não há espaço livre suficiente neste telemóvel</string>
+    <string name="notice_changed">O arquivo mudou, por isso foi lido de novo</string>
+    <string name="notice_share_failed">Não foi possível partilhar estes ficheiros</string>
+    <!-- Temporary start screen, until Home exists -->
+    <string name="home_open_archive">Abrir um arquivo</string>
+</resources>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="browser_search">アーカイブ内を検索</string>
+    <string name="browser_search_hint">アーカイブ内を検索</string>
+    <string name="browser_extract_all">すべて展開</string>
+    <string name="browser_opening">%1$s を開いています…</string>
+    <string name="browser_nested_meta">%1$s · %2$s</string>
+    <string name="browser_menu_extract_all">すべて展開…</string>
+    <string name="browser_menu_sort">並べ替え</string>
+    <string name="browser_menu_info">アーカイブ情報</string>
+    <string name="browser_menu_share">アーカイブを共有</string>
+    <string name="selection_cancel">選択をキャンセル</string>
+    <string name="selection_all">すべて選択</string>
+    <string name="selection_extract">展開</string>
+    <plurals name="selection_count">
+        <item quantity="other">%1$s 個を選択中</item>
+    </plurals>
+    <plurals name="search_results">
+        <item quantity="other">すべてのフォルダで %1$s 件の結果</item>
+    </plurals>
+    <string name="search_no_match">このアーカイブには「%1$s」に一致するものはありません</string>
+    <plurals name="browser_reading">
+        <item quantity="other">アーカイブを読み込んでいます… %1$s 個の項目</item>
+    </plurals>
+    <!-- before the first count arrives (a ZIP is counted only at the end). -->
+    <string name="browser_reading_start">アーカイブを読み込んでいます…</string>
+    <string name="browser_copying">アーカイブを準備しています… %1$s</string>
+    <string name="browser_partial">このアーカイブは一部しか読み込めませんでした。</string>
+    <string name="browser_capped">最初の 200,000 項目のみ表示しています。</string>
+    <plurals name="browser_hidden_unsafe">
+        <item quantity="other">名前が安全でないため、%1$s 個の項目を非表示にしています。</item>
+    </plurals>
+    <string name="browser_empty_folder">このフォルダは空です</string>
+    <string name="browser_empty_archive">このアーカイブは空です</string>
+    <!-- Entry panel (frame 05) -->
+    <string name="entry_open_with">アプリで開く…</string>
+    <string name="entry_extract_to">展開先を選択…</string>
+    <string name="entry_extract_folder">フォルダの展開先を選択…</string>
+    <string name="entry_size">サイズ</string>
+    <string name="entry_packed">圧縮後</string>
+    <string name="entry_modified">更新日時</string>
+    <string name="entry_encrypted">暗号化</string>
+    <string name="entry_contains">%1$s を含む</string>
+    <string name="yes">はい</string>
+    <string name="no">いいえ</string>
+    <!-- Archive info (frame 16) -->
+    <string name="info_title">アーカイブ情報</string>
+    <string name="info_format">形式</string>
+    <string name="info_files">ファイル</string>
+    <string name="info_folders">フォルダ</string>
+    <string name="info_packed_value">%1$s (%2$s)</string>
+    <string name="info_encrypted_some">一部のファイル</string>
+    <string name="info_encrypted_all">すべてのファイル</string>
+    <string name="info_encrypted_names">ファイルと名前</string>
+    <string name="info_created_by">作成環境</string>
+    <string name="info_os_windows">Windows</string>
+    <string name="info_os_unix">Unix</string>
+    <string name="info_os_mac">macOS</string>
+    <string name="info_os_msdos">MS-DOS</string>
+    <string name="info_unknown">不明</string>
+    <string name="info_comment">コメント</string>
+    <string name="info_more">詳細</string>
+    <!-- Sort panel -->
+    <string name="sort_title">並べ替え</string>
+    <string name="sort_name">名前</string>
+    <string name="sort_size">サイズ</string>
+    <string name="sort_date">更新日時</string>
+    <string name="sort_type">種類</string>
+    <string name="sort_folders_first">フォルダを先頭に</string>
+    <string name="sort_ascending_name">A から Z</string>
+    <string name="sort_descending_name">Z から A</string>
+    <string name="sort_smallest">小さい順</string>
+    <string name="sort_largest">大きい順</string>
+    <string name="sort_oldest">古い順</string>
+    <string name="sort_newest">新しい順</string>
+    <!-- No app, protected RAR 4 entry -->
+    <string name="browser_no_app">この端末には .%1$s ファイルを開けるアプリがありません</string>
+    <string name="browser_no_app_plain">この端末にはこのファイルを開けるアプリがありません</string>
+    <!-- Notices (snackbars) -->
+    <string name="notice_damaged">%1$s を読み込めませんでした。アーカイブのその部分が壊れています</string>
+    <string name="notice_too_deep">ここまで深く入れ子になったアーカイブは開きません</string>
+    <string name="notice_no_space">この端末の空き容量が足りません</string>
+    <string name="notice_changed">アーカイブが変更されたため、読み込み直しました</string>
+    <string name="notice_share_failed">これらのファイルを共有できませんでした</string>
+    <!-- Temporary start screen, until Home exists -->
+    <string name="home_open_archive">アーカイブを開く</string>
+</resources>

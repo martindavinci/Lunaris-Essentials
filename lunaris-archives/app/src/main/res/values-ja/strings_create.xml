@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_title">新しいアーカイブ</string>
+    <string name="create_pick_files">ファイルを選択</string>
+    <string name="create_pick_folder">フォルダを選択</string>
+    <!-- what the check on a card means, for a screen reader. -->
+    <string name="create_picked">追加済み</string>
+    <string name="create_add_more">さらに追加</string>
+    <string name="create_remove">%1$s を削除</string>
+    <string name="create_name">名前</string>
+    <string name="create_name_invalid">名前に / \\ : * ? \" &lt; &gt; | は使えません</string>
+    <string name="create_compression">圧縮</string>
+    <string name="create_store">無圧縮</string>
+    <string name="create_normal">標準</string>
+    <string name="create_maximum">最大</string>
+    <string name="create_protect">パスワードで保護</string>
+    <string name="create_confirm">パスワードの確認</string>
+    <string name="create_mismatch">パスワードが一致しません</string>
+    <string name="create_aes_note">AES-256。パスワードがなければ、作成した本人を含めて誰も開けません。</string>
+    <string name="create_names_visible">ファイル名は暗号化されず、読める状態のままです。</string>
+    <string name="create_button">ZIP を作成</string>
+    <string name="create_save_hint">次に保存先を選びます</string>
+    <string name="create_strength_weak">弱い</string>
+    <string name="create_strength_fair">普通</string>
+    <string name="create_strength_good">良好</string>
+    <string name="create_strength_strong">強い</string>
+    <plurals name="create_adding">
+        <item quantity="other">%2$s 個中 %1$s 個のファイルを追加中</item>
+    </plurals>
+    <string name="create_creating">%1$s を作成中</string>
+    <string name="create_in">保存先: %1$s</string>
+    <string name="create_done">%1$s を作成しました</string>
+    <!-- files that have no content of their own and were left out. -->
+    <plurals name="create_skipped">
+        <item quantity="other">追加するファイルがないため、%1$s 個の項目を除外しました:</item>
+    </plurals>
+    <string name="create_stop_title">アーカイブの作成を中止しますか？</string>
+    <string name="create_stop_body">未完成のファイルは削除されます。</string>
+    <string name="create_failed_source">読み込めないファイルがあったため、アーカイブは作成されませんでした。</string>
+    <string name="create_failed_space">アーカイブを保存する空き容量が足りません。</string>
+    <string name="create_failed_target">アーカイブを保存できませんでした。</string>
+    <string name="home_new_archive">新しいアーカイブ</string>
+</resources>

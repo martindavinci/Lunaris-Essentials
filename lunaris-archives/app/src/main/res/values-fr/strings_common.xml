@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="back">Retour</string>
+    <string name="cancel">Annuler</string>
+    <string name="close">Fermer</string>
+    <string name="ok">OK</string>
+    <string name="done">Terminé</string>
+    <string name="open">Ouvrir</string>
+    <string name="action_share">Partager</string>
+    <string name="action_continue">Continuer</string>
+    <string name="more_options">Plus d\'options</string>
+    <string name="search_clear">Effacer</string>
+    <!-- a picked file whose size the provider does not tell. -->
+    <string name="size_unknown">Taille inconnue</string>
+    <plurals name="count_files">
+        <item quantity="one">%1$s fichier</item>
+        <item quantity="many">%1$s fichiers</item>
+        <item quantity="other">%1$s fichiers</item>
+    </plurals>
+    <plurals name="count_items">
+        <item quantity="one">%1$s élément</item>
+        <item quantity="many">%1$s éléments</item>
+        <item quantity="other">%1$s éléments</item>
+    </plurals>
+    <!-- Password dialog (frames 08) -->
+    <string name="password_title">Mot de passe requis</string>
+    <string name="password_body">%1$s est protégé.</string>
+    <string name="password_label">Mot de passe</string>
+    <string name="password_remember">Mémoriser jusqu\'à la fermeture de l\'app</string>
+    <string name="password_show">Afficher le mot de passe</string>
+    <string name="password_hide">Masquer le mot de passe</string>
+    <string name="password_checking">Vérification…</string>
+    <string name="password_wrong">Mot de passe incorrect. Réessayez.</string>
+    <string name="share_target_create_zip">Créer un ZIP</string>
+    <string name="incoming_text_only">Partagez des fichiers pour créer un ZIP</string>
+</resources>

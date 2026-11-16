@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="extract_title">Extrayendo %1$s</string>
+    <string name="extract_to">en %1$s</string>
+    <plurals name="extract_files_of">
+        <item quantity="one">%1$s de %2$s archivo</item>
+        <item quantity="many">%1$s de %2$s archivos</item>
+        <item quantity="other">%1$s de %2$s archivos</item>
+    </plurals>
+    <string name="extract_bytes_of">%1$s de %2$s</string>
+    <string name="extract_keep_open">Mantén Lunaris Archives abierta hasta que termine.</string>
+    <!-- what a screen reader says for the bar while the "unusually large" question is open. -->
+    <string name="extract_waiting">Esperando tu respuesta</string>
+    <plurals name="extract_done">
+        <item quantity="one">%1$s archivo extraído</item>
+        <item quantity="many">%1$s archivos extraídos</item>
+        <item quantity="other">%1$s archivos extraídos</item>
+    </plurals>
+    <plurals name="extract_done_partial">
+        <item quantity="one">%1$s de %2$s archivo extraído</item>
+        <item quantity="many">%1$s de %2$s archivos extraídos</item>
+        <item quantity="other">%1$s de %2$s archivos extraídos</item>
+    </plurals>
+    <plurals name="extract_skipped">
+        <item quantity="one">%1$s elemento omitido: su nombre apunta fuera de la carpeta de destino.</item>
+        <item quantity="many">%1$s elementos omitidos: sus nombres apuntan fuera de la carpeta de destino.</item>
+        <item quantity="other">%1$s elementos omitidos: sus nombres apuntan fuera de la carpeta de destino.</item>
+    </plurals>
+    <plurals name="extract_skipped_unsafe">
+        <item quantity="one">%1$s elemento omitido porque podría no ser seguro.</item>
+        <item quantity="many">%1$s elementos omitidos porque podrían no ser seguros.</item>
+        <item quantity="other">%1$s elementos omitidos porque podrían no ser seguros.</item>
+    </plurals>
+    <string name="extract_details">Detalles</string>
+    <string name="extract_show_all">Mostrar todo</string>
+    <plurals name="extract_damaged">
+        <item quantity="one">%1$s archivo estaba dañado y no se ha escrito:</item>
+        <item quantity="many">%1$s archivos estaban dañados y no se han escrito:</item>
+        <item quantity="other">%1$s archivos estaban dañados y no se han escrito:</item>
+    </plurals>
+    <!-- the title of the panel behind "Show all". -->
+    <string name="extract_not_written">No escritos</string>
+    <string name="skip_reason_link">enlace</string>
+    <string name="skip_reason_device">archivo de dispositivo</string>
+    <string name="skip_reason_invalid">nombre no válido</string>
+    <!-- a skipped name with its reason. -->
+    <string name="skip_line">%1$s (%2$s)</string>
+    <string name="conflict_title">%1$s ya existe en %2$s</string>
+    <!-- when the folder has no name to show. -->
+    <string name="conflict_title_plain">%1$s ya existe</string>
+    <string name="conflict_replace">Reemplazar</string>
+    <string name="conflict_keep_both">Conservar ambos</string>
+    <string name="conflict_skip">Omitir</string>
+    <plurals name="conflict_apply_all">
+        <item quantity="one">Hacer lo mismo con %1$s conflicto</item>
+        <item quantity="many">Hacer lo mismo con los %1$s conflictos</item>
+        <item quantity="other">Hacer lo mismo con los %1$s conflictos</item>
+    </plurals>
+    <string name="extract_stop_title">¿Detener la extracción?</string>
+    <string name="extract_stop_body">Los archivos ya extraídos se quedan en la carpeta.</string>
+    <string name="extract_keep_going">Continuar</string>
+    <string name="extract_stop">Detener</string>
+    <string name="large_title">Este archivo es inusualmente grande</string>
+    <string name="large_body">Ocupa mucho más que su tamaño comprimido, algo propio de los archivos comprimidos dañinos. ¿Continuar?</string>
+    <string name="space_title">Espacio insuficiente</string>
+    <!-- The spec's text has two sizes ("This needs X; the phone has Y free."); ExtractFailure carries none. -->
+    <string name="space_body_before">La carpeta no tiene suficiente espacio libre para estos archivos.</string>
+    <string name="space_body_during">El destino se ha quedado sin espacio. Los archivos ya escritos se quedan ahí.</string>
+    <!-- a title for the folder-gone case when it is shown as a dialog. -->
+    <string name="extract_folder_gone_title">Carpeta no disponible</string>
+    <string name="extract_folder_gone">La carpeta ya no está disponible. Vuelve a elegirla.</string>
+    <string name="extract_choose">Elegir</string>
+    <string name="extract_password_title">Se necesita contraseña</string>
+    <string name="extract_password_body">Estos archivos están protegidos. Abre primero uno de ellos e introduce la contraseña; después vuelve a extraer.</string>
+</resources>

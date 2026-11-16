@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Instellingen</string>
+    <string name="settings_section_appearance">Weergave</string>
+    <string name="settings_theme">Thema</string>
+    <string name="settings_theme_system">Systeemstandaard</string>
+    <string name="settings_theme_dark">Donker</string>
+    <string name="settings_theme_light">Licht</string>
+    <string name="settings_language">Taal</string>
+    <string name="settings_section_files">Bestanden</string>
+    <string name="settings_clear_temp">Tijdelijke bestanden wissen</string>
+    <string name="settings_clear_temp_summary">Verwijdert kopieën van geopende bestanden</string>
+    <string name="settings_remember_recents">Recente archieven onthouden</string>
+    <string name="settings_section_about">Over</string>
+    <string name="settings_about_version">Versie %1$s</string>
+    <string name="settings_about_author">Door Martin DaVinci</string>
+    <string name="settings_licences">Licenties</string>
+    <string name="settings_source">Broncode</string>
+    <string name="settings_language_system">Systeemstandaard</string>
+    <string name="settings_cleared">Tijdelijke bestanden gewist</string>
+    <string name="settings_no_browser">Geen browser op deze telefoon kan de link openen</string>
+</resources>

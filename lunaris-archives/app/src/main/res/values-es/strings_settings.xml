@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_section_appearance">Apariencia</string>
+    <string name="settings_theme">Tema</string>
+    <string name="settings_theme_system">Sistema</string>
+    <string name="settings_theme_dark">Oscuro</string>
+    <string name="settings_theme_light">Claro</string>
+    <string name="settings_language">Idioma</string>
+    <string name="settings_section_files">Archivos</string>
+    <string name="settings_clear_temp">Borrar archivos temporales</string>
+    <string name="settings_clear_temp_summary">Elimina las copias de los archivos abiertos</string>
+    <string name="settings_remember_recents">Recordar archivos comprimidos recientes</string>
+    <string name="settings_section_about">Acerca de</string>
+    <string name="settings_about_version">Versión %1$s</string>
+    <string name="settings_about_author">Por Martin DaVinci</string>
+    <string name="settings_licences">Licencias</string>
+    <string name="settings_source">Código fuente</string>
+    <string name="settings_language_system">Predeterminado del sistema</string>
+    <string name="settings_cleared">Archivos temporales borrados</string>
+    <string name="settings_no_browser">Ningún navegador de este teléfono puede abrir el enlace</string>
+</resources>

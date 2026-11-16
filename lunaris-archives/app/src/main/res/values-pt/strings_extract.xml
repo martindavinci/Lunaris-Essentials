@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="extract_title">A extrair %1$s</string>
+    <string name="extract_to">para %1$s</string>
+    <plurals name="extract_files_of">
+        <item quantity="one">%1$s de %2$s ficheiro</item>
+        <item quantity="many">%1$s de %2$s ficheiros</item>
+        <item quantity="other">%1$s de %2$s ficheiros</item>
+    </plurals>
+    <string name="extract_bytes_of">%1$s de %2$s</string>
+    <string name="extract_keep_open">Mantenha o Lunaris Archives aberto até terminar.</string>
+    <!-- what a screen reader says for the bar while the "unusually large" question is open. -->
+    <string name="extract_waiting">À espera da sua resposta</string>
+    <plurals name="extract_done">
+        <item quantity="one">%1$s ficheiro extraído</item>
+        <item quantity="many">%1$s ficheiros extraídos</item>
+        <item quantity="other">%1$s ficheiros extraídos</item>
+    </plurals>
+    <plurals name="extract_done_partial">
+        <item quantity="one">%1$s de %2$s ficheiro extraído</item>
+        <item quantity="many">%1$s de %2$s ficheiros extraídos</item>
+        <item quantity="other">%1$s de %2$s ficheiros extraídos</item>
+    </plurals>
+    <plurals name="extract_skipped">
+        <item quantity="one">%1$s item ignorado: o nome aponta para fora da pasta de destino.</item>
+        <item quantity="many">%1$s itens ignorados: os nomes apontam para fora da pasta de destino.</item>
+        <item quantity="other">%1$s itens ignorados: os nomes apontam para fora da pasta de destino.</item>
+    </plurals>
+    <plurals name="extract_skipped_unsafe">
+        <item quantity="one">%1$s item ignorado porque pode não ser seguro.</item>
+        <item quantity="many">%1$s itens ignorados porque podem não ser seguros.</item>
+        <item quantity="other">%1$s itens ignorados porque podem não ser seguros.</item>
+    </plurals>
+    <string name="extract_details">Detalhes</string>
+    <string name="extract_show_all">Mostrar tudo</string>
+    <plurals name="extract_damaged">
+        <item quantity="one">%1$s ficheiro estava danificado e não foi gravado:</item>
+        <item quantity="many">%1$s ficheiros estavam danificados e não foram gravados:</item>
+        <item quantity="other">%1$s ficheiros estavam danificados e não foram gravados:</item>
+    </plurals>
+    <!-- the title of the panel behind "Show all". -->
+    <string name="extract_not_written">Não gravados</string>
+    <string name="skip_reason_link">ligação</string>
+    <string name="skip_reason_device">ficheiro de dispositivo</string>
+    <string name="skip_reason_invalid">nome inválido</string>
+    <!-- a skipped name with its reason. -->
+    <string name="skip_line">%1$s (%2$s)</string>
+    <string name="conflict_title">%1$s já existe em %2$s</string>
+    <!-- when the folder has no name to show. -->
+    <string name="conflict_title_plain">%1$s já existe</string>
+    <string name="conflict_replace">Substituir</string>
+    <string name="conflict_keep_both">Manter ambos</string>
+    <string name="conflict_skip">Ignorar</string>
+    <plurals name="conflict_apply_all">
+        <item quantity="one">Fazer o mesmo para %1$s conflito</item>
+        <item quantity="many">Fazer o mesmo para os %1$s conflitos</item>
+        <item quantity="other">Fazer o mesmo para os %1$s conflitos</item>
+    </plurals>
+    <string name="extract_stop_title">Parar a extração?</string>
+    <string name="extract_stop_body">Os ficheiros já extraídos ficam na pasta.</string>
+    <string name="extract_keep_going">Continuar</string>
+    <string name="extract_stop">Parar</string>
+    <string name="large_title">Este ficheiro é invulgarmente grande</string>
+    <string name="large_body">Fica muito maior do que o tamanho comprimido, como fazem os arquivos maliciosos. Continuar?</string>
+    <string name="space_title">Espaço insuficiente</string>
+    <!-- The spec's text has two sizes ("This needs X; the phone has Y free."); ExtractFailure carries none. -->
+    <string name="space_body_before">A pasta não tem espaço livre suficiente para estes ficheiros.</string>
+    <string name="space_body_during">O destino ficou sem espaço. Os ficheiros já gravados ficam lá.</string>
+    <!-- a title for the folder-gone case when it is shown as a dialog. -->
+    <string name="extract_folder_gone_title">Pasta não disponível</string>
+    <string name="extract_folder_gone">A pasta já não está disponível. Escolha-a novamente.</string>
+    <string name="extract_choose">Escolher</string>
+    <string name="extract_password_title">Palavra-passe necessária</string>
+    <string name="extract_password_body">Estes ficheiros estão protegidos. Abra primeiro um deles e introduza a palavra-passe, depois extraia novamente.</string>
+</resources>

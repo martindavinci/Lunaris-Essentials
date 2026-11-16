@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_search">Pesquisar arquivos recentes</string>
+    <string name="home_clear">Limpar arquivos recentes</string>
+    <string name="home_continue">Continuar</string>
+    <string name="home_create">Criar um arquivo</string>
+    <string name="home_create_detail">ZIP a partir de ficheiros ou de uma pasta</string>
+    <string name="home_recents">Todos os arquivos recentes</string>
+    <string name="home_results">Resultados</string>
+    <string name="home_open">Abrir um arquivo</string>
+    <string name="home_locked">Com palavra-passe</string>
+    <string name="home_empty_title">Ainda nada aberto</string>
+    <string name="home_empty_detail">O seu último arquivo fica à espera aqui</string>
+    <string name="home_empty_list">Os arquivos que abrir aparecem aqui</string>
+    <string name="home_recents_off">Os arquivos recentes estão desativados nas Definições</string>
+    <string name="home_no_match">Nenhum arquivo recente corresponde a “%1$s”</string>
+    <string name="home_clear_title">Limpar arquivos recentes?</string>
+    <string name="home_clear_message">Os arquivos ficam onde estão. Só esta lista é limpa.</string>
+    <string name="home_clear_confirm">Limpar</string>
+    <string name="home_menu_remove">Remover dos recentes</string>
+    <string name="home_menu_extract_all">Extrair tudo…</string>
+    <string name="recents_yesterday">Ontem</string>
+    <string name="home_removed">Removido dos recentes. O arquivo não é alterado.</string>
+    <string name="home_undo">Anular</string>
+    <string name="home_gone">Este arquivo já não está disponível, por isso saiu da lista</string>
+    <string name="home_no_picker">Nenhuma aplicação neste telemóvel consegue escolher ficheiros</string>
+    <string name="home_extract_recovered">Uma extração foi interrompida a meio. O ficheiro incompleto foi removido.</string>
+</resources>

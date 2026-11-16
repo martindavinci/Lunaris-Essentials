@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="browser_search">Szukaj w archiwum</string>
+    <string name="browser_search_hint">Szukaj w archiwum</string>
+    <string name="browser_extract_all">Wypakuj wszystko</string>
+    <string name="browser_opening">Otwieranie %1$s…</string>
+    <string name="browser_nested_meta">%1$s · %2$s</string>
+    <string name="browser_menu_extract_all">Wypakuj wszystko…</string>
+    <string name="browser_menu_sort">Sortuj według</string>
+    <string name="browser_menu_info">Informacje o archiwum</string>
+    <string name="browser_menu_share">Udostępnij archiwum</string>
+    <string name="selection_cancel">Anuluj zaznaczenie</string>
+    <string name="selection_all">Zaznacz wszystko</string>
+    <string name="selection_extract">Wypakuj</string>
+    <plurals name="selection_count">
+        <item quantity="one">Zaznaczono: %1$s</item>
+        <item quantity="few">Zaznaczono: %1$s</item>
+        <item quantity="many">Zaznaczono: %1$s</item>
+        <item quantity="other">Zaznaczono: %1$s</item>
+    </plurals>
+    <plurals name="search_results">
+        <item quantity="one">%1$s wynik we wszystkich folderach</item>
+        <item quantity="few">%1$s wyniki we wszystkich folderach</item>
+        <item quantity="many">%1$s wyników we wszystkich folderach</item>
+        <item quantity="other">%1$s wyniki we wszystkich folderach</item>
+    </plurals>
+    <string name="search_no_match">Nic w tym archiwum nie pasuje do „%1$s”</string>
+    <plurals name="browser_reading">
+        <item quantity="one">Odczytywanie archiwum… %1$s element</item>
+        <item quantity="few">Odczytywanie archiwum… %1$s elementy</item>
+        <item quantity="many">Odczytywanie archiwum… %1$s elementów</item>
+        <item quantity="other">Odczytywanie archiwum… %1$s elementy</item>
+    </plurals>
+    <!-- before the first count arrives (a ZIP is counted only at the end). -->
+    <string name="browser_reading_start">Odczytywanie archiwum…</string>
+    <string name="browser_copying">Przygotowywanie archiwum… %1$s</string>
+    <string name="browser_partial">Udało się odczytać tylko część tego archiwum.</string>
+    <string name="browser_capped">Wyświetlanych jest tylko pierwszych 200 000 elementów.</string>
+    <plurals name="browser_hidden_unsafe">
+        <item quantity="one">%1$s element jest ukryty, bo jego nazwa nie jest bezpieczna.</item>
+        <item quantity="few">%1$s elementy są ukryte, bo ich nazwy nie są bezpieczne.</item>
+        <item quantity="many">%1$s elementów jest ukrytych, bo ich nazwy nie są bezpieczne.</item>
+        <item quantity="other">%1$s elementy są ukryte, bo ich nazwy nie są bezpieczne.</item>
+    </plurals>
+    <string name="browser_empty_folder">Ten folder jest pusty</string>
+    <string name="browser_empty_archive">To archiwum jest puste</string>
+    <!-- Entry panel (frame 05) -->
+    <string name="entry_open_with">Otwórz za pomocą…</string>
+    <string name="entry_extract_to">Wypakuj do…</string>
+    <string name="entry_extract_folder">Wypakuj folder do…</string>
+    <string name="entry_size">Rozmiar</string>
+    <string name="entry_packed">Po kompresji</string>
+    <string name="entry_modified">Zmodyfikowano</string>
+    <string name="entry_encrypted">Zaszyfrowany</string>
+    <string name="entry_contains">Zawiera %1$s</string>
+    <string name="yes">Tak</string>
+    <string name="no">Nie</string>
+    <!-- Archive info (frame 16) -->
+    <string name="info_title">Informacje o archiwum</string>
+    <string name="info_format">Format</string>
+    <string name="info_files">Pliki</string>
+    <string name="info_folders">Foldery</string>
+    <string name="info_packed_value">%1$s (%2$s)</string>
+    <string name="info_encrypted_some">Niektóre pliki</string>
+    <string name="info_encrypted_all">Wszystkie pliki</string>
+    <string name="info_encrypted_names">Pliki i nazwy</string>
+    <string name="info_created_by">Utworzono w systemie</string>
+    <string name="info_os_windows">Windows</string>
+    <string name="info_os_unix">Unix</string>
+    <string name="info_os_mac">macOS</string>
+    <string name="info_os_msdos">MS-DOS</string>
+    <string name="info_unknown">Nieznany</string>
+    <string name="info_comment">Komentarz</string>
+    <string name="info_more">Więcej</string>
+    <!-- Sort panel -->
+    <string name="sort_title">Sortuj według</string>
+    <string name="sort_name">Nazwa</string>
+    <string name="sort_size">Rozmiar</string>
+    <string name="sort_date">Data modyfikacji</string>
+    <string name="sort_type">Typ</string>
+    <string name="sort_folders_first">Najpierw foldery</string>
+    <string name="sort_ascending_name">Od A do Z</string>
+    <string name="sort_descending_name">Od Z do A</string>
+    <string name="sort_smallest">Od najmniejszych</string>
+    <string name="sort_largest">Od największych</string>
+    <string name="sort_oldest">Od najstarszych</string>
+    <string name="sort_newest">Od najnowszych</string>
+    <!-- No app, protected RAR 4 entry -->
+    <string name="browser_no_app">Żadna aplikacja na tym telefonie nie otwiera plików .%1$s</string>
+    <string name="browser_no_app_plain">Żadna aplikacja na tym telefonie nie otwiera tego pliku</string>
+    <!-- Notices (snackbars) -->
+    <string name="notice_damaged">Nie udało się odczytać %1$s: ta część archiwum jest uszkodzona</string>
+    <string name="notice_too_deep">Archiwa zagnieżdżone tak głęboko nie są otwierane</string>
+    <string name="notice_no_space">Za mało wolnego miejsca na tym telefonie</string>
+    <string name="notice_changed">Archiwum się zmieniło, więc odczytano je ponownie</string>
+    <string name="notice_share_failed">Nie udało się udostępnić tych plików</string>
+    <!-- Temporary start screen, until Home exists -->
+    <string name="home_open_archive">Otwórz archiwum</string>
+</resources>

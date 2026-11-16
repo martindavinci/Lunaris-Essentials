@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="problem_rar4_title">この RAR は開けません</string>
+    <string name="problem_rar4_body">古い RAR 4 のパスワード保護が使われており、無料のアプリでは読み込めません。送信者に ZIP か新しい形式の RAR を依頼してください。</string>
+    <string name="problem_damaged_title">このアーカイブは壊れています</string>
+    <string name="problem_damaged_body">途中で途切れているか、内容が一致しません。新しいコピーを依頼してください。</string>
+    <string name="problem_show_readable">読み込めた部分を表示</string>
+    <string name="problem_not_archive_title">Lunaris Archives で開けるアーカイブではありません</string>
+    <string name="problem_not_archive_body">対応形式: ZIP、7z、RAR、TAR、GZ、BZ2、XZ、ZST、LZ4、ISO、CPIO。</string>
+    <string name="problem_unsupported_title">このアーカイブには Lunaris Archives が読み込めない機能が使われています</string>
+    <string name="problem_unsupported_body">標準設定で作成した ZIP を送信者に依頼してください。</string>
+    <string name="problem_split_title">これは分割アーカイブの一部です</string>
+    <string name="problem_split_body">Lunaris Archives はまだ分割アーカイブを開けません。</string>
+    <string name="problem_stopped_title">このアーカイブの読み込みが止まりました</string>
+    <string name="problem_stopped_body">壊れているか、この端末のメモリには大きすぎる可能性があります。</string>
+    <string name="problem_gone_title">%1$s が見つかりません</string>
+    <string name="problem_gone_body">移動または削除された可能性があります。</string>
+</resources>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="back">戻る</string>
+    <string name="cancel">キャンセル</string>
+    <string name="close">閉じる</string>
+    <string name="ok">OK</string>
+    <string name="done">完了</string>
+    <string name="open">開く</string>
+    <string name="action_share">共有</string>
+    <string name="action_continue">続行</string>
+    <string name="more_options">その他のオプション</string>
+    <string name="search_clear">クリア</string>
+    <!-- a picked file whose size the provider does not tell. -->
+    <string name="size_unknown">サイズ不明</string>
+    <plurals name="count_files">
+        <item quantity="other">%1$s 個のファイル</item>
+    </plurals>
+    <plurals name="count_items">
+        <item quantity="other">%1$s 個の項目</item>
+    </plurals>
+    <!-- Password dialog (frames 08) -->
+    <string name="password_title">パスワードが必要です</string>
+    <string name="password_body">%1$s はパスワードで保護されています。</string>
+    <string name="password_label">パスワード</string>
+    <string name="password_remember">アプリを閉じるまで記憶する</string>
+    <string name="password_show">パスワードを表示</string>
+    <string name="password_hide">パスワードを隠す</string>
+    <string name="password_checking">確認中…</string>
+    <string name="password_wrong">パスワードが違います。もう一度お試しください。</string>
+    <string name="share_target_create_zip">ZIP を作成</string>
+    <string name="incoming_text_only">ZIP を作成するにはファイルを共有してください</string>
+</resources>

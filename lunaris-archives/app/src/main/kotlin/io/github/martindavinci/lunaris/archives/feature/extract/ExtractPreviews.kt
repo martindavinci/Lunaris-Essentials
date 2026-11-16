@@ -39,6 +39,13 @@ private fun ExtractRunningPreview() = Show(Base.copy(state = Running))
 @Composable
 private fun ExtractRunningLightPreview() = Show(Base.copy(state = Running), ThemeMode.LIGHT)
 
+/** German runs longest: the conflict choices must not clip. */
+@Preview(locale = "de")
+@Composable
+private fun ExtractGermanPreview() = Show(
+    Base.copy(state = ExtractionState.Conflicts(List(6) { Conflict(Notes, "notes.md") }, current = 0), showApplyAll = true, keepBothName = "notes (1).md"),
+)
+
 @Preview
 @Composable
 private fun ExtractConflictPreview() = Show(

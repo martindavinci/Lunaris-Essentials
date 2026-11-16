@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="browser_search">Zoeken in archief</string>
+    <string name="browser_search_hint">Zoeken in archief</string>
+    <string name="browser_extract_all">Alles uitpakken</string>
+    <string name="browser_opening">%1$s openen…</string>
+    <string name="browser_nested_meta">%1$s · %2$s</string>
+    <string name="browser_menu_extract_all">Alles uitpakken…</string>
+    <string name="browser_menu_sort">Sorteren op</string>
+    <string name="browser_menu_info">Archiefinfo</string>
+    <string name="browser_menu_share">Archief delen</string>
+    <string name="selection_cancel">Selectie annuleren</string>
+    <string name="selection_all">Alles selecteren</string>
+    <string name="selection_extract">Uitpakken</string>
+    <plurals name="selection_count">
+        <item quantity="one">%1$s geselecteerd</item>
+        <item quantity="other">%1$s geselecteerd</item>
+    </plurals>
+    <plurals name="search_results">
+        <item quantity="one">%1$s resultaat in alle mappen</item>
+        <item quantity="other">%1$s resultaten in alle mappen</item>
+    </plurals>
+    <string name="search_no_match">Niets in dit archief komt overeen met “%1$s”</string>
+    <plurals name="browser_reading">
+        <item quantity="one">Archief lezen… %1$s item</item>
+        <item quantity="other">Archief lezen… %1$s items</item>
+    </plurals>
+    <!-- before the first count arrives (a ZIP is counted only at the end). -->
+    <string name="browser_reading_start">Archief lezen…</string>
+    <string name="browser_copying">Archief voorbereiden… %1$s</string>
+    <string name="browser_partial">Dit archief kon maar gedeeltelijk worden gelezen.</string>
+    <string name="browser_capped">Alleen de eerste 200.000 items worden getoond.</string>
+    <plurals name="browser_hidden_unsafe">
+        <item quantity="one">%1$s item is verborgen omdat de naam niet veilig is.</item>
+        <item quantity="other">%1$s items zijn verborgen omdat hun namen niet veilig zijn.</item>
+    </plurals>
+    <string name="browser_empty_folder">Deze map is leeg</string>
+    <string name="browser_empty_archive">Dit archief is leeg</string>
+    <!-- Entry panel (frame 05) -->
+    <string name="entry_open_with">Openen met…</string>
+    <string name="entry_extract_to">Uitpakken naar…</string>
+    <string name="entry_extract_folder">Map uitpakken naar…</string>
+    <string name="entry_size">Grootte</string>
+    <string name="entry_packed">Gecomprimeerd</string>
+    <string name="entry_modified">Gewijzigd</string>
+    <string name="entry_encrypted">Versleuteld</string>
+    <string name="entry_contains">Bevat %1$s</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nee</string>
+    <!-- Archive info (frame 16) -->
+    <string name="info_title">Archiefinfo</string>
+    <string name="info_format">Indeling</string>
+    <string name="info_files">Bestanden</string>
+    <string name="info_folders">Mappen</string>
+    <string name="info_packed_value">%1$s (%2$s)</string>
+    <string name="info_encrypted_some">Sommige bestanden</string>
+    <string name="info_encrypted_all">Alle bestanden</string>
+    <string name="info_encrypted_names">Bestanden en namen</string>
+    <string name="info_created_by">Gemaakt op</string>
+    <string name="info_os_windows">Windows</string>
+    <string name="info_os_unix">Unix</string>
+    <string name="info_os_mac">macOS</string>
+    <string name="info_os_msdos">MS-DOS</string>
+    <string name="info_unknown">Onbekend</string>
+    <string name="info_comment">Opmerking</string>
+    <string name="info_more">Meer</string>
+    <!-- Sort panel -->
+    <string name="sort_title">Sorteren op</string>
+    <string name="sort_name">Naam</string>
+    <string name="sort_size">Grootte</string>
+    <string name="sort_date">Datum gewijzigd</string>
+    <string name="sort_type">Type</string>
+    <string name="sort_folders_first">Mappen eerst</string>
+    <string name="sort_ascending_name">A tot Z</string>
+    <string name="sort_descending_name">Z tot A</string>
+    <string name="sort_smallest">Kleinste eerst</string>
+    <string name="sort_largest">Grootste eerst</string>
+    <string name="sort_oldest">Oudste eerst</string>
+    <string name="sort_newest">Nieuwste eerst</string>
+    <!-- No app, protected RAR 4 entry -->
+    <string name="browser_no_app">Geen app op deze telefoon opent .%1$s-bestanden</string>
+    <string name="browser_no_app_plain">Geen app op deze telefoon opent dit bestand</string>
+    <!-- Notices (snackbars) -->
+    <string name="notice_damaged">%1$s kon niet worden gelezen: dat deel van het archief is beschadigd</string>
+    <string name="notice_too_deep">Archieven die zo diep genest zijn, worden niet geopend</string>
+    <string name="notice_no_space">Niet genoeg vrije ruimte op deze telefoon</string>
+    <string name="notice_changed">Het archief is gewijzigd en is opnieuw gelezen</string>
+    <string name="notice_share_failed">Kan deze bestanden niet delen</string>
+    <!-- Temporary start screen, until Home exists -->
+    <string name="home_open_archive">Een archief openen</string>
+</resources>

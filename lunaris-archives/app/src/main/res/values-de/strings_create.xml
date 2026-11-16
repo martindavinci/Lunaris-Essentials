@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_title">Neues Archiv</string>
+    <string name="create_pick_files">Dateien auswählen</string>
+    <string name="create_pick_folder">Ordner auswählen</string>
+    <!-- what the check on a card means, for a screen reader. -->
+    <string name="create_picked">Hinzugefügt</string>
+    <string name="create_add_more">Weitere hinzufügen</string>
+    <string name="create_remove">%1$s entfernen</string>
+    <string name="create_name">Name</string>
+    <string name="create_name_invalid">Einen Namen ohne / \\ : * ? \" &lt; &gt; | verwenden</string>
+    <string name="create_compression">Komprimierung</string>
+    <string name="create_store">Keine</string>
+    <string name="create_normal">Normal</string>
+    <string name="create_maximum">Maximal</string>
+    <string name="create_protect">Mit Passwort schützen</string>
+    <string name="create_confirm">Passwort bestätigen</string>
+    <string name="create_mismatch">Die Passwörter stimmen nicht überein</string>
+    <string name="create_aes_note">AES-256. Ohne das Passwort kann es niemand öffnen, auch du nicht.</string>
+    <string name="create_names_visible">Dateinamen bleiben lesbar.</string>
+    <string name="create_button">ZIP erstellen</string>
+    <string name="create_save_hint">Danach wählst du den Speicherort</string>
+    <string name="create_strength_weak">Schwach</string>
+    <string name="create_strength_fair">Mittel</string>
+    <string name="create_strength_good">Gut</string>
+    <string name="create_strength_strong">Stark</string>
+    <plurals name="create_adding">
+        <item quantity="one">%1$s von %2$s Datei wird hinzugefügt</item>
+        <item quantity="other">%1$s von %2$s Dateien werden hinzugefügt</item>
+    </plurals>
+    <string name="create_creating">%1$s wird erstellt</string>
+    <string name="create_in">in %1$s</string>
+    <string name="create_done">%1$s erstellt</string>
+    <!-- files that have no content of their own and were left out. -->
+    <plurals name="create_skipped">
+        <item quantity="one">%1$s Element hat keine Datei zum Hinzufügen und wurde ausgelassen:</item>
+        <item quantity="other">%1$s Elemente haben keine Datei zum Hinzufügen und wurden ausgelassen:</item>
+    </plurals>
+    <string name="create_stop_title">Erstellen des Archivs stoppen?</string>
+    <string name="create_stop_body">Die unfertige Datei wird entfernt.</string>
+    <string name="create_failed_source">Eine Datei konnte nicht gelesen werden, daher wurde das Archiv nicht erstellt.</string>
+    <string name="create_failed_space">Nicht genug Speicherplatz für das Archiv.</string>
+    <string name="create_failed_target">Das Archiv konnte nicht gespeichert werden.</string>
+    <string name="home_new_archive">Neues Archiv</string>
+</resources>

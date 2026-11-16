@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="extract_title">%1$s uitpakken</string>
+    <string name="extract_to">naar %1$s</string>
+    <plurals name="extract_files_of">
+        <item quantity="one">%1$s van %2$s bestand</item>
+        <item quantity="other">%1$s van %2$s bestanden</item>
+    </plurals>
+    <string name="extract_bytes_of">%1$s van %2$s</string>
+    <string name="extract_keep_open">Houd Lunaris Archives open tot het klaar is.</string>
+    <!-- what a screen reader says for the bar while the "unusually large" question is open. -->
+    <string name="extract_waiting">Wacht op je antwoord</string>
+    <plurals name="extract_done">
+        <item quantity="one">%1$s bestand uitgepakt</item>
+        <item quantity="other">%1$s bestanden uitgepakt</item>
+    </plurals>
+    <plurals name="extract_done_partial">
+        <item quantity="one">%1$s van %2$s bestand uitgepakt</item>
+        <item quantity="other">%1$s van %2$s bestanden uitgepakt</item>
+    </plurals>
+    <plurals name="extract_skipped">
+        <item quantity="one">%1$s item overgeslagen: de naam wijst naar buiten de doelmap.</item>
+        <item quantity="other">%1$s items overgeslagen: hun namen wijzen naar buiten de doelmap.</item>
+    </plurals>
+    <plurals name="extract_skipped_unsafe">
+        <item quantity="one">%1$s item overgeslagen omdat het onveilig kan zijn.</item>
+        <item quantity="other">%1$s items overgeslagen omdat ze onveilig kunnen zijn.</item>
+    </plurals>
+    <string name="extract_details">Details</string>
+    <string name="extract_show_all">Alles tonen</string>
+    <plurals name="extract_damaged">
+        <item quantity="one">%1$s bestand was beschadigd en is niet weggeschreven:</item>
+        <item quantity="other">%1$s bestanden waren beschadigd en zijn niet weggeschreven:</item>
+    </plurals>
+    <!-- the title of the panel behind "Show all". -->
+    <string name="extract_not_written">Niet weggeschreven</string>
+    <string name="skip_reason_link">link</string>
+    <string name="skip_reason_device">apparaatbestand</string>
+    <string name="skip_reason_invalid">ongeldige naam</string>
+    <!-- a skipped name with its reason. -->
+    <string name="skip_line">%1$s (%2$s)</string>
+    <string name="conflict_title">%1$s bestaat al in %2$s</string>
+    <!-- when the folder has no name to show. -->
+    <string name="conflict_title_plain">%1$s bestaat al</string>
+    <string name="conflict_replace">Vervangen</string>
+    <string name="conflict_keep_both">Beide houden</string>
+    <string name="conflict_skip">Overslaan</string>
+    <plurals name="conflict_apply_all">
+        <item quantity="one">Dit doen voor %1$s conflict</item>
+        <item quantity="other">Dit doen voor alle %1$s conflicten</item>
+    </plurals>
+    <string name="extract_stop_title">Uitpakken stoppen?</string>
+    <string name="extract_stop_body">Al uitgepakte bestanden blijven in de map.</string>
+    <string name="extract_keep_going">Doorgaan</string>
+    <string name="extract_stop">Stoppen</string>
+    <string name="large_title">Dit bestand is ongewoon groot</string>
+    <string name="large_body">Het wordt veel groter dan de gecomprimeerde grootte, iets wat schadelijke archieven doen. Doorgaan?</string>
+    <string name="space_title">Niet genoeg ruimte</string>
+    <!-- The spec's text has two sizes ("This needs X; the phone has Y free."); ExtractFailure carries none. -->
+    <string name="space_body_before">De map heeft niet genoeg vrije ruimte voor deze bestanden.</string>
+    <string name="space_body_during">De bestemming heeft geen ruimte meer. Al weggeschreven bestanden blijven daar staan.</string>
+    <!-- a title for the folder-gone case when it is shown as a dialog. -->
+    <string name="extract_folder_gone_title">Map niet beschikbaar</string>
+    <string name="extract_folder_gone">De map is niet meer beschikbaar. Kies hem opnieuw.</string>
+    <string name="extract_choose">Kiezen</string>
+    <string name="extract_password_title">Wachtwoord nodig</string>
+    <string name="extract_password_body">Deze bestanden zijn beveiligd. Open er eerst een en voer het wachtwoord in, en pak daarna opnieuw uit.</string>
+</resources>

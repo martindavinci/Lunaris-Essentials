@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="extract_title">Extraction de %1$s</string>
+    <string name="extract_to">vers %1$s</string>
+    <plurals name="extract_files_of">
+        <item quantity="one">%1$s sur %2$s fichier</item>
+        <item quantity="many">%1$s sur %2$s fichiers</item>
+        <item quantity="other">%1$s sur %2$s fichiers</item>
+    </plurals>
+    <string name="extract_bytes_of">%1$s sur %2$s</string>
+    <string name="extract_keep_open">Gardez Lunaris Archives ouvert jusqu\'à la fin.</string>
+    <!-- what a screen reader says for the bar while the "unusually large" question is open. -->
+    <string name="extract_waiting">En attente de votre réponse</string>
+    <plurals name="extract_done">
+        <item quantity="one">%1$s fichier extrait</item>
+        <item quantity="many">%1$s fichiers extraits</item>
+        <item quantity="other">%1$s fichiers extraits</item>
+    </plurals>
+    <plurals name="extract_done_partial">
+        <item quantity="one">%1$s sur %2$s fichier extrait</item>
+        <item quantity="many">%1$s sur %2$s fichiers extraits</item>
+        <item quantity="other">%1$s sur %2$s fichiers extraits</item>
+    </plurals>
+    <plurals name="extract_skipped">
+        <item quantity="one">%1$s élément ignoré : son nom pointe en dehors du dossier de destination.</item>
+        <item quantity="many">%1$s éléments ignorés : leurs noms pointent en dehors du dossier de destination.</item>
+        <item quantity="other">%1$s éléments ignorés : leurs noms pointent en dehors du dossier de destination.</item>
+    </plurals>
+    <plurals name="extract_skipped_unsafe">
+        <item quantity="one">%1$s élément ignoré, car il pourrait être dangereux.</item>
+        <item quantity="many">%1$s éléments ignorés, car ils pourraient être dangereux.</item>
+        <item quantity="other">%1$s éléments ignorés, car ils pourraient être dangereux.</item>
+    </plurals>
+    <string name="extract_details">Détails</string>
+    <string name="extract_show_all">Tout afficher</string>
+    <plurals name="extract_damaged">
+        <item quantity="one">%1$s fichier était endommagé et n\'a pas été écrit :</item>
+        <item quantity="many">%1$s fichiers étaient endommagés et n\'ont pas été écrits :</item>
+        <item quantity="other">%1$s fichiers étaient endommagés et n\'ont pas été écrits :</item>
+    </plurals>
+    <!-- the title of the panel behind "Show all". -->
+    <string name="extract_not_written">Non écrits</string>
+    <string name="skip_reason_link">lien</string>
+    <string name="skip_reason_device">fichier de périphérique</string>
+    <string name="skip_reason_invalid">nom non valide</string>
+    <!-- a skipped name with its reason. -->
+    <string name="skip_line">%1$s (%2$s)</string>
+    <string name="conflict_title">%1$s existe déjà dans %2$s</string>
+    <!-- when the folder has no name to show. -->
+    <string name="conflict_title_plain">%1$s existe déjà</string>
+    <string name="conflict_replace">Remplacer</string>
+    <string name="conflict_keep_both">Garder les deux</string>
+    <string name="conflict_skip">Ignorer</string>
+    <plurals name="conflict_apply_all">
+        <item quantity="one">Faire de même pour %1$s conflit</item>
+        <item quantity="many">Faire de même pour les %1$s conflits</item>
+        <item quantity="other">Faire de même pour les %1$s conflits</item>
+    </plurals>
+    <string name="extract_stop_title">Arrêter l\'extraction ?</string>
+    <string name="extract_stop_body">Les fichiers déjà extraits restent dans le dossier.</string>
+    <string name="extract_keep_going">Continuer</string>
+    <string name="extract_stop">Arrêter</string>
+    <string name="large_title">Ce fichier est anormalement volumineux</string>
+    <string name="large_body">Il devient bien plus gros que sa taille compressée, comme le font les archives malveillantes. Continuer ?</string>
+    <string name="space_title">Espace insuffisant</string>
+    <!-- The spec's text has two sizes ("This needs X; the phone has Y free."); ExtractFailure carries none. -->
+    <string name="space_body_before">Le dossier n\'a pas assez d\'espace libre pour ces fichiers.</string>
+    <string name="space_body_during">La destination manque d\'espace. Les fichiers déjà écrits y restent.</string>
+    <!-- a title for the folder-gone case when it is shown as a dialog. -->
+    <string name="extract_folder_gone_title">Dossier indisponible</string>
+    <string name="extract_folder_gone">Le dossier n\'est plus disponible. Choisissez-le à nouveau.</string>
+    <string name="extract_choose">Choisir</string>
+    <string name="extract_password_title">Mot de passe requis</string>
+    <string name="extract_password_body">Ces fichiers sont protégés. Ouvrez d\'abord l\'un d\'eux et saisissez le mot de passe, puis relancez l\'extraction.</string>
+</resources>

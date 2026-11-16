@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">설정</string>
+    <string name="settings_section_appearance">화면 스타일</string>
+    <string name="settings_theme">테마</string>
+    <string name="settings_theme_system">시스템 기본값</string>
+    <string name="settings_theme_dark">다크</string>
+    <string name="settings_theme_light">라이트</string>
+    <string name="settings_language">언어</string>
+    <string name="settings_section_files">파일</string>
+    <string name="settings_clear_temp">임시 파일 지우기</string>
+    <string name="settings_clear_temp_summary">연 파일의 사본을 삭제합니다</string>
+    <string name="settings_remember_recents">최근 압축 파일 기억</string>
+    <string name="settings_section_about">정보</string>
+    <string name="settings_about_version">버전 %1$s</string>
+    <string name="settings_about_author">개발: Martin DaVinci</string>
+    <string name="settings_licences">라이선스</string>
+    <string name="settings_source">소스 코드</string>
+    <string name="settings_language_system">시스템 기본값</string>
+    <string name="settings_cleared">임시 파일을 지웠습니다</string>
+    <string name="settings_no_browser">이 휴대전화에는 링크를 열 수 있는 브라우저가 없습니다</string>
+</resources>

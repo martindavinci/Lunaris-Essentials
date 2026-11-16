@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="back">Zurück</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="close">Schließen</string>
+    <string name="ok">OK</string>
+    <string name="done">Fertig</string>
+    <string name="open">Öffnen</string>
+    <string name="action_share">Teilen</string>
+    <string name="action_continue">Weiter</string>
+    <string name="more_options">Weitere Optionen</string>
+    <string name="search_clear">Löschen</string>
+    <!-- a picked file whose size the provider does not tell. -->
+    <string name="size_unknown">Größe unbekannt</string>
+    <plurals name="count_files">
+        <item quantity="one">%1$s Datei</item>
+        <item quantity="other">%1$s Dateien</item>
+    </plurals>
+    <plurals name="count_items">
+        <item quantity="one">%1$s Element</item>
+        <item quantity="other">%1$s Elemente</item>
+    </plurals>
+    <!-- Password dialog (frames 08) -->
+    <string name="password_title">Passwort erforderlich</string>
+    <string name="password_body">%1$s ist geschützt.</string>
+    <string name="password_label">Passwort</string>
+    <string name="password_remember">Merken, bis ich die App schließe</string>
+    <string name="password_show">Passwort anzeigen</string>
+    <string name="password_hide">Passwort ausblenden</string>
+    <string name="password_checking">Wird geprüft…</string>
+    <string name="password_wrong">Falsches Passwort. Bitte erneut versuchen.</string>
+    <string name="share_target_create_zip">ZIP erstellen</string>
+    <string name="incoming_text_only">Dateien teilen, um ein ZIP zu erstellen</string>
+</resources>

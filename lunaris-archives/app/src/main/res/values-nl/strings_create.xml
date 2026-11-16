@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_title">Nieuw archief</string>
+    <string name="create_pick_files">Bestanden kiezen</string>
+    <string name="create_pick_folder">Een map kiezen</string>
+    <!-- what the check on a card means, for a screen reader. -->
+    <string name="create_picked">Toegevoegd</string>
+    <string name="create_add_more">Meer toevoegen</string>
+    <string name="create_remove">%1$s verwijderen</string>
+    <string name="create_name">Naam</string>
+    <string name="create_name_invalid">Gebruik een naam zonder / \\ : * ? \" &lt; &gt; |</string>
+    <string name="create_compression">Compressie</string>
+    <string name="create_store">Geen</string>
+    <string name="create_normal">Normaal</string>
+    <string name="create_maximum">Maximaal</string>
+    <string name="create_protect">Beveiligen met een wachtwoord</string>
+    <string name="create_confirm">Wachtwoord bevestigen</string>
+    <string name="create_mismatch">Wachtwoorden komen niet overeen</string>
+    <string name="create_aes_note">AES-256. Zonder het wachtwoord kan niemand het openen, ook jij niet.</string>
+    <string name="create_names_visible">Bestandsnamen blijven leesbaar.</string>
+    <string name="create_button">ZIP maken</string>
+    <string name="create_save_hint">Daarna kies je waar je het opslaat</string>
+    <string name="create_strength_weak">Zwak</string>
+    <string name="create_strength_fair">Redelijk</string>
+    <string name="create_strength_good">Goed</string>
+    <string name="create_strength_strong">Sterk</string>
+    <plurals name="create_adding">
+        <item quantity="one">%1$s van %2$s bestand toevoegen</item>
+        <item quantity="other">%1$s van %2$s bestanden toevoegen</item>
+    </plurals>
+    <string name="create_creating">%1$s maken</string>
+    <string name="create_in">in %1$s</string>
+    <string name="create_done">%1$s gemaakt</string>
+    <!-- files that have no content of their own and were left out. -->
+    <plurals name="create_skipped">
+        <item quantity="one">%1$s item heeft geen bestand om toe te voegen en is weggelaten:</item>
+        <item quantity="other">%1$s items hebben geen bestand om toe te voegen en zijn weggelaten:</item>
+    </plurals>
+    <string name="create_stop_title">Archief maken stoppen?</string>
+    <string name="create_stop_body">Het onvoltooide bestand wordt verwijderd.</string>
+    <string name="create_failed_source">Een bestand kon niet worden gelezen, dus het archief is niet gemaakt.</string>
+    <string name="create_failed_space">Niet genoeg ruimte voor het archief.</string>
+    <string name="create_failed_target">Het archief kon niet worden opgeslagen.</string>
+    <string name="home_new_archive">Nieuw archief</string>
+</resources>

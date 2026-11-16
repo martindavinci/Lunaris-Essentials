@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_title">Nuovo archivio</string>
+    <string name="create_pick_files">Scegli file</string>
+    <string name="create_pick_folder">Scegli una cartella</string>
+    <!-- what the check on a card means, for a screen reader. -->
+    <string name="create_picked">Aggiunto</string>
+    <string name="create_add_more">Aggiungi altri</string>
+    <string name="create_remove">Rimuovi %1$s</string>
+    <string name="create_name">Nome</string>
+    <string name="create_name_invalid">Usa un nome senza / \\ : * ? \" &lt; &gt; |</string>
+    <string name="create_compression">Compressione</string>
+    <string name="create_store">Nessuna</string>
+    <string name="create_normal">Normale</string>
+    <string name="create_maximum">Massima</string>
+    <string name="create_protect">Proteggi con una password</string>
+    <string name="create_confirm">Conferma password</string>
+    <string name="create_mismatch">Le password non coincidono</string>
+    <string name="create_aes_note">AES-256. Senza la password nessuno può aprirlo, nemmeno tu.</string>
+    <string name="create_names_visible">I nomi dei file restano leggibili.</string>
+    <string name="create_button">Crea ZIP</string>
+    <string name="create_save_hint">Poi scegli dove salvarlo</string>
+    <string name="create_strength_weak">Debole</string>
+    <string name="create_strength_fair">Discreta</string>
+    <string name="create_strength_good">Buona</string>
+    <string name="create_strength_strong">Forte</string>
+    <plurals name="create_adding">
+        <item quantity="one">Aggiunta di %1$s di %2$s file</item>
+        <item quantity="many">Aggiunta di %1$s di %2$s file</item>
+        <item quantity="other">Aggiunta di %1$s di %2$s file</item>
+    </plurals>
+    <string name="create_creating">Creazione di %1$s</string>
+    <string name="create_in">in %1$s</string>
+    <string name="create_done">%1$s creato</string>
+    <!-- files that have no content of their own and were left out. -->
+    <plurals name="create_skipped">
+        <item quantity="one">%1$s elemento non ha un file da aggiungere ed è stato escluso:</item>
+        <item quantity="many">%1$s elementi non hanno un file da aggiungere e sono stati esclusi:</item>
+        <item quantity="other">%1$s elementi non hanno un file da aggiungere e sono stati esclusi:</item>
+    </plurals>
+    <string name="create_stop_title">Interrompere la creazione dell\'archivio?</string>
+    <string name="create_stop_body">Il file incompleto viene rimosso.</string>
+    <string name="create_failed_source">Impossibile leggere un file, quindi l\'archivio non è stato creato.</string>
+    <string name="create_failed_space">Spazio insufficiente per l\'archivio.</string>
+    <string name="create_failed_target">Impossibile salvare l\'archivio.</string>
+    <string name="home_new_archive">Nuovo archivio</string>
+</resources>

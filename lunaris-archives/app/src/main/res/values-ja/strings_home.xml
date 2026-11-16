@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_search">最近のアーカイブを検索</string>
+    <string name="home_clear">最近のアーカイブを消去</string>
+    <string name="home_continue">続ける</string>
+    <string name="home_create">アーカイブを作成</string>
+    <string name="home_create_detail">ファイルやフォルダから ZIP を作成</string>
+    <string name="home_recents">最近のすべてのアーカイブ</string>
+    <string name="home_results">検索結果</string>
+    <string name="home_open">アーカイブを開く</string>
+    <string name="home_locked">パスワード付き</string>
+    <string name="home_empty_title">まだ何も開いていません</string>
+    <string name="home_empty_detail">最後に開いたアーカイブがここに表示されます</string>
+    <string name="home_empty_list">開いたアーカイブがここに表示されます</string>
+    <string name="home_recents_off">最近のアーカイブは設定でオフになっています</string>
+    <string name="home_no_match">「%1$s」に一致する最近のアーカイブはありません</string>
+    <string name="home_clear_title">最近のアーカイブを消去しますか？</string>
+    <string name="home_clear_message">アーカイブはそのまま残ります。消去されるのはこのリストだけです。</string>
+    <string name="home_clear_confirm">消去</string>
+    <string name="home_menu_remove">最近の項目から削除</string>
+    <string name="home_menu_extract_all">すべて展開…</string>
+    <string name="recents_yesterday">昨日</string>
+    <string name="home_removed">最近の項目から削除しました。アーカイブ自体は変更されません。</string>
+    <string name="home_undo">元に戻す</string>
+    <string name="home_gone">このアーカイブは利用できなくなったため、リストから削除されました</string>
+    <string name="home_no_picker">この端末にはファイルを選択できるアプリがありません</string>
+    <string name="home_extract_recovered">展開が途中で止まりました。未完成のファイルは削除されました。</string>
+</resources>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_search">Letzte Archive durchsuchen</string>
+    <string name="home_clear">Liste der letzten Archive leeren</string>
+    <string name="home_continue">Weiter</string>
+    <string name="home_create">Archiv erstellen</string>
+    <string name="home_create_detail">ZIP aus Dateien oder einem Ordner</string>
+    <string name="home_recents">Alle letzten Archive</string>
+    <string name="home_results">Ergebnisse</string>
+    <string name="home_open">Archiv öffnen</string>
+    <string name="home_locked">Mit Passwort</string>
+    <string name="home_empty_title">Noch nichts geöffnet</string>
+    <string name="home_empty_detail">Hier wartet dein letztes Archiv</string>
+    <string name="home_empty_list">Geöffnete Archive erscheinen hier</string>
+    <string name="home_recents_off">Letzte Archive sind in den Einstellungen ausgeschaltet</string>
+    <string name="home_no_match">Kein letztes Archiv passt zu „%1$s“</string>
+    <string name="home_clear_title">Liste der letzten Archive leeren?</string>
+    <string name="home_clear_message">Die Archive bleiben, wo sie sind. Nur diese Liste wird geleert.</string>
+    <string name="home_clear_confirm">Leeren</string>
+    <string name="home_menu_remove">Aus der Liste entfernen</string>
+    <string name="home_menu_extract_all">Alles entpacken…</string>
+    <string name="recents_yesterday">Gestern</string>
+    <string name="home_removed">Aus der Liste entfernt. Das Archiv bleibt unberührt.</string>
+    <string name="home_undo">Rückgängig</string>
+    <string name="home_gone">Dieses Archiv ist nicht mehr verfügbar und wurde aus der Liste entfernt</string>
+    <string name="home_no_picker">Keine App auf diesem Telefon kann Dateien auswählen</string>
+    <string name="home_extract_recovered">Ein Entpackvorgang wurde mittendrin abgebrochen. Die unfertige Datei wurde entfernt.</string>
+</resources>

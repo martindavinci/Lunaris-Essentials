@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="extract_title">Wypakowywanie %1$s</string>
+    <string name="extract_to">do %1$s</string>
+    <plurals name="extract_files_of">
+        <item quantity="one">%1$s z %2$s pliku</item>
+        <item quantity="few">%1$s z %2$s plików</item>
+        <item quantity="many">%1$s z %2$s plików</item>
+        <item quantity="other">%1$s z %2$s plików</item>
+    </plurals>
+    <string name="extract_bytes_of">%1$s z %2$s</string>
+    <string name="extract_keep_open">Nie zamykaj Lunaris Archives, dopóki operacja się nie zakończy.</string>
+    <!-- what a screen reader says for the bar while the "unusually large" question is open. -->
+    <string name="extract_waiting">Oczekiwanie na odpowiedź</string>
+    <plurals name="extract_done">
+        <item quantity="one">Wypakowano %1$s plik</item>
+        <item quantity="few">Wypakowano %1$s pliki</item>
+        <item quantity="many">Wypakowano %1$s plików</item>
+        <item quantity="other">Wypakowano %1$s pliki</item>
+    </plurals>
+    <plurals name="extract_done_partial">
+        <item quantity="one">Wypakowano %1$s z %2$s pliku</item>
+        <item quantity="few">Wypakowano %1$s z %2$s plików</item>
+        <item quantity="many">Wypakowano %1$s z %2$s plików</item>
+        <item quantity="other">Wypakowano %1$s z %2$s plików</item>
+    </plurals>
+    <plurals name="extract_skipped">
+        <item quantity="one">Pominięto %1$s element: jego nazwa wskazuje poza folder docelowy.</item>
+        <item quantity="few">Pominięto %1$s elementy: ich nazwy wskazują poza folder docelowy.</item>
+        <item quantity="many">Pominięto %1$s elementów: ich nazwy wskazują poza folder docelowy.</item>
+        <item quantity="other">Pominięto %1$s elementy: ich nazwy wskazują poza folder docelowy.</item>
+    </plurals>
+    <plurals name="extract_skipped_unsafe">
+        <item quantity="one">Pominięto %1$s element, bo może być niebezpieczny.</item>
+        <item quantity="few">Pominięto %1$s elementy, bo mogą być niebezpieczne.</item>
+        <item quantity="many">Pominięto %1$s elementów, bo mogą być niebezpieczne.</item>
+        <item quantity="other">Pominięto %1$s elementy, bo mogą być niebezpieczne.</item>
+    </plurals>
+    <string name="extract_details">Szczegóły</string>
+    <string name="extract_show_all">Pokaż wszystko</string>
+    <plurals name="extract_damaged">
+        <item quantity="one">%1$s plik był uszkodzony i nie został zapisany:</item>
+        <item quantity="few">%1$s pliki były uszkodzone i nie zostały zapisane:</item>
+        <item quantity="many">%1$s plików było uszkodzonych i nie zostało zapisanych:</item>
+        <item quantity="other">%1$s pliki były uszkodzone i nie zostały zapisane:</item>
+    </plurals>
+    <!-- the title of the panel behind "Show all". -->
+    <string name="extract_not_written">Niezapisane</string>
+    <string name="skip_reason_link">link</string>
+    <string name="skip_reason_device">plik urządzenia</string>
+    <string name="skip_reason_invalid">nieprawidłowa nazwa</string>
+    <!-- a skipped name with its reason. -->
+    <string name="skip_line">%1$s (%2$s)</string>
+    <string name="conflict_title">%1$s już istnieje w %2$s</string>
+    <!-- when the folder has no name to show. -->
+    <string name="conflict_title_plain">%1$s już istnieje</string>
+    <string name="conflict_replace">Zastąp</string>
+    <string name="conflict_keep_both">Zachowaj oba</string>
+    <string name="conflict_skip">Pomiń</string>
+    <plurals name="conflict_apply_all">
+        <item quantity="one">Zastosuj do %1$s konfliktu</item>
+        <item quantity="few">Zastosuj do wszystkich %1$s konfliktów</item>
+        <item quantity="many">Zastosuj do wszystkich %1$s konfliktów</item>
+        <item quantity="other">Zastosuj do wszystkich %1$s konfliktów</item>
+    </plurals>
+    <string name="extract_stop_title">Zatrzymać wypakowywanie?</string>
+    <string name="extract_stop_body">Już wypakowane pliki pozostaną w folderze.</string>
+    <string name="extract_keep_going">Kontynuuj</string>
+    <string name="extract_stop">Zatrzymaj</string>
+    <string name="large_title">Ten plik jest nietypowo duży</string>
+    <string name="large_body">Po rozpakowaniu jest dużo większy niż po kompresji, co robią szkodliwe archiwa. Kontynuować?</string>
+    <string name="space_title">Za mało miejsca</string>
+    <!-- The spec's text has two sizes ("This needs X; the phone has Y free."); ExtractFailure carries none. -->
+    <string name="space_body_before">W folderze nie ma dość wolnego miejsca na te pliki.</string>
+    <string name="space_body_during">W miejscu docelowym zabrakło miejsca. Już zapisane pliki tam pozostaną.</string>
+    <!-- a title for the folder-gone case when it is shown as a dialog. -->
+    <string name="extract_folder_gone_title">Folder niedostępny</string>
+    <string name="extract_folder_gone">Folder nie jest już dostępny. Wybierz go ponownie.</string>
+    <string name="extract_choose">Wybierz</string>
+    <string name="extract_password_title">Wymagane hasło</string>
+    <string name="extract_password_body">Te pliki są chronione. Najpierw otwórz jeden z nich i wpisz hasło, a potem wypakuj ponownie.</string>
+</resources>

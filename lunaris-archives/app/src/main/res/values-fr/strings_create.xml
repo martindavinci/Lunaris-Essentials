@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_title">Nouvelle archive</string>
+    <string name="create_pick_files">Choisir des fichiers</string>
+    <string name="create_pick_folder">Choisir un dossier</string>
+    <!-- what the check on a card means, for a screen reader. -->
+    <string name="create_picked">Ajouté</string>
+    <string name="create_add_more">Ajouter d\'autres</string>
+    <string name="create_remove">Retirer %1$s</string>
+    <string name="create_name">Nom</string>
+    <string name="create_name_invalid">Utilisez un nom sans / \\ : * ? \" &lt; &gt; |</string>
+    <string name="create_compression">Compression</string>
+    <string name="create_store">Aucune</string>
+    <string name="create_normal">Normale</string>
+    <string name="create_maximum">Maximale</string>
+    <string name="create_protect">Protéger par un mot de passe</string>
+    <string name="create_confirm">Confirmer le mot de passe</string>
+    <string name="create_mismatch">Les mots de passe ne correspondent pas</string>
+    <string name="create_aes_note">AES-256. Sans le mot de passe, personne ne peut l\'ouvrir, pas même vous.</string>
+    <string name="create_names_visible">Les noms des fichiers restent lisibles.</string>
+    <string name="create_button">Créer le ZIP</string>
+    <string name="create_save_hint">Vous choisirez ensuite où l\'enregistrer</string>
+    <string name="create_strength_weak">Faible</string>
+    <string name="create_strength_fair">Moyen</string>
+    <string name="create_strength_good">Bon</string>
+    <string name="create_strength_strong">Fort</string>
+    <plurals name="create_adding">
+        <item quantity="one">Ajout de %1$s sur %2$s fichier</item>
+        <item quantity="many">Ajout de %1$s sur %2$s fichiers</item>
+        <item quantity="other">Ajout de %1$s sur %2$s fichiers</item>
+    </plurals>
+    <string name="create_creating">Création de %1$s</string>
+    <string name="create_in">dans %1$s</string>
+    <string name="create_done">%1$s créé</string>
+    <!-- files that have no content of their own and were left out. -->
+    <plurals name="create_skipped">
+        <item quantity="one">%1$s élément n\'a aucun fichier à ajouter et a été omis :</item>
+        <item quantity="many">%1$s éléments n\'ont aucun fichier à ajouter et ont été omis :</item>
+        <item quantity="other">%1$s éléments n\'ont aucun fichier à ajouter et ont été omis :</item>
+    </plurals>
+    <string name="create_stop_title">Arrêter la création de l\'archive ?</string>
+    <string name="create_stop_body">Le fichier inachevé est supprimé.</string>
+    <string name="create_failed_source">Un fichier n\'a pas pu être lu, l\'archive n\'a donc pas été créée.</string>
+    <string name="create_failed_space">Espace insuffisant pour l\'archive.</string>
+    <string name="create_failed_target">L\'archive n\'a pas pu être enregistrée.</string>
+    <string name="home_new_archive">Nouvelle archive</string>
+</resources>

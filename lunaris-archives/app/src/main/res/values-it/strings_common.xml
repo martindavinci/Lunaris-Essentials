@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="back">Indietro</string>
+    <string name="cancel">Annulla</string>
+    <string name="close">Chiudi</string>
+    <string name="ok">OK</string>
+    <string name="done">Fine</string>
+    <string name="open">Apri</string>
+    <string name="action_share">Condividi</string>
+    <string name="action_continue">Continua</string>
+    <string name="more_options">Altre opzioni</string>
+    <string name="search_clear">Cancella</string>
+    <!-- a picked file whose size the provider does not tell. -->
+    <string name="size_unknown">Dimensione sconosciuta</string>
+    <plurals name="count_files">
+        <item quantity="one">%1$s file</item>
+        <item quantity="many">%1$s file</item>
+        <item quantity="other">%1$s file</item>
+    </plurals>
+    <plurals name="count_items">
+        <item quantity="one">%1$s elemento</item>
+        <item quantity="many">%1$s elementi</item>
+        <item quantity="other">%1$s elementi</item>
+    </plurals>
+    <!-- Password dialog (frames 08) -->
+    <string name="password_title">Serve la password</string>
+    <string name="password_body">%1$s è protetto.</string>
+    <string name="password_label">Password</string>
+    <string name="password_remember">Ricorda finché non chiudo l\'app</string>
+    <string name="password_show">Mostra password</string>
+    <string name="password_hide">Nascondi password</string>
+    <string name="password_checking">Verifica in corso…</string>
+    <string name="password_wrong">Password errata. Riprova.</string>
+    <string name="share_target_create_zip">Crea ZIP</string>
+    <string name="incoming_text_only">Condividi dei file per creare uno ZIP</string>
+</resources>

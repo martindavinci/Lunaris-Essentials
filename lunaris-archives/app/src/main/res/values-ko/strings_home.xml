@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_search">최근 압축 파일 검색</string>
+    <string name="home_clear">최근 압축 파일 지우기</string>
+    <string name="home_continue">계속</string>
+    <string name="home_create">압축 파일 만들기</string>
+    <string name="home_create_detail">파일 또는 폴더로 ZIP 만들기</string>
+    <string name="home_recents">모든 최근 압축 파일</string>
+    <string name="home_results">검색 결과</string>
+    <string name="home_open">압축 파일 열기</string>
+    <string name="home_locked">비밀번호 있음</string>
+    <string name="home_empty_title">아직 연 파일이 없습니다</string>
+    <string name="home_empty_detail">마지막으로 연 압축 파일이 여기에 표시됩니다</string>
+    <string name="home_empty_list">연 압축 파일이 여기에 표시됩니다</string>
+    <string name="home_recents_off">최근 압축 파일 기록이 설정에서 꺼져 있습니다</string>
+    <string name="home_no_match">“%1$s”와(과) 일치하는 최근 압축 파일이 없습니다</string>
+    <string name="home_clear_title">최근 압축 파일 목록을 지울까요?</string>
+    <string name="home_clear_message">압축 파일은 그대로 있고 이 목록만 지워집니다.</string>
+    <string name="home_clear_confirm">지우기</string>
+    <string name="home_menu_remove">최근 항목에서 제거</string>
+    <string name="home_menu_extract_all">모두 압축 풀기…</string>
+    <string name="recents_yesterday">어제</string>
+    <string name="home_removed">최근 항목에서 제거했습니다. 압축 파일 자체는 변경되지 않습니다.</string>
+    <string name="home_undo">실행 취소</string>
+    <string name="home_gone">이 압축 파일을 더 이상 사용할 수 없어 목록에서 삭제했습니다</string>
+    <string name="home_no_picker">이 휴대전화에는 파일을 선택할 수 있는 앱이 없습니다</string>
+    <string name="home_extract_recovered">압축 풀기가 중간에 중단되었습니다. 완료되지 않은 파일은 삭제했습니다.</string>
+</resources>

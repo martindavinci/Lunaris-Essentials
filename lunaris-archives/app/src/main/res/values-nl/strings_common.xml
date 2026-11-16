@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="back">Terug</string>
+    <string name="cancel">Annuleren</string>
+    <string name="close">Sluiten</string>
+    <string name="ok">OK</string>
+    <string name="done">Klaar</string>
+    <string name="open">Openen</string>
+    <string name="action_share">Delen</string>
+    <string name="action_continue">Doorgaan</string>
+    <string name="more_options">Meer opties</string>
+    <string name="search_clear">Wissen</string>
+    <!-- a picked file whose size the provider does not tell. -->
+    <string name="size_unknown">Grootte onbekend</string>
+    <plurals name="count_files">
+        <item quantity="one">%1$s bestand</item>
+        <item quantity="other">%1$s bestanden</item>
+    </plurals>
+    <plurals name="count_items">
+        <item quantity="one">%1$s item</item>
+        <item quantity="other">%1$s items</item>
+    </plurals>
+    <!-- Password dialog (frames 08) -->
+    <string name="password_title">Wachtwoord nodig</string>
+    <string name="password_body">%1$s is beveiligd.</string>
+    <string name="password_label">Wachtwoord</string>
+    <string name="password_remember">Onthouden tot ik de app sluit</string>
+    <string name="password_show">Wachtwoord tonen</string>
+    <string name="password_hide">Wachtwoord verbergen</string>
+    <string name="password_checking">Controleren…</string>
+    <string name="password_wrong">Verkeerd wachtwoord. Probeer het opnieuw.</string>
+    <string name="share_target_create_zip">ZIP maken</string>
+    <string name="incoming_text_only">Deel bestanden om een ZIP te maken</string>
+</resources>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_title">Nuevo archivo comprimido</string>
+    <string name="create_pick_files">Elegir archivos</string>
+    <string name="create_pick_folder">Elegir una carpeta</string>
+    <!-- what the check on a card means, for a screen reader. -->
+    <string name="create_picked">Añadido</string>
+    <string name="create_add_more">Añadir más</string>
+    <string name="create_remove">Quitar %1$s</string>
+    <string name="create_name">Nombre</string>
+    <string name="create_name_invalid">Usa un nombre sin / \\ : * ? \" &lt; &gt; |</string>
+    <string name="create_compression">Compresión</string>
+    <string name="create_store">Ninguna</string>
+    <string name="create_normal">Normal</string>
+    <string name="create_maximum">Máxima</string>
+    <string name="create_protect">Proteger con contraseña</string>
+    <string name="create_confirm">Confirmar contraseña</string>
+    <string name="create_mismatch">Las contraseñas no coinciden</string>
+    <string name="create_aes_note">AES-256. Sin la contraseña nadie puede abrirlo, ni siquiera tú.</string>
+    <string name="create_names_visible">Los nombres de los archivos siguen siendo legibles.</string>
+    <string name="create_button">Crear ZIP</string>
+    <string name="create_save_hint">Después eliges dónde guardarlo</string>
+    <string name="create_strength_weak">Débil</string>
+    <string name="create_strength_fair">Regular</string>
+    <string name="create_strength_good">Buena</string>
+    <string name="create_strength_strong">Fuerte</string>
+    <plurals name="create_adding">
+        <item quantity="one">Añadiendo %1$s de %2$s archivo</item>
+        <item quantity="many">Añadiendo %1$s de %2$s archivos</item>
+        <item quantity="other">Añadiendo %1$s de %2$s archivos</item>
+    </plurals>
+    <string name="create_creating">Creando %1$s</string>
+    <string name="create_in">en %1$s</string>
+    <string name="create_done">%1$s creado</string>
+    <!-- files that have no content of their own and were left out. -->
+    <plurals name="create_skipped">
+        <item quantity="one">%1$s elemento no tiene ningún archivo que añadir y se ha dejado fuera:</item>
+        <item quantity="many">%1$s elementos no tienen ningún archivo que añadir y se han dejado fuera:</item>
+        <item quantity="other">%1$s elementos no tienen ningún archivo que añadir y se han dejado fuera:</item>
+    </plurals>
+    <string name="create_stop_title">¿Dejar de crear el archivo comprimido?</string>
+    <string name="create_stop_body">Se elimina el archivo sin terminar.</string>
+    <string name="create_failed_source">No se ha podido leer un archivo, así que no se ha creado el archivo comprimido.</string>
+    <string name="create_failed_space">No hay espacio suficiente para el archivo comprimido.</string>
+    <string name="create_failed_target">No se ha podido guardar el archivo comprimido.</string>
+    <string name="home_new_archive">Nuevo archivo comprimido</string>
+</resources>

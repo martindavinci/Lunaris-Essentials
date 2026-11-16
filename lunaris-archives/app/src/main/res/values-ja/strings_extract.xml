@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="extract_title">%1$s を展開中</string>
+    <string name="extract_to">展開先: %1$s</string>
+    <plurals name="extract_files_of">
+        <item quantity="other">%1$s / %2$s 個のファイル</item>
+    </plurals>
+    <string name="extract_bytes_of">%1$s / %2$s</string>
+    <string name="extract_keep_open">完了するまで Lunaris Archives を開いたままにしてください。</string>
+    <!-- what a screen reader says for the bar while the "unusually large" question is open. -->
+    <string name="extract_waiting">回答を待っています</string>
+    <plurals name="extract_done">
+        <item quantity="other">%1$s 個のファイルを展開しました</item>
+    </plurals>
+    <plurals name="extract_done_partial">
+        <item quantity="other">%2$s 個中 %1$s 個のファイルを展開しました</item>
+    </plurals>
+    <plurals name="extract_skipped">
+        <item quantity="other">名前が展開先フォルダの外を指しているため、%1$s 個の項目をスキップしました。</item>
+    </plurals>
+    <plurals name="extract_skipped_unsafe">
+        <item quantity="other">安全でない可能性があるため、%1$s 個の項目をスキップしました。</item>
+    </plurals>
+    <string name="extract_details">詳細</string>
+    <string name="extract_show_all">すべて表示</string>
+    <plurals name="extract_damaged">
+        <item quantity="other">%1$s 個のファイルが壊れていたため、書き込まれませんでした:</item>
+    </plurals>
+    <!-- the title of the panel behind "Show all". -->
+    <string name="extract_not_written">書き込まれなかったファイル</string>
+    <string name="skip_reason_link">リンク</string>
+    <string name="skip_reason_device">デバイスファイル</string>
+    <string name="skip_reason_invalid">無効な名前</string>
+    <!-- a skipped name with its reason. -->
+    <string name="skip_line">%1$s (%2$s)</string>
+    <string name="conflict_title">%1$s は %2$s に既に存在します</string>
+    <!-- when the folder has no name to show. -->
+    <string name="conflict_title_plain">%1$s は既に存在します</string>
+    <string name="conflict_replace">置き換える</string>
+    <string name="conflict_keep_both">両方残す</string>
+    <string name="conflict_skip">スキップ</string>
+    <plurals name="conflict_apply_all">
+        <item quantity="other">%1$s 件の競合すべてに同じ操作を行う</item>
+    </plurals>
+    <string name="extract_stop_title">展開を中止しますか？</string>
+    <string name="extract_stop_body">展開済みのファイルはフォルダに残ります。</string>
+    <string name="extract_keep_going">続ける</string>
+    <string name="extract_stop">中止</string>
+    <string name="large_title">このファイルは異常に大きくなります</string>
+    <string name="large_body">圧縮時のサイズよりはるかに大きくなります。これは有害なアーカイブに見られる特徴です。続行しますか？</string>
+    <string name="space_title">空き容量が足りません</string>
+    <!-- The spec's text has two sizes ("This needs X; the phone has Y free."); ExtractFailure carries none. -->
+    <string name="space_body_before">このフォルダには、これらのファイルを保存する空き容量がありません。</string>
+    <string name="space_body_during">展開先の空き容量がなくなりました。書き込み済みのファイルはそのまま残ります。</string>
+    <!-- a title for the folder-gone case when it is shown as a dialog. -->
+    <string name="extract_folder_gone_title">フォルダを利用できません</string>
+    <string name="extract_folder_gone">フォルダを利用できなくなりました。もう一度選択してください。</string>
+    <string name="extract_choose">選択</string>
+    <string name="extract_password_title">パスワードが必要です</string>
+    <string name="extract_password_body">これらのファイルは保護されています。先にいずれかを開いてパスワードを入力してから、もう一度展開してください。</string>
+</resources>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="create_title">Nowe archiwum</string>
+    <string name="create_pick_files">Wybierz pliki</string>
+    <string name="create_pick_folder">Wybierz folder</string>
+    <!-- what the check on a card means, for a screen reader. -->
+    <string name="create_picked">Dodano</string>
+    <string name="create_add_more">Dodaj więcej</string>
+    <string name="create_remove">Usuń %1$s</string>
+    <string name="create_name">Nazwa</string>
+    <string name="create_name_invalid">Użyj nazwy bez / \\ : * ? \" &lt; &gt; |</string>
+    <string name="create_compression">Kompresja</string>
+    <string name="create_store">Brak</string>
+    <string name="create_normal">Normalna</string>
+    <string name="create_maximum">Maksymalna</string>
+    <string name="create_protect">Chroń hasłem</string>
+    <string name="create_confirm">Potwierdź hasło</string>
+    <string name="create_mismatch">Hasła nie są zgodne</string>
+    <string name="create_aes_note">AES-256. Bez hasła nikt go nie otworzy, nawet ty.</string>
+    <string name="create_names_visible">Nazwy plików pozostają czytelne.</string>
+    <string name="create_button">Utwórz ZIP</string>
+    <string name="create_save_hint">Następnie wybierzesz, gdzie go zapisać</string>
+    <string name="create_strength_weak">Słabe</string>
+    <string name="create_strength_fair">Średnie</string>
+    <string name="create_strength_good">Dobre</string>
+    <string name="create_strength_strong">Silne</string>
+    <plurals name="create_adding">
+        <item quantity="one">Dodawanie %1$s z %2$s pliku</item>
+        <item quantity="few">Dodawanie %1$s z %2$s plików</item>
+        <item quantity="many">Dodawanie %1$s z %2$s plików</item>
+        <item quantity="other">Dodawanie %1$s z %2$s plików</item>
+    </plurals>
+    <string name="create_creating">Tworzenie %1$s</string>
+    <string name="create_in">w %1$s</string>
+    <string name="create_done">Utworzono %1$s</string>
+    <!-- files that have no content of their own and were left out. -->
+    <plurals name="create_skipped">
+        <item quantity="one">Pominięto %1$s element, który nie ma pliku do dodania:</item>
+        <item quantity="few">Pominięto %1$s elementy, które nie mają pliku do dodania:</item>
+        <item quantity="many">Pominięto %1$s elementów, które nie mają pliku do dodania:</item>
+        <item quantity="other">Pominięto %1$s elementy, które nie mają pliku do dodania:</item>
+    </plurals>
+    <string name="create_stop_title">Przerwać tworzenie archiwum?</string>
+    <string name="create_stop_body">Niedokończony plik zostanie usunięty.</string>
+    <string name="create_failed_source">Nie udało się odczytać pliku, więc archiwum nie zostało utworzone.</string>
+    <string name="create_failed_space">Za mało miejsca na archiwum.</string>
+    <string name="create_failed_target">Nie udało się zapisać archiwum.</string>
+    <string name="home_new_archive">Nowe archiwum</string>
+</resources>

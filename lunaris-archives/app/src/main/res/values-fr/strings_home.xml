@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_search">Rechercher dans les archives récentes</string>
+    <string name="home_clear">Vider les archives récentes</string>
+    <string name="home_continue">Continuer</string>
+    <string name="home_create">Créer une archive</string>
+    <string name="home_create_detail">ZIP à partir de fichiers ou d\'un dossier</string>
+    <string name="home_recents">Toutes les archives récentes</string>
+    <string name="home_results">Résultats</string>
+    <string name="home_open">Ouvrir une archive</string>
+    <string name="home_locked">Protégée par mot de passe</string>
+    <string name="home_empty_title">Rien d\'ouvert pour le moment</string>
+    <string name="home_empty_detail">Votre dernière archive vous attendra ici</string>
+    <string name="home_empty_list">Les archives que vous ouvrez apparaissent ici</string>
+    <string name="home_recents_off">Les archives récentes sont désactivées dans les paramètres</string>
+    <string name="home_no_match">Aucune archive récente ne correspond à « %1$s »</string>
+    <string name="home_clear_title">Vider les archives récentes ?</string>
+    <string name="home_clear_message">Les archives restent où elles sont. Seule cette liste est vidée.</string>
+    <string name="home_clear_confirm">Vider</string>
+    <string name="home_menu_remove">Retirer des récents</string>
+    <string name="home_menu_extract_all">Tout extraire…</string>
+    <string name="recents_yesterday">Hier</string>
+    <string name="home_removed">Retirée des récents. L\'archive n\'est pas touchée.</string>
+    <string name="home_undo">Annuler</string>
+    <string name="home_gone">Cette archive n\'est plus disponible, elle a donc été retirée de la liste</string>
+    <string name="home_no_picker">Aucune application de ce téléphone ne permet de choisir des fichiers</string>
+    <string name="home_extract_recovered">Une extraction s\'est arrêtée en cours de route. Son fichier inachevé a été supprimé.</string>
+</resources>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">设置</string>
+    <string name="settings_section_appearance">外观</string>
+    <string name="settings_theme">主题</string>
+    <string name="settings_theme_system">跟随系统</string>
+    <string name="settings_theme_dark">深色</string>
+    <string name="settings_theme_light">浅色</string>
+    <string name="settings_language">语言</string>
+    <string name="settings_section_files">文件</string>
+    <string name="settings_clear_temp">清除临时文件</string>
+    <string name="settings_clear_temp_summary">删除已打开文件的副本</string>
+    <string name="settings_remember_recents">记住最近的压缩包</string>
+    <string name="settings_section_about">关于</string>
+    <string name="settings_about_version">版本 %1$s</string>
+    <string name="settings_about_author">作者：Martin DaVinci</string>
+    <string name="settings_licences">许可</string>
+    <string name="settings_source">源代码</string>
+    <string name="settings_language_system">跟随系统</string>
+    <string name="settings_cleared">已清除临时文件</string>
+    <string name="settings_no_browser">此手机上没有可以打开链接的浏览器</string>
+</resources>

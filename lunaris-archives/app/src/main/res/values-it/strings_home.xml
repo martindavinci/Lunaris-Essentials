@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_search">Cerca negli archivi recenti</string>
+    <string name="home_clear">Svuota gli archivi recenti</string>
+    <string name="home_continue">Continua</string>
+    <string name="home_create">Crea un archivio</string>
+    <string name="home_create_detail">ZIP da file o da una cartella</string>
+    <string name="home_recents">Tutti gli archivi recenti</string>
+    <string name="home_results">Risultati</string>
+    <string name="home_open">Apri un archivio</string>
+    <string name="home_locked">Protetto da password</string>
+    <string name="home_empty_title">Ancora niente di aperto</string>
+    <string name="home_empty_detail">Qui ti aspetta l\'ultimo archivio aperto</string>
+    <string name="home_empty_list">Gli archivi che apri compaiono qui</string>
+    <string name="home_recents_off">Gli archivi recenti sono disattivati nelle Impostazioni</string>
+    <string name="home_no_match">Nessun archivio recente corrisponde a “%1$s”</string>
+    <string name="home_clear_title">Svuotare gli archivi recenti?</string>
+    <string name="home_clear_message">Gli archivi restano dove sono. Viene svuotato solo questo elenco.</string>
+    <string name="home_clear_confirm">Svuota</string>
+    <string name="home_menu_remove">Togli dai recenti</string>
+    <string name="home_menu_extract_all">Estrai tutto…</string>
+    <string name="recents_yesterday">Ieri</string>
+    <string name="home_removed">Tolto dai recenti. L\'archivio non viene toccato.</string>
+    <string name="home_undo">Annulla</string>
+    <string name="home_gone">Questo archivio non è più disponibile, quindi è stato tolto dall\'elenco</string>
+    <string name="home_no_picker">Nessuna app su questo telefono può scegliere i file</string>
+    <string name="home_extract_recovered">Un\'estrazione si è interrotta a metà. Il suo file incompleto è stato rimosso.</string>
+</resources>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="extract_title">Estrazione di %1$s</string>
+    <string name="extract_to">in %1$s</string>
+    <plurals name="extract_files_of">
+        <item quantity="one">%1$s di %2$s file</item>
+        <item quantity="many">%1$s di %2$s file</item>
+        <item quantity="other">%1$s di %2$s file</item>
+    </plurals>
+    <string name="extract_bytes_of">%1$s di %2$s</string>
+    <string name="extract_keep_open">Tieni aperta Lunaris Archives finché non ha finito.</string>
+    <!-- what a screen reader says for the bar while the "unusually large" question is open. -->
+    <string name="extract_waiting">In attesa della tua risposta</string>
+    <plurals name="extract_done">
+        <item quantity="one">%1$s file estratto</item>
+        <item quantity="many">%1$s file estratti</item>
+        <item quantity="other">%1$s file estratti</item>
+    </plurals>
+    <plurals name="extract_done_partial">
+        <item quantity="one">%1$s di %2$s file estratto</item>
+        <item quantity="many">%1$s di %2$s file estratti</item>
+        <item quantity="other">%1$s di %2$s file estratti</item>
+    </plurals>
+    <plurals name="extract_skipped">
+        <item quantity="one">%1$s elemento saltato: il suo nome punta fuori dalla cartella di destinazione.</item>
+        <item quantity="many">%1$s elementi saltati: i loro nomi puntano fuori dalla cartella di destinazione.</item>
+        <item quantity="other">%1$s elementi saltati: i loro nomi puntano fuori dalla cartella di destinazione.</item>
+    </plurals>
+    <plurals name="extract_skipped_unsafe">
+        <item quantity="one">%1$s elemento saltato perché potrebbe non essere sicuro.</item>
+        <item quantity="many">%1$s elementi saltati perché potrebbero non essere sicuri.</item>
+        <item quantity="other">%1$s elementi saltati perché potrebbero non essere sicuri.</item>
+    </plurals>
+    <string name="extract_details">Dettagli</string>
+    <string name="extract_show_all">Mostra tutto</string>
+    <plurals name="extract_damaged">
+        <item quantity="one">%1$s file era danneggiato e non è stato scritto:</item>
+        <item quantity="many">%1$s file erano danneggiati e non sono stati scritti:</item>
+        <item quantity="other">%1$s file erano danneggiati e non sono stati scritti:</item>
+    </plurals>
+    <!-- the title of the panel behind "Show all". -->
+    <string name="extract_not_written">Non scritti</string>
+    <string name="skip_reason_link">link</string>
+    <string name="skip_reason_device">file di dispositivo</string>
+    <string name="skip_reason_invalid">nome non valido</string>
+    <!-- a skipped name with its reason. -->
+    <string name="skip_line">%1$s (%2$s)</string>
+    <string name="conflict_title">%1$s esiste già in %2$s</string>
+    <!-- when the folder has no name to show. -->
+    <string name="conflict_title_plain">%1$s esiste già</string>
+    <string name="conflict_replace">Sostituisci</string>
+    <string name="conflict_keep_both">Mantieni entrambi</string>
+    <string name="conflict_skip">Salta</string>
+    <plurals name="conflict_apply_all">
+        <item quantity="one">Applica a %1$s conflitto</item>
+        <item quantity="many">Applica a tutti i %1$s conflitti</item>
+        <item quantity="other">Applica a tutti i %1$s conflitti</item>
+    </plurals>
+    <string name="extract_stop_title">Interrompere l\'estrazione?</string>
+    <string name="extract_stop_body">I file già estratti restano nella cartella.</string>
+    <string name="extract_keep_going">Continua</string>
+    <string name="extract_stop">Interrompi</string>
+    <string name="large_title">Questo file è insolitamente grande</string>
+    <string name="large_body">Diventa molto più grande della sua dimensione compressa, come fanno gli archivi dannosi. Continuare?</string>
+    <string name="space_title">Spazio insufficiente</string>
+    <!-- The spec's text has two sizes ("This needs X; the phone has Y free."); ExtractFailure carries none. -->
+    <string name="space_body_before">La cartella non ha abbastanza spazio libero per questi file.</string>
+    <string name="space_body_during">La destinazione ha esaurito lo spazio. I file già scritti restano lì.</string>
+    <!-- a title for the folder-gone case when it is shown as a dialog. -->
+    <string name="extract_folder_gone_title">Cartella non disponibile</string>
+    <string name="extract_folder_gone">La cartella non è più disponibile. Sceglila di nuovo.</string>
+    <string name="extract_choose">Scegli</string>
+    <string name="extract_password_title">Serve la password</string>
+    <string name="extract_password_body">Questi file sono protetti. Aprine prima uno e inserisci la password, poi estrai di nuovo.</string>
+</resources>

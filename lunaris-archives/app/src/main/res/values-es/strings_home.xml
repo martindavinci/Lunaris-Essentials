@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_search">Buscar en recientes</string>
+    <string name="home_clear">Vaciar la lista de recientes</string>
+    <string name="home_continue">Continuar</string>
+    <string name="home_create">Crear un archivo comprimido</string>
+    <string name="home_create_detail">ZIP a partir de archivos o de una carpeta</string>
+    <string name="home_recents">Todos los archivos comprimidos recientes</string>
+    <string name="home_results">Resultados</string>
+    <string name="home_open">Abrir un archivo comprimido</string>
+    <string name="home_locked">Con contraseña</string>
+    <string name="home_empty_title">Aún no has abierto nada</string>
+    <string name="home_empty_detail">Aquí te esperará el último archivo comprimido</string>
+    <string name="home_empty_list">Los archivos comprimidos que abras aparecen aquí</string>
+    <string name="home_recents_off">Los recientes están desactivados en Ajustes</string>
+    <string name="home_no_match">Ningún archivo comprimido reciente coincide con «%1$s»</string>
+    <string name="home_clear_title">¿Vaciar la lista de recientes?</string>
+    <string name="home_clear_message">Los archivos comprimidos se quedan donde están. Solo se vacía esta lista.</string>
+    <string name="home_clear_confirm">Vaciar</string>
+    <string name="home_menu_remove">Quitar de recientes</string>
+    <string name="home_menu_extract_all">Extraer todo…</string>
+    <string name="recents_yesterday">Ayer</string>
+    <string name="home_removed">Quitado de recientes. El archivo comprimido no se toca.</string>
+    <string name="home_undo">Deshacer</string>
+    <string name="home_gone">Este archivo comprimido ya no está disponible, así que se ha quitado de la lista</string>
+    <string name="home_no_picker">Ninguna aplicación de este teléfono puede elegir archivos</string>
+    <string name="home_extract_recovered">Una extracción se detuvo a medias. Se ha eliminado su archivo sin terminar.</string>
+</resources>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="back">Voltar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="close">Fechar</string>
+    <string name="ok">OK</string>
+    <string name="done">Concluído</string>
+    <string name="open">Abrir</string>
+    <string name="action_share">Partilhar</string>
+    <string name="action_continue">Continuar</string>
+    <string name="more_options">Mais opções</string>
+    <string name="search_clear">Limpar</string>
+    <!-- a picked file whose size the provider does not tell. -->
+    <string name="size_unknown">Tamanho desconhecido</string>
+    <plurals name="count_files">
+        <item quantity="one">%1$s ficheiro</item>
+        <item quantity="many">%1$s ficheiros</item>
+        <item quantity="other">%1$s ficheiros</item>
+    </plurals>
+    <plurals name="count_items">
+        <item quantity="one">%1$s item</item>
+        <item quantity="many">%1$s itens</item>
+        <item quantity="other">%1$s itens</item>
+    </plurals>
+    <!-- Password dialog (frames 08) -->
+    <string name="password_title">Palavra-passe necessária</string>
+    <string name="password_body">%1$s está protegido.</string>
+    <string name="password_label">Palavra-passe</string>
+    <string name="password_remember">Lembrar até fechar a aplicação</string>
+    <string name="password_show">Mostrar palavra-passe</string>
+    <string name="password_hide">Ocultar palavra-passe</string>
+    <string name="password_checking">A verificar…</string>
+    <string name="password_wrong">Palavra-passe errada. Tente novamente.</string>
+    <string name="share_target_create_zip">Criar ZIP</string>
+    <string name="incoming_text_only">Partilhe ficheiros para criar um ZIP</string>
+</resources>

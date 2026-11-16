@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="browser_search">在压缩包中搜索</string>
+    <string name="browser_search_hint">在压缩包中搜索</string>
+    <string name="browser_extract_all">全部解压</string>
+    <string name="browser_opening">正在打开 %1$s…</string>
+    <string name="browser_nested_meta">%1$s · %2$s</string>
+    <string name="browser_menu_extract_all">全部解压…</string>
+    <string name="browser_menu_sort">排序方式</string>
+    <string name="browser_menu_info">压缩包信息</string>
+    <string name="browser_menu_share">分享压缩包</string>
+    <string name="selection_cancel">取消选择</string>
+    <string name="selection_all">全选</string>
+    <string name="selection_extract">解压</string>
+    <plurals name="selection_count">
+        <item quantity="other">已选择 %1$s 项</item>
+    </plurals>
+    <plurals name="search_results">
+        <item quantity="other">所有文件夹中共 %1$s 个结果</item>
+    </plurals>
+    <string name="search_no_match">此压缩包中没有与“%1$s”匹配的内容</string>
+    <plurals name="browser_reading">
+        <item quantity="other">正在读取压缩包… %1$s 项</item>
+    </plurals>
+    <!-- before the first count arrives (a ZIP is counted only at the end). -->
+    <string name="browser_reading_start">正在读取压缩包…</string>
+    <string name="browser_copying">正在准备压缩包… %1$s</string>
+    <string name="browser_partial">此压缩包只能读取一部分。</string>
+    <string name="browser_capped">仅显示前 200,000 项。</string>
+    <plurals name="browser_hidden_unsafe">
+        <item quantity="other">有 %1$s 项因名称不安全而被隐藏。</item>
+    </plurals>
+    <string name="browser_empty_folder">此文件夹为空</string>
+    <string name="browser_empty_archive">此压缩包为空</string>
+    <!-- Entry panel (frame 05) -->
+    <string name="entry_open_with">打开方式…</string>
+    <string name="entry_extract_to">解压到…</string>
+    <string name="entry_extract_folder">将文件夹解压到…</string>
+    <string name="entry_size">大小</string>
+    <string name="entry_packed">压缩后</string>
+    <string name="entry_modified">修改时间</string>
+    <string name="entry_encrypted">加密</string>
+    <string name="entry_contains">包含 %1$s</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
+    <!-- Archive info (frame 16) -->
+    <string name="info_title">压缩包信息</string>
+    <string name="info_format">格式</string>
+    <string name="info_files">文件</string>
+    <string name="info_folders">文件夹</string>
+    <string name="info_packed_value">%1$s (%2$s)</string>
+    <string name="info_encrypted_some">部分文件</string>
+    <string name="info_encrypted_all">所有文件</string>
+    <string name="info_encrypted_names">文件和文件名</string>
+    <string name="info_created_by">创建平台</string>
+    <string name="info_os_windows">Windows</string>
+    <string name="info_os_unix">Unix</string>
+    <string name="info_os_mac">macOS</string>
+    <string name="info_os_msdos">MS-DOS</string>
+    <string name="info_unknown">未知</string>
+    <string name="info_comment">注释</string>
+    <string name="info_more">更多</string>
+    <!-- Sort panel -->
+    <string name="sort_title">排序方式</string>
+    <string name="sort_name">名称</string>
+    <string name="sort_size">大小</string>
+    <string name="sort_date">修改日期</string>
+    <string name="sort_type">类型</string>
+    <string name="sort_folders_first">文件夹优先</string>
+    <string name="sort_ascending_name">A 到 Z</string>
+    <string name="sort_descending_name">Z 到 A</string>
+    <string name="sort_smallest">从小到大</string>
+    <string name="sort_largest">从大到小</string>
+    <string name="sort_oldest">从旧到新</string>
+    <string name="sort_newest">从新到旧</string>
+    <!-- No app, protected RAR 4 entry -->
+    <string name="browser_no_app">此手机上没有可以打开 .%1$s 文件的应用</string>
+    <string name="browser_no_app_plain">此手机上没有可以打开此文件的应用</string>
+    <!-- Notices (snackbars) -->
+    <string name="notice_damaged">无法读取 %1$s：压缩包的这一部分已损坏</string>
+    <string name="notice_too_deep">嵌套层数过深的压缩包不会打开</string>
+    <string name="notice_no_space">此手机上的可用空间不足</string>
+    <string name="notice_changed">压缩包已更改，因此已重新读取</string>
+    <string name="notice_share_failed">无法分享这些文件</string>
+    <!-- Temporary start screen, until Home exists -->
+    <string name="home_open_archive">打开压缩包</string>
+</resources>

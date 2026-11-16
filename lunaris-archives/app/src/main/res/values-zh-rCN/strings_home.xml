@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_search">搜索最近的压缩包</string>
+    <string name="home_clear">清空最近的压缩包</string>
+    <string name="home_continue">继续</string>
+    <string name="home_create">创建压缩包</string>
+    <string name="home_create_detail">用文件或文件夹创建 ZIP</string>
+    <string name="home_recents">所有最近的压缩包</string>
+    <string name="home_results">结果</string>
+    <string name="home_open">打开压缩包</string>
+    <string name="home_locked">有密码</string>
+    <string name="home_empty_title">还没有打开过任何内容</string>
+    <string name="home_empty_detail">上次打开的压缩包会显示在这里</string>
+    <string name="home_empty_list">你打开的压缩包会显示在这里</string>
+    <string name="home_recents_off">最近的压缩包已在“设置”中关闭</string>
+    <string name="home_no_match">没有与“%1$s”匹配的最近压缩包</string>
+    <string name="home_clear_title">要清空最近的压缩包吗？</string>
+    <string name="home_clear_message">压缩包会留在原处，只会清空此列表。</string>
+    <string name="home_clear_confirm">清空</string>
+    <string name="home_menu_remove">从最近列表中移除</string>
+    <string name="home_menu_extract_all">全部解压…</string>
+    <string name="recents_yesterday">昨天</string>
+    <string name="home_removed">已从最近列表中移除，不会改动压缩包。</string>
+    <string name="home_undo">撤销</string>
+    <string name="home_gone">此压缩包已不可用，因此已从列表中移除</string>
+    <string name="home_no_picker">此手机上没有可以选择文件的应用</string>
+    <string name="home_extract_recovered">有一次解压在中途停止，未完成的文件已删除。</string>
+</resources>

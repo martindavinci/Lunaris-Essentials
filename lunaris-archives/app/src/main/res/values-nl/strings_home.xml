@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_search">Zoeken in recente archieven</string>
+    <string name="home_clear">Recente archieven wissen</string>
+    <string name="home_continue">Doorgaan</string>
+    <string name="home_create">Een archief maken</string>
+    <string name="home_create_detail">ZIP van bestanden of een map</string>
+    <string name="home_recents">Alle recente archieven</string>
+    <string name="home_results">Resultaten</string>
+    <string name="home_open">Een archief openen</string>
+    <string name="home_locked">Met wachtwoord</string>
+    <string name="home_empty_title">Nog niets geopend</string>
+    <string name="home_empty_detail">Je laatste archief wacht hier op je</string>
+    <string name="home_empty_list">Archieven die je opent, verschijnen hier</string>
+    <string name="home_recents_off">Recente archieven staan uit in Instellingen</string>
+    <string name="home_no_match">Geen recent archief komt overeen met “%1$s”</string>
+    <string name="home_clear_title">Recente archieven wissen?</string>
+    <string name="home_clear_message">De archieven blijven waar ze zijn. Alleen deze lijst wordt gewist.</string>
+    <string name="home_clear_confirm">Wissen</string>
+    <string name="home_menu_remove">Uit recente archieven verwijderen</string>
+    <string name="home_menu_extract_all">Alles uitpakken…</string>
+    <string name="recents_yesterday">Gisteren</string>
+    <string name="home_removed">Uit recente archieven verwijderd. Het archief blijft ongemoeid.</string>
+    <string name="home_undo">Ongedaan maken</string>
+    <string name="home_gone">Dit archief is niet meer beschikbaar en is uit de lijst verwijderd</string>
+    <string name="home_no_picker">Geen app op deze telefoon kan bestanden kiezen</string>
+    <string name="home_extract_recovered">Het uitpakken is halverwege gestopt. Het onvoltooide bestand is verwijderd.</string>
+</resources>

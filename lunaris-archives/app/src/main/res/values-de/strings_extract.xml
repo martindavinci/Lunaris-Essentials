@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="extract_title">%1$s wird entpackt</string>
+    <string name="extract_to">nach %1$s</string>
+    <plurals name="extract_files_of">
+        <item quantity="one">%1$s von %2$s Datei</item>
+        <item quantity="other">%1$s von %2$s Dateien</item>
+    </plurals>
+    <string name="extract_bytes_of">%1$s von %2$s</string>
+    <string name="extract_keep_open">Lunaris Archives bis zum Ende geöffnet lassen.</string>
+    <!-- what a screen reader says for the bar while the "unusually large" question is open. -->
+    <string name="extract_waiting">Wartet auf deine Antwort</string>
+    <plurals name="extract_done">
+        <item quantity="one">%1$s Datei entpackt</item>
+        <item quantity="other">%1$s Dateien entpackt</item>
+    </plurals>
+    <plurals name="extract_done_partial">
+        <item quantity="one">%1$s von %2$s Datei entpackt</item>
+        <item quantity="other">%1$s von %2$s Dateien entpackt</item>
+    </plurals>
+    <plurals name="extract_skipped">
+        <item quantity="one">%1$s Element übersprungen: Sein Name zeigt aus dem Zielordner hinaus.</item>
+        <item quantity="other">%1$s Elemente übersprungen: Ihre Namen zeigen aus dem Zielordner hinaus.</item>
+    </plurals>
+    <plurals name="extract_skipped_unsafe">
+        <item quantity="one">%1$s Element übersprungen, weil es unsicher sein könnte.</item>
+        <item quantity="other">%1$s Elemente übersprungen, weil sie unsicher sein könnten.</item>
+    </plurals>
+    <string name="extract_details">Details</string>
+    <string name="extract_show_all">Alle anzeigen</string>
+    <plurals name="extract_damaged">
+        <item quantity="one">%1$s Datei war beschädigt und wurde nicht geschrieben:</item>
+        <item quantity="other">%1$s Dateien waren beschädigt und wurden nicht geschrieben:</item>
+    </plurals>
+    <!-- the title of the panel behind "Show all". -->
+    <string name="extract_not_written">Nicht geschrieben</string>
+    <string name="skip_reason_link">Link</string>
+    <string name="skip_reason_device">Gerätedatei</string>
+    <string name="skip_reason_invalid">ungültiger Name</string>
+    <!-- a skipped name with its reason. -->
+    <string name="skip_line">%1$s (%2$s)</string>
+    <string name="conflict_title">%1$s ist in %2$s bereits vorhanden</string>
+    <!-- when the folder has no name to show. -->
+    <string name="conflict_title_plain">%1$s ist bereits vorhanden</string>
+    <string name="conflict_replace">Ersetzen</string>
+    <string name="conflict_keep_both">Beide behalten</string>
+    <string name="conflict_skip">Überspringen</string>
+    <plurals name="conflict_apply_all">
+        <item quantity="one">Für %1$s Konflikt übernehmen</item>
+        <item quantity="other">Für alle %1$s Konflikte übernehmen</item>
+    </plurals>
+    <string name="extract_stop_title">Entpacken stoppen?</string>
+    <string name="extract_stop_body">Bereits entpackte Dateien bleiben im Ordner.</string>
+    <string name="extract_keep_going">Weitermachen</string>
+    <string name="extract_stop">Stoppen</string>
+    <string name="large_title">Diese Datei ist ungewöhnlich groß</string>
+    <string name="large_body">Sie wird viel größer als ihre gepackte Größe, wie bei schädlichen Archiven. Fortfahren?</string>
+    <string name="space_title">Nicht genug Speicherplatz</string>
+    <!-- The spec's text has two sizes ("This needs X; the phone has Y free."); ExtractFailure carries none. -->
+    <string name="space_body_before">Im Ordner ist nicht genug freier Speicherplatz für diese Dateien.</string>
+    <string name="space_body_during">Am Ziel ist kein Speicherplatz mehr frei. Bereits geschriebene Dateien bleiben dort.</string>
+    <!-- a title for the folder-gone case when it is shown as a dialog. -->
+    <string name="extract_folder_gone_title">Ordner nicht verfügbar</string>
+    <string name="extract_folder_gone">Der Ordner ist nicht mehr verfügbar. Bitte erneut auswählen.</string>
+    <string name="extract_choose">Auswählen</string>
+    <string name="extract_password_title">Passwort erforderlich</string>
+    <string name="extract_password_body">Diese Dateien sind geschützt. Zuerst eine davon öffnen und das Passwort eingeben, dann erneut entpacken.</string>
+</resources>

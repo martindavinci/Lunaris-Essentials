@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_title">設定</string>
+    <string name="settings_section_appearance">外観</string>
+    <string name="settings_theme">テーマ</string>
+    <string name="settings_theme_system">システムのデフォルト</string>
+    <string name="settings_theme_dark">ダーク</string>
+    <string name="settings_theme_light">ライト</string>
+    <string name="settings_language">言語</string>
+    <string name="settings_section_files">ファイル</string>
+    <string name="settings_clear_temp">一時ファイルを消去</string>
+    <string name="settings_clear_temp_summary">開いたファイルのコピーを削除します</string>
+    <string name="settings_remember_recents">最近のアーカイブを記録</string>
+    <string name="settings_section_about">このアプリについて</string>
+    <string name="settings_about_version">バージョン %1$s</string>
+    <string name="settings_about_author">開発: Martin DaVinci</string>
+    <string name="settings_licences">ライセンス</string>
+    <string name="settings_source">ソースコード</string>
+    <string name="settings_language_system">システムのデフォルト</string>
+    <string name="settings_cleared">一時ファイルを消去しました</string>
+    <string name="settings_no_browser">この端末にはリンクを開けるブラウザがありません</string>
+</resources>

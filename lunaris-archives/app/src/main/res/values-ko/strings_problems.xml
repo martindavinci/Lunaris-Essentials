@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="problem_rar4_title">이 RAR 파일은 열 수 없습니다</string>
+    <string name="problem_rar4_body">예전 RAR 4 비밀번호 보호 방식을 사용하며, 이 방식은 어떤 무료 앱도 읽을 수 없습니다. 보낸 사람에게 ZIP 또는 최신 RAR 파일을 요청하세요.</string>
+    <string name="problem_damaged_title">이 압축 파일은 손상되었습니다</string>
+    <string name="problem_damaged_body">파일이 너무 일찍 끝나거나 내용이 맞지 않습니다. 새 사본을 요청하세요.</string>
+    <string name="problem_show_readable">읽을 수 있는 부분 보기</string>
+    <string name="problem_not_archive_title">Lunaris Archives에서 열 수 있는 압축 파일이 아닙니다</string>
+    <string name="problem_not_archive_body">지원 형식: ZIP, 7z, RAR, TAR, GZ, BZ2, XZ, ZST, LZ4, ISO, CPIO.</string>
+    <string name="problem_unsupported_title">이 압축 파일은 Lunaris Archives가 읽을 수 없는 기능을 사용합니다</string>
+    <string name="problem_unsupported_body">보낸 사람에게 표준 설정으로 만든 ZIP을 요청하세요.</string>
+    <string name="problem_split_title">분할 압축 파일의 일부입니다</string>
+    <string name="problem_split_body">Lunaris Archives는 아직 분할 압축 파일을 열 수 없습니다.</string>
+    <string name="problem_stopped_title">이 압축 파일 때문에 읽기가 중단되었습니다</string>
+    <string name="problem_stopped_body">손상되었거나 이 휴대전화의 메모리로는 너무 클 수 있습니다.</string>
+    <string name="problem_gone_title">%1$s을(를) 찾을 수 없습니다</string>
+    <string name="problem_gone_body">이동되었거나 삭제되었을 수 있습니다.</string>
+</resources>

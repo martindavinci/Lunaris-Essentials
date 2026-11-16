@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="back">Wstecz</string>
+    <string name="cancel">Anuluj</string>
+    <string name="close">Zamknij</string>
+    <string name="ok">OK</string>
+    <string name="done">Gotowe</string>
+    <string name="open">Otwórz</string>
+    <string name="action_share">Udostępnij</string>
+    <string name="action_continue">Dalej</string>
+    <string name="more_options">Więcej opcji</string>
+    <string name="search_clear">Wyczyść</string>
+    <!-- a picked file whose size the provider does not tell. -->
+    <string name="size_unknown">Nieznany rozmiar</string>
+    <plurals name="count_files">
+        <item quantity="one">%1$s plik</item>
+        <item quantity="few">%1$s pliki</item>
+        <item quantity="many">%1$s plików</item>
+        <item quantity="other">%1$s pliki</item>
+    </plurals>
+    <plurals name="count_items">
+        <item quantity="one">%1$s element</item>
+        <item quantity="few">%1$s elementy</item>
+        <item quantity="many">%1$s elementów</item>
+        <item quantity="other">%1$s elementy</item>
+    </plurals>
+    <!-- Password dialog (frames 08) -->
+    <string name="password_title">Wymagane hasło</string>
+    <string name="password_body">%1$s jest chroniony hasłem.</string>
+    <string name="password_label">Hasło</string>
+    <string name="password_remember">Pamiętaj do zamknięcia aplikacji</string>
+    <string name="password_show">Pokaż hasło</string>
+    <string name="password_hide">Ukryj hasło</string>
+    <string name="password_checking">Sprawdzanie…</string>
+    <string name="password_wrong">Nieprawidłowe hasło. Spróbuj ponownie.</string>
+    <string name="share_target_create_zip">Utwórz ZIP</string>
+    <string name="incoming_text_only">Udostępnij pliki, aby utworzyć ZIP</string>
+</resources>

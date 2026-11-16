@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="extract_title">正在解压 %1$s</string>
+    <string name="extract_to">解压到 %1$s</string>
+    <plurals name="extract_files_of">
+        <item quantity="other">%1$s / %2$s 个文件</item>
+    </plurals>
+    <string name="extract_bytes_of">%1$s / %2$s</string>
+    <string name="extract_keep_open">完成前请让 Lunaris Archives 保持打开。</string>
+    <!-- what a screen reader says for the bar while the "unusually large" question is open. -->
+    <string name="extract_waiting">正在等待你的回答</string>
+    <plurals name="extract_done">
+        <item quantity="other">已解压 %1$s 个文件</item>
+    </plurals>
+    <plurals name="extract_done_partial">
+        <item quantity="other">已解压 %1$s 个文件（共 %2$s 个）</item>
+    </plurals>
+    <plurals name="extract_skipped">
+        <item quantity="other">已跳过 %1$s 项：其名称指向目标文件夹之外。</item>
+    </plurals>
+    <plurals name="extract_skipped_unsafe">
+        <item quantity="other">已跳过 %1$s 项，因为它们可能不安全。</item>
+    </plurals>
+    <string name="extract_details">详细信息</string>
+    <string name="extract_show_all">全部显示</string>
+    <plurals name="extract_damaged">
+        <item quantity="other">有 %1$s 个文件已损坏，未写入：</item>
+    </plurals>
+    <!-- the title of the panel behind "Show all". -->
+    <string name="extract_not_written">未写入的文件</string>
+    <string name="skip_reason_link">链接</string>
+    <string name="skip_reason_device">设备文件</string>
+    <string name="skip_reason_invalid">无效名称</string>
+    <!-- a skipped name with its reason. -->
+    <string name="skip_line">%1$s (%2$s)</string>
+    <string name="conflict_title">%2$s 中已存在 %1$s</string>
+    <!-- when the folder has no name to show. -->
+    <string name="conflict_title_plain">%1$s 已存在</string>
+    <string name="conflict_replace">替换</string>
+    <string name="conflict_keep_both">保留两者</string>
+    <string name="conflict_skip">跳过</string>
+    <plurals name="conflict_apply_all">
+        <item quantity="other">对全部 %1$s 个冲突执行相同操作</item>
+    </plurals>
+    <string name="extract_stop_title">要停止解压吗？</string>
+    <string name="extract_stop_body">已解压的文件会保留在文件夹中。</string>
+    <string name="extract_keep_going">继续解压</string>
+    <string name="extract_stop">停止</string>
+    <string name="large_title">此文件异常大</string>
+    <string name="large_body">它解压后远大于压缩时的大小，有害的压缩包常会这样。要继续吗？</string>
+    <string name="space_title">空间不足</string>
+    <!-- The spec's text has two sizes ("This needs X; the phone has Y free."); ExtractFailure carries none. -->
+    <string name="space_body_before">该文件夹没有足够的可用空间存放这些文件。</string>
+    <string name="space_body_during">目标位置的空间已用完。已写入的文件会保留在那里。</string>
+    <!-- a title for the folder-gone case when it is shown as a dialog. -->
+    <string name="extract_folder_gone_title">文件夹不可用</string>
+    <string name="extract_folder_gone">该文件夹已不可用，请重新选择。</string>
+    <string name="extract_choose">选择</string>
+    <string name="extract_password_title">需要密码</string>
+    <string name="extract_password_body">这些文件受密码保护。请先打开其中一个并输入密码，然后再次解压。</string>
+</resources>
