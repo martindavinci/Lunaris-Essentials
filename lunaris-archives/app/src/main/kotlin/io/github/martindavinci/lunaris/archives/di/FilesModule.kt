@@ -9,6 +9,10 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import io.github.martindavinci.lunaris.archives.create.ContentCreateIo
+import io.github.martindavinci.lunaris.archives.create.CreateIo
+import io.github.martindavinci.lunaris.archives.create.DocumentsSourceTree
+import io.github.martindavinci.lunaris.archives.create.SourceTree
 import io.github.martindavinci.lunaris.archives.extract.ExtractAgain
 import io.github.martindavinci.lunaris.archives.extract.ExtractMarker
 import io.github.martindavinci.lunaris.archives.extract.ExtractStarter
@@ -30,6 +34,12 @@ abstract class FilesModule {
 
     @Binds
     abstract fun bindAgain(starter: ExtractStarter): ExtractAgain
+
+    @Binds
+    abstract fun bindCreateIo(io: ContentCreateIo): CreateIo
+
+    @Binds
+    abstract fun bindSourceTree(tree: DocumentsSourceTree): SourceTree
 
     companion object {
         private const val AUTHORITY_SUFFIX = ".fileprovider"
