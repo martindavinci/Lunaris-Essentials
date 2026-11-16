@@ -1,0 +1,24 @@
+# Local working files — never commit
+.superpowers/
+docs/superpowers/
+
+# Reference screenshots
+docs/screens/
+
+# Android / Gradle
+*.iml
+.gradle/
+.kotlin/
+/local.properties
+/.idea
+.DS_Store
+/build
+build/
+/captures
+.externalNativeBuild
+.cxx
+*.apk
+*.aab
+*.ap_
+*.dex
+local.properties
