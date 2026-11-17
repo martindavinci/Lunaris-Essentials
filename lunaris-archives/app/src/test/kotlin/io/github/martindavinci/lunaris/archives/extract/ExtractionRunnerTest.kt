@@ -65,6 +65,14 @@ class ExtractionRunnerTest {
         runner.start(ExtractJob(archive(), entries, null, tree)); advanceUntilIdle()
         assertThat(runner.state.value).isEqualTo(ExtractionState.Failed(ExtractFailure.FOLDER_GONE))
     }
+    @Test fun stopWhileTheFoldersAreRead_writesNothing() = runTest(dispatcher) {
+        val tree = FakeTree(); script(file(0), file(1))
+        runner.run(tree)            // the planning coroutine is queued, not yet run
+        runner.stop()
+        advanceUntilIdle()
+        assertThat(tree.read("b.txt")).isNull()
+        assertThat(finished.stoppedEarly).isTrue(); assertThat(finished.written).isEqualTo(0)
+    }
     @Test fun plainExtraction_writesEveryFileInFolders_andFinishes() = runTest(dispatcher) {
         val tree = FakeTree(); script(file(0), file(1))
         runner.run(tree); advanceUntilIdle()
