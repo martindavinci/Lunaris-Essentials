@@ -142,6 +142,24 @@ class EntryCopierTest {
         copier.copy(archive(), notes, null) {}
         assertThat(askedOn).isNotSameInstanceAs(caller)
     }
+    @Test fun copyAll_readsTheArchiveOncePerRoute() = runTest {
+        val three = listOf(entry(0, "a.md", size = 1), entry(1, "b.md", size = 1), entry(2, "c.md", size = 1))
+        script(EngineRoute.LIBARCHIVE, *three.flatMap { e -> ok(e.index, byteArrayOf('x'.code.toByte())).dropLast(1) }.toTypedArray(),
+            EngineEvent.Finished(EngineStatus.OK))
+        val results = copier.copyAll(archive(), three, null)
+        assertThat(engine.extractCalls.map { it.third }).containsExactly(listOf(0L, 1L, 2L))
+        assertThat(results.map { File((it as CopyResult.Ready).path).readText() }).containsExactly("x", "x", "x")
+    }
+    @Test fun copyAll_aDamagedEntry_failsOnlyThatEntry_andReusesWhatIsThere() = runTest {
+        script(EngineRoute.LIBARCHIVE, *ok(0, "hello".toByteArray()))
+        copier.copy(archive(), notes, null) {}
+        val other = entry(1, "b.md", size = 5)
+        script(EngineRoute.LIBARCHIVE, *ended(1, EntryOutcome.DAMAGED))
+        val results = copier.copyAll(archive(), listOf(notes, other), null)
+        assertThat(results[0]).isInstanceOf(CopyResult.Ready::class.java)
+        assertThat(results[1]).isEqualTo(CopyResult.Damaged)
+        assertThat(engine.extractCalls.last().third).containsExactly(1L)
+    }
     @Test fun rar4EncryptedEntry_isRar4Password() = runTest {
         assertThat(copier.copy(archive(ArchiveKind.RAR4), secret, "x".toCharArray()) {}).isEqualTo(CopyResult.Rar4Password)
         assertThat(engine.extractCalls).isEmpty()

@@ -41,6 +41,11 @@ class BrowserSharingTest {
         sharing.share(archive, archive.index.entries.take(2)); scope.advanceUntilIdle()
         assertThat(state.value.launch).isEqualTo(LaunchRequest.Send(listOf("content://x/a.png", "content://x/b.jpg"), "image/*"))
     }
+    @Test fun theChosenFiles_areCopiedInOneBatch() {
+        opener.results += ready("a.png", "image/png"); opener.results += ready("b.jpg", "image/jpeg")
+        sharing.share(archive, archive.index.entries.take(2)); scope.advanceUntilIdle()
+        assertThat(opener.batches).containsExactly(2)
+    }
     @Test fun mixedKinds_areSentAsAnything() {
         opener.results += ready("a.png", "image/png"); opener.results += ready("c.md", "text/markdown")
         sharing.share(archive, listOf(archive.index.entries[0], archive.index.entries[2])); scope.advanceUntilIdle()

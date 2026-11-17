@@ -7,6 +7,7 @@ import io.github.martindavinci.lunaris.archives.files.EntryOpener
 import io.github.martindavinci.lunaris.archives.session.ArchiveSession
 import io.github.martindavinci.lunaris.archives.session.OpenArchive
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -18,22 +19,23 @@ internal class BrowserSharing(
     private val opener: EntryOpener,
     private val state: MutableStateFlow<BrowserUiState>,
 ) {
+    private var job: Job? = null
+
+    /** One batch, so a solid archive is read once; a new share replaces one still being copied. */
     fun share(archive: OpenArchive, entries: List<ArchiveEntry>) {
         if (entries.isEmpty()) return
-        scope.launch {
-            val ready = ArrayList<CopyResult.Ready>()
-            for (entry in entries) {
-                val password = session.passwordFor(archive.id)
-                val result = try {
-                    opener.copy(archive, entry, password) {}
-                } finally {
-                    password?.fill(WIPED)
-                }
-                if (result !is CopyResult.Ready) {
-                    state.update { it.copy(notice = BrowserNotice.ShareFailed) }
-                    return@launch
-                }
-                ready += result
+        job?.cancel()
+        job = scope.launch {
+            val password = session.passwordFor(archive.id)
+            val results = try {
+                opener.copyAll(archive, entries, password)
+            } finally {
+                password?.fill(WIPED)
+            }
+            val ready = results.filterIsInstance<CopyResult.Ready>()
+            if (ready.size != results.size) {
+                state.update { it.copy(notice = BrowserNotice.ShareFailed) }
+                return@launch
             }
             state.update { it.copy(launch = LaunchRequest.Send(ready.map { r -> r.uri }, commonMime(ready.map { r -> r.mime }))) }
         }

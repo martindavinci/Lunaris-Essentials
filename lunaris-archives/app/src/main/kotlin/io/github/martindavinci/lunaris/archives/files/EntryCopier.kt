@@ -22,6 +22,9 @@ import kotlinx.coroutines.withContext
 
 interface EntryOpener {
     suspend fun copy(archive: OpenArchive, entry: ArchiveEntry, password: CharArray?, onProgress: (Long) -> Unit): CopyResult
+
+    /** Several entries, one engine pass per route; the results are in the order of [entries]. */
+    suspend fun copyAll(archive: OpenArchive, entries: List<ArchiveEntry>, password: CharArray?): List<CopyResult>
 }
 
 sealed interface CopyResult {
@@ -56,6 +59,8 @@ class EntryCopier @Inject constructor(
     private val uris: FileUris,
     private val platformMime: PlatformMime,
 ) : EntryOpener {
+    private val batch = EntryBatch(engine, copies)
+
     override suspend fun copy(archive: OpenArchive, entry: ArchiveEntry, password: CharArray?, onProgress: (Long) -> Unit): CopyResult {
         val route = EntryRoutes.routeFor(archive, entry) ?: return CopyResult.Rar4Password
         if (entry.encrypted && password == null) return CopyResult.NeedsPassword
@@ -83,21 +88,58 @@ class EntryCopier @Inject constructor(
             write(archive, entry, route, password, File(attempt, target.name), onProgress)
         } catch (e: Throwable) {
             attempt.deleteRecursively()
-            return when (e) {
-                is EngineStoppedException, is OverrunException -> CopyResult.Damaged
-                is CancellationException -> throw e
-                is IOException -> if (FreeSpace.isNoSpace(e)) CopyResult.NoSpace else CopyResult.Gone
-                is SecurityException -> CopyResult.Gone
-                else -> throw e
-            }
+            return copyFailure(e)
         }
         if (result != null) {
             attempt.deleteRecursively()
             return result
         }
         val file = copies.publish(attempt, target, entry) ?: return CopyResult.Damaged
-        copies.trim(file, System.currentTimeMillis())
+        copies.trim(listOf(file), System.currentTimeMillis())
         return ready(file)
+    }
+
+    override suspend fun copyAll(archive: OpenArchive, entries: List<ArchiveEntry>, password: CharArray?): List<CopyResult> =
+        withContext(Dispatchers.IO) {
+            try {
+                copyAllToCache(archive, entries, password)
+            } catch (_: IOException) {
+                entries.map { CopyResult.Gone }
+            }
+        }
+
+    private suspend fun copyAllToCache(archive: OpenArchive, entries: List<ArchiveEntry>, password: CharArray?): List<CopyResult> {
+        val key = archive.source.key
+        val done = HashMap<Long, BatchCopy>()
+        val missing = ArrayList<ArchiveEntry>()
+        for (entry in entries) {
+            when {
+                EntryRoutes.routeFor(archive, entry) == null -> done[entry.index] = BatchCopy.Failed(CopyResult.Rar4Password)
+                entry.encrypted && password == null -> done[entry.index] = BatchCopy.Failed(CopyResult.NeedsPassword)
+                else -> copies.existingCopy(key, entry)?.let { done[entry.index] = BatchCopy.Copied(it) } ?: missing.add(entry)
+            }
+        }
+        if (missing.sumOf { it.size ?: 0 } + Limits.CACHE_MARGIN_BYTES > freeBytes.get()) {
+            missing.forEach { done[it.index] = BatchCopy.Failed(CopyResult.NoSpace) }
+            missing.clear()
+        }
+        for ((route, group) in missing.groupBy { EntryRoutes.routeFor(archive, it) ?: archive.route }) {
+            val copied = try {
+                batch.copy(archive, route, password, group)
+            } catch (e: Throwable) {
+                val failure = BatchCopy.Failed(copyFailure(e))
+                group.associate { it.index to failure }
+            }
+            done += copied
+        }
+        val files = done.values.mapNotNull { (it as? BatchCopy.Copied)?.file }
+        if (files.isNotEmpty()) copies.trim(files, System.currentTimeMillis())   // every file of this share stays
+        return entries.map { entry ->
+            when (val one = done.getValue(entry.index)) {
+                is BatchCopy.Copied -> ready(one.file)
+                is BatchCopy.Failed -> one.result
+            }
+        }
     }
 
     /** Null when the entry was written whole; else why not. */
@@ -124,23 +166,34 @@ class EntryCopier @Inject constructor(
                 }
             }
         }
-        verdict(outcome, status)
-    }
-
-    private fun verdict(outcome: EntryOutcome?, status: EngineStatus?): CopyResult? = when {
-        status == EngineStatus.PATH_MISMATCH -> CopyResult.Changed
-        outcome == EntryOutcome.OK && status == EngineStatus.OK -> null
-        outcome == EntryOutcome.WRONG_PASSWORD || status == EngineStatus.WRONG_PASSWORD -> CopyResult.WrongPassword
-        outcome == EntryOutcome.ENCRYPTED -> CopyResult.NeedsPassword
-        outcome == EntryOutcome.UNSUPPORTED || status == EngineStatus.UNSUPPORTED_FEATURE -> CopyResult.Unsupported
-        outcome == EntryOutcome.CANCELLED || status == EngineStatus.CANCELLED -> CopyResult.Cancelled
-        else -> CopyResult.Damaged
+        copyVerdict(outcome, status)
     }
 
     private fun ready(file: File): CopyResult.Ready {
         val head = file.inputStream().use { input -> ByteArray(Limits.TEXT_SNIFF_BYTES).let { it.copyOf(maxOf(0, input.read(it))) } }
         return CopyResult.Ready(uris.uriFor(file), EntryMime.of(file.name, head, platformMime::of), file.path)
     }
+}
 
-    private class OverrunException : RuntimeException("entry larger than declared")
+/** An entry that gave more bytes than it declared. */
+internal class OverrunException : RuntimeException("entry larger than declared")
+
+/** What a copy that threw comes to; a cancellation and the unforeseen are thrown on. */
+internal fun copyFailure(e: Throwable): CopyResult = when (e) {
+    is EngineStoppedException, is OverrunException -> CopyResult.Damaged
+    is CancellationException -> throw e
+    is IOException -> if (FreeSpace.isNoSpace(e)) CopyResult.NoSpace else CopyResult.Gone
+    is SecurityException -> CopyResult.Gone
+    else -> throw e
+}
+
+/** Null when the entry came out whole; else why not. */
+internal fun copyVerdict(outcome: EntryOutcome?, status: EngineStatus?): CopyResult? = when {
+    status == EngineStatus.PATH_MISMATCH -> CopyResult.Changed
+    outcome == EntryOutcome.OK && status == EngineStatus.OK -> null
+    outcome == EntryOutcome.WRONG_PASSWORD || status == EngineStatus.WRONG_PASSWORD -> CopyResult.WrongPassword
+    outcome == EntryOutcome.ENCRYPTED -> CopyResult.NeedsPassword
+    outcome == EntryOutcome.UNSUPPORTED || status == EngineStatus.UNSUPPORTED_FEATURE -> CopyResult.Unsupported
+    outcome == EntryOutcome.CANCELLED || status == EngineStatus.CANCELLED -> CopyResult.Cancelled
+    else -> CopyResult.Damaged
 }

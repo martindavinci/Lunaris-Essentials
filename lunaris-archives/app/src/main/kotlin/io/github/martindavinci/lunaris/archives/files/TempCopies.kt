@@ -47,11 +47,13 @@ class TempCopies(private val cacheDir: File, private val capBytes: Long) {
         return target.takeIf { it.isFile }
     }
 
-    /** Copies older than a day go, then the oldest until the folder is under the cap; [keep] stays. */
-    fun trim(keep: File, now: Long) {
-        val copies = root.walk().filter { it.isFile && it != keep && ATTEMPT_MARK !in it.parentFile.name }.sortedBy { it.lastModified() }.toMutableList()
+    /** Copies older than a day go, then the oldest until the folder is under the cap; the files of [keep] stay. */
+    fun trim(keep: Collection<File>, now: Long) {
+        val kept = keep.toHashSet()
+        val copies = root.walk().filter { it.isFile && it !in kept && ATTEMPT_MARK !in it.parentFile.name }
+            .sortedBy { it.lastModified() }.toMutableList()
         copies.filter { now - it.lastModified() > Limits.TEMP_MAX_AGE_MILLIS }.forEach { drop(it); copies.remove(it) }
-        var total = copies.sumOf { it.length() } + keep.length()
+        var total = copies.sumOf { it.length() } + kept.sumOf { it.length() }
         for (file in copies) {
             if (total <= capBytes) break
             total -= file.length()

@@ -45,10 +45,19 @@ class TempCopiesTest {
         val oldest = made(2, 6, 3 * hour)
         val keep = made(3, 6, 4 * hour)
         val newest = made(4, 3, 1 * hour)
-        copies.trim(keep, now)
+        copies.trim(listOf(keep), now)
         assertThat(stale.exists()).isFalse()
         assertThat(oldest.exists()).isFalse()
         assertThat(keep.exists()).isTrue()
         assertThat(newest.exists()).isTrue()
+    }
+    @Test fun trim_keepsEveryFileOfOneShare_evenBeyondTheCap() {
+        val copies = TempCopies(temp.root, capBytes = 10)
+        val now = 100 * hour
+        val shared = (1L..3L).map { i ->
+            copies.target(key, entry(i, "s$i")).apply { parentFile!!.mkdirs(); writeBytes(ByteArray(6)); setLastModified(now - i * hour) }
+        }
+        copies.trim(shared, now)
+        assertThat(shared.all { it.exists() }).isTrue()
     }
 }

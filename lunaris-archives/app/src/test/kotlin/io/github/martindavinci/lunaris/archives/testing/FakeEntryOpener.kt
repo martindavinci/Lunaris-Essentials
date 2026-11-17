@@ -19,4 +19,12 @@ class FakeEntryOpener : EntryOpener {
         gate?.await()
         return results.removeFirstOrNull() ?: error("no copy answer")
     }
+
+    override suspend fun copyAll(archive: OpenArchive, entries: List<ArchiveEntry>, password: CharArray?): List<CopyResult> {
+        batches += entries.size
+        return entries.map { copy(archive, it, password) {} }
+    }
+
+    /** How many entries each copyAll held. */
+    val batches = mutableListOf<Int>()
 }
