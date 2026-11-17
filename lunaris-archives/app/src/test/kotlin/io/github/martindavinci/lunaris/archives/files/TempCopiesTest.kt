@@ -5,6 +5,7 @@ import io.github.martindavinci.lunaris.archives.testing.entry
 import org.junit.Assert.assertThrows
 import org.junit.Rule
 import org.junit.Test
+import java.io.File
 import org.junit.rules.TemporaryFolder
 
 class TempCopiesTest {
@@ -34,6 +35,25 @@ class TempCopiesTest {
         assertThat(copies.existingCopy(key, e)).isNull()
         copies.target(key, e).writeBytes(ByteArray(3))
         assertThat(copies.existingCopy(key, e)).isEqualTo(copies.target(key, e))
+    }
+    @Test fun trim_skipsProtectedCopies() {
+        val now = 100 * hour
+        lateinit var edited: File
+        val copies = TempCopies(temp.root, capBytes = 1) { setOf(edited) }
+        edited = copies.target(key, entry(1, "e.md")).apply { parentFile!!.mkdirs(); writeBytes(ByteArray(6)); setLastModified(now - 30 * hour) }
+        copies.trim(emptyList(), now)
+        assertThat(edited.exists()).isTrue()
+        copies.clearAll()
+        assertThat(edited.exists()).isTrue()
+    }
+    @Test fun publish_neverReplacesAProtectedCopy() {
+        lateinit var edited: File
+        val copies = TempCopies(temp.root) { setOf(edited) }
+        val e = entry(1, "e.md", size = 3)
+        edited = copies.target(key, e).apply { parentFile!!.mkdirs(); writeText("edited text") }
+        val attempt = copies.attempt(edited).apply { mkdirs(); resolve("e.md").writeBytes(ByteArray(3)) }
+        assertThat(copies.publish(attempt, edited, e)).isEqualTo(edited)
+        assertThat(edited.readText()).isEqualTo("edited text"); assertThat(attempt.exists()).isFalse()
     }
     @Test fun trim_dropsOldCopiesThenTheOldestBeyondTheCap() {
         val copies = TempCopies(temp.root, capBytes = 10)

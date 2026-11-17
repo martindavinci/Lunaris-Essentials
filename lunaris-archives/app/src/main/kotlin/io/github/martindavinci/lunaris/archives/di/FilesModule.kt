@@ -22,6 +22,9 @@ import io.github.martindavinci.lunaris.archives.files.EntryCopier
 import io.github.martindavinci.lunaris.archives.files.EntryOpener
 import io.github.martindavinci.lunaris.archives.files.FileUris
 import io.github.martindavinci.lunaris.archives.files.PlatformMime
+import io.github.martindavinci.lunaris.archives.files.ProtectedCopies
+import io.github.martindavinci.lunaris.archives.files.UriRevoker
+import io.github.martindavinci.lunaris.archives.edits.EditWatcher
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -41,12 +44,26 @@ abstract class FilesModule {
     @Binds
     abstract fun bindSourceTree(tree: DocumentsSourceTree): SourceTree
 
+    @Binds
+    abstract fun bindProtectedCopies(watcher: EditWatcher): ProtectedCopies
+
     companion object {
         private const val AUTHORITY_SUFFIX = ".fileprovider"
 
         @Provides
         fun provideFileUris(@ApplicationContext context: Context): FileUris = FileUris { file ->
             FileProvider.getUriForFile(context, context.packageName + AUTHORITY_SUFFIX, file).toString()
+        }
+
+        /** A copy given to another app stops being reachable through its content URI. */
+        @Provides
+        fun provideUriRevoker(@ApplicationContext context: Context, uris: FileUris): UriRevoker = UriRevoker { file ->
+            runCatching {
+                context.revokeUriPermission(
+                    android.net.Uri.parse(uris.uriFor(file)),
+                    android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION or android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
+                )
+            }
         }
 
         private const val MARKER_FILE = "extract_marker"

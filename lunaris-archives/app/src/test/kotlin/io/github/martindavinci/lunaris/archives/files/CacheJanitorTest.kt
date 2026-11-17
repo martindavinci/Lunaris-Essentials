@@ -24,6 +24,21 @@ class CacheJanitorTest {
         assertThat(young.all { it.exists() }).isTrue()
         assertThat(index.exists()).isTrue()
     }
+    @Test fun sweepAndClear_skipProtectedCopies_atTheirRealDepth() {
+        val kept = temp.root.resolve("open/key/0-1/a.txt").apply { parentFile!!.mkdirs(); writeText("edited"); setLastModified(now - 50 * hour) }
+        val other = temp.root.resolve("open/key/1-2/b.txt").apply { parentFile!!.mkdirs(); writeText("b") }
+        listOf(kept.parentFile!!, other.parentFile!!, kept.parentFile!!.parentFile!!).forEach { it.setLastModified(now - 50 * hour) }
+        val janitor = CacheJanitor(temp.root) { setOf(kept) }
+        janitor.sweep(now)
+        assertThat(kept.exists()).isTrue(); assertThat(other.exists()).isFalse()
+        janitor.clearAll()
+        assertThat(kept.exists()).isTrue()
+    }
+    @Test fun workFolders_ofCreateAndUpdate_areSwept() {
+        val work = listOf("create", "update").map { child(it, "old", 25 * hour) }
+        CacheJanitor(temp.root).sweep(now)
+        assertThat(work.none { it.exists() }).isTrue()
+    }
     @Test fun clearAllAndSize() {
         listOf("open", "share", "incoming", "index").forEach { child(it, "x", 0, bytes = 5) }
         val janitor = CacheJanitor(temp.root)

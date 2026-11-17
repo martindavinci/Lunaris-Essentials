@@ -12,8 +12,8 @@ import javax.inject.Singleton
 
 /** Copies of single entries for other apps: cache/open/<archive key>/<index>-<crc or date>/<name>. */
 @Singleton
-class TempCopies(private val cacheDir: File, private val capBytes: Long) {
-    @Inject constructor(@CacheDir cacheDir: File) : this(cacheDir, Limits.OPEN_DIR_CAP_BYTES)
+class TempCopies(private val cacheDir: File, private val capBytes: Long, private val protected: ProtectedCopies = ProtectedCopies.NONE) {
+    @Inject constructor(@CacheDir cacheDir: File, protected: ProtectedCopies = ProtectedCopies.NONE) : this(cacheDir, Limits.OPEN_DIR_CAP_BYTES, protected)
 
     private val root get() = File(cacheDir, FOLDER)
 
@@ -38,6 +38,10 @@ class TempCopies(private val cacheDir: File, private val capBytes: Long) {
     @Synchronized
     fun publish(attempt: File, target: File, entry: ArchiveEntry): File? {
         val folder = target.parentFile ?: return null
+        if (protected.guards(folder)) {   // another app is editing that copy: it is never replaced
+            attempt.deleteRecursively()
+            return target.takeIf { it.isFile }
+        }
         val whole = target.isFile && entry.size != null && target.length() == entry.size
         if (!whole) {
             folder.deleteRecursively()
@@ -49,7 +53,7 @@ class TempCopies(private val cacheDir: File, private val capBytes: Long) {
 
     /** Copies older than a day go, then the oldest until the folder is under the cap; the files of [keep] stay. */
     fun trim(keep: Collection<File>, now: Long) {
-        val kept = keep.toHashSet()
+        val kept = keep.toHashSet() + protected.files()
         val copies = root.walk().filter { it.isFile && it !in kept && ATTEMPT_MARK !in it.parentFile.name }
             .sortedBy { it.lastModified() }.toMutableList()
         copies.filter { now - it.lastModified() > Limits.TEMP_MAX_AGE_MILLIS }.forEach { drop(it); copies.remove(it) }
@@ -61,8 +65,14 @@ class TempCopies(private val cacheDir: File, private val capBytes: Long) {
         }
     }
 
+    /** Everything but the copies another app may still be writing. */
     fun clearAll() {
-        root.deleteRecursively()
+        val guarded = protected.files()
+        if (guarded.isEmpty()) {
+            root.deleteRecursively()
+            return
+        }
+        root.walkBottomUp().filter { it != root && !protected.guards(it, guarded) }.forEach { it.delete() }
     }
 
     /** The file and its entry folder (one copy per folder). */
