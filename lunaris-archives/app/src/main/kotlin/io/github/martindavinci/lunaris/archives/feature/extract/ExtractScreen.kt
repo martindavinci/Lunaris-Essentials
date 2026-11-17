@@ -5,6 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -26,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import io.github.martindavinci.lunaris.archives.R
 import io.github.martindavinci.lunaris.archives.extract.ConflictChoice
 import io.github.martindavinci.lunaris.archives.extract.ExtractionState
+import io.github.martindavinci.lunaris.archives.extract.SkippedEntry
 import io.github.martindavinci.lunaris.archives.ui.ArchiveTopBar
 import io.github.martindavinci.lunaris.archives.ui.BottomPanel
 
@@ -65,7 +68,7 @@ internal fun ExtractScreen(state: ExtractUiState, onAction: (ExtractAction) -> U
         }
         SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter))
         if (state.showSkipped && phase is ExtractionState.Finished) {
-            NamesPanel(skippedLines(phase.skipped) + phase.damaged, onDismiss = { onAction(ExtractAction.HideSkipped) })
+            NamesPanel(phase.skipped, phase.damaged, onDismiss = { onAction(ExtractAction.HideSkipped) })
         }
     }
     when (phase) {
@@ -89,16 +92,22 @@ internal fun KeepScreenOn(on: Boolean) {
     }
 }
 
-/** Every name that was not written, in full. */
+/** Every name that was not written, in full; only the rows on screen are laid out. */
 @Composable
-private fun NamesPanel(lines: List<String>, onDismiss: () -> Unit) {
+private fun NamesPanel(skipped: List<SkippedEntry>, damaged: List<String>, onDismiss: () -> Unit) {
+    val reasons = skipReasons()
     BottomPanel(onDismiss = onDismiss) {
-        Column(
-            Modifier.padding(start = PanelPadding, end = PanelPadding, bottom = PanelListBottom).verticalScroll(rememberScrollState()),
+        LazyColumn(
+            modifier = Modifier.padding(start = PanelPadding, end = PanelPadding),
+            contentPadding = PaddingValues(bottom = PanelListBottom),
             verticalArrangement = Arrangement.spacedBy(PanelLineSpacing),
         ) {
-            Text(stringResource(R.string.extract_not_written), style = MaterialTheme.typography.titleMedium)
-            lines.forEach { Text(it, style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Monospace) }
+            item { Text(stringResource(R.string.extract_not_written), style = MaterialTheme.typography.titleMedium) }
+            items(skipped.size) { i -> NameLine(reasons.line(skipped[i])) }
+            items(damaged.size) { i -> NameLine(damaged[i]) }
         }
     }
 }
+
+@Composable
+private fun NameLine(text: String) = Text(text, style = MaterialTheme.typography.bodySmall, fontFamily = FontFamily.Monospace)

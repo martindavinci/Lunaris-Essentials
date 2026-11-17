@@ -55,6 +55,8 @@ private val ProblemTileSize = 72.dp
 private val ProblemTileShape = RoundedCornerShape(24.dp)
 private val ProblemIconSize = 34.dp
 private const val UNSAFE_LINES = 5
+/** The lines a caller needs to give: the block shows [UNSAFE_LINES], and one more tells it to offer "Show all". */
+const val UNSAFE_PREVIEW_LINES = UNSAFE_LINES + 1
 private const val SOFT_LINES = 3
 
 /**

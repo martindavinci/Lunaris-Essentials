@@ -31,6 +31,7 @@ import io.github.martindavinci.lunaris.archives.ui.SEPARATOR
 import io.github.martindavinci.lunaris.archives.ui.SoftErrorBlock
 import io.github.martindavinci.lunaris.archives.ui.SoftOutlinedButton
 import io.github.martindavinci.lunaris.archives.ui.ThickProgressBar
+import io.github.martindavinci.lunaris.archives.ui.UNSAFE_PREVIEW_LINES
 import io.github.martindavinci.lunaris.archives.ui.UnsafeEntriesBlock
 import io.github.martindavinci.lunaris.archives.ui.countText
 import io.github.martindavinci.lunaris.archives.ui.sizeText
@@ -102,7 +103,7 @@ internal fun ColumnScope.DoneCard(done: ExtractionState.Finished, state: Extract
             val outside = done.skipped.all { it.reason == SkipReason.OUTSIDE_FOLDER }
             UnsafeEntriesBlock(
                 title = countText(if (outside) R.plurals.extract_skipped else R.plurals.extract_skipped_unsafe, done.skipped.size),
-                lines = skippedLines(done.skipped),
+                lines = skipReasons().let { reasons -> done.skipped.take(UNSAFE_PREVIEW_LINES).map(reasons::line) },
                 onShowAll = { onAction(ExtractAction.ShowSkipped) },
             )
         }
@@ -117,18 +118,21 @@ internal fun ColumnScope.DoneCard(done: ExtractionState.Finished, state: Extract
     }
 }
 
-/** The original name of each skipped entry, with why when it is not "points outside the folder". */
-@Composable
-internal fun skippedLines(skipped: List<SkippedEntry>): List<String> {
-    val link = stringResource(R.string.skip_reason_link)
-    val device = stringResource(R.string.skip_reason_device)
-    val invalid = stringResource(R.string.skip_reason_invalid)
-    return skipped.map { entry ->
-        when (entry.reason) {
-            SkipReason.OUTSIDE_FOLDER -> entry.displayPath
-            SkipReason.LINK -> stringResource(R.string.skip_line, entry.displayPath, link)
-            SkipReason.DEVICE_FILE -> stringResource(R.string.skip_line, entry.displayPath, device)
-            SkipReason.INVALID_NAME -> stringResource(R.string.skip_line, entry.displayPath, invalid)
-        }
+/**
+ * The original name of each skipped entry, with why when it is not "points outside the folder".
+ * The words are read once; [line] is then plain string work, fit for a lazy list of 200 000 names.
+ */
+internal class SkipReasons(private val link: String, private val device: String, private val invalid: String, private val pattern: String) {
+    fun line(entry: SkippedEntry): String = when (entry.reason) {
+        SkipReason.OUTSIDE_FOLDER -> entry.displayPath
+        SkipReason.LINK -> pattern.format(entry.displayPath, link)
+        SkipReason.DEVICE_FILE -> pattern.format(entry.displayPath, device)
+        SkipReason.INVALID_NAME -> pattern.format(entry.displayPath, invalid)
     }
 }
+
+@Composable
+internal fun skipReasons() = SkipReasons(
+    stringResource(R.string.skip_reason_link), stringResource(R.string.skip_reason_device),
+    stringResource(R.string.skip_reason_invalid), stringResource(R.string.skip_line),
+)
