@@ -31,4 +31,12 @@
         <item quantity="one">The changes to %d file are lost.</item>
         <item quantity="other">The changes to %d files are lost.</item>
     </plurals>
+    <string name="edits_busy">Wait for the extraction from %1$s to finish, then try again.</string>
+    <string name="edits_saving">Saving…</string>
+    <string name="edits_stuck_title">%1$s could not be put back</string>
+    <string name="edits_stuck_body">Lunaris kept a copy of the archive as it was before the update.</string>
+    <string name="edits_save_original">Save the original as…</string>
+    <string name="edits_discard_copy">Discard the copy</string>
+    <string name="edits_discard_copy_title">Discard the copy?</string>
+    <string name="edits_discard_copy_body">The copy of %1$s that Lunaris kept is deleted. The archive stays as it is now.</string>
 </resources>

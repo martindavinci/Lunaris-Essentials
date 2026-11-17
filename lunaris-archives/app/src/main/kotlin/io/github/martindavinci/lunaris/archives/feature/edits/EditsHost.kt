@@ -66,8 +66,15 @@ fun EditsHost(
     val saveAll = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
         saving?.let { onAction(EditsAction.SaveTo(it, uri?.toString(), isFolder = true)) }
     }
+    var pickingFor by rememberSaveable { mutableStateOf<String?>(null) }   // survives the app being closed behind the picker
     val pickAgain = rememberLauncherForActivityResult(PickArchiveAgain()) { uri ->
-        state.pick?.let { onAction(EditsAction.Picked(it.archiveUri, uri?.toString())) }
+        pickingFor?.let { onAction(EditsAction.Picked(it, uri?.toString())) }
+        pickingFor = null
+    }
+    var keepingOriginal by rememberSaveable { mutableStateOf<String?>(null) }
+    val saveOriginal = rememberLauncherForActivityResult(SaveAsContract()) { uri ->
+        keepingOriginal?.let { onAction(EditsAction.SaveOriginal(it, uri?.toString())) }
+        keepingOriginal = null
     }
 
     LaunchedEffect(state.reload) {
@@ -107,7 +114,10 @@ fun EditsHost(
             title = { Text(stringResource(R.string.edits_choose_title)) },
             text = { Text(stringResource(R.string.edits_choose_body, target.archiveName)) },
             confirmButton = {
-                TextButton(onClick = { pickAgain.launchOr(target.archiveUri) { onAction(EditsAction.CancelPick); context.sayNoPicker() } }) {
+                TextButton(onClick = {
+                    pickingFor = target.archiveUri
+                    pickAgain.launchOr(target.archiveUri) { onAction(EditsAction.CancelPick); context.sayNoPicker() }
+                }) {
                     Text(stringResource(R.string.edits_choose))
                 }
             },
@@ -115,7 +125,22 @@ fun EditsHost(
         )
     }
 
-    return EditsCardsSlot { EditsCards(state, archiveUri, onAction) { archive ->
+    state.confirmDiscard?.let { id ->
+        val name = state.stuck.firstOrNull { it.id == id }?.name.orEmpty()
+        AlertDialog(
+            onDismissRequest = { onAction(EditsAction.CancelDiscard) },
+            title = { Text(stringResource(R.string.edits_discard_copy_title)) },
+            text = { Text(stringResource(R.string.edits_discard_copy_body, name)) },
+            confirmButton = { TextButton(onClick = { onAction(EditsAction.ConfirmDiscard) }) { Text(stringResource(R.string.edits_discard)) } },
+            dismissButton = { TextButton(onClick = { onAction(EditsAction.CancelDiscard) }) { Text(stringResource(R.string.cancel)) } },
+        )
+    }
+    val onSaveOriginal = { id: String, name: String ->
+        keepingOriginal = id
+        saveOriginal.launchOr(SaveAsContract.Input(name, ZIP_TYPE)) { keepingOriginal = null; context.sayNoPicker() }
+    }
+
+    return EditsCardsSlot { if (archiveUri == null) StuckCards(state, onAction, onSaveOriginal); EditsCards(state, archiveUri, onAction) { archive ->
         saving = archive.archiveUri
         if (archive.entries.size == 1) {
             savingOne = archive.entries.single().id
@@ -139,6 +164,7 @@ private fun Context.text(message: EditsMessage): String = when (message) {
     is EditsMessage.ArchiveChanged -> getString(R.string.edits_archive_changed, message.name)
     is EditsMessage.CannotUpdate -> getString(R.string.edits_cannot_update, message.name)
     EditsMessage.NoSpace -> getString(R.string.edits_no_space)
+    is EditsMessage.Busy -> getString(R.string.edits_busy, message.name)
     EditsMessage.DifferentFile -> getString(R.string.edits_different_file)
     EditsMessage.Saved -> getString(R.string.edits_saved)
     EditsMessage.SaveFailed -> getString(R.string.edits_save_failed)
@@ -147,3 +173,4 @@ private fun Context.text(message: EditsMessage): String = when (message) {
 }
 
 private const val ANY_TYPE = "*/*"
+private const val ZIP_TYPE = "application/zip"

@@ -6,7 +6,7 @@ import io.github.martindavinci.lunaris.archives.edits.RecoveryOutcome
 import io.github.martindavinci.lunaris.archives.edits.UpdateResult
 
 /** The archive asked about in a dialog, by URI and by the name the user knows. */
-data class EditsTarget(val archiveUri: String, val archiveName: String, val wrong: Boolean = false)
+data class EditsTarget(val archiveUri: String, val archiveName: String, val wrong: Boolean = false, val writableUri: String? = null)
 
 /** Changed files, what is running, and the one dialog or message shown. No password is ever here. */
 data class EditsUiState(
@@ -21,6 +21,11 @@ data class EditsUiState(
     /** An archive that changed: the browser showing [EditsReload.from] lists it again from [EditsReload.to]. */
     val reload: EditsReload? = null,
     val expanded: Set<String> = emptySet(),
+    /** Copies of archives that could not be put back: kept until the user saves or discards them. */
+    val stuck: List<RecoveryOutcome.RestoreFailed> = emptyList(),
+    val confirmDiscard: String? = null,
+    /** The running decision saves files (a message of its own), rather than updating an archive. */
+    val saving: Boolean = false,
 )
 
 data class EditsReload(val from: String, val to: String)
@@ -31,6 +36,7 @@ sealed interface EditsMessage {
     data class ArchiveChanged(val name: String) : EditsMessage
     data class CannotUpdate(val name: String) : EditsMessage
     data object NoSpace : EditsMessage
+    data class Busy(val name: String) : EditsMessage
     data object DifferentFile : EditsMessage
     data object Saved : EditsMessage
     data object SaveFailed : EditsMessage
@@ -51,6 +57,7 @@ sealed interface EditsMessage {
             EditOutcome.Saved -> Saved
             EditOutcome.Ignored -> null
             EditOutcome.Failed -> SaveFailed
+            EditOutcome.Busy -> Busy(name)
             is EditOutcome.Refused -> when (outcome.result) {
                 UpdateResult.NoSpace -> NoSpace
                 UpdateResult.ArchiveChanged -> ArchiveChanged(name)
@@ -77,6 +84,11 @@ sealed interface EditsAction {
     /** "Save a copy" answered: one document for one file, a folder for several; null when dismissed. */
     data class SaveTo(val archiveUri: String, val target: String?, val isFolder: Boolean, val recordId: String? = null) : EditsAction
     data class ToggleShow(val archiveUri: String) : EditsAction
+    /** "Save the original as…" answered, for a stuck backup; null when dismissed. */
+    data class SaveOriginal(val id: String, val target: String?) : EditsAction
+    data class DiscardBackup(val id: String) : EditsAction
+    data object ConfirmDiscard : EditsAction
+    data object CancelDiscard : EditsAction
     data object MessageShown : EditsAction
     data object Reloaded : EditsAction
 }

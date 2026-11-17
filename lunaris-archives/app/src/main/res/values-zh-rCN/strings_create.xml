@@ -44,4 +44,5 @@
     <string name="create_password_zip_only">仅 ZIP 支持密码。</string>
     <string name="create_button_7z">创建 7z</string>
     <string name="create_button_tar">创建 TAR</string>
+    <string name="create_failed_memory">内存不足，无法使用此压缩级别。请尝试“标准”或“仅存储”。</string>
 </resources>

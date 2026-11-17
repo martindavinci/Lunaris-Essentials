@@ -44,4 +44,5 @@
     <string name="create_password_zip_only">パスワードは ZIP のみ。</string>
     <string name="create_button_7z">7z を作成</string>
     <string name="create_button_tar">TAR を作成</string>
+    <string name="create_failed_memory">この圧縮に必要なメモリが足りません。「標準」か「無圧縮」をお試しください。</string>
 </resources>

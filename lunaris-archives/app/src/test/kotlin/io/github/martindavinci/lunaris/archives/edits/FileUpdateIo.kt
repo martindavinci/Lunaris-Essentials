@@ -27,7 +27,10 @@ class FileUpdateIo : UpdateIo {
         return RandomAccessFile(f, "r").use { ArchiveFacts(f.length(), f.lastModified(), Fingerprint.of(it.channel, f.length())) }
     }
 
-    override fun canWrite(uri: String): Boolean = writable
+    /** URIs that open read-only, like an archive opened with "Open with". */
+    val readOnly = mutableSetOf<String>()
+
+    override fun canWrite(uri: String): Boolean = writable && uri !in readOnly
 
     override fun keepAccess(uri: String): Access = access
 

@@ -29,4 +29,12 @@
     <plurals name="edits_ignore_body">
         <item quantity="other">%d 个文件的更改将丢失。</item>
     </plurals>
+    <string name="edits_busy">请等待 %1$s 的解压完成后再试。</string>
+    <string name="edits_saving">正在保存…</string>
+    <string name="edits_stuck_title">无法恢复 %1$s</string>
+    <string name="edits_stuck_body">Lunaris 保留了更新前压缩包的副本。</string>
+    <string name="edits_save_original">将原始文件另存为…</string>
+    <string name="edits_discard_copy">删除副本</string>
+    <string name="edits_discard_copy_title">要删除副本吗？</string>
+    <string name="edits_discard_copy_body">将删除 Lunaris 保留的 %1$s 副本。压缩包保持现在的样子。</string>
 </resources>

@@ -31,4 +31,12 @@
         <item quantity="one">De wijzigingen in %d bestand gaan verloren.</item>
         <item quantity="other">De wijzigingen in %d bestanden gaan verloren.</item>
     </plurals>
+    <string name="edits_busy">Wacht tot het uitpakken uit %1$s klaar is en probeer het opnieuw.</string>
+    <string name="edits_saving">Opslaan…</string>
+    <string name="edits_stuck_title">%1$s kon niet worden teruggezet</string>
+    <string name="edits_stuck_body">Lunaris heeft een kopie van het archief bewaard zoals het vóór de update was.</string>
+    <string name="edits_save_original">Origineel opslaan als…</string>
+    <string name="edits_discard_copy">Kopie verwijderen</string>
+    <string name="edits_discard_copy_title">Kopie verwijderen?</string>
+    <string name="edits_discard_copy_body">De kopie van %1$s die Lunaris bewaarde wordt verwijderd. Het archief blijft zoals het nu is.</string>
 </resources>

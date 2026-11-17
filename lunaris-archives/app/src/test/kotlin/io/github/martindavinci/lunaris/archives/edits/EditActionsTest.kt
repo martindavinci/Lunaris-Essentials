@@ -22,6 +22,7 @@ class EditActionsTest {
     private val saved = mutableMapOf<String, String>()
     private val moves = mutableListOf<Pair<String, String>>()
     private val remembered = mutableMapOf<String, CharArray>()
+    private var extracting: String? = null
     private val actions by lazy {
         EditActions(
             store, watcher, ZipUpdater(io, UpdateJournal(files), cache) { Long.MAX_VALUE }, io, { revoked += it },
@@ -30,6 +31,7 @@ class EditActionsTest {
                 override fun write(target: String, from: File) { saved[target] = from.readText() }
                 override fun createIn(tree: String, name: String, mime: String): String = "$tree/$name".also { saved[it] = "" }
             },
+            busy = { it == extracting },
         ) { old, new, _ -> moves += old to new }
     }
 
@@ -99,6 +101,21 @@ class EditActionsTest {
         zip.setLastModified(zip.lastModified() + 60_000)   // the restore wrote it again: same bytes, new date
         actions.applyRecovery(RecoveryOutcome.Restored("a.zip", uri))
         assertThat(actions.update(uri, null)).isEqualTo(EditOutcome.Updated(uri))
+    }
+    @Test fun anArchiveBeingExtracted_isNotUpdated() = runBlocking<Unit> {
+        val a = handOut("a.md"); edit(a, "A2"); watcher.scan()
+        extracting = uri
+        assertThat(actions.update(uri, null)).isEqualTo(EditOutcome.Busy)
+        assertThat(content("a.md")).isEqualTo("one")
+    }
+    @Test fun aStuckBackup_isSavedWhereTheUserSays_thenForgotten() = runBlocking<Unit> {
+        val journal = UpdateJournal(files)
+        val backup = File(journal.folder("u1").apply { mkdirs() }, "backup.zip").apply { writeText("the original") }
+        journal.begin("u1", uri, "a.zip", backup, backup.length(), "fp", 1, "new")
+        journal.restoreFailed("u1")
+        val stuck = journal.stuck.value.single()
+        assertThat(actions.saveOriginal(journal, stuck, "content://out/a.zip")).isEqualTo(EditOutcome.Saved)
+        assertThat(saved["content://out/a.zip"]).isEqualTo("the original"); assertThat(journal.stuck.value).isEmpty()
     }
     @Test fun failedUpdate_refreshesTheRecords_soARetrySucceeds() = runBlocking<Unit> {
         val a = handOut("a.md"); edit(a, "A2"); watcher.scan()

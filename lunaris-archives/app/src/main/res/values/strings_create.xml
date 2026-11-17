@@ -49,4 +49,5 @@
     <string name="create_format_zip" translatable="false">ZIP</string>
     <string name="create_format_7z" translatable="false">7z</string>
     <string name="create_format_tar" translatable="false">TAR</string>
+    <string name="create_failed_memory">Not enough memory for this compression. Try Normal or Store.</string>
 </resources>

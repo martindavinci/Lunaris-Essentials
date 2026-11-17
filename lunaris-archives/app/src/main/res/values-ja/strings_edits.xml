@@ -29,4 +29,12 @@
     <plurals name="edits_ignore_body">
         <item quantity="other">%d 個のファイルの変更は失われます。</item>
     </plurals>
+    <string name="edits_busy">%1$s の展開が終わるまで待ってから、もう一度お試しください。</string>
+    <string name="edits_saving">保存しています…</string>
+    <string name="edits_stuck_title">%1$s を元に戻せませんでした</string>
+    <string name="edits_stuck_body">Lunaris は更新前のアーカイブのコピーを保管しています。</string>
+    <string name="edits_save_original">元のファイルを名前を付けて保存…</string>
+    <string name="edits_discard_copy">コピーを削除</string>
+    <string name="edits_discard_copy_title">コピーを削除しますか？</string>
+    <string name="edits_discard_copy_body">Lunaris が保管している %1$s のコピーを削除します。アーカイブは現在のままです。</string>
 </resources>

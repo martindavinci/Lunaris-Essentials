@@ -48,4 +48,5 @@
     <string name="create_password_zip_only">Contraseñas: solo ZIP.</string>
     <string name="create_button_7z">Crear 7z</string>
     <string name="create_button_tar">Crear TAR</string>
+    <string name="create_failed_memory">No hay memoria suficiente para esta compresión. Prueba Normal o Ninguna.</string>
 </resources>

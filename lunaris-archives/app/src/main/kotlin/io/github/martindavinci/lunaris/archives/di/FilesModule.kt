@@ -24,7 +24,10 @@ import io.github.martindavinci.lunaris.archives.files.FileUris
 import io.github.martindavinci.lunaris.archives.files.PlatformMime
 import io.github.martindavinci.lunaris.archives.files.ProtectedCopies
 import io.github.martindavinci.lunaris.archives.files.UriRevoker
+import io.github.martindavinci.lunaris.archives.edits.BusyArchives
 import io.github.martindavinci.lunaris.archives.edits.ContentSaveIo
+import io.github.martindavinci.lunaris.archives.extract.ExtractionRunner
+import io.github.martindavinci.lunaris.archives.extract.ExtractionState
 import io.github.martindavinci.lunaris.archives.edits.ContentUpdateIo
 import io.github.martindavinci.lunaris.archives.edits.PasswordSource
 import io.github.martindavinci.lunaris.archives.edits.SaveIo
@@ -86,6 +89,14 @@ abstract class FilesModule {
                     android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION or android.content.Intent.FLAG_GRANT_WRITE_URI_PERMISSION,
                 )
             }
+        }
+
+        /** An archive being extracted is not rewritten under the reader. */
+        @Provides
+        fun provideBusyArchives(runner: ExtractionRunner): BusyArchives = BusyArchives { uri ->
+            val state = runner.state.value
+            val reading = state is ExtractionState.Running || state is ExtractionState.Conflicts || state is ExtractionState.AskLarge
+            reading && runner.currentJob?.archive?.source?.uri == uri
         }
 
         /** Passwords of open or remembered archives, for updating their entries. */

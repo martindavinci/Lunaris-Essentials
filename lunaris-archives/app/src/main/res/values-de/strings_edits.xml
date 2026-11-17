@@ -31,4 +31,12 @@
         <item quantity="one">Die Änderungen an %d Datei gehen verloren.</item>
         <item quantity="other">Die Änderungen an %d Dateien gehen verloren.</item>
     </plurals>
+    <string name="edits_busy">Warte, bis das Entpacken aus %1$s fertig ist, und versuche es dann erneut.</string>
+    <string name="edits_saving">Wird gespeichert…</string>
+    <string name="edits_stuck_title">%1$s konnte nicht wiederhergestellt werden</string>
+    <string name="edits_stuck_body">Lunaris hat eine Kopie des Archivs vor der Aktualisierung behalten.</string>
+    <string name="edits_save_original">Original speichern unter…</string>
+    <string name="edits_discard_copy">Kopie löschen</string>
+    <string name="edits_discard_copy_title">Kopie löschen?</string>
+    <string name="edits_discard_copy_body">Die von Lunaris behaltene Kopie von %1$s wird gelöscht. Das Archiv bleibt, wie es jetzt ist.</string>
 </resources>

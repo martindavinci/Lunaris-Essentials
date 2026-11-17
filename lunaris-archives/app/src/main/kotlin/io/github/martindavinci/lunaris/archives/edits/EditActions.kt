@@ -16,6 +16,13 @@ sealed interface EditOutcome {
     data object Saved : EditOutcome
     data object Ignored : EditOutcome
     data object Failed : EditOutcome
+    /** The archive is being extracted: it is not rewritten under the reader. */
+    data object Busy : EditOutcome
+}
+
+/** An archive another job is reading right now (an extraction). */
+fun interface BusyArchives {
+    fun busy(archiveUri: String): Boolean
 }
 
 /** Writing a changed file somewhere the user picked (ContentResolver on the device). */
@@ -49,6 +56,7 @@ class EditActions @Inject constructor(
     private val revoker: UriRevoker,
     private val passwords: PasswordSource,
     private val saver: SaveIo,
+    private val busy: BusyArchives = BusyArchives { false },
     private val recents: RecentsMove,
 ) {
     /** [password] (wiped) or a remembered one; [writableUri] is the same archive picked again with the right to write. */
@@ -57,6 +65,7 @@ class EditActions @Inject constructor(
         val records = pending(archiveUri)
         if (records.isEmpty()) return@withLock EditOutcome.Failed.also { password?.fill(WIPED) }
         val target = writableUri ?: archiveUri
+        if (busy.busy(archiveUri) || busy.busy(target)) return@withLock EditOutcome.Busy.also { password?.fill(WIPED) }
         val secret = password ?: passwords.find(records.first().archiveKey)
         // A file picked again has its own date under its other URI: only its size and fingerprint must match.
         // Two changed copies of one entry (a tap after an earlier update): the newest edit is the one written.
@@ -118,6 +127,20 @@ class EditActions @Inject constructor(
             is RecoveryOutcome.RestoreFailed -> Unit
         }
     }
+
+    /** The copy kept of an archive that could not be put back goes where the user chose; then it is forgotten. */
+    suspend fun saveOriginal(journal: UpdateJournal, stuck: RecoveryOutcome.RestoreFailed, targetUri: String): EditOutcome =
+        withContext(Dispatchers.IO) {
+            try {
+                saver.write(targetUri, File(stuck.backupPath))
+            } catch (_: IOException) {
+                return@withContext EditOutcome.Failed
+            } catch (_: RuntimeException) {
+                return@withContext EditOutcome.Failed
+            }
+            journal.discard(stuck.id)
+            EditOutcome.Saved
+        }
 
     /** The picked document is this archive: same size and same fingerprint. */
     suspend fun matchesArchive(archiveUri: String, pickedUri: String): Boolean = withContext(Dispatchers.IO) {

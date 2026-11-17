@@ -35,4 +35,12 @@
         <item quantity="many">Zmiany w %d plikach zostaną utracone.</item>
         <item quantity="other">Zmiany w %d pliku zostaną utracone.</item>
     </plurals>
+    <string name="edits_busy">Poczekaj, aż skończy się wypakowywanie z %1$s, i spróbuj ponownie.</string>
+    <string name="edits_saving">Zapisywanie…</string>
+    <string name="edits_stuck_title">Nie udało się przywrócić %1$s</string>
+    <string name="edits_stuck_body">Lunaris zachował kopię archiwum sprzed aktualizacji.</string>
+    <string name="edits_save_original">Zapisz oryginał jako…</string>
+    <string name="edits_discard_copy">Usuń kopię</string>
+    <string name="edits_discard_copy_title">Usunąć kopię?</string>
+    <string name="edits_discard_copy_body">Kopia %1$s zachowana przez Lunaris zostanie usunięta. Archiwum pozostanie takie, jak teraz.</string>
 </resources>

@@ -108,6 +108,14 @@ class EditsViewModelTest {
         vm.onAction(EditsAction.Picked(uri, "file:${same.path}")); eventually { vm.state.value.reload != null }
         assertThat(vm.state.value.reload).isEqualTo(EditsReload(uri, "file:${same.path}"))
     }
+    @Test fun aPasswordAfterPickingTheArchiveAgain_updatesThePickedFile() {
+        val uri = edited(zip(encrypted = true)); io.readOnly += uri; val vm = viewModel()
+        vm.onAction(EditsAction.Update(uri)); eventually { vm.state.value.pick != null }
+        val same = File(temp.newFolder(), "Trip.zip").apply { writeBytes(File(uri.removePrefix("file:")).readBytes()) }
+        vm.onAction(EditsAction.Picked(uri, "file:${same.path}")); eventually { vm.state.value.password != null }
+        vm.onAction(EditsAction.SubmitPassword("pw".toCharArray())); eventually { vm.state.value.message != null }
+        assertThat(vm.state.value.message).isEqualTo(EditsMessage.Updated("Trip.zip"))
+    }
     @Test fun update_needsPassword_asksForIt_andWipesIt() {
         val uri = edited(zip(encrypted = true)); val vm = viewModel()
         vm.onAction(EditsAction.Update(uri)); eventually { vm.state.value.password != null }
@@ -132,6 +140,16 @@ class EditsViewModelTest {
         browser.onAction(EditsAction.Update(uri)); eventually { browser.state.value.message != null }
         assertThat(browser.state.value.reload).isEqualTo(EditsReload(uri, uri))
         assertThat(home.state.value.message).isNull(); assertThat(home.state.value.reload).isNull()
+    }
+    @Test fun aStuckBackup_isShown_andDiscardedOnlyAfterConfirming() {
+        val backup = File(journal.folder("u1").apply { mkdirs() }, "backup.zip").apply { writeText("x") }
+        journal.begin("u1", "file:/a.zip", "a.zip", backup, 1, "fp", 1, "new"); journal.restoreFailed("u1")
+        val vm = viewModel()
+        assertThat(vm.state.value.stuck.single().name).isEqualTo("a.zip")
+        vm.onAction(EditsAction.DiscardBackup("u1"))
+        assertThat(backup.exists()).isTrue(); assertThat(vm.state.value.confirmDiscard).isEqualTo("u1")
+        vm.onAction(EditsAction.ConfirmDiscard); eventually { vm.state.value.stuck.isEmpty() }
+        assertThat(backup.exists()).isFalse()
     }
     @Test fun anArchivePutBackAtStartUp_isSaid() {
         val vm = viewModel()

@@ -31,4 +31,12 @@
         <item quantity="one">Les modifications de %d fichier seront perdues.</item>
         <item quantity="other">Les modifications de %d fichiers seront perdues.</item>
     </plurals>
+    <string name="edits_busy">Attendez la fin de l\'extraction de %1$s, puis réessayez.</string>
+    <string name="edits_saving">Enregistrement…</string>
+    <string name="edits_stuck_title">%1$s n\'a pas pu être restauré</string>
+    <string name="edits_stuck_body">Lunaris a gardé une copie de l\'archive telle qu\'elle était avant la mise à jour.</string>
+    <string name="edits_save_original">Enregistrer l\'original sous…</string>
+    <string name="edits_discard_copy">Supprimer la copie</string>
+    <string name="edits_discard_copy_title">Supprimer la copie ?</string>
+    <string name="edits_discard_copy_body">La copie de %1$s gardée par Lunaris est supprimée. L\'archive reste telle qu\'elle est.</string>
 </resources>

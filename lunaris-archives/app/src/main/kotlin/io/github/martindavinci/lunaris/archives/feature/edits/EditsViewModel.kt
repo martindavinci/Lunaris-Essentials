@@ -15,6 +15,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.Dispatchers
 
 /** The banner in the browser and the card on Home: one per archive with changed files, and what follows a tap. */
 @HiltViewModel
@@ -29,7 +31,8 @@ class EditsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch { watcher.changed.collect { list -> _state.update { it.copy(archives = list) } } }
-        viewModelScope.launch { runner.working.collect { w -> _state.update { it.copy(working = w?.archiveUri) } } }
+        viewModelScope.launch { runner.working.collect { w -> _state.update { it.copy(working = w?.archiveUri, saving = w?.saving == true) } } }
+        viewModelScope.launch { journal.stuck.collect { list -> _state.update { it.copy(stuck = list) } } }
         viewModelScope.launch { runner.result.collect { r -> r?.takeIf { it.work.owner == null || it.work.owner === this@EditsViewModel }?.let { finished(it) } } }
         viewModelScope.launch {
             journal.outcomes.collect { outcomes ->
@@ -50,13 +53,23 @@ class EditsViewModel @Inject constructor(
             is EditsAction.SubmitPassword -> {
                 val target = _state.value.password
                 _state.update { it.copy(password = null) }
-                if (target == null) action.password.fill(WIPED) else update(target.archiveUri, action.password, null)
+                if (target == null) action.password.fill(WIPED) else update(target.archiveUri, action.password, target.writableUri)
             }
             EditsAction.CancelPassword -> _state.update { it.copy(password = null) }
             is EditsAction.Picked -> picked(action.archiveUri, action.pickedUri)
             EditsAction.CancelPick -> _state.update { it.copy(pick = null) }
+            is EditsAction.SaveOriginal -> action.target?.let { target ->
+                val stuck = _state.value.stuck.firstOrNull { it.id == action.id } ?: return
+                runner.run(EditsRunner.Work(stuck.id, stuck.name, owner = this, saving = true)) { saveOriginal(journal, stuck, target) }
+            }
+            is EditsAction.DiscardBackup -> _state.update { it.copy(confirmDiscard = action.id) }
+            EditsAction.ConfirmDiscard -> _state.value.confirmDiscard?.let { id ->
+                _state.update { it.copy(confirmDiscard = null) }
+                viewModelScope.launch { withContext(Dispatchers.IO) { journal.discard(id) } }
+            }
+            EditsAction.CancelDiscard -> _state.update { it.copy(confirmDiscard = null) }
             is EditsAction.SaveTo -> action.target?.let { target ->
-                run(action.archiveUri) {
+                run(action.archiveUri, saving = true) {
                     val id = action.recordId
                     if (action.isFolder || id == null) saveAll(action.archiveUri, target) else saveOne(action.archiveUri, id, target)
                 }
@@ -70,7 +83,7 @@ class EditsViewModel @Inject constructor(
     }
 
     private fun update(uri: String, password: CharArray?, writableUri: String?) {
-        if (!run(uri) { update(uri, password, writableUri) }) password?.fill(WIPED)
+        if (!run(uri, writableUri) { update(uri, password, writableUri) }) password?.fill(WIPED)
     }
 
     private fun picked(uri: String, pickedUri: String?) {
@@ -82,13 +95,14 @@ class EditsViewModel @Inject constructor(
         }
     }
 
-    private fun run(uri: String, decision: suspend EditActions.() -> EditOutcome): Boolean =
-        runner.run(EditsRunner.Work(uri, nameOf(uri), owner = this), decision)
+    private fun run(uri: String, writableUri: String? = null, saving: Boolean = false, decision: suspend EditActions.() -> EditOutcome): Boolean =
+        runner.run(EditsRunner.Work(uri, nameOf(uri), owner = this, writableUri = writableUri, saving = saving), decision)
 
     private fun finished(result: EditsRunner.Result) {
         runner.resultShown()
         val (work, outcome) = result
-        val target = EditsTarget(work.archiveUri, work.archiveName)
+        // A password asked after the archive was picked again goes to the picked file, not back to the picker.
+        val target = EditsTarget(work.archiveUri, work.archiveName, writableUri = work.writableUri)
         val refused = (outcome as? EditOutcome.Refused)?.result
         _state.update { s ->
             s.copy(

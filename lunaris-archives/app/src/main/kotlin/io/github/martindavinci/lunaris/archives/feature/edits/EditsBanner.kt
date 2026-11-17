@@ -32,6 +32,8 @@ import io.github.martindavinci.lunaris.archives.edits.Snapshot
 import io.github.martindavinci.lunaris.archives.settings.ThemeMode
 import io.github.martindavinci.lunaris.archives.ui.theme.LunarisArchivesTheme
 import io.github.martindavinci.lunaris.archives.ui.theme.accentText
+import io.github.martindavinci.lunaris.archives.ui.theme.onWarningContainer
+import io.github.martindavinci.lunaris.archives.ui.theme.warningContainer
 
 private val CardShape = RoundedCornerShape(20.dp)
 private val CardPadding = 16.dp
@@ -44,14 +46,15 @@ private val OuterPadding = 16.dp
 internal fun EditsCards(state: EditsUiState, archiveUri: String?, onAction: (EditsAction) -> Unit, onSaveCopy: (ChangedArchive) -> Unit) {
     val shown = state.archives.filter { archiveUri == null || it.archiveUri == archiveUri }
     shown.forEach { archive ->
-        EditsCard(archive, working = state.working == archive.archiveUri, busy = state.working != null,
+        EditsCard(archive, working = state.working == archive.archiveUri, saving = state.saving, busy = state.working != null,
             expanded = archive.archiveUri in state.expanded, onAction = onAction, onSaveCopy = { onSaveCopy(archive) })
     }
 }
 
 @Composable
 private fun EditsCard(
-    archive: ChangedArchive, working: Boolean, busy: Boolean, expanded: Boolean, onAction: (EditsAction) -> Unit, onSaveCopy: () -> Unit,
+    archive: ChangedArchive, working: Boolean, saving: Boolean, busy: Boolean, expanded: Boolean,
+    onAction: (EditsAction) -> Unit, onSaveCopy: () -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
     val count = archive.entries.size
@@ -70,7 +73,10 @@ private fun EditsCard(
             }
             if (expanded) archive.entries.forEach { Text(it.entryPath, style = MaterialTheme.typography.bodySmall, color = colors.onSurfaceVariant) }
             if (working) {
-                Text(stringResource(R.string.edits_working, archive.archiveName), style = MaterialTheme.typography.bodySmall)
+                Text(
+                    if (saving) stringResource(R.string.edits_saving) else stringResource(R.string.edits_working, archive.archiveName),
+                    style = MaterialTheme.typography.bodySmall,
+                )
                 LinearProgressIndicator(Modifier.fillMaxWidth())
             } else {
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(Gap)) {
@@ -86,6 +92,27 @@ private fun EditsCard(
                             Text(stringResource(if (expanded) R.string.edits_hide else R.string.edits_show))
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+/** Home only: the copy of an archive that could not be put back, until the user saves it or lets it go. */
+@Composable
+internal fun StuckCards(state: EditsUiState, onAction: (EditsAction) -> Unit, onSave: (id: String, name: String) -> Unit) {
+    val colors = MaterialTheme.colorScheme
+    state.stuck.forEach { stuck ->
+        Surface(shape = CardShape, color = colors.warningContainer, contentColor = colors.onWarningContainer,
+            modifier = Modifier.fillMaxWidth().padding(horizontal = OuterPadding, vertical = Gap)) {
+            Column(Modifier.padding(CardPadding), verticalArrangement = Arrangement.spacedBy(Gap)) {
+                Text(stringResource(R.string.edits_stuck_title, stuck.name), style = MaterialTheme.typography.titleSmall)
+                Text(stringResource(R.string.edits_stuck_body), style = MaterialTheme.typography.bodySmall)
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(Gap)) {
+                    FilledTonalButton(onClick = { onSave(stuck.id, stuck.name) }, enabled = state.working == null) {
+                        Text(stringResource(R.string.edits_save_original))
+                    }
+                    TextButton(onClick = { onAction(EditsAction.DiscardBackup(stuck.id)) }) { Text(stringResource(R.string.edits_discard_copy)) }
                 }
             }
         }

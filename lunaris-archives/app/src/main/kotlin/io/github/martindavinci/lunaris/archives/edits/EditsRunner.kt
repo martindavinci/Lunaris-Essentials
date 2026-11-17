@@ -18,7 +18,9 @@ import kotlinx.coroutines.launch
 @Singleton
 class EditsRunner @Inject constructor(private val actions: EditActions, @param:Background dispatcher: CoroutineDispatcher) {
     /** [owner] is the screen that asked: its result is for it alone, unless it is gone by then (null: anyone). */
-    data class Work(val archiveUri: String, val archiveName: String, val owner: Any? = null)
+    data class Work(
+        val archiveUri: String, val archiveName: String, val owner: Any? = null, val writableUri: String? = null, val saving: Boolean = false,
+    )
     data class Result(val work: Work, val outcome: EditOutcome)
 
     private val scope = CoroutineScope(SupervisorJob() + dispatcher)
