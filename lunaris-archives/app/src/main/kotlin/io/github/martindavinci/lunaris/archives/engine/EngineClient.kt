@@ -62,6 +62,23 @@ class EngineClient @Inject constructor(private val connection: EngineConnection)
         source: ArchiveSource, route: EngineRoute, password: CharArray?, indices: LongArray,
         expected: Map<Long, RawPath>,
     ): Flow<EngineEvent> = flow {
+        val batches = IndexBatches.of(indices)
+        for ((n, batch) in batches.withIndex()) {
+            var status = EngineStatus.OK
+            pass(source, route, password, batch, expected) { event ->
+                if (event is EngineEvent.Finished) status = event.status
+                // One Finished for the whole extraction: the last batch's, or the first that is not OK.
+                if (event !is EngineEvent.Finished || n == batches.lastIndex || status != EngineStatus.OK) emit(event)
+            }
+            if (status != EngineStatus.OK) break
+        }
+    }.flowOn(Dispatchers.IO)
+
+    /** One engine pass over [indices], small enough for one binder call. */
+    private suspend fun pass(
+        source: ArchiveSource, route: EngineRoute, password: CharArray?, indices: LongArray,
+        expected: Map<Long, RawPath>, onEvent: suspend (EngineEvent) -> Unit,
+    ) {
         connection.use { engine ->
             val jobId = ids.incrementAndGet()
             val pipe = start(source) { archive, sink -> engine.extract(jobId, arrayOf(archive), route.code, password, indices, sink) }
@@ -69,7 +86,7 @@ class EngineClient @Inject constructor(private val connection: EngineConnection)
                 coroutineScope {
                     val watcher = launch { stopEngineWhenCancelled(engine, jobId) }
                     try {
-                        WireCollector.events(WireReader(FileInputStream(read.fileDescriptor)), expected).forEach { emit(it) }
+                        WireCollector.events(WireReader(FileInputStream(read.fileDescriptor)), expected).forEach { onEvent(it) }
                     } catch (_: WireFormatException) {
                         currentCoroutineContext().ensureActive()   // our own cancel ended the stream
                         deaths.merge(source.key, 1, Int::plus)
@@ -80,7 +97,7 @@ class EngineClient @Inject constructor(private val connection: EngineConnection)
                 }
             }
         }
-    }.flowOn(Dispatchers.IO)
+    }
 
     /**
      * Opens the archive and a reliable pipe, gives both to the engine and returns the read side.
