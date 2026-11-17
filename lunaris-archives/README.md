@@ -14,6 +14,22 @@
   <a href="../LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0--or--later-blue" alt="License: GPL-3.0-or-later"></a>
 </p>
 
+<p align="center">
+  <img src="docs/screenshots/home.webp" width="32%" alt="The first screen: the archive opened last, Create an archive, and the recent archives with their format, size and a lock when they have a password">
+  <img src="docs/screenshots/lisbon.webp" width="32%" alt="Inside a ZIP: the path above, folders with how many items they hold, a file with its size and date, and Extract all">
+  <img src="docs/screenshots/entry.webp" width="32%" alt="One photo inside the archive: Open with, Share and Extract to, with its size, packed size, date and whether it is encrypted">
+</p>
+<p align="center">
+  <img src="docs/screenshots/select.webp" width="32%" alt="Four photos selected, with Select all, Share and Extract">
+  <img src="docs/screenshots/search.webp" width="32%" alt="A search by name across all the folders of the archive, with the folder of each result">
+  <img src="docs/screenshots/password.webp" width="32%" alt="A 7z archive asking for its password, with Remember until I close the app">
+</p>
+<p align="center">
+  <img src="docs/screenshots/conflict.webp" width="32%" alt="A file that is already in the destination folder: Replace, Keep both with the new name, or Skip, for one file or for all of them">
+  <img src="docs/screenshots/create.webp" width="32%" alt="A new ZIP from a folder: name, three levels of compression, and an AES-256 password with how strong it is">
+  <img src="docs/screenshots/settings.webp" width="32%" alt="The settings: theme, language, clearing the temporary files, remembering recent archives, licences and source code">
+</p>
+
 ## Download
 
 <p>
