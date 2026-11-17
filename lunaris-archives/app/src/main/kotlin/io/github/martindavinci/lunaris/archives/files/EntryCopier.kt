@@ -9,6 +9,7 @@ import io.github.martindavinci.lunaris.archives.engine.EntryRoutes
 import io.github.martindavinci.lunaris.archives.engine.EngineStatus
 import io.github.martindavinci.lunaris.archives.engine.EngineStoppedException
 import io.github.martindavinci.lunaris.archives.engine.EntryOutcome
+import io.github.martindavinci.lunaris.archives.extract.FreeSpace
 import io.github.martindavinci.lunaris.archives.safety.Limits
 import io.github.martindavinci.lunaris.archives.session.FreeBytes
 import io.github.martindavinci.lunaris.archives.session.OpenArchive
@@ -58,26 +59,45 @@ class EntryCopier @Inject constructor(
     override suspend fun copy(archive: OpenArchive, entry: ArchiveEntry, password: CharArray?, onProgress: (Long) -> Unit): CopyResult {
         val route = EntryRoutes.routeFor(archive, entry) ?: return CopyResult.Rar4Password
         if (entry.encrypted && password == null) return CopyResult.NeedsPassword
-        copies.existingCopy(archive.source.key, entry)?.let { return ready(it) }
+        // Everything below touches the disk; the free-space query alone can take seconds.
+        return withContext(Dispatchers.IO) {
+            try {
+                copyToCache(archive, entry, route, password, onProgress)
+            } catch (_: IOException) {
+                CopyResult.Gone   // our own copy went away under us (the cache was cleared)
+            }
+        }
+    }
+
+    private suspend fun copyToCache(
+        archive: OpenArchive, entry: ArchiveEntry, route: EngineRoute, password: CharArray?, onProgress: (Long) -> Unit,
+    ): CopyResult {
+        val key = archive.source.key
+        copies.existingCopy(key, entry)?.let { return ready(it) }
         if (freeBytes.get() < (entry.size ?: 0) + Limits.CACHE_MARGIN_BYTES) return CopyResult.NoSpace
-        val target = copies.target(archive.source.key, entry)
+        val target = copies.target(key, entry)
+        // Written in a folder of its own and moved into place when whole: a copy that is cancelled or
+        // fails removes only what it wrote, never the file a second tap on the same entry is writing.
+        val attempt = copies.attempt(target)
         val result = try {
-            write(archive, entry, route, password, target, onProgress)
+            write(archive, entry, route, password, File(attempt, target.name), onProgress)
         } catch (e: Throwable) {
-            target.parentFile?.deleteRecursively()
+            attempt.deleteRecursively()
             return when (e) {
                 is EngineStoppedException, is OverrunException -> CopyResult.Damaged
                 is CancellationException -> throw e
-                is IOException, is SecurityException -> CopyResult.Gone
+                is IOException -> if (FreeSpace.isNoSpace(e)) CopyResult.NoSpace else CopyResult.Gone
+                is SecurityException -> CopyResult.Gone
                 else -> throw e
             }
         }
         if (result != null) {
-            target.parentFile?.deleteRecursively()
+            attempt.deleteRecursively()
             return result
         }
-        copies.trim(target, System.currentTimeMillis())
-        return ready(target)
+        val file = copies.publish(attempt, target, entry) ?: return CopyResult.Damaged
+        copies.trim(file, System.currentTimeMillis())
+        return ready(file)
     }
 
     /** Null when the entry was written whole; else why not. */

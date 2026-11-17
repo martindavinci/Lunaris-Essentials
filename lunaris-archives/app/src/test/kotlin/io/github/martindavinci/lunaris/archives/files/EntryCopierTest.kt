@@ -15,7 +15,15 @@ import io.github.martindavinci.lunaris.archives.testing.index
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.runTest
+import io.github.martindavinci.lunaris.archives.archive.RawPath
+import io.github.martindavinci.lunaris.archives.engine.ArchiveEngine
+import java.io.File
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -91,6 +99,40 @@ class EntryCopierTest {
         engine.extractFailure = SecurityException("permission released")
         assertThat(copier.copy(archive(), notes, null) {}).isEqualTo(CopyResult.Gone)
         assertThat(temp.root.resolve("open").walk().filter { it.isFile }.toList()).isEmpty()
+    }
+    @Test fun aFailedCopy_leavesTheFinishedCopyOfTheSameEntry() = runTest {
+        val unsized = entry(0, "notes.md", size = null)            // no size: never reused, always copied again
+        script(EngineRoute.LIBARCHIVE, *ok(0, "hello".toByteArray()))
+        val first = copier.copy(archive(), unsized, null) {} as CopyResult.Ready
+        script(EngineRoute.LIBARCHIVE, *ended(0, EntryOutcome.DAMAGED))
+        assertThat(copier.copy(archive(), unsized, null) {}).isEqualTo(CopyResult.Damaged)
+        assertThat(File(first.path).readText()).isEqualTo("hello")
+    }
+    @Test fun aCancelledCopy_doesNotTakeTheFileOfAnotherCopy() = runTest {
+        val reached = Channel<Unit>(Channel.UNLIMITED)
+        val gate = CompletableDeferred<Unit>()
+        val slow = object : ArchiveEngine by engine {
+            override fun extract(source: ArchiveSource, route: EngineRoute, password: CharArray?, indices: LongArray, expected: Map<Long, RawPath>) = flow {
+                emit(EngineEvent.EntryStarted(0)); emit(EngineEvent.Bytes("he".toByteArray(), 2))
+                reached.send(Unit); gate.await()
+                emit(EngineEvent.Bytes("llo".toByteArray(), 3)); emit(EngineEvent.EntryFinished(0, EntryOutcome.OK))
+                emit(EngineEvent.Finished(EngineStatus.OK))
+            }
+        }
+        val copier = EntryCopier(slow, TempCopies(temp.root), { Long.MAX_VALUE }, { it.path }, { null })
+        val first = launch { copier.copy(archive(), notes, null) {} }
+        reached.receive()
+        val second = async { copier.copy(archive(), notes, null) {} }
+        reached.receive()                       // both are in the middle of the same file now
+        first.cancelAndJoin()                   // the first one cleans up
+        gate.complete(Unit)
+        val result = second.await() as CopyResult.Ready
+        assertThat(File(result.path).readText()).isEqualTo("hello")
+    }
+    @Test fun aNameWithNoWritableForm_isCopiedUnderAFallbackName() = runTest {
+        script(EngineRoute.LIBARCHIVE, *ok(0, "hello".toByteArray()))
+        val result = copier.copy(archive(), entry(0, "...", size = 5), null) {} as CopyResult.Ready
+        assertThat(result.uri).endsWith("/0-0/file")
     }
     @Test fun rar4EncryptedEntry_isRar4Password() = runTest {
         assertThat(copier.copy(archive(ArchiveKind.RAR4), secret, "x".toCharArray()) {}).isEqualTo(CopyResult.Rar4Password)

@@ -6,6 +6,7 @@ import io.github.martindavinci.lunaris.archives.safety.Limits
 import io.github.martindavinci.lunaris.archives.safety.SafeComponent
 import io.github.martindavinci.lunaris.archives.safety.SafePath
 import java.io.File
+import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,9 +17,10 @@ class TempCopies(private val cacheDir: File, private val capBytes: Long) {
 
     private val root get() = File(cacheDir, FOLDER)
 
+    /** A name made only of dots and spaces has no writable form: its copy is called [FALLBACK_LEAF]. */
     fun target(archiveKey: String, entry: ArchiveEntry): File {
         val path = entry.path as? SafePath.Result.Ok ?: throw IllegalArgumentException("unsafe entry ${entry.index}")
-        val leaf = SafeComponent.leaf(path) ?: throw IllegalArgumentException("no writable name for ${entry.index}")
+        val leaf = SafeComponent.leaf(path) ?: FALLBACK_LEAF
         val version = entry.crc?.let { "%x".format(it) } ?: "t${entry.modifiedMillis ?: 0}"
         return File(File(File(root, archiveKey), "${entry.index}-$version"), leaf)
     }
@@ -26,9 +28,28 @@ class TempCopies(private val cacheDir: File, private val capBytes: Long) {
     fun existingCopy(archiveKey: String, entry: ArchiveEntry): File? =
         target(archiveKey, entry).takeIf { it.isFile && entry.size != null && it.length() == entry.size }
 
+    /** A folder for one copy in progress, beside the folder the finished file will be in. */
+    fun attempt(target: File): File {
+        val folder = requireNotNull(target.parentFile) { "no folder for $target" }
+        return File(folder.parentFile, folder.name + ATTEMPT_MARK + UUID.randomUUID())
+    }
+
+    /** Moves a finished attempt into place. When another copy of the entry got there first, that one is used. */
+    @Synchronized
+    fun publish(attempt: File, target: File, entry: ArchiveEntry): File? {
+        val folder = target.parentFile ?: return null
+        val whole = target.isFile && entry.size != null && target.length() == entry.size
+        if (!whole) {
+            folder.deleteRecursively()
+            attempt.renameTo(folder)
+        }
+        attempt.deleteRecursively()
+        return target.takeIf { it.isFile }
+    }
+
     /** Copies older than a day go, then the oldest until the folder is under the cap; [keep] stays. */
     fun trim(keep: File, now: Long) {
-        val copies = root.walk().filter { it.isFile && it != keep }.sortedBy { it.lastModified() }.toMutableList()
+        val copies = root.walk().filter { it.isFile && it != keep && ATTEMPT_MARK !in it.parentFile.name }.sortedBy { it.lastModified() }.toMutableList()
         copies.filter { now - it.lastModified() > Limits.TEMP_MAX_AGE_MILLIS }.forEach { drop(it); copies.remove(it) }
         var total = copies.sumOf { it.length() } + keep.length()
         for (file in copies) {
@@ -47,5 +68,9 @@ class TempCopies(private val cacheDir: File, private val capBytes: Long) {
         file.parentFile?.deleteRecursively() ?: file.delete()
     }
 
-    private companion object { const val FOLDER = "open" }
+    private companion object {
+        const val FOLDER = "open"
+        const val FALLBACK_LEAF = "file"
+        const val ATTEMPT_MARK = ".part-"
+    }
 }
