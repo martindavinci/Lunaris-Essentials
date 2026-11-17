@@ -59,7 +59,9 @@ class EditActions @Inject constructor(
         val target = writableUri ?: archiveUri
         val secret = password ?: passwords.find(records.first().archiveKey)
         // A file picked again has its own date under its other URI: only its size and fingerprint must match.
-        val checked = if (writableUri != null) records.map { it.copy(archiveMtime = null) } else records
+        // Two changed copies of one entry (a tap after an earlier update): the newest edit is the one written.
+        val newest = records.groupBy { it.entryRaw }.values.map { same -> same.maxBy { checkNotNull(it.pending).mtime } }
+        val checked = if (writableUri != null) newest.map { it.copy(archiveMtime = null) } else newest
         when (val result = updater.update(target, checked, secret)) {
             is UpdateResult.Done -> {
                 withContext(Dispatchers.IO) { settle(archiveUri, target, records, result) }

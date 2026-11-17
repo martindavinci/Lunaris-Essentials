@@ -2,6 +2,7 @@ package io.github.martindavinci.lunaris.archives.edits
 
 import com.google.common.truth.Truth.assertThat
 import io.github.martindavinci.lunaris.archives.archive.ZipDirectory
+import io.github.martindavinci.lunaris.archives.safety.Limits
 import java.io.File
 import java.io.RandomAccessFile
 import java.util.zip.ZipInputStream
@@ -136,6 +137,11 @@ class ZipUpdaterTest {
         assertThat(update(a, record(a, "notes.md", "new"))).isEqualTo(UpdateResult.NoSpace)
         assertThat(a.readBytes()).isEqualTo(bytes)
     }
+    @Test fun spaceCheck_countsZip4jsOwnCopyToo() {
+        val a = zip(Item("notes.md", "old".toByteArray()), Item("photo.bin", other))
+        free = a.length() * 2 + 2 * 3 + Limits.CACHE_MARGIN_BYTES
+        assertThat(update(a, record(a, "notes.md", "new"))).isEqualTo(UpdateResult.NoSpace)
+    }
     @Test fun notWritable_isReported() {
         val a = zip(Item("notes.md", "old".toByteArray()))
         io.writable = false
@@ -177,7 +183,9 @@ class ZipUpdaterTest {
         val a = zip(Item("日本.txt", "old".toByteArray()))
         clearEfs(a)
         assertThat(update(a, record(a, "日本.txt", "new"))).isInstanceOf(UpdateResult.Done::class.java)
-        assertThat(cd(a).entries).hasSize(1)
+        val entry = cd(a).entries.single()
+        assertThat(String(entry.name.bytes, Charsets.UTF_8)).isEqualTo("日本.txt")   // never re-encoded as CP437
+        assertThat(ZipFile(a, password).use { z -> z.getInputStream(z.fileHeaders.single()).use { String(it.readBytes()) } }).isEqualTo("new")
     }
     @Test fun duplicateNames_areRefused() {
         val a = zip(Item("dup.md", "1".toByteArray()), Item("dup.md", "2".toByteArray()))

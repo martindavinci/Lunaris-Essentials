@@ -55,7 +55,8 @@ class ZipUpdater @Inject constructor(
         val facts = io.facts(uri) ?: return UpdateResult.Failed
         if (!sameArchive(facts, first)) return UpdateResult.ArchiveChanged
         val edits = records.sumOf { checkNotNull(it.pending).size }
-        if (freeBytes.get() < facts.size * 2 + edits * 2 + Limits.CACHE_MARGIN_BYTES) return UpdateResult.NoSpace
+        // The backup, the work copy and zip4j's own copy while it removes entries, and the snapshots added twice.
+        if (freeBytes.get() < facts.size * COPIES + edits * 2 + Limits.CACHE_MARGIN_BYTES) return UpdateResult.NoSpace
 
         val backup = File(journal.folder(id).apply { mkdirs() }, BACKUP)
         io.openInput(uri).use { input -> FileOutputStream(backup).use { out -> input.copyTo(out, Limits.WIRE_CHUNK_BYTES); out.fd.sync() } }
@@ -72,6 +73,7 @@ class ZipUpdater @Inject constructor(
             ZipRewrite.Result.NEEDS_PASSWORD -> return UpdateResult.NeedsPassword.also { journal.done(id) }
             ZipRewrite.Result.WRONG_PASSWORD -> return UpdateResult.WrongPassword.also { journal.done(id) }
             ZipRewrite.Result.UNSUPPORTED -> return UpdateResult.Unsupported.also { journal.done(id) }
+            ZipRewrite.Result.NO_SPACE -> return UpdateResult.NoSpace.also { journal.done(id) }
             ZipRewrite.Result.FAILED -> return UpdateResult.Failed.also { journal.done(id) }
         }
         currentCoroutineContext().ensureActive()
@@ -115,6 +117,7 @@ class ZipUpdater @Inject constructor(
         const val WORK_ROOT = "update"
         const val WORK = "work.zip"
         const val BACKUP = "backup.zip"
+        const val COPIES = 3
         val WIPED = Char(0)
     }
 }

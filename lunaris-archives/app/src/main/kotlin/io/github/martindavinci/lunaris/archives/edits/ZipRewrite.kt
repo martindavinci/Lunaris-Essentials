@@ -1,7 +1,9 @@
 package io.github.martindavinci.lunaris.archives.edits
 
+import io.github.martindavinci.lunaris.archives.archive.EntryNames
 import io.github.martindavinci.lunaris.archives.archive.ZipCdEntry
 import io.github.martindavinci.lunaris.archives.archive.ZipDirectory
+import io.github.martindavinci.lunaris.archives.extract.FreeSpace
 import java.io.File
 import java.io.IOException
 import java.io.RandomAccessFile
@@ -17,34 +19,42 @@ import net.lingala.zip4j.model.enums.EncryptionMethod
  * encryption, and the result is read back. Other entries are copied as they are, never recompressed.
  */
 internal object ZipRewrite {
-    enum class Result { OK, NEEDS_PASSWORD, WRONG_PASSWORD, UNSUPPORTED, FAILED }
+    enum class Result { OK, NEEDS_PASSWORD, WRONG_PASSWORD, UNSUPPORTED, NO_SPACE, FAILED }
+
+    /** One entry to write: where it is in the old directory, its name as text, and the snapshot that replaces it. */
+    private class Change(val entry: ZipCdEntry, val name: String, val record: EditRecord)
 
     fun rewrite(work: File, records: List<EditRecord>, password: CharArray?): Result {
         val before = directory(work) ?: return Result.FAILED
         if (!before.entries.all(::writable)) return Result.UNSUPPORTED
-        val targets = records.map { r -> before.entries.filter { hex(it.name.bytes) == r.entryRaw }.singleOrNull() ?: return Result.FAILED }
+        val changes = records.map { r ->
+            val raw = unhex(r.entryRaw)
+            val entry = before.entries.filter { it.name.bytes.contentEquals(raw) }.singleOrNull() ?: return Result.FAILED
+            // The text the browser shows: zip4j writes it back as UTF-8 with the flag, never a CP437 reading of it.
+            Change(entry, EntryNames.decode(raw, entry.efs, zipWithoutEfs = true), r)
+        }
         val secret = password?.copyOf()
         try {
-            val changed = ZipFile(work, secret).use { zip ->
+            ZipFile(work, secret).use { zip ->
                 val headers = zip.fileHeaders
                 if (headers.size != before.entries.size) return Result.FAILED
-                val chosen = targets.map { headers[it.order] }
+                val chosen = changes.map { headers[it.entry.order] }
                 if (chosen.any { h -> headers.count { it.fileName == h.fileName } != 1 }) return Result.FAILED
-                chosen.forEach { h -> check(zip, h, secret)?.let { return it } }
-                val params = chosen.zip(records) { h, r -> parameters(h, r) }
+                val buffer = ByteArray(BUFFER)
+                chosen.forEach { h -> check(zip, h, secret, buffer)?.let { return it } }
+                val params = chosen.zip(changes) { h, c -> parameters(h, c) }
                 zip.removeFiles(chosen.map { it.fileName })
-                records.zip(params) { r, p ->
-                    val snapshot = File(checkNotNull(r.pending).path)
-                    snapshot.setLastModified(r.pending.mtime)
+                changes.zip(params) { c, p ->
+                    val snapshot = File(checkNotNull(c.record.pending).path)
+                    snapshot.setLastModified(c.record.pending.mtime)
                     zip.addFile(snapshot, p)
                 }
-                params.map { it.fileNameInZip }
             }
-            return if (verified(work, before, targets, records, changed, secret)) Result.OK else Result.FAILED
-        } catch (_: ZipException) {
-            return Result.FAILED
-        } catch (_: IOException) {
-            return Result.FAILED
+            return if (verified(work, before, changes, secret)) Result.OK else Result.FAILED
+        } catch (e: ZipException) {
+            return if (FreeSpace.isNoSpace(e) || (e.cause as? IOException)?.let(FreeSpace::isNoSpace) == true) Result.NO_SPACE else Result.FAILED
+        } catch (e: IOException) {
+            return if (FreeSpace.isNoSpace(e)) Result.NO_SPACE else Result.FAILED
         } finally {
             secret?.fill(WIPED)
         }
@@ -58,11 +68,11 @@ internal object ZipRewrite {
     }
 
     /** Reads the old entry whole: a wrong password shows here, before anything is written. */
-    private fun check(zip: ZipFile, header: FileHeader, password: CharArray?): Result? {
+    private fun check(zip: ZipFile, header: FileHeader, password: CharArray?, buffer: ByteArray): Result? {
         if (!header.isEncrypted) return null
         if (password == null) return Result.NEEDS_PASSWORD
         return try {
-            zip.getInputStream(header).use { input -> while (input.read(ByteArray(BUFFER)) >= 0) Unit }
+            zip.getInputStream(header).use { input -> while (input.read(buffer) >= 0) Unit }
             null
         } catch (e: ZipException) {
             if (e.type == ZipException.Type.WRONG_PASSWORD || e.type == ZipException.Type.CHECKSUM_MISMATCH) Result.WRONG_PASSWORD else Result.FAILED
@@ -71,9 +81,9 @@ internal object ZipRewrite {
         }
     }
 
-    private fun parameters(h: FileHeader, r: EditRecord) = ZipParameters().apply {
-        fileNameInZip = h.fileName
-        lastModifiedFileTime = checkNotNull(r.pending).mtime
+    private fun parameters(h: FileHeader, c: Change) = ZipParameters().apply {
+        fileNameInZip = c.name
+        lastModifiedFileTime = checkNotNull(c.record.pending).mtime
         h.fileComment?.let { fileComment = it }
         val aes = h.aesExtraDataRecord
         compressionMethod = if (h.encryptionMethod == EncryptionMethod.AES && aes != null) aes.compressionMethod else h.compressionMethod
@@ -88,18 +98,19 @@ internal object ZipRewrite {
     }
 
     /** Same number of entries; changed ones read back as their snapshots; the others with their CRC and size. */
-    private fun verified(
-        work: File, before: ZipDirectory, targets: List<ZipCdEntry>, records: List<EditRecord>, names: List<String>, password: CharArray?,
-    ): Boolean {
+    private fun verified(work: File, before: ZipDirectory, changes: List<Change>, password: CharArray?): Boolean {
         val after = directory(work) ?: return false
         if (after.entries.size != before.entries.size) return false
-        val untouched = before.entries - targets.toSet()
-        val byName = after.entries.groupBy { hex(it.name.bytes) }
-        if (untouched.any { e -> byName[hex(e.name.bytes)]?.singleOrNull()?.let { it.crc == e.crc && it.packedSize == e.packedSize } != true }) return false
+        val touched = changes.map { it.entry }.toSet()
+        val byName = after.entries.groupBy { it.name.bytes.asList() }
+        val untouchedKept = (before.entries - touched).all { e ->
+            byName[e.name.bytes.asList()]?.singleOrNull()?.let { it.crc == e.crc && it.packedSize == e.packedSize } == true
+        }
+        if (!untouchedKept) return false
         return ZipFile(work, password).use { zip ->
-            names.zip(records).all { (name, r) ->
-                val header = zip.getFileHeader(name) ?: return@all false
-                zip.getInputStream(header).use { Fingerprint.sha256(it) } == checkNotNull(r.pending).sha256
+            changes.all { c ->
+                val header = zip.getFileHeader(c.name) ?: return@all false
+                zip.getInputStream(header).use { Fingerprint.sha256(it) } == checkNotNull(c.record.pending).sha256
             }
         }
     }
@@ -107,11 +118,12 @@ internal object ZipRewrite {
     private fun directory(file: File): ZipDirectory? =
         runCatching { RandomAccessFile(file, "r").use { ZipDirectory.read(it.channel) } }.getOrNull()
 
-    private fun hex(bytes: ByteArray) = bytes.joinToString("") { "%02x".format(it) }
+    private fun unhex(text: String): ByteArray = ByteArray(text.length / 2) { i -> text.substring(i * 2, i * 2 + 2).toInt(HEX).toByte() }
 
     private const val STORE = 0
     private const val DEFLATE = 8
     private const val AES_MARKER = 99
     private const val BUFFER = 64 * 1024
+    private const val HEX = 16
     private val WIPED = Char(0)
 }

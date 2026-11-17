@@ -77,6 +77,15 @@ class EditActionsTest {
         watcher.scan()
         assertThat(watcher.changed.value.single().entries.single().entryPath).isEqualTo("a.md")
     }
+    @Test fun twoChangedCopiesOfOneEntry_theNewestGoesIn() = runBlocking<Unit> {
+        val a = handOut("a.md"); edit(a, "older"); watcher.scan()
+        val second = File(cache, "open/k2/a.md").apply { parentFile!!.mkdirs(); writeText("one") }
+        val first = store.all().single()
+        store.put(first.copy(id = "id-second", copyPath = second.path, size = 3, mtime = second.lastModified(), sha256 = Fingerprint.sha256(second), pending = null))
+        second.writeText("newest"); second.setLastModified(a.lastModified() + 60_000); watcher.scan()
+        assertThat(actions.update(uri, null)).isEqualTo(EditOutcome.Updated(uri))
+        assertThat(content("a.md")).isEqualTo("newest"); assertThat(store.all()).isEmpty()
+    }
     @Test fun failedUpdate_refreshesTheRecords_soARetrySucceeds() = runBlocking<Unit> {
         val a = handOut("a.md"); edit(a, "A2"); watcher.scan()
         io.failAfterBytes = 50
