@@ -11,7 +11,11 @@ import io.github.martindavinci.lunaris.archives.feature.browser.SourcesAdapter
 import io.github.martindavinci.lunaris.archives.feature.browser.SourcesPort
 import io.github.martindavinci.lunaris.archives.open.ArchiveOpener
 import io.github.martindavinci.lunaris.archives.open.ReadCheck
+import io.github.martindavinci.lunaris.archives.edits.RecentsMove
 import io.github.martindavinci.lunaris.archives.recents.ContentUriPermissions
+import io.github.martindavinci.lunaris.archives.recents.PermissionCalls
+import io.github.martindavinci.lunaris.archives.recents.RecentsMover
+import io.github.martindavinci.lunaris.archives.recents.ResolverPermissionCalls
 import io.github.martindavinci.lunaris.archives.recents.RecentsRepository
 import io.github.martindavinci.lunaris.archives.recents.RecentsStore
 import io.github.martindavinci.lunaris.archives.recents.RecentsRecorder
@@ -44,6 +48,12 @@ abstract class BrowserModule {
 
     @Binds
     abstract fun bindPermissions(permissions: ContentUriPermissions): UriPermissions
+
+    @Binds
+    abstract fun bindPermissionCalls(calls: ResolverPermissionCalls): PermissionCalls
+
+    @Binds
+    abstract fun bindRecentsMove(mover: RecentsMover): RecentsMove
 
     @Binds
     abstract fun bindRecentsRepository(store: RecentsStore): RecentsRepository

@@ -48,6 +48,15 @@ class RecentsStore @Inject constructor(private val dataStore: DataStore<Preferen
         update { list -> (list.filter { it.uri != item.uri } + item).sortedByDescending { it.lastOpenedMillis } }
     }
 
+    /** False when [oldUri] is not remembered. */
+    suspend fun move(oldUri: String, newUri: String, sizeBytes: Long): Boolean {
+        var found = false
+        update { list ->
+            list.map { if (it.uri == oldUri) it.copy(uri = newUri, sizeBytes = sizeBytes).also { found = true } else it }
+        }
+        return found
+    }
+
     suspend fun updatePath(uri: String, path: List<String>?) {
         update { list -> list.map { if (it.uri == uri) it.copy(lastPath = path) else it } }
     }

@@ -52,6 +52,11 @@ class ArchiveSession @Inject constructor(
     @Synchronized
     fun passwordFor(id: String): CharArray? = openPasswords[id]?.copyOf()
 
+    /** A copy of a password for the archive with session key [key]: of an open archive, else a remembered one. */
+    @Synchronized
+    fun passwordForKey(key: String): CharArray? =
+        open.entries.firstOrNull { it.value.source.key == key }?.let { openPasswords[it.key]?.copyOf() } ?: passwords.get(key)
+
     /** A password typed for an entry of [id] worked: keep a copy with the open archive, and for later if asked. */
     @Synchronized
     fun keepPassword(id: String, password: CharArray, remember: Boolean) {

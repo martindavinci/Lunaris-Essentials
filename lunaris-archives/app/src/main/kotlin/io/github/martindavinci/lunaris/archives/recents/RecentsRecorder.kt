@@ -12,19 +12,48 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 
-/** Keeping a read permission across restarts (ContentResolver on the device). */
+/** Keeping access to an archive across restarts: read, and write when the picker gave it (updates need it). */
 interface UriPermissions {
     /** False when the provider does not let it last: then the archive is not remembered. */
     fun takeRead(uri: String): Boolean
     fun release(uri: String)
 }
 
-class ContentUriPermissions @Inject constructor(private val resolver: ContentResolver) : UriPermissions {
-    override fun takeRead(uri: String): Boolean =
-        runCatching { resolver.takePersistableUriPermission(Uri.parse(uri), Intent.FLAG_GRANT_READ_URI_PERMISSION) }.isSuccess
+/** The two ContentResolver calls, so that the choice of flags can be tested on the JVM. */
+interface PermissionCalls {
+    fun take(uri: String, flags: Int): Boolean
+    fun release(uri: String, flags: Int)
+}
+
+class ResolverPermissionCalls @Inject constructor(private val resolver: ContentResolver) : PermissionCalls {
+    override fun take(uri: String, flags: Int): Boolean = runCatching { resolver.takePersistableUriPermission(Uri.parse(uri), flags) }.isSuccess
+
+    override fun release(uri: String, flags: Int) {
+        runCatching { resolver.releasePersistableUriPermission(Uri.parse(uri), flags) }
+    }
+}
+
+class ContentUriPermissions @Inject constructor(private val calls: PermissionCalls) : UriPermissions {
+    override fun takeRead(uri: String): Boolean = calls.take(uri, READ or WRITE) || calls.take(uri, READ)
 
     override fun release(uri: String) {
-        runCatching { resolver.releasePersistableUriPermission(Uri.parse(uri), Intent.FLAG_GRANT_READ_URI_PERMISSION) }
+        calls.release(uri, READ or WRITE)
+        calls.release(uri, READ)
+    }
+
+    private companion object {
+        const val READ = Intent.FLAG_GRANT_READ_URI_PERMISSION
+        const val WRITE = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+    }
+}
+
+/** An archive updated under another URI (picked again to be written): the recents follow it. */
+class RecentsMover @Inject constructor(private val store: RecentsStore, private val permissions: UriPermissions) :
+    io.github.martindavinci.lunaris.archives.edits.RecentsMove {
+    override suspend fun moved(oldUri: String, newUri: String, sizeBytes: Long) {
+        if (!store.move(oldUri, newUri, sizeBytes)) return
+        if (!permissions.takeRead(newUri)) store.remove(newUri)
+        permissions.release(oldUri)
     }
 }
 

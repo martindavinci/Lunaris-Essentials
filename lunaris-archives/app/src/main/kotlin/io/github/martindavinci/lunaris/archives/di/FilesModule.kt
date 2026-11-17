@@ -24,7 +24,11 @@ import io.github.martindavinci.lunaris.archives.files.FileUris
 import io.github.martindavinci.lunaris.archives.files.PlatformMime
 import io.github.martindavinci.lunaris.archives.files.ProtectedCopies
 import io.github.martindavinci.lunaris.archives.files.UriRevoker
+import io.github.martindavinci.lunaris.archives.edits.ContentSaveIo
 import io.github.martindavinci.lunaris.archives.edits.ContentUpdateIo
+import io.github.martindavinci.lunaris.archives.edits.PasswordSource
+import io.github.martindavinci.lunaris.archives.edits.SaveIo
+import io.github.martindavinci.lunaris.archives.session.ArchiveSession
 import io.github.martindavinci.lunaris.archives.edits.EditLookup
 import io.github.martindavinci.lunaris.archives.edits.UpdateIo
 import io.github.martindavinci.lunaris.archives.edits.EditRecorder
@@ -62,6 +66,9 @@ abstract class FilesModule {
     @Binds
     abstract fun bindUpdateIo(io: ContentUpdateIo): UpdateIo
 
+    @Binds
+    abstract fun bindSaveIo(io: ContentSaveIo): SaveIo
+
     companion object {
         private const val AUTHORITY_SUFFIX = ".fileprovider"
 
@@ -80,6 +87,10 @@ abstract class FilesModule {
                 )
             }
         }
+
+        /** Passwords of open or remembered archives, for updating their entries. */
+        @Provides
+        fun providePasswordSource(session: ArchiveSession): PasswordSource = PasswordSource(session::passwordForKey)
 
         private const val MARKER_FILE = "extract_marker"
         private const val MARKER_KEY = "token"
