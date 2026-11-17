@@ -47,6 +47,9 @@ class CreateViewModel @Inject constructor(
     val state: StateFlow<CreateUiState> = _state.asStateFlow()
 
     init {
+        // The runner outlives the screen: an archive made or failed before is not this screen's result. One still
+        // being written is, and keeps showing.
+        runner.reset()
         inbox.take().takeIf { it.isNotEmpty() }?.let { addFiles(it) }
         viewModelScope.launch { runner.state.collect { s -> _state.update { it.copy(state = s) } } }
     }

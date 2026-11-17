@@ -118,6 +118,16 @@ class CreateViewModelTest {
         assertThat(vm.state.value.state).isEqualTo(CreateState.Idle)
         assertThat(deleted).containsExactly("content://out/a.zip")
     }
+    @Test fun aNewScreenAfterAFinishedArchive_startsAfresh() = runTest(dispatcher) {
+        val first = viewModel()
+        first.onAction(CreateAction.AddFiles(listOf("content://x/a.txt"))); advanceUntilIdle()
+        first.onAction(CreateAction.HoldPassword(null)); first.onAction(CreateAction.CreateAt("content://out/a.zip")); advanceUntilIdle()
+        assertThat(first.state.value.state).isInstanceOf(CreateState.Finished::class.java)
+        val second = viewModel(); advanceUntilIdle()   // closed with X, then "Create an archive" again
+        assertThat(second.state.value.state).isEqualTo(CreateState.Idle)
+        second.onAction(CreateAction.AddFiles(listOf("content://x/b.txt"))); advanceUntilIdle()
+        assertThat(second.state.value.canCreate).isTrue()
+    }
     @Test fun switchingTo7z_dropsThePassword() = runTest(dispatcher) {
         val vm = viewModel()
         vm.onAction(CreateAction.AddFiles(listOf("content://x/a.txt"))); advanceUntilIdle()
