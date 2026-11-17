@@ -33,6 +33,11 @@ object Limits {
     const val ENGINE_MAX_DEATHS = 2
     const val ENGINE_CANCEL_GRACE_MILLIS = 2_000L
     const val WIRE_CHUNK_BYTES = 64 * 1024
+    /** LZMA2 presets of a new 7z: 3 (4 MiB dictionary) and 6 (8 MiB); 7 to 9 need 186 to 674 MiB to compress. */
+    const val SEVEN_Z_NORMAL_PRESET = 3
+    const val SEVEN_Z_MAXIMUM_PRESET = 6
+    /** What an LZMA2 encoder may take, in KiB, the unit of XZ for Java. */
+    const val LZMA2_ENCODER_BUDGET_KIB = 100 * 1024
     const val OPENING_BAR_DELAY_MILLIS = 400L
     const val READING_HINT_DELAY_MILLIS = 300L
     const val RECENTS_MAX = 50

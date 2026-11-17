@@ -7,4 +7,7 @@ import java.io.InputStream
 interface ArchiveWriter : Closeable {
     /** [onBytes] gets the bytes read from [input] so far; it may throw to stop (cancellation). */
     fun add(path: String, sizeBytes: Long?, modifiedMillis: Long?, input: InputStream, onBytes: (Long) -> Unit)
+
+    /** The archive will not be finished (failure or cancel): closing then only cleans up. */
+    fun abort() {}
 }
