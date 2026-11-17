@@ -15,6 +15,18 @@ class IncomingCopyTest {
     @get:Rule val temp = TemporaryFolder()
     private val copy by lazy { IncomingCopy(temp.root) }
 
+    @Test fun aCopyWithNoSizeStops_beforeTheDiskIsFull() = runTest {
+        val endless = object : InputStream() {
+            override fun read() = 0
+            override fun read(b: ByteArray, off: Int, len: Int) = len
+        }
+        val target = copy.target("k5", "a.zip")
+        val failure = runCatching {
+            copy.copy(endless, target, freeBytes = { Limits.CACHE_MARGIN_BYTES - 1 }, checkEvery = Limits.WIRE_CHUNK_BYTES.toLong()) {}
+        }.exceptionOrNull()
+        assertThat(failure).isInstanceOf(NoSpaceException::class.java)
+        assertThat(target.exists()).isFalse()
+    }
     @Test fun copiesEverythingAndReportsProgress() = runTest {
         val data = ByteArray(Limits.WIRE_CHUNK_BYTES * 3 + 5) { it.toByte() }
         val reports = mutableListOf<Long>()

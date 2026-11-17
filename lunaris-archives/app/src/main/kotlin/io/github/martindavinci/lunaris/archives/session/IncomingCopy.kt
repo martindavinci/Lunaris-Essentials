@@ -22,8 +22,15 @@ class IncomingCopy @Inject constructor(@param:CacheDir private val cacheDir: Fil
         return File(File(root, key), leaf)
     }
 
-    /** Copies [input] into [target]; on failure or cancellation the partial file is deleted. */
-    suspend fun copy(input: InputStream, target: File, onProgress: (Long) -> Unit): File =
+    /**
+     * Copies [input] into [target]; on failure or cancellation the partial file is deleted.
+     * A provider may not say how big the archive is: [freeBytes] is asked again every [checkEvery] bytes,
+     * and the copy stops while the cache margin is still there.
+     */
+    suspend fun copy(
+        input: InputStream, target: File, freeBytes: () -> Long = { Long.MAX_VALUE },
+        checkEvery: Long = Limits.INCOMING_SPACE_CHECK_BYTES, onProgress: (Long) -> Unit,
+    ): File =
         withContext(Dispatchers.IO) {
             target.parentFile?.mkdirs()
             try {
@@ -31,12 +38,18 @@ class IncomingCopy @Inject constructor(@param:CacheDir private val cacheDir: Fil
                     target.outputStream().use { out ->
                         val buffer = ByteArray(Limits.WIRE_CHUNK_BYTES)
                         var copied = 0L
+                        var nextCheck = checkEvery
                         while (true) {
                             ensureActive()
                             val n = source.read(buffer)
                             if (n < 0) break
                             out.write(buffer, 0, n)
                             copied += n
+                            if (copied >= nextCheck) {
+                                nextCheck += checkEvery
+                                val free = freeBytes()
+                                if (free < Limits.CACHE_MARGIN_BYTES) throw NoSpaceException(copied + Limits.CACHE_MARGIN_BYTES, free)
+                            }
                             onProgress(copied)
                         }
                     }

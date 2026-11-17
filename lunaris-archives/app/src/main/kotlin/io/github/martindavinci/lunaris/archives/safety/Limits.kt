@@ -12,6 +12,8 @@ object Limits {
     const val MAX_PATH_DEPTH = 256
     const val MAX_COMPONENT_BYTES = 255
     const val CACHE_MARGIN_BYTES = 256 * MIB
+    /** How often a copy of an archive of unknown size asks for the free space again. */
+    const val INCOMING_SPACE_CHECK_BYTES = 64L * MIB
     const val MAX_TEMP_COPY_BYTES = 4 * GIB
     const val OVERRUN_SLACK_BYTES = 64 * KIB
     const val RATIO_CHECK_AFTER_BYTES = 100 * MIB

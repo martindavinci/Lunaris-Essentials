@@ -82,7 +82,7 @@ class ArchiveSources @Inject constructor(
         } catch (e: RuntimeException) {
             throw FileNotFoundException("$uri: ${e.javaClass.simpleName}")
         }
-        val file = incoming.copy(input, incoming.target(key, name), onProgress)
+        val file = incoming.copy(input, incoming.target(key, name), freeBytes::get, onProgress = onProgress)
         fromFile(file, name, uri.toString(), key, fromCopy = true)
     }
 
