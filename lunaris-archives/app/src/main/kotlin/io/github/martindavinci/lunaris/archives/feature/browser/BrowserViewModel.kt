@@ -122,9 +122,10 @@ class BrowserViewModel @Inject constructor(
         archive = opened
         val tree = folders.load(opened.index)
         val start = loader.takeStart()
+        val header = withContext(background) { BrowserContent.header(opened, tree) }   // passes over 200 000 entries
         _state.update { state ->
             state.copy(
-                title = opened.source.name, badge = opened.index.formatLabel, header = BrowserContent.header(opened, tree),
+                title = opened.source.name, badge = opened.index.formatLabel, header = header,
                 loading = LoadState.Ready, hiddenUnsafe = tree.hiddenUnsafe, capped = opened.index.cappedAtLimit,
                 partial = opened.index.partial, problem = null, password = null,
             )
@@ -168,18 +169,22 @@ class BrowserViewModel @Inject constructor(
     /** Protected entries and no password yet: asked first (RAR4 has none to give: its own message comes later). */
     private fun extract(indices: LongArray) {
         val open = archive ?: return
-        if (needsPassword(open, indices)) {
-            waitingExtract = indices
-            _state.update { it.copy(sheet = null, password = PasswordPrompt(open.source.name, PasswordTarget.EXTRACT)) }
-            return
+        viewModelScope.launch(start = CoroutineStart.UNDISPATCHED) {
+            if (needsPassword(open, indices)) {
+                waitingExtract = indices
+                _state.update { it.copy(sheet = null, password = PasswordPrompt(open.source.name, PasswordTarget.EXTRACT)) }
+                return@launch
+            }
+            _state.update { it.copy(sheet = null, launch = LaunchRequest.Extract(ExtractArgs(open.id, indices))) }
         }
-        _state.update { it.copy(sheet = null, launch = LaunchRequest.Extract(ExtractArgs(open.id, indices))) }
     }
 
-    private fun needsPassword(open: OpenArchive, indices: LongArray): Boolean {
+    private suspend fun needsPassword(open: OpenArchive, indices: LongArray): Boolean {
         if (open.index.kind == ArchiveKind.RAR4 || session.passwordFor(open.id)?.also { it.fill(Char(0)) } != null) return false
-        val wanted = indices.toHashSet()
-        return open.index.entries.any { it.encrypted && it.index in wanted }
+        return withContext(background) {
+            val wanted = indices.toHashSet()
+            open.index.entries.any { it.encrypted && it.index in wanted }
+        }
     }
 
     /** [typed] is wiped when the attempt is over; it never enters the state. */

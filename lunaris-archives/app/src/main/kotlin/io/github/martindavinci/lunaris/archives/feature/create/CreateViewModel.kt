@@ -130,9 +130,11 @@ class CreateViewModel @Inject constructor(
             return
         }
         val all = files.values.flatten()
-        val paths = ZipPaths.unique(all.map { it.pathInZip })
-        val unique = all.zip(paths) { file, path -> file.copy(pathInZip = path) }
-        runner.start(unique, uri, ArchiveNameRules.fileName(s.name), s.level, password, sources.skipped)
+        viewModelScope.launch(start = CoroutineStart.UNDISPATCHED) {
+            // Every path of every picked file is normalised: not on the main thread.
+            val unique = withContext(background) { all.zip(ZipPaths.unique(all.map { it.pathInZip })) { file, path -> file.copy(pathInZip = path) } }
+            runner.start(unique, uri, ArchiveNameRules.fileName(s.name), s.level, password, sources.skipped)
+        }
     }
 
     override fun onCleared() {

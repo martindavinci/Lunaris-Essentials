@@ -23,8 +23,9 @@ class ExtractStarter @Inject constructor(
         val archive = session.get(archiveId) ?: return false
         lastArchiveId = archiveId
         lastIndices = indices
-        val wanted = indices.toHashSet()
-        val entries = archive.index.entries.filter { it.index in wanted }
+        val all = archive.index.entries
+        // "Extract all" needs no lookup; a selection is one pass with a set.
+        val entries = if (indices.size == all.size) all else indices.toHashSet().let { wanted -> all.filter { it.index in wanted } }
         runner.reset()
         runner.start(ExtractJob(archive, entries, session.passwordFor(archiveId), target, onWrongPassword = { session.forgetPassword(archiveId) }))
         return true
