@@ -4,7 +4,7 @@
     <string name="home_clear">Vider les archives récentes</string>
     <string name="home_continue">Continuer</string>
     <string name="home_create">Créer une archive</string>
-    <string name="home_create_detail">ZIP à partir de fichiers ou d\'un dossier</string>
+    <string name="home_create_detail">ZIP, 7z ou TAR à partir de fichiers ou d\'un dossier</string>
     <string name="home_recents">Toutes les archives récentes</string>
     <string name="home_results">Résultats</string>
     <string name="home_open">Ouvrir une archive</string>

@@ -4,7 +4,7 @@
     <string name="home_clear">Liste der letzten Archive leeren</string>
     <string name="home_continue">Weiter</string>
     <string name="home_create">Archiv erstellen</string>
-    <string name="home_create_detail">ZIP aus Dateien oder einem Ordner</string>
+    <string name="home_create_detail">ZIP, 7z oder TAR aus Dateien oder einem Ordner</string>
     <string name="home_recents">Alle letzten Archive</string>
     <string name="home_results">Ergebnisse</string>
     <string name="home_open">Archiv öffnen</string>

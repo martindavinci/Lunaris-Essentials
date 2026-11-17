@@ -4,7 +4,7 @@
     <string name="home_clear">Wyczyść ostatnie archiwa</string>
     <string name="home_continue">Kontynuuj</string>
     <string name="home_create">Utwórz archiwum</string>
-    <string name="home_create_detail">ZIP z plików lub folderu</string>
+    <string name="home_create_detail">ZIP, 7z lub TAR z plików lub folderu</string>
     <string name="home_recents">Wszystkie ostatnie archiwa</string>
     <string name="home_results">Wyniki</string>
     <string name="home_open">Otwórz archiwum</string>

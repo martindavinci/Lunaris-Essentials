@@ -4,7 +4,7 @@
     <string name="home_clear">Recente archieven wissen</string>
     <string name="home_continue">Doorgaan</string>
     <string name="home_create">Een archief maken</string>
-    <string name="home_create_detail">ZIP van bestanden of een map</string>
+    <string name="home_create_detail">ZIP, 7z of TAR van bestanden of een map</string>
     <string name="home_recents">Alle recente archieven</string>
     <string name="home_results">Resultaten</string>
     <string name="home_open">Een archief openen</string>

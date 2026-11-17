@@ -4,7 +4,7 @@
     <string name="home_clear">Limpar arquivos recentes</string>
     <string name="home_continue">Continuar</string>
     <string name="home_create">Criar um arquivo</string>
-    <string name="home_create_detail">ZIP a partir de ficheiros ou de uma pasta</string>
+    <string name="home_create_detail">ZIP, 7z ou TAR a partir de ficheiros ou de uma pasta</string>
     <string name="home_recents">Todos os arquivos recentes</string>
     <string name="home_results">Resultados</string>
     <string name="home_open">Abrir um arquivo</string>

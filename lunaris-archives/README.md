@@ -4,7 +4,7 @@
 
 <h1 align="center">Lunaris Archives</h1>
 
-<p align="center"><b>An archive app for Android that works offline: open ZIP, 7z and RAR files, take out one file or all of them, open archives with a password, and make ZIP files. No ads.</b></p>
+<p align="center"><b>An archive app for Android that works offline: open ZIP, 7z and RAR files, take out one file or all of them, edit a file and put it back in the ZIP, open archives with a password, and make ZIP, 7z and TAR files. No ads.</b></p>
 
 <p align="center">by <a href="https://github.com/martindavinci">Martin DaVinci</a></p>
 
@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/home.webp" width="32%" alt="The first screen: the archive opened last, Create an archive, and the recent archives with their format, size and a lock when they have a password">
+  <img src="docs/screenshots/home.webp" width="32%" alt="The first screen: the archive opened last, Create an archive, and the recent archives with their format, number of files, size and a lock when they have a password">
   <img src="docs/screenshots/lisbon.webp" width="32%" alt="Inside a ZIP: the path above, folders with how many items they hold, a file with its size and date, and Extract all">
   <img src="docs/screenshots/entry.webp" width="32%" alt="One photo inside the archive: Open with, Share and Extract to, with its size, packed size, date and whether it is encrypted">
 </p>
@@ -25,7 +25,12 @@
   <img src="docs/screenshots/password.webp" width="32%" alt="A 7z archive asking for its password, with Remember until I close the app">
 </p>
 <p align="center">
+  <img src="docs/screenshots/changed.webp" width="32%" alt="Itinerary.md was changed in another app: Update in ZIP, Save a copy or Ignore, above the folder it came from">
   <img src="docs/screenshots/conflict.webp" width="32%" alt="A file that is already in the destination folder: Replace, Keep both with the new name, or Skip, for one file or for all of them">
+  <img src="docs/screenshots/skipped.webp" width="32%" alt="Three files extracted and, in amber, two entries skipped because their names point outside the destination folder">
+</p>
+<p align="center">
+  <img src="docs/screenshots/create-formats.webp" width="32%" alt="A new archive from a folder as TAR packed with xz: the format, the compression and the note that only ZIP takes a password">
   <img src="docs/screenshots/create.webp" width="32%" alt="A new ZIP from a folder: name, three levels of compression, and an AES-256 password with how strong it is">
   <img src="docs/screenshots/settings.webp" width="32%" alt="The settings: theme, language, clearing the temporary files, remembering recent archives, licences and source code">
 </p>
@@ -64,22 +69,36 @@ button sets it up for you. To add it by hand, use this repository's URL and filt
 - The password is asked when it is needed. You can have it remembered until you close the app; it is never written
   to storage
 
+**Editing a file inside a ZIP**
+- Open a file in the app you edit it with, save it there, and come back: the app tells you it changed
+- **Update in ZIP** puts it back in the archive, **Save a copy** saves it somewhere else, **Ignore** drops the change.
+  Nothing is written into an archive unless you ask
+- The archive is first copied aside and rebuilt beside it; it is replaced only when the new one reads back right. If
+  the app is closed halfway, the archive is put back as it was the next time the app starts
+- Only ZIP files can be updated; for 7z, RAR and the others a changed file can be saved as a copy
+- The other entries of the ZIP are copied as they are, not compressed again. File permissions of an updated entry are
+  not kept
+- If the phone clears the app's cache before you come back, a change already noticed is kept; one not yet noticed is
+  lost
+
 **Creating**
-- A ZIP from files and folders you pick, or that another app shares with the app
-- Three levels of compression and an optional AES-256 password, with a hint about how strong it is
+- ZIP, 7z or TAR from files and folders you pick, or that another app shares with the app; a TAR can be packed with
+  gzip, xz or bzip2
+- Three levels of compression for ZIP and 7z, and an optional AES-256 password for ZIP, with a hint about how strong it
+  is. 7z and TAR files are made without a password
 - Saved where you choose, then opened, shared or left there
 
 | Format | Open and extract | Password | Create |
 |---|---|---|---|
-| ZIP | yes | ZipCrypto, AES-128/192/256 | yes, AES-256 optional |
-| 7z | yes | AES-256, data and names | no |
+| ZIP | yes | ZipCrypto, AES-128/192/256 | yes, AES-256 optional; changed files go back in |
+| 7z | yes | AES-256, data and names | yes, without a password |
 | RAR5 | yes | data and names | no |
 | RAR4 | yes | no: no free app can read it | no |
-| TAR, and TAR with GZ, BZ2, XZ, ZST or LZ4 | yes | — | no |
+| TAR, and TAR with GZ, BZ2, XZ, ZST or LZ4 | yes | — | TAR, TAR.GZ, TAR.XZ, TAR.BZ2 |
 | GZ, BZ2, XZ, ZST, LZ4 (one file) | yes | — | no |
 | ISO 9660, CPIO | yes | — | no |
 
-Changing an archive in place, and ZIP files split into parts, are not supported yet.
+Adding or removing files in an existing archive, and ZIP files split into parts, are not supported yet.
 
 ## How it stays safe
 
@@ -100,7 +119,9 @@ Android's own picker.
 A recent archive is remembered only when Android lets the app keep its access to it; you can turn the list off in the
 settings, which also gives that access back. For an archive whose file names are hidden by a password, the list keeps
 no folder. The copies made to open single files stay in the app's cache, go away after a day, and can be cleared from
-the settings.
+the settings; a copy you are editing in another app stays until you update the archive, save the copy or ignore it.
+A changed file waiting for that choice, and the copy of an archive being updated, are kept in the app's own storage,
+never written anywhere else.
 
 There are no ads, no analytics and no account. Android's cloud backup is turned off for the app and its data is
 excluded from device-to-device transfer.

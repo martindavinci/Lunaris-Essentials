@@ -4,7 +4,7 @@
     <string name="home_clear">최근 압축 파일 지우기</string>
     <string name="home_continue">계속</string>
     <string name="home_create">압축 파일 만들기</string>
-    <string name="home_create_detail">파일 또는 폴더로 ZIP 만들기</string>
+    <string name="home_create_detail">파일 또는 폴더로 ZIP, 7z, TAR 만들기</string>
     <string name="home_recents">모든 최근 압축 파일</string>
     <string name="home_results">검색 결과</string>
     <string name="home_open">압축 파일 열기</string>

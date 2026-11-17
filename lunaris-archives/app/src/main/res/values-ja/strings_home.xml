@@ -4,7 +4,7 @@
     <string name="home_clear">最近のアーカイブを消去</string>
     <string name="home_continue">続ける</string>
     <string name="home_create">アーカイブを作成</string>
-    <string name="home_create_detail">ファイルやフォルダから ZIP を作成</string>
+    <string name="home_create_detail">ファイルやフォルダから ZIP、7z、TAR を作成</string>
     <string name="home_recents">最近のすべてのアーカイブ</string>
     <string name="home_results">検索結果</string>
     <string name="home_open">アーカイブを開く</string>

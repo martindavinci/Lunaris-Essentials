@@ -4,7 +4,7 @@
     <string name="home_clear">Vaciar la lista de recientes</string>
     <string name="home_continue">Continuar</string>
     <string name="home_create">Crear un archivo comprimido</string>
-    <string name="home_create_detail">ZIP a partir de archivos o de una carpeta</string>
+    <string name="home_create_detail">ZIP, 7z o TAR a partir de archivos o de una carpeta</string>
     <string name="home_recents">Todos los archivos comprimidos recientes</string>
     <string name="home_results">Resultados</string>
     <string name="home_open">Abrir un archivo comprimido</string>
