@@ -39,6 +39,10 @@ object Limits {
     const val INDEXES_IN_MEMORY = 2
     const val SNIFF_BYTES = 32 * 1024
     const val TEXT_SNIFF_BYTES = 8 * 1024
-    const val MAX_INDEX_PATH_BYTES = 48L * MIB
+    /**
+     * Every name is held about three times (raw bytes, display text, components), and two indexes can be
+     * in memory: 24 MiB of names stays well inside a 256 MiB heap and still fits 200 000 names of 120 bytes.
+     */
+    const val MAX_INDEX_PATH_BYTES = 24L * MIB
     const val INDEX_PROGRESS_EVERY_ENTRIES = 512
 }
