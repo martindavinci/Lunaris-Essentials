@@ -21,6 +21,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.martindavinci.lunaris.archives.edits.EditWatcher
+import io.github.martindavinci.lunaris.archives.edits.UpdateIo
+import io.github.martindavinci.lunaris.archives.edits.UpdateJournal
 import io.github.martindavinci.lunaris.archives.engine.EngineProcess
 import io.github.martindavinci.lunaris.archives.extract.ExtractStarter
 import io.github.martindavinci.lunaris.archives.extract.PrefsExtractMarker
@@ -41,6 +43,8 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     @Inject lateinit var cacheJanitor: CacheJanitor
     @Inject lateinit var editWatcher: EditWatcher
+    @Inject lateinit var updateJournal: UpdateJournal
+    @Inject lateinit var updateIo: UpdateIo
     @Inject lateinit var passwordMemory: PasswordMemory
     @Inject lateinit var session: ArchiveSession
     @Inject lateinit var extractMarker: PrefsExtractMarker
@@ -126,6 +130,7 @@ class MainActivity : ComponentActivity() {
         if (swept || EngineProcess.isCurrent()) return
         swept = true
         lifecycleScope.launch(Dispatchers.IO) {
+            updateJournal.recover(updateIo)   // an archive left half written by a closed app is put back first
             editWatcher.scan()   // changes made while the app was away are seen before anything is swept
             cacheJanitor.sweep(System.currentTimeMillis())
             extractMarker.recover { token -> DocumentsContract.deleteDocument(contentResolver, Uri.parse(token)) }

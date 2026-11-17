@@ -24,7 +24,9 @@ import io.github.martindavinci.lunaris.archives.files.FileUris
 import io.github.martindavinci.lunaris.archives.files.PlatformMime
 import io.github.martindavinci.lunaris.archives.files.ProtectedCopies
 import io.github.martindavinci.lunaris.archives.files.UriRevoker
+import io.github.martindavinci.lunaris.archives.edits.ContentUpdateIo
 import io.github.martindavinci.lunaris.archives.edits.EditLookup
+import io.github.martindavinci.lunaris.archives.edits.UpdateIo
 import io.github.martindavinci.lunaris.archives.edits.EditRecorder
 import io.github.martindavinci.lunaris.archives.edits.EditWatcher
 import io.github.martindavinci.lunaris.archives.files.CopyRecorder
@@ -56,6 +58,9 @@ abstract class FilesModule {
 
     @Binds
     abstract fun bindCopyRecorder(recorder: EditRecorder): CopyRecorder
+
+    @Binds
+    abstract fun bindUpdateIo(io: ContentUpdateIo): UpdateIo
 
     companion object {
         private const val AUTHORITY_SUFFIX = ".fileprovider"
