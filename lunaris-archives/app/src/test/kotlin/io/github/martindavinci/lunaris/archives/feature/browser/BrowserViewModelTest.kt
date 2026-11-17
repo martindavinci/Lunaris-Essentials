@@ -140,6 +140,13 @@ class BrowserViewModelTest {
         store.clear()
         assertThat(session.get(id)).isNull()
     }
+    @Test fun aShareTheSystemRefused_saysSo() = runTest(dispatcher) {
+        listed()
+        val vm = viewModel(session.register(OpenRequest("content://app.files/open/k/inner.zip", null, 0, "/cache/open/k/inner.zip"))); advanceUntilIdle()
+        vm.onAction(BrowserAction.ShareArchive)
+        vm.onAction(BrowserAction.LaunchHandled(false))     // SecurityException, or an intent too large for the binder
+        assertThat(vm.state.value.notice).isEqualTo(BrowserNotice.ShareFailed)
+    }
     @Test fun aNestedArchive_isSharedThroughItsContentUri() = runTest(dispatcher) {
         listed()
         val vm = viewModel(session.register(OpenRequest("content://app.files/open/k/inner.zip", null, 0, "/cache/open/k/inner.zip"))); advanceUntilIdle()

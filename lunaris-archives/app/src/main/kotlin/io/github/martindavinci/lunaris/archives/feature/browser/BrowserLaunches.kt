@@ -20,6 +20,10 @@ internal fun Context.launch(request: LaunchRequest): Boolean {
         true
     } catch (_: ActivityNotFoundException) {
         false
+    } catch (_: SecurityException) {   // the permission on the file has ended, or the other app does not let us in
+        false
+    } catch (_: RuntimeException) {    // "Failure from system": the intent is too large for one binder call
+        false
     }
 }
 

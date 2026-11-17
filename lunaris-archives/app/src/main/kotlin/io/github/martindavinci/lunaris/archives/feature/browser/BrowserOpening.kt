@@ -85,7 +85,14 @@ internal class BrowserOpening(
     fun launchHandled(ok: Boolean) {
         val row = launchedRow
         launchedRow = null
-        state.update { it.copy(launch = null, sheet = if (!ok && row != null) BrowserSheet.NoApp(row) else it.sheet) }
+        state.update {
+            val refusedShare = !ok && it.launch is LaunchRequest.Send
+            it.copy(
+                launch = null,
+                sheet = if (!ok && row != null) BrowserSheet.NoApp(row) else it.sheet,
+                notice = if (refusedShare) BrowserNotice.ShareFailed else it.notice,
+            )
+        }
     }
 
     private fun handle(archive: OpenArchive, row: FolderRow, result: CopyResult, nested: Boolean, chooser: Boolean) {
