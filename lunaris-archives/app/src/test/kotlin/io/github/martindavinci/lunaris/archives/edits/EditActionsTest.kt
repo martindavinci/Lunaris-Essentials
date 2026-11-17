@@ -58,22 +58,22 @@ class EditActionsTest {
     @Test fun update_scansFirst_soTheLatestBytesGoIn() = runBlocking<Unit> {
         val a = handOut("a.md"); edit(a, "first edit"); watcher.scan()
         edit(a, "latest edit")
-        assertThat(actions.update(uri, null)).isEqualTo(EditOutcome.Updated)
+        assertThat(actions.update(uri, null)).isEqualTo(EditOutcome.Updated(uri))
         assertThat(content("a.md")).isEqualTo("latest edit")
         assertThat(store.all()).isEmpty(); assertThat(revoked).contains(a)
     }
     @Test fun secondEdit_afterAnUpdate_isStillUpdatable() = runBlocking<Unit> {
         val a = handOut("a.md"); val b = handOut("b.md")
         edit(a, "A2"); watcher.scan()
-        assertThat(actions.update(uri, null)).isEqualTo(EditOutcome.Updated)
+        assertThat(actions.update(uri, null)).isEqualTo(EditOutcome.Updated(uri))
         edit(b, "B2"); watcher.scan()
-        assertThat(actions.update(uri, null)).isEqualTo(EditOutcome.Updated)
+        assertThat(actions.update(uri, null)).isEqualTo(EditOutcome.Updated(uri))
         assertThat(content("a.md")).isEqualTo("A2"); assertThat(content("b.md")).isEqualTo("B2")
     }
     @Test fun anEditMadeDuringTheUpdate_staysPending() = runBlocking<Unit> {
         val a = handOut("a.md"); edit(a, "A2"); watcher.scan()
         io.onWrite = { edit(a, "A3 while writing"); io.onWrite = null }
-        assertThat(actions.update(uri, null)).isEqualTo(EditOutcome.Updated)
+        assertThat(actions.update(uri, null)).isEqualTo(EditOutcome.Updated(uri))
         watcher.scan()
         assertThat(watcher.changed.value.single().entries.single().entryPath).isEqualTo("a.md")
     }
@@ -81,12 +81,12 @@ class EditActionsTest {
         val a = handOut("a.md"); edit(a, "A2"); watcher.scan()
         io.failAfterBytes = 50
         assertThat(actions.update(uri, null)).isEqualTo(EditOutcome.Refused(UpdateResult.Failed))
-        assertThat(actions.update(uri, null)).isEqualTo(EditOutcome.Updated)
+        assertThat(actions.update(uri, null)).isEqualTo(EditOutcome.Updated(uri))
     }
     @Test fun update_usesARememberedPassword() = runBlocking<Unit> {
         remembered["key"] = "pw".toCharArray()
         val a = handOut("a.md"); edit(a, "A2"); watcher.scan()
-        assertThat(actions.update(uri, null)).isEqualTo(EditOutcome.Updated)
+        assertThat(actions.update(uri, null)).isEqualTo(EditOutcome.Updated(uri))
     }
     @Test fun pickedFile_withAnotherFingerprint_doesNotMatch() = runBlocking<Unit> {
         handOut("a.md")
@@ -98,7 +98,7 @@ class EditActionsTest {
         val same = File(temp.newFolder(), "same.zip").apply { writeBytes(zip.readBytes()); setLastModified(zip.lastModified()) }
         val picked = "file:${same.path}"
         assertThat(actions.matchesArchive(uri, picked)).isTrue()
-        assertThat(actions.update(uri, null, writableUri = picked)).isEqualTo(EditOutcome.Updated)
+        assertThat(actions.update(uri, null, writableUri = picked)).isEqualTo(EditOutcome.Updated(picked))
         assertThat(ZipFile(same).use { z -> String(z.getInputStream(z.getEntry("a.md")).readBytes()) }).isEqualTo("A2")
         assertThat(moves).containsExactly(uri to picked)
     }

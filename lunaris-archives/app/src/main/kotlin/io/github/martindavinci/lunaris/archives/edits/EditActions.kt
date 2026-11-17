@@ -10,7 +10,8 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 sealed interface EditOutcome {
-    data object Updated : EditOutcome
+    /** [archiveUri] is where the archive now is: another URI when it was picked again to be written. */
+    data class Updated(val archiveUri: String) : EditOutcome
     data class Refused(val result: UpdateResult) : EditOutcome
     data object Saved : EditOutcome
     data object Ignored : EditOutcome
@@ -57,11 +58,13 @@ class EditActions @Inject constructor(
         if (records.isEmpty()) return@withLock EditOutcome.Failed.also { password?.fill(WIPED) }
         val target = writableUri ?: archiveUri
         val secret = password ?: passwords.find(records.first().archiveKey)
-        when (val result = updater.update(target, records, secret)) {
+        // A file picked again has its own date under its other URI: only its size and fingerprint must match.
+        val checked = if (writableUri != null) records.map { it.copy(archiveMtime = null) } else records
+        when (val result = updater.update(target, checked, secret)) {
             is UpdateResult.Done -> {
                 withContext(Dispatchers.IO) { settle(archiveUri, target, records, result) }
                 if (target != archiveUri) recents.moved(archiveUri, target, result.newSize)
-                EditOutcome.Updated
+                EditOutcome.Updated(target)
             }
             UpdateResult.Failed, is UpdateResult.RestoreFailed -> {
                 withContext(Dispatchers.IO) { refresh(archiveUri) }

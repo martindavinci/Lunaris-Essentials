@@ -100,6 +100,14 @@ class EditsViewModelTest {
         vm.onAction(EditsAction.Picked(uri, "file:${other.path}")); eventually { vm.state.value.message != null }
         assertThat(vm.state.value.message).isEqualTo(EditsMessage.DifferentFile)
     }
+    @Test fun anArchivePickedAgain_isTheOneTheBrowserReloads() {
+        val uri = edited(zip()); io.writable = false; val vm = viewModel()
+        vm.onAction(EditsAction.Update(uri)); eventually { vm.state.value.pick != null }
+        val same = File(temp.newFolder(), "Trip.zip").apply { writeBytes(File(uri.removePrefix("file:")).readBytes()) }
+        io.writable = true
+        vm.onAction(EditsAction.Picked(uri, "file:${same.path}")); eventually { vm.state.value.reload != null }
+        assertThat(vm.state.value.reload).isEqualTo(EditsReload(uri, "file:${same.path}"))
+    }
     @Test fun update_needsPassword_asksForIt_andWipesIt() {
         val uri = edited(zip(encrypted = true)); val vm = viewModel()
         vm.onAction(EditsAction.Update(uri)); eventually { vm.state.value.password != null }
@@ -113,9 +121,17 @@ class EditsViewModelTest {
         val uri = edited(zip()); val vm = viewModel()
         vm.onAction(EditsAction.Update(uri)); eventually { vm.state.value.message != null }
         assertThat(vm.state.value.message).isEqualTo(EditsMessage.Updated("Trip.zip"))
-        assertThat(vm.state.value.reload).isEqualTo(uri)
+        assertThat(vm.state.value.reload).isEqualTo(EditsReload(uri, uri))
         vm.onAction(EditsAction.Reloaded); vm.onAction(EditsAction.MessageShown)
         assertThat(vm.state.value.reload).isNull(); assertThat(vm.state.value.message).isNull()
+    }
+    /** Home stays alive under the browser with its own view model: the result goes to the screen that asked. */
+    @Test fun theResult_goesToTheScreenThatStartedTheUpdate() {
+        val uri = edited(zip())
+        val home = viewModel(); val browser = viewModel()
+        browser.onAction(EditsAction.Update(uri)); eventually { browser.state.value.message != null }
+        assertThat(browser.state.value.reload).isEqualTo(EditsReload(uri, uri))
+        assertThat(home.state.value.message).isNull(); assertThat(home.state.value.reload).isNull()
     }
     @Test fun anArchivePutBackAtStartUp_isSaid() {
         val vm = viewModel()

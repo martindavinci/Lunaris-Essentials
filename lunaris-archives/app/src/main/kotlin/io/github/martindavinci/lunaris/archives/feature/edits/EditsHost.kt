@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
@@ -29,6 +30,7 @@ import io.github.martindavinci.lunaris.archives.feature.browser.PasswordTarget
 import io.github.martindavinci.lunaris.archives.feature.create.SaveAsContract
 import io.github.martindavinci.lunaris.archives.ui.launchOr
 import io.github.martindavinci.lunaris.archives.ui.sayNoPicker
+import kotlinx.coroutines.launch
 
 /** The system picker for the archive itself, opened where it is: picking it again gives the right to write it. */
 private class PickArchiveAgain : ActivityResultContract<String, Uri?>() {
@@ -49,6 +51,7 @@ private class PickArchiveAgain : ActivityResultContract<String, Uri?>() {
 fun EditsHost(
     archiveUri: String?,
     snackbar: SnackbarHostState,
+    /** The archive shown here was updated; its URI now (another one when it was picked again). */
     onReload: (String) -> Unit = {},
     viewModel: EditsViewModel = hiltViewModel(),
 ): EditsCardsSlot {
@@ -69,12 +72,14 @@ fun EditsHost(
     LaunchedEffect(state.reload) {
         val reload = state.reload ?: return@LaunchedEffect
         onAction(EditsAction.Reloaded)
-        if (reload == archiveUri) onReload(reload)
+        if (reload.from == archiveUri) onReload(reload.to)
     }
+    val scope = rememberCoroutineScope()
     LaunchedEffect(state.message) {
         val message = state.message ?: return@LaunchedEffect
+        // Shown in a scope of its own: marking it shown restarts this effect, which must not take the snackbar away.
+        scope.launch { snackbar.showSnackbar(context.text(message)) }
         onAction(EditsAction.MessageShown)
-        snackbar.showSnackbar(context.text(message))
     }
 
     state.confirmIgnore?.let { uri ->

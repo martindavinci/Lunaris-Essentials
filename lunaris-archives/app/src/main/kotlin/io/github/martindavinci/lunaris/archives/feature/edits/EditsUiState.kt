@@ -18,10 +18,12 @@ data class EditsUiState(
     /** Updating needs the archive picked again, with the right to write. */
     val pick: EditsTarget? = null,
     val message: EditsMessage? = null,
-    /** An archive that changed: the browser showing it lists it again. */
-    val reload: String? = null,
+    /** An archive that changed: the browser showing [EditsReload.from] lists it again from [EditsReload.to]. */
+    val reload: EditsReload? = null,
     val expanded: Set<String> = emptySet(),
 )
+
+data class EditsReload(val from: String, val to: String)
 
 sealed interface EditsMessage {
     data class Updated(val name: String) : EditsMessage
@@ -43,7 +45,7 @@ sealed interface EditsMessage {
 
         /** Null for outcomes that open a dialog instead (password, picking the archive) or need no words (ignore). */
         fun of(outcome: EditOutcome, name: String): EditsMessage? = when (outcome) {
-            EditOutcome.Updated -> Updated(name)
+            is EditOutcome.Updated -> Updated(name)
             EditOutcome.Saved -> Saved
             EditOutcome.Ignored -> null
             EditOutcome.Failed -> SaveFailed

@@ -30,7 +30,7 @@ class EditsViewModel @Inject constructor(
     init {
         viewModelScope.launch { watcher.changed.collect { list -> _state.update { it.copy(archives = list) } } }
         viewModelScope.launch { runner.working.collect { w -> _state.update { it.copy(working = w?.archiveUri) } } }
-        viewModelScope.launch { runner.result.collect { r -> r?.let { finished(it) } } }
+        viewModelScope.launch { runner.result.collect { r -> r?.takeIf { it.work.owner == null || it.work.owner === this@EditsViewModel }?.let { finished(it) } } }
         viewModelScope.launch {
             journal.outcomes.collect { outcomes ->
                 outcomes.firstOrNull()?.let { o -> _state.update { it.copy(message = EditsMessage.of(o)) }; journal.shown() }
@@ -80,7 +80,7 @@ class EditsViewModel @Inject constructor(
     }
 
     private fun run(uri: String, decision: suspend EditActions.() -> EditOutcome): Boolean =
-        runner.run(EditsRunner.Work(uri, nameOf(uri)), decision)
+        runner.run(EditsRunner.Work(uri, nameOf(uri), owner = this), decision)
 
     private fun finished(result: EditsRunner.Result) {
         runner.resultShown()
@@ -96,9 +96,13 @@ class EditsViewModel @Inject constructor(
                     else -> s.password
                 },
                 pick = if (refused == UpdateResult.NotWritable) target else s.pick,
-                reload = if (outcome == EditOutcome.Updated) work.archiveUri else s.reload,
+                reload = (outcome as? EditOutcome.Updated)?.let { EditsReload(work.archiveUri, it.archiveUri) } ?: s.reload,
             )
         }
+    }
+
+    override fun onCleared() {
+        runner.ownerGone(this)
     }
 
     private fun nameOf(uri: String): String = _state.value.archives.firstOrNull { it.archiveUri == uri }?.archiveName.orEmpty()

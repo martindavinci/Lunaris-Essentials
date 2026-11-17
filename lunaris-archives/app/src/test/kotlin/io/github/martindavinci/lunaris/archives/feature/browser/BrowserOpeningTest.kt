@@ -100,6 +100,14 @@ class BrowserOpeningTest {
         vm.tap("notes.md"); advanceUntilIdle()
         assertThat(vm.state.value.launch).isEqualTo(LaunchRequest.View(ready.uri, ready.mime, writable = true))
     }
+    @Test fun reloadFromAnotherUri_opensThatUri() = runTest(dispatcher) {
+        listed(); listed()
+        val vm = viewModel(); advanceUntilIdle()
+        val picked = "content://picked/archive.zip"
+        vm.onAction(BrowserAction.Reload(picked)); advanceUntilIdle()
+        assertThat(vm.state.value.archiveUri).isEqualTo("content://a/${picked.length}")   // the fake names a source by its URI's length
+        assertThat(vm.state.value.notice).isNull()
+    }
     @Test fun openWith_usesTheChooser() = runTest(dispatcher) {
         listed(); opener.results += ready
         val vm = viewModel(); advanceUntilIdle()

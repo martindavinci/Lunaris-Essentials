@@ -17,10 +17,12 @@ import kotlinx.coroutines.launch
  */
 @Singleton
 class EditsRunner @Inject constructor(private val actions: EditActions, @param:Background dispatcher: CoroutineDispatcher) {
-    data class Work(val archiveUri: String, val archiveName: String)
+    /** [owner] is the screen that asked: its result is for it alone, unless it is gone by then (null: anyone). */
+    data class Work(val archiveUri: String, val archiveName: String, val owner: Any? = null)
     data class Result(val work: Work, val outcome: EditOutcome)
 
     private val scope = CoroutineScope(SupervisorJob() + dispatcher)
+    private val gone = HashSet<Any>()
     private val _working = MutableStateFlow<Work?>(null)
     val working: StateFlow<Work?> = _working.asStateFlow()
     private val _result = MutableStateFlow<Result?>(null)
@@ -40,13 +42,23 @@ class EditsRunner @Inject constructor(private val actions: EditActions, @param:B
             } catch (_: RuntimeException) {
                 EditOutcome.Failed
             }
-            _result.value = Result(work, outcome)
-            _working.value = null
+            synchronized(this@EditsRunner) {
+                val owner = work.owner?.takeUnless { gone.remove(it) }
+                _result.value = Result(work.copy(owner = owner), outcome)
+                _working.value = null
+            }
         }
         return true
     }
 
     fun resultShown() {
         _result.value = null
+    }
+
+    /** The screen [owner] went away: a result still to come is for whichever screen is there. */
+    @Synchronized
+    fun ownerGone(owner: Any) {
+        if (_working.value?.owner === owner) gone += owner
+        _result.value?.let { r -> if (r.work.owner === owner) _result.value = r.copy(work = r.work.copy(owner = null)) }
     }
 }

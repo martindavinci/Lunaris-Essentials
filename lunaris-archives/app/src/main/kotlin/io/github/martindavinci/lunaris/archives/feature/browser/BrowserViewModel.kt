@@ -14,6 +14,7 @@ import io.github.martindavinci.lunaris.archives.feature.Routes
 import io.github.martindavinci.lunaris.archives.files.EntryOpener
 import io.github.martindavinci.lunaris.archives.session.ArchiveSession
 import io.github.martindavinci.lunaris.archives.session.OpenArchive
+import io.github.martindavinci.lunaris.archives.session.OpenRequest
 import io.github.martindavinci.lunaris.archives.session.OpenOutcome
 import io.github.martindavinci.lunaris.archives.session.PendingOpen
 import javax.inject.Inject
@@ -49,7 +50,7 @@ class BrowserViewModel @Inject constructor(
     private val opening = BrowserOpening(viewModelScope, session, opener, _state, ::relist)
     private val sharing = BrowserSharing(viewModelScope, session, opener, _state)
     private val folders = BrowserFolders(viewModelScope, background, _state) { path -> visitedPath.value = path }
-    private val archiveId: String? = savedState.get<String>(Routes.ARG_ARCHIVE_ID)
+    private var archiveId: String? = savedState.get<String>(Routes.ARG_ARCHIVE_ID)
     private var archive: OpenArchive? = null
     private var pending: PendingOpen? = null
     private var waitingExtract: LongArray? = null
@@ -103,7 +104,7 @@ class BrowserViewModel @Inject constructor(
             is BrowserAction.SetSort -> setSort(action.order)
             is BrowserAction.LaunchHandled -> opening.launchHandled(action.ok)
             BrowserAction.NoticeShown -> _state.update { it.copy(notice = null) }
-            BrowserAction.Reload -> relist(quiet = true)
+            is BrowserAction.Reload -> reload(action.uri)
             else -> Unit
         }
     }
@@ -152,6 +153,12 @@ class BrowserViewModel @Inject constructor(
     }
 
     /** The archive is not the one that was listed any more: list it again and say so. */
+    /** After an update: the same request, or a new one when the archive now lives under another URI. */
+    private fun reload(uri: String) {
+        if (archive != null && archive?.source?.uri != uri) archiveId = session.register(OpenRequest(uri, null, null, null))
+        relist(quiet = true)
+    }
+
     private fun relist(quiet: Boolean = false) {
         archive?.let { session.forgetIndex(it.source); session.close(it.id) }
         archive = null

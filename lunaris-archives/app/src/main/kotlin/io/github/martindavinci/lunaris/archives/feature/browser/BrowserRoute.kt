@@ -44,7 +44,7 @@ fun BrowserRoute(
     }
 
     // No archive yet: no URI matches, so no card shows before the listing.
-    val edits = EditsHost(state.archiveUri ?: NONE, snackbar, onReload = { onAction(BrowserAction.Reload) })
+    val edits = EditsHost(state.archiveUri ?: NONE, snackbar, onReload = { uri -> onAction(BrowserAction.Reload(uri)) })
     BrowserScreen(state, onAction, snackbar, cards = { edits.Cards() })
     when (val sheet = state.sheet) {
         is BrowserSheet.Row -> EntrySheet(sheet.row, onAction)

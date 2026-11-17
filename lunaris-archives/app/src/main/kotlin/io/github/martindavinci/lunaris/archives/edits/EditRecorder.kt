@@ -18,12 +18,15 @@ fun interface ArchiveProbe {
     fun probe(source: ArchiveSource): ArchiveFacts?
 }
 
-/** Through the archive's own descriptor; null when it can no longer be read. */
+/**
+ * Through the archive's own descriptor; null when it can no longer be read. The size is the file's, never the
+ * provider's column: right after an update a provider can still report the old one.
+ */
 class DescriptorProbe @Inject constructor() : ArchiveProbe {
     override fun probe(source: ArchiveSource): ArchiveFacts? = runCatching {
         source.openFd().use { fd ->
             FileInputStream(fd.fileDescriptor).channel.use { channel ->
-                val size = source.size ?: channel.size()
+                val size = channel.size()
                 ArchiveFacts(size, source.modifiedMillis, Fingerprint.of(channel, size))
             }
         }

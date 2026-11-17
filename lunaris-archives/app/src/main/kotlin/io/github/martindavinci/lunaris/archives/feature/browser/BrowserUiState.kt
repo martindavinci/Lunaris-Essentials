@@ -101,8 +101,8 @@ class ExtractArgs(val archiveId: String, val indices: LongArray) {
 sealed interface BrowserAction {
     data class OpenRow(val row: FolderRow) : BrowserAction
     data object Up : BrowserAction
-    /** The archive was updated here: list it again, without saying it changed. */
-    data object Reload : BrowserAction
+    /** The archive was updated here: list it again from [uri] (another one when it was picked again), quietly. */
+    data class Reload(val uri: String) : BrowserAction
     data class GoToCrumb(val index: Int) : BrowserAction
     data class LongPress(val row: FolderRow) : BrowserAction
     data class Toggle(val row: FolderRow) : BrowserAction
