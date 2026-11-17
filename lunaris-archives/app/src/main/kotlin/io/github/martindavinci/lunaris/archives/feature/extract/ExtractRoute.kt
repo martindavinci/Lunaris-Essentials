@@ -1,5 +1,8 @@
 package io.github.martindavinci.lunaris.archives.feature.extract
 
+import io.github.martindavinci.lunaris.archives.ui.sayNoPicker
+import io.github.martindavinci.lunaris.archives.ui.launchOr
+import androidx.compose.ui.platform.LocalContext
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -17,6 +20,7 @@ import io.github.martindavinci.lunaris.archives.extract.SafTarget
 @Composable
 fun ExtractRoute(onExit: () -> Unit, openTree: (Uri) -> SafTarget, viewModel: ExtractViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
         uri?.let { viewModel.onFolderPicked(openTree(it)) }
     }
@@ -24,7 +28,10 @@ fun ExtractRoute(onExit: () -> Unit, openTree: (Uri) -> SafTarget, viewModel: Ex
     LaunchedEffect(state.pickFolder) {
         if (state.pickFolder) {
             viewModel.onAction(ExtractAction.PickerHandled)
-            picker.launch(null)
+            picker.launchOr(null) {
+                context.sayNoPicker()
+                onExit()
+            }
         }
     }
     ExtractScreen(state, viewModel::onAction)

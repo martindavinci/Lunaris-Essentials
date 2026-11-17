@@ -1,5 +1,8 @@
 package io.github.martindavinci.lunaris.archives.feature.create
 
+import io.github.martindavinci.lunaris.archives.ui.launchOr
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -24,6 +27,8 @@ fun CreateRoute(onClose: () -> Unit, onOpenArchive: (String) -> Unit, viewModel:
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val snackbar = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val noPicker = { scope.launch { snackbar.showSnackbar(context.getString(R.string.home_no_picker)) }; Unit }
     val files = rememberLauncherForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { uris ->
         if (uris.isNotEmpty()) viewModel.onAction(CreateAction.AddFiles(uris.map(Uri::toString)))
     }
@@ -52,11 +57,14 @@ fun CreateRoute(onClose: () -> Unit, onOpenArchive: (String) -> Unit, viewModel:
             if (action == CreateAction.Share) (state.state as? CreateState.Finished)?.let { context.shareZip(it.uri) }
             viewModel.onAction(action)
         },
-        onPickFiles = { files.launch(arrayOf(ANY_TYPE)) },
-        onPickFolder = { folder.launch(null) },
+        onPickFiles = { files.launchOr(arrayOf(ANY_TYPE), noPicker) },
+        onPickFolder = { folder.launchOr(null, noPicker) },
         onCreate = { password ->
             viewModel.onAction(CreateAction.HoldPassword(password))
-            saveAs.launch(ArchiveNameRules.fileName(state.name))
+            saveAs.launchOr(ArchiveNameRules.fileName(state.name)) {
+                viewModel.onAction(CreateAction.CreateAt(null))   // wipes the held password
+                noPicker()
+            }
         },
         onClose = onClose,
         snackbar = snackbar,

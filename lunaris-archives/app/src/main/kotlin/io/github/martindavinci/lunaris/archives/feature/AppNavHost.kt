@@ -1,5 +1,8 @@
 package io.github.martindavinci.lunaris.archives.feature
 
+import androidx.compose.ui.platform.LocalContext
+import io.github.martindavinci.lunaris.archives.ui.sayNoPicker
+import io.github.martindavinci.lunaris.archives.ui.launchOr
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -43,6 +46,7 @@ fun AppNavHost(
     val nav = rememberNavController()
     var pendingExtract by remember { mutableStateOf<ExtractArgs?>(null) }
     var fromOtherApp by rememberSaveable { mutableStateOf<String?>(null) }
+    val context = LocalContext.current
     val treePicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
         val args = pendingExtract
         pendingExtract = null
@@ -98,7 +102,10 @@ fun AppNavHost(
                     onNested = { id -> nav.navigate(Routes.browser(id)) },
                     onExtract = { args ->
                         pendingExtract = args
-                        treePicker.launch(lastTree())
+                        treePicker.launchOr(lastTree()) {
+                            pendingExtract = null
+                            context.sayNoPicker()
+                        }
                     },
                 )
             }

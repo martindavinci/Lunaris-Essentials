@@ -1,6 +1,6 @@
 package io.github.martindavinci.lunaris.archives.feature.home
 
-import android.content.ActivityNotFoundException
+import io.github.martindavinci.lunaris.archives.ui.launchOr
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -71,11 +71,7 @@ fun HomeRoute(
             viewModel.onAction(action)
         },
         onPickFile = {
-            try {
-                picker.launch(ARCHIVE_TYPES)
-            } catch (_: ActivityNotFoundException) {
-                say(R.string.home_no_picker)
-            }
+            picker.launchOr(ARCHIVE_TYPES) { say(R.string.home_no_picker) }
         },
         onCreate = onCreate,
         onSettings = onSettings,
