@@ -21,4 +21,22 @@ class NaturalOrderTest {
             .sortedWith { x, y -> NaturalOrder.compare(x.first, x.second, y.first, y.second) }.map { it.first }
         assertThat(byKeys).isEqualTo(names.sortedWith(NaturalOrder))
     }
+    @Test fun namesThatMixDigitScripts_sortWithoutThrowing() {
+        val kanji = listOf("一", "二", "三", "四", "五", "六", "七", "八", "九", "十")
+        val random = java.util.Random(1)
+        repeat(2000) {
+            val names = (1..60).map { n ->
+                val number = when (random.nextInt(3)) {
+                    0 -> n.toString()
+                    1 -> n.toString().map { '０' + (it - '0') }.joinToString("")
+                    else -> kanji[n % 10]
+                }
+                "第${number}話_$n.txt"
+            }
+            names.sortedWith(NaturalOrder)
+        }
+    }
+    @Test fun aFullWidthDigit_isAnOrdinaryCharacter() {
+        assertThat(listOf("第１章", "第二章", "第10章").sortedWith(NaturalOrder)).containsExactly("第10章", "第二章", "第１章").inOrder()
+    }
 }

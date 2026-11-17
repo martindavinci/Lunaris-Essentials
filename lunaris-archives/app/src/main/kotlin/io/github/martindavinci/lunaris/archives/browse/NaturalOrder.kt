@@ -20,7 +20,7 @@ object NaturalOrder : Comparator<String> {
         var i = 0
         var j = 0
         while (i < a.length && j < b.length) {
-            if (a[i].isDigit() && b[j].isDigit()) {
+            if (a[i].isAsciiDigit() && b[j].isAsciiDigit()) {
                 val ei = digitsEnd(a, i)
                 val ej = digitsEnd(b, j)
                 val na = a.substring(i, ei).trimStart('0')
@@ -42,7 +42,10 @@ object NaturalOrder : Comparator<String> {
 
     private fun digitsEnd(s: String, from: Int): Int {
         var k = from
-        while (k < s.length && s[k].isDigit()) k++
+        while (k < s.length && s[k].isAsciiDigit()) k++
         return k
     }
+
+    /** Only 0–9 count as numbers: with every Unicode digit ("１", "٣") the order is not transitive and the sort throws. */
+    private fun Char.isAsciiDigit() = this in '0'..'9'
 }
