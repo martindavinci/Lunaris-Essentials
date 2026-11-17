@@ -24,6 +24,11 @@ import kotlinx.coroutines.test.runTest
 import io.github.martindavinci.lunaris.archives.archive.RawPath
 import io.github.martindavinci.lunaris.archives.engine.ArchiveEngine
 import java.io.File
+import io.github.martindavinci.lunaris.archives.edits.EditLookup
+import io.github.martindavinci.lunaris.archives.edits.EditRecord
+import io.github.martindavinci.lunaris.archives.edits.EditStore
+import io.github.martindavinci.lunaris.archives.edits.EditWatcher
+import io.github.martindavinci.lunaris.archives.edits.Fingerprint
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -50,6 +55,59 @@ class EntryCopierTest {
     private fun ended(index: Long, outcome: EntryOutcome) =
         arrayOf(EngineEvent.EntryStarted(index), EngineEvent.EntryFinished(index, outcome), EngineEvent.Finished(EngineStatus.OK))
 
+    /** A copier that knows about edits, over a real register in [files]. */
+    private fun editingCopier(files: File): Pair<EntryCopier, EditStore> {
+        val store = EditStore(files)
+        val watcher = EditWatcher(store, files, {}, kotlinx.coroutines.Dispatchers.Unconfined)
+        val copies = TempCopies(temp.root, watcher)
+        return EntryCopier(engine, copies, { free }, { it.path }, { null }, EditLookup(store, watcher)) { _, _, _ -> true } to store
+    }
+    private fun handOut(store: EditStore, copy: File) = store.put(EditRecord(
+        "r", copy.path, "content://a/1", "0123456789abcdef", "a.zip", 10, 1, "fp", "ZIP", "notes.md",
+        copy.length(), copy.lastModified(), Fingerprint.sha256(copy), updatable = true, createdMillis = System.currentTimeMillis(),
+    ))
+
+    @Test fun pendingEdit_differentSize_tapReturnsEditedCopy() = runTest {
+        val (copier, store) = editingCopier(temp.newFolder("files"))
+        script(EngineRoute.LIBARCHIVE, *ok(0, "hello".toByteArray()))
+        val first = copier.copyForApp(archive(), notes, null) {}
+        assertThat(first.writable).isTrue()
+        val copy = File((first.result as CopyResult.Ready).path)
+        handOut(store, copy)
+        copy.writeText("hello, edited elsewhere"); copy.setLastModified(copy.lastModified() + 5_000)
+        val again = copier.copyForApp(archive(), notes, null) {}.result as CopyResult.Ready
+        assertThat(File(again.path).readText()).isEqualTo("hello, edited elsewhere")
+        assertThat(engine.extractCalls).hasSize(1)
+    }
+    @Test fun pendingEdit_share_doesNotClobber() = runTest {
+        val (copier, store) = editingCopier(temp.newFolder("files"))
+        script(EngineRoute.LIBARCHIVE, *ok(0, "hello".toByteArray()))
+        val copy = File((copier.copy(archive(), notes, null) {} as CopyResult.Ready).path)
+        handOut(store, copy)
+        copy.writeText("edited"); copy.setLastModified(copy.lastModified() + 5_000)
+        val shared = copier.copyAll(archive(), listOf(notes), null).single() as CopyResult.Ready
+        assertThat(File(shared.path).readText()).isEqualTo("edited")
+    }
+    @Test fun pendingEdit_whoseCopyIsGone_opensTheSnapshot() = runTest {
+        val files = temp.newFolder("files")
+        val (copier, store) = editingCopier(files)
+        script(EngineRoute.LIBARCHIVE, *ok(0, "hello".toByteArray()))
+        val copy = File((copier.copy(archive(), notes, null) {} as CopyResult.Ready).path)
+        handOut(store, copy)
+        copy.writeText("edited"); copy.setLastModified(copy.lastModified() + 5_000)
+        EditWatcher(store, files, {}, kotlinx.coroutines.Dispatchers.Unconfined).scan()
+        copy.delete()
+        val reopened = copier.copy(archive(), notes, null) {} as CopyResult.Ready
+        assertThat(File(reopened.path).readText()).isEqualTo("edited")
+    }
+    @Test fun unchangedRecord_reusesTheCopy() = runTest {
+        val (copier, store) = editingCopier(temp.newFolder("files"))
+        script(EngineRoute.LIBARCHIVE, *ok(0, "hello".toByteArray()))
+        val copy = File((copier.copy(archive(), notes, null) {} as CopyResult.Ready).path)
+        handOut(store, copy)
+        assertThat(File((copier.copy(archive(), notes, null) {} as CopyResult.Ready).path).readText()).isEqualTo("hello")
+        assertThat(engine.extractCalls).hasSize(1)
+    }
     @Test fun copiesOneEntryAndReturnsAContentUriWithTheMime() = runTest {
         script(EngineRoute.LIBARCHIVE, *ok(0, "hello".toByteArray()))
         val result = copier.copy(archive(), notes, null) {} as CopyResult.Ready

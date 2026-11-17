@@ -25,6 +25,10 @@ interface EntryOpener {
 
     /** Several entries, one engine pass per route; the results are in the order of [entries]. */
     suspend fun copyAll(archive: OpenArchive, entries: List<ArchiveEntry>, password: CharArray?): List<CopyResult>
+
+    /** A copy to open in another app, which may write it back when the archive allows. */
+    suspend fun copyForApp(archive: OpenArchive, entry: ArchiveEntry, password: CharArray?, onProgress: (Long) -> Unit): AppCopy =
+        AppCopy(copy(archive, entry, password, onProgress), writable = false)
 }
 
 sealed interface CopyResult {
@@ -58,6 +62,8 @@ class EntryCopier @Inject constructor(
     private val freeBytes: FreeBytes,
     private val uris: FileUris,
     private val platformMime: PlatformMime,
+    private val edits: EditedCopies = EditedCopies.NONE,
+    private val recorder: CopyRecorder = CopyRecorder.NONE,
 ) : EntryOpener {
     private val batch = EntryBatch(engine, copies)
 
@@ -74,10 +80,17 @@ class EntryCopier @Inject constructor(
         }
     }
 
+    override suspend fun copyForApp(archive: OpenArchive, entry: ArchiveEntry, password: CharArray?, onProgress: (Long) -> Unit): AppCopy {
+        val result = copy(archive, entry, password, onProgress)
+        val writable = result is CopyResult.Ready && withContext(Dispatchers.IO) { recorder.record(archive, entry, File(result.path)) }
+        return AppCopy(result, writable)
+    }
+
     private suspend fun copyToCache(
         archive: OpenArchive, entry: ArchiveEntry, route: EngineRoute, password: CharArray?, onProgress: (Long) -> Unit,
     ): CopyResult {
         val key = archive.source.key
+        edits.edited(copies.target(key, entry))?.let { return ready(it) }
         copies.existingCopy(key, entry)?.let { return ready(it) }
         if (freeBytes.get() < (entry.size ?: 0) + Limits.CACHE_MARGIN_BYTES) return CopyResult.NoSpace
         val target = copies.target(key, entry)
@@ -116,7 +129,8 @@ class EntryCopier @Inject constructor(
             when {
                 EntryRoutes.routeFor(archive, entry) == null -> done[entry.index] = BatchCopy.Failed(CopyResult.Rar4Password)
                 entry.encrypted && password == null -> done[entry.index] = BatchCopy.Failed(CopyResult.NeedsPassword)
-                else -> copies.existingCopy(key, entry)?.let { done[entry.index] = BatchCopy.Copied(it) } ?: missing.add(entry)
+                else -> (edits.edited(copies.target(key, entry)) ?: copies.existingCopy(key, entry))
+                    ?.let { done[entry.index] = BatchCopy.Copied(it) } ?: missing.add(entry)
             }
         }
         if (missing.sumOf { it.size ?: 0 } + Limits.CACHE_MARGIN_BYTES > freeBytes.get()) {

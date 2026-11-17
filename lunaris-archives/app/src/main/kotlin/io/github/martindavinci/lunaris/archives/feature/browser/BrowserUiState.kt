@@ -84,8 +84,8 @@ sealed interface BrowserNotice {
 }
 
 sealed interface LaunchRequest {
-    data class View(val uri: String, val mime: String) : LaunchRequest
-    data class Chooser(val uri: String, val mime: String) : LaunchRequest
+    data class View(val uri: String, val mime: String, val writable: Boolean = false) : LaunchRequest
+    data class Chooser(val uri: String, val mime: String, val writable: Boolean = false) : LaunchRequest
     data class Send(val uris: List<String>, val mime: String) : LaunchRequest
     data class Extract(val jobArgs: ExtractArgs) : LaunchRequest
     data class Nested(val requestId: String) : LaunchRequest

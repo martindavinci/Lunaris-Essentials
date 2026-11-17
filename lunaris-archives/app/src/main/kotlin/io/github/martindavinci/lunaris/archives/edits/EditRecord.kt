@@ -19,7 +19,7 @@ data class EditRecord(
     val archiveMtime: Long?,
     val archiveFingerprint: String,
     val archiveFormat: String,
-    /** The decoded path the index uses, never a display form. */
+    /** The path as the screens show it (for the banner). */
     val entryPath: String,
     val size: Long,
     val mtime: Long,
@@ -27,4 +27,6 @@ data class EditRecord(
     val updatable: Boolean,
     val createdMillis: Long,
     val pending: Snapshot? = null,
+    /** The entry name exactly as stored in the archive, in hex: an update finds the entry by these bytes. */
+    val entryRaw: String = "",
 )

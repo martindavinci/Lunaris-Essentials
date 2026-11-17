@@ -4,6 +4,7 @@ import io.github.martindavinci.lunaris.archives.archive.EntryType
 import io.github.martindavinci.lunaris.archives.browse.EntryKind
 import io.github.martindavinci.lunaris.archives.browse.EntryKinds
 import io.github.martindavinci.lunaris.archives.browse.FolderRow
+import io.github.martindavinci.lunaris.archives.files.AppCopy
 import io.github.martindavinci.lunaris.archives.files.CopyResult
 import io.github.martindavinci.lunaris.archives.files.EntryOpener
 import io.github.martindavinci.lunaris.archives.safety.Limits
@@ -59,21 +60,25 @@ internal class BrowserOpening(
                 state.update { it.copy(opening = OpeningState(row.name, INDETERMINATE)) }
             }
             val password = typed ?: session.passwordFor(archive.id)
-            val result = try {
-                opener.copy(archive, entry, password) { bytes ->
+            val progress: (Long) -> Unit = { bytes ->
                 val fraction = entry.size?.takeIf { it > 0 }?.let { (bytes.toFloat() / it).coerceIn(0f, 1f) } ?: INDETERMINATE
-                    state.update { s -> s.opening?.let { s.copy(opening = it.copy(fraction = fraction)) } ?: s }
-                }
+                state.update { s -> s.opening?.let { s.copy(opening = it.copy(fraction = fraction)) } ?: s }
+            }
+            val copied = try {
+                // An archive opened here is not handed out: only copies for other apps may be written back.
+                if (nested) AppCopy(opener.copy(archive, entry, password, progress), writable = false)
+                else opener.copyForApp(archive, entry, password, progress)
             } finally {
                 if (typed == null) password?.fill(WIPED)
             }
+            val result = copied.result
             if (typed != null) {
                 if (result is CopyResult.Ready) session.keepPassword(archive.id, typed, remember)
                 typed.fill(WIPED)
             }
             bar.cancel()
             state.update { it.copy(opening = null) }
-            handle(archive, row, result, nested, chooser)
+            handle(archive, row, result, nested, chooser, copied.writable)
         }
     }
 
@@ -95,14 +100,14 @@ internal class BrowserOpening(
         }
     }
 
-    private fun handle(archive: OpenArchive, row: FolderRow, result: CopyResult, nested: Boolean, chooser: Boolean) {
+    private fun handle(archive: OpenArchive, row: FolderRow, result: CopyResult, nested: Boolean, chooser: Boolean, writable: Boolean) {
         val launch: LaunchRequest? = when (result) {
             is CopyResult.Ready -> when {
                 nested -> LaunchRequest.Nested(
                     session.register(OpenRequest(result.uri, archive.id, row.entry?.index, result.path)),
                 )
-                chooser -> LaunchRequest.Chooser(result.uri, result.mime)
-                else -> LaunchRequest.View(result.uri, result.mime)
+                chooser -> LaunchRequest.Chooser(result.uri, result.mime, writable)
+                else -> LaunchRequest.View(result.uri, result.mime, writable)
             }
             CopyResult.NeedsPassword, CopyResult.WrongPassword -> {
                 waiting = row

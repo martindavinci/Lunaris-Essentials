@@ -1,6 +1,7 @@
 package io.github.martindavinci.lunaris.archives.testing
 
 import io.github.martindavinci.lunaris.archives.archive.ArchiveEntry
+import io.github.martindavinci.lunaris.archives.files.AppCopy
 import io.github.martindavinci.lunaris.archives.files.CopyResult
 import io.github.martindavinci.lunaris.archives.files.EntryOpener
 import io.github.martindavinci.lunaris.archives.session.OpenArchive
@@ -23,6 +24,14 @@ class FakeEntryOpener : EntryOpener {
     override suspend fun copyAll(archive: OpenArchive, entries: List<ArchiveEntry>, password: CharArray?): List<CopyResult> {
         batches += entries.size
         return entries.map { copy(archive, it, password) {} }
+    }
+
+    /** Whether copies for other apps come back writable. */
+    var writable = false
+
+    override suspend fun copyForApp(archive: OpenArchive, entry: ArchiveEntry, password: CharArray?, onProgress: (Long) -> Unit): AppCopy {
+        val result = copy(archive, entry, password, onProgress)
+        return AppCopy(result, writable && result is CopyResult.Ready)
     }
 
     /** How many entries each copyAll held. */

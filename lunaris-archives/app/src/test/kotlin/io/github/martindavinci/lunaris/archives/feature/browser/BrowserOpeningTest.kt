@@ -94,6 +94,12 @@ class BrowserOpeningTest {
         assertThat(vm.state.value.sheet).isInstanceOf(BrowserSheet.NoApp::class.java)
         assertThat(vm.state.value.launch).isNull()
     }
+    @Test fun aCopyHandedOutForEditing_isLaunchedWritable() = runTest(dispatcher) {
+        listed(); opener.results += ready; opener.writable = true
+        val vm = viewModel(); advanceUntilIdle()
+        vm.tap("notes.md"); advanceUntilIdle()
+        assertThat(vm.state.value.launch).isEqualTo(LaunchRequest.View(ready.uri, ready.mime, writable = true))
+    }
     @Test fun openWith_usesTheChooser() = runTest(dispatcher) {
         listed(); opener.results += ready
         val vm = viewModel(); advanceUntilIdle()

@@ -10,8 +10,8 @@ import io.github.martindavinci.lunaris.archives.R
 /** Starts what the browser asked for; false when no app takes it. */
 internal fun Context.launch(request: LaunchRequest): Boolean {
     val intent = when (request) {
-        is LaunchRequest.View -> viewIntent(request.uri, request.mime)
-        is LaunchRequest.Chooser -> Intent.createChooser(viewIntent(request.uri, request.mime), null)
+        is LaunchRequest.View -> viewIntent(request.uri, request.mime, request.writable)
+        is LaunchRequest.Chooser -> Intent.createChooser(viewIntent(request.uri, request.mime, request.writable), null)
         is LaunchRequest.Send -> Intent.createChooser(sendIntent(request.uris, request.mime), null)
         is LaunchRequest.Extract, is LaunchRequest.Nested -> return true
     }
@@ -27,9 +27,10 @@ internal fun Context.launch(request: LaunchRequest): Boolean {
     }
 }
 
-private fun viewIntent(uri: String, mime: String) = Intent(Intent.ACTION_VIEW)
+/** A writable copy also lets the other app save its changes; they come back only when the user says so. */
+private fun viewIntent(uri: String, mime: String, writable: Boolean) = Intent(Intent.ACTION_VIEW)
     .setDataAndType(Uri.parse(uri), mime)
-    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or if (writable) Intent.FLAG_GRANT_WRITE_URI_PERMISSION else 0)
 
 private fun sendIntent(uris: List<String>, mime: String): Intent {
     val parsed = uris.map(Uri::parse)

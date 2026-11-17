@@ -11,7 +11,7 @@ internal object EditCodec {
                 put(ID, r.id); put(COPY, r.copyPath); put(URI, r.archiveUri); put(KEY, r.archiveKey); put(NAME, r.archiveName)
                 put(A_SIZE, r.archiveSize); r.archiveMtime?.let { put(A_MTIME, it) }; put(A_PRINT, r.archiveFingerprint)
                 put(FORMAT, r.archiveFormat); put(ENTRY, r.entryPath); put(SIZE, r.size); put(MTIME, r.mtime); put(SHA, r.sha256)
-                put(UPDATABLE, r.updatable); put(CREATED, r.createdMillis)
+                put(UPDATABLE, r.updatable); put(CREATED, r.createdMillis); put(RAW, r.entryRaw)
                 r.pending?.let { p ->
                     put(PENDING, JSONObject().apply { put(PATH, p.path); put(SIZE, p.size); put(MTIME, p.mtime); put(SHA, p.sha256) })
                 }
@@ -29,7 +29,7 @@ internal object EditCodec {
         archiveName = o.getString(NAME), archiveSize = o.getLong(A_SIZE), archiveMtime = if (o.has(A_MTIME)) o.getLong(A_MTIME) else null,
         archiveFingerprint = o.getString(A_PRINT), archiveFormat = o.getString(FORMAT), entryPath = o.getString(ENTRY),
         size = o.getLong(SIZE), mtime = o.getLong(MTIME), sha256 = o.getString(SHA), updatable = o.getBoolean(UPDATABLE),
-        createdMillis = o.getLong(CREATED),
+        createdMillis = o.getLong(CREATED), entryRaw = o.optString(RAW),
         pending = o.optJSONObject(PENDING)?.let { p -> Snapshot(p.getString(PATH), p.getLong(SIZE), p.getLong(MTIME), p.getString(SHA)) },
     )
 
@@ -50,4 +50,5 @@ internal object EditCodec {
     private const val CREATED = "created"
     private const val PENDING = "pending"
     private const val PATH = "path"
+    private const val RAW = "raw"
 }
