@@ -24,6 +24,10 @@ import kotlinx.coroutines.test.setMain
 import net.lingala.zip4j.io.outputstream.ZipOutputStream as Zip4jOut
 import net.lingala.zip4j.model.ZipParameters
 import net.lingala.zip4j.model.enums.EncryptionMethod
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -47,10 +51,19 @@ class EditsViewModelTest {
             }) { _, _, _ -> }
     }
     private val runner by lazy { EditsRunner(actions, Dispatchers.Unconfined) }
-    private fun viewModel() = EditsViewModel(watcher, runner, actions, journal)
+    /** Every view model goes in [models], closed after the test: a live one would touch Dispatchers.Main once it is reset. */
+    private val models = ViewModelStore()
+    private var made = 0
+    private fun viewModel(): EditsViewModel = ViewModelProvider.create(
+        models, viewModelFactory { initializer { EditsViewModel(watcher, runner, actions, journal) } },
+    )["vm${made++}", EditsViewModel::class]
 
     @Before fun main() = Dispatchers.setMain(UnconfinedTestDispatcher())
-    @After fun reset() = Dispatchers.resetMain()
+    @After fun reset() {
+        eventually { runner.working.value == null }   // a decision still on its way would land after the reset
+        models.clear()
+        Dispatchers.resetMain()
+    }
 
     private fun zip(encrypted: Boolean = false): File = File(temp.newFolder(), "Trip.zip").apply {
         if (encrypted) Zip4jOut(outputStream(), "pw".toCharArray()).use { z ->
