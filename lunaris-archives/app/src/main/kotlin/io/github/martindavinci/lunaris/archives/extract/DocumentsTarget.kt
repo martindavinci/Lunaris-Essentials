@@ -21,6 +21,7 @@ class DocumentsTarget(private val resolver: ContentResolver, private val tree: U
 
     private val rootId: String = DocumentsContract.getTreeDocumentId(tree)
     private val listings = HashMap<String, MutableMap<String, Child>>()   // folder id -> lower-cased name -> child
+    private val owners = HashMap<String, Pair<String, String>>()   // document id -> folder id and key: forget() needs no scan
     private var firstCreated: Uri? = null
 
     override val label: String? get() = LocationLabel.of(rootId)
@@ -38,10 +39,10 @@ class DocumentsTarget(private val resolver: ContentResolver, private val tree: U
     override fun ensureFolder(folder: List<String>): String {
         var id = rootId
         for (name in folder) {
-            val kids = list(id)
+            val parent = id
             // A file of the same name is not this folder: the provider then gives the new folder another name.
-            id = kids[key(name)]?.takeIf { it.isFolder }?.id
-                ?: create(id, Document.MIME_TYPE_DIR, name).also { kids[key(name)] = Child(it, name, isFolder = true) }
+            id = list(parent)[key(name)]?.takeIf { it.isFolder }?.id
+                ?: create(parent, Document.MIME_TYPE_DIR, name).also { record(parent, Child(it, name, isFolder = true)) }
         }
         return id
     }
@@ -50,7 +51,7 @@ class DocumentsTarget(private val resolver: ContentResolver, private val tree: U
         val id = create(folderToken, BINARY, name)
         // Recorded under the name that was asked for, unless that name is taken (then the provider chose
         // another one). Asking for the name it really used costs a query per file.
-        list(folderToken).putIfAbsent(key(name), Child(id, name, isFolder = false))
+        if (key(name) !in list(folderToken)) record(folderToken, Child(id, name, isFolder = false))
         val uri = uriOf(id)
         if (firstCreated == null) firstCreated = uri
         return Created(uri.toString(), name)
@@ -72,19 +73,21 @@ class DocumentsTarget(private val resolver: ContentResolver, private val tree: U
         val renamed = runCatching { DocumentsContract.renameDocument(resolver, Uri.parse(created.token), name) }.getOrNull() ?: return null
         val folder = forget(created.token)
         val id = DocumentsContract.getDocumentId(renamed)
-        if (folder != null) listings[folder]?.set(key(name), Child(id, name, isFolder = false))
+        if (folder != null && listings[folder] != null) record(folder, Child(id, name, isFolder = false))
         return Created(renamed.toString(), name)
     }
 
     /** Drops a document from the listings; returns the folder it was in. */
     private fun forget(token: String): String? {
         val id = runCatching { DocumentsContract.getDocumentId(Uri.parse(token)) }.getOrNull() ?: return null
-        for ((folder, kids) in listings) {
-            val name = kids.entries.firstOrNull { it.value.id == id }?.key ?: continue
-            kids.remove(name)
-            return folder
-        }
-        return null
+        val (folder, name) = owners.remove(id) ?: return null
+        listings[folder]?.let { kids -> if (kids[name]?.id == id) kids.remove(name) }
+        return folder
+    }
+
+    private fun record(folder: String, child: Child) {
+        listings.getValue(folder)[key(child.name)] = child
+        owners[child.id] = folder to key(child.name)
     }
 
     /** From the first file this run created, and only when it is a regular file (internal storage, SD card). */
@@ -112,7 +115,9 @@ class DocumentsTarget(private val resolver: ContentResolver, private val tree: U
         cursor.use {
             while (it.moveToNext()) {
                 val name = it.getString(1) ?: continue
-                kids[key(name)] = Child(it.getString(0), name, it.getString(2) == Document.MIME_TYPE_DIR)
+                val child = Child(it.getString(0), name, it.getString(2) == Document.MIME_TYPE_DIR)
+                kids[key(name)] = child
+                owners[child.id] = folderId to key(name)
             }
         }
         kids
