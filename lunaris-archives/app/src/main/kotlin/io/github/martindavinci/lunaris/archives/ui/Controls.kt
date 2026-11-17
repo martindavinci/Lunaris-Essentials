@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -43,6 +45,7 @@ private val ButtonIconSpacing = 8.dp
 private val BorderWidth = 1.dp
 private val CheckOffset = (-14).dp
 private val CheckRowMinHeight = 48.dp
+private val CheckTextGap = 12.dp
 private val ChoiceMinHeight = 56.dp
 private val ChoiceShape = RoundedCornerShape(16.dp)
 private val ChoiceEndPadding = 16.dp
@@ -99,6 +102,7 @@ fun CheckRow(text: String, checked: Boolean, onChange: (Boolean) -> Unit, modifi
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Checkbox(checked = checked, onCheckedChange = null, enabled = enabled)
+        Spacer(Modifier.width(CheckTextGap))
         Text(text, style = MaterialTheme.typography.bodyMedium)
     }
 }

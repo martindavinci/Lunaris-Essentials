@@ -1,6 +1,7 @@
 package io.github.martindavinci.lunaris.archives.feature.browser
 
 import io.github.martindavinci.lunaris.archives.archive.EntryType
+import io.github.martindavinci.lunaris.archives.archive.HostOs
 import io.github.martindavinci.lunaris.archives.browse.EntrySort
 import io.github.martindavinci.lunaris.archives.browse.FolderRow
 import io.github.martindavinci.lunaris.archives.browse.FolderView
@@ -16,7 +17,7 @@ internal object BrowserContent {
         return ArchiveHeader(
             id = archive.id, name = archive.source.name, formatLabel = archive.index.formatLabel,
             fileCount = view.fileCount(), folderCount = view.folderCount(), sizeBytes = files.sumOf { it.size ?: 0 },
-            packedBytes = packed, encryption = archive.index.encryption, createdBy = archive.index.createdBy,
+            packedBytes = packed, encryption = archive.index.encryption, createdBy = archive.index.createdBy.takeIf { it != HostOs.MSDOS },
             comment = archive.index.comment,
         )
     }

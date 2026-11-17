@@ -41,6 +41,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.github.martindavinci.lunaris.archives.R
+import io.github.martindavinci.lunaris.archives.ui.theme.onWarningContainer
+import io.github.martindavinci.lunaris.archives.ui.theme.warningContainer
 
 private val BlockShape = RoundedCornerShape(16.dp)
 private val BlockPaddingVertical = 14.dp
@@ -60,14 +62,14 @@ const val UNSAFE_PREVIEW_LINES = UNSAFE_LINES + 1
 private const val SOFT_LINES = 3
 
 /**
- * The one red block of the app (frame 12): entries that were not written because they could be
+ * The one amber block of the app (frame 12): entries that were not written because they could be
  * unsafe. [lines] are ready to show, one entry each, with the reason where it is not "outside".
  */
 @Composable
 fun UnsafeEntriesBlock(title: String, lines: List<String>, onShowAll: () -> Unit, modifier: Modifier = Modifier) {
     val colors = MaterialTheme.colorScheme
     var open by rememberSaveable { mutableStateOf(false) }
-    Surface(shape = BlockShape, color = colors.errorContainer, contentColor = colors.onErrorContainer, modifier = modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite }) {
+    Surface(shape = BlockShape, color = colors.warningContainer, contentColor = colors.onWarningContainer, modifier = modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite }) {
         Row(Modifier.padding(horizontal = BlockPaddingHorizontal, vertical = BlockPaddingVertical), horizontalArrangement = Arrangement.spacedBy(BlockSpacing)) {
             Icon(Icons.Rounded.Warning, contentDescription = null, modifier = Modifier.size(BlockIconSize))
             Column(verticalArrangement = Arrangement.spacedBy(BlockLineSpacing)) {

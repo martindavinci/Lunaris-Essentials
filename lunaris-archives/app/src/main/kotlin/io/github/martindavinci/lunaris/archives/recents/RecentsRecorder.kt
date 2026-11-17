@@ -4,6 +4,7 @@ import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
 import io.github.martindavinci.lunaris.archives.archive.Encryption
+import io.github.martindavinci.lunaris.archives.archive.EntryType
 import io.github.martindavinci.lunaris.archives.feature.browser.RecentsPort
 import io.github.martindavinci.lunaris.archives.session.OpenArchive
 import io.github.martindavinci.lunaris.archives.settings.AppSettings
@@ -47,7 +48,7 @@ class RecentsRecorder(
         val index = archive.index
         val item = RecentArchive(
             uri = archive.source.uri, name = archive.source.name, formatLabel = index.formatLabel, sizeBytes = archive.source.size,
-            fileCount = index.entries.size, locked = index.encryption != Encryption.NONE, lastOpenedMillis = clock(),
+            fileCount = index.entries.count { it.type == EntryType.FILE }, locked = index.encryption != Encryption.NONE, lastOpenedMillis = clock(),
             lastPath = path.takeIf { index.encryption != Encryption.HEADERS },
         )
         store.remember(item).forEach { permissions.release(it.uri) }

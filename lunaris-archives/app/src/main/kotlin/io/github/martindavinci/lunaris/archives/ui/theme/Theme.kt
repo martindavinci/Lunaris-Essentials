@@ -86,6 +86,13 @@ val ColorScheme.accentText: Color
 val ColorScheme.entryTile: Color
     get() = if (isDarkScheme()) surfaceContainerHigh else surfaceVariant
 
+/** The amber of a warning that is not an error (entries skipped as unsafe). */
+val ColorScheme.warningContainer: Color
+    get() = if (isDarkScheme()) WarningColors.dark.container else WarningColors.light.container
+
+val ColorScheme.onWarningContainer: Color
+    get() = if (isDarkScheme()) WarningColors.dark.content else WarningColors.light.content
+
 /** Behind a selected row. */
 val ColorScheme.selectedRow: Color
     get() = if (isDarkScheme()) primaryContainer.copy(alpha = SELECTED_DARK_ALPHA) else primary.copy(alpha = SELECTED_LIGHT_ALPHA)

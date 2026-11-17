@@ -43,6 +43,11 @@ class RecentsRecorderTest {
 
     @After fun stop() = runBlocking { scope.coroutineContext.job.cancelAndJoin() }
 
+    @Test fun fileCount_skipsFolders() = runBlocking<Unit> {
+        val folders = archive().copy(index = index("a/", "a/x.txt", "b.txt"))
+        recorder.visited(folders, emptyList())
+        assertThat(store.recents.first().single().fileCount).isEqualTo(2)
+    }
     @Test fun permissionRefused_isNotRemembered() = runBlocking<Unit> {
         permissions.allow = false
         recorder.visited(archive(), listOf("docs"))
