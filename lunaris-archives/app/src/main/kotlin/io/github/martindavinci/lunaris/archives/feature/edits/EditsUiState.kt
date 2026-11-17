@@ -73,7 +73,7 @@ sealed interface EditsAction {
     data class Picked(val archiveUri: String, val pickedUri: String?) : EditsAction
     data object CancelPick : EditsAction
     /** "Save a copy" answered: one document for one file, a folder for several; null when dismissed. */
-    data class SaveTo(val archiveUri: String, val target: String?, val isFolder: Boolean) : EditsAction
+    data class SaveTo(val archiveUri: String, val target: String?, val isFolder: Boolean, val recordId: String? = null) : EditsAction
     data class ToggleShow(val archiveUri: String) : EditsAction
     data object MessageShown : EditsAction
     data object Reloaded : EditsAction

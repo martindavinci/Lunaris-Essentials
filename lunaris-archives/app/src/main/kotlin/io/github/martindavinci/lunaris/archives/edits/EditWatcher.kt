@@ -89,8 +89,8 @@ class EditWatcher @Inject constructor(
         val baseSha = record.pending?.sha256 ?: record.sha256
         if (sha == baseSha) {
             temp.delete()
-            return record.pending?.let { record.copy(pending = it.copy(size = temp.length(), mtime = mtime)) }
-                ?: record.copy(size = live.length(), mtime = mtime)
+            // The same bytes, so the same size: only the date moved.
+            return record.pending?.let { record.copy(pending = it.copy(mtime = mtime)) } ?: record.copy(mtime = mtime)
         }
         val target = File(folder, live.name)
         if (!temp.renameTo(target)) {

@@ -76,7 +76,7 @@ class EditActions @Inject constructor(
         }
     }
 
-    suspend fun saveOne(archiveUri: String, targetUri: String): EditOutcome = closing(archiveUri) { records ->
+    suspend fun saveOne(archiveUri: String, recordId: String, targetUri: String): EditOutcome = closing(archiveUri, only = recordId) { records ->
         saver.write(targetUri, File(checkNotNull(records.single().pending).path))
     }
 
@@ -88,7 +88,7 @@ class EditActions @Inject constructor(
     }
 
     suspend fun ignore(archiveUri: String): EditOutcome =
-        closing(archiveUri, deleteCopies = true) {}.let { if (it == EditOutcome.Saved) EditOutcome.Ignored else it }
+        closing(archiveUri) {}.let { if (it == EditOutcome.Saved) EditOutcome.Ignored else it }
 
     /** The picked document is this archive: same size and same fingerprint. */
     suspend fun matchesArchive(archiveUri: String, pickedUri: String): Boolean = withContext(Dispatchers.IO) {
@@ -97,11 +97,11 @@ class EditActions @Inject constructor(
         facts.size == record.archiveSize && facts.fingerprint == record.archiveFingerprint
     }
 
-    private suspend fun closing(archiveUri: String, deleteCopies: Boolean = false, action: (List<EditRecord>) -> Unit): EditOutcome =
+    private suspend fun closing(archiveUri: String, only: String? = null, action: (List<EditRecord>) -> Unit): EditOutcome =
         watcher.lock.withLock {
             withContext(Dispatchers.IO) {
                 watcher.scanLocked()
-                val records = pending(archiveUri)
+                val records = pending(archiveUri).filter { only == null || it.id == only }
                 if (records.isEmpty()) return@withContext EditOutcome.Failed
                 try {
                     action(records)
@@ -110,7 +110,7 @@ class EditActions @Inject constructor(
                 } catch (_: RuntimeException) {   // the provider of the target refused
                     return@withContext EditOutcome.Failed
                 }
-                close(records, deleteCopies)
+                close(records)
                 EditOutcome.Saved
             }
         }
@@ -144,13 +144,17 @@ class EditActions @Inject constructor(
         }
     }
 
-    private fun close(records: List<EditRecord>, deleteCopies: Boolean) {
+    /**
+     * A closed case leaves nothing behind: its snapshot, the other app's right to write, and the edited copy, which
+     * would otherwise be opened again as if it were the entry.
+     */
+    private fun close(records: List<EditRecord>) {
         store.remove(records.map { it.id })
         records.forEach { r ->
             File(checkNotNull(r.pending).path).parentFile?.deleteRecursively()
             val copy = File(r.copyPath)
             revoker.revoke(copy)
-            if (deleteCopies) copy.delete()
+            copy.delete()
         }
     }
 

@@ -56,7 +56,10 @@ class EditsViewModel @Inject constructor(
             is EditsAction.Picked -> picked(action.archiveUri, action.pickedUri)
             EditsAction.CancelPick -> _state.update { it.copy(pick = null) }
             is EditsAction.SaveTo -> action.target?.let { target ->
-                run(action.archiveUri) { if (action.isFolder) saveAll(action.archiveUri, target) else saveOne(action.archiveUri, target) }
+                run(action.archiveUri) {
+                    val id = action.recordId
+                    if (action.isFolder || id == null) saveAll(action.archiveUri, target) else saveOne(action.archiveUri, id, target)
+                }
             }
             is EditsAction.ToggleShow -> _state.update { s ->
                 s.copy(expanded = if (action.archiveUri in s.expanded) s.expanded - action.archiveUri else s.expanded + action.archiveUri)

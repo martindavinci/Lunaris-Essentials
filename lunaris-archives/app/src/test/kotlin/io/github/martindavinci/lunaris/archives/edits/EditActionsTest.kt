@@ -120,8 +120,15 @@ class EditActionsTest {
     }
     @Test fun saveOne_writesTheLatestEdit_andClosesTheCase() = runBlocking<Unit> {
         val a = handOut("a.md"); edit(a, "A2"); watcher.scan(); edit(a, "A3")
-        assertThat(actions.saveOne(uri, "content://out/a.md")).isEqualTo(EditOutcome.Saved)
+        assertThat(actions.saveOne(uri, "id-a.md", "content://out/a.md")).isEqualTo(EditOutcome.Saved)
         assertThat(saved["content://out/a.md"]).isEqualTo("A3"); assertThat(store.all()).isEmpty()
+        assertThat(a.exists()).isFalse()   // never served again as if it were the entry
+    }
+    @Test fun saveOne_withASecondChange_savesTheOneAskedFor() = runBlocking<Unit> {
+        val a = handOut("a.md"); edit(a, "A2"); watcher.scan()
+        val b = handOut("b.md"); edit(b, "B2")
+        assertThat(actions.saveOne(uri, "id-a.md", "content://out/a.md")).isEqualTo(EditOutcome.Saved)
+        assertThat(saved["content://out/a.md"]).isEqualTo("A2"); assertThat(store.all().single().id).isEqualTo("id-b.md")
     }
     @Test fun saveAll_putsEveryChangedFileInTheFolder() = runBlocking<Unit> {
         val a = handOut("a.md"); val b = handOut("b.md"); edit(a, "A2"); edit(b, "B2"); watcher.scan()

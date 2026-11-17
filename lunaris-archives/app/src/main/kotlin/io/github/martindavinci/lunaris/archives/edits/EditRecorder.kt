@@ -44,6 +44,7 @@ class EditRecorder(private val store: EditStore, private val probe: ArchiveProbe
     override suspend fun record(archive: OpenArchive, entry: ArchiveEntry, copy: File): Boolean {
         val source = archive.source
         if (archive.parentId != null || source.fromCopy || archive.index.encryption == Encryption.HEADERS) return false
+        if (store.all().any { it.copyPath == copy.path }) return true   // handed out before: no probe, no hash of a big copy again
         val facts = probe.probe(source) ?: return false
         store.put(
             EditRecord(

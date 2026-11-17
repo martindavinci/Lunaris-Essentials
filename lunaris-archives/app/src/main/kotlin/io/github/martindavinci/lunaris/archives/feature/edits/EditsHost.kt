@@ -59,8 +59,9 @@ fun EditsHost(
     val context = LocalContext.current
     val onAction = viewModel::onAction
     var saving by rememberSaveable { mutableStateOf<String?>(null) }   // the archive whose files are being saved
+    var savingOne by rememberSaveable { mutableStateOf<String?>(null) }   // the record, when there is one file
     val saveOne = rememberLauncherForActivityResult(SaveAsContract()) { uri ->
-        saving?.let { onAction(EditsAction.SaveTo(it, uri?.toString(), isFolder = false)) }
+        saving?.let { onAction(EditsAction.SaveTo(it, uri?.toString(), isFolder = false, recordId = savingOne)) }
     }
     val saveAll = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
         saving?.let { onAction(EditsAction.SaveTo(it, uri?.toString(), isFolder = true)) }
@@ -117,6 +118,7 @@ fun EditsHost(
     return EditsCardsSlot { EditsCards(state, archiveUri, onAction) { archive ->
         saving = archive.archiveUri
         if (archive.entries.size == 1) {
+            savingOne = archive.entries.single().id
             val name = archive.entries.single().entryPath.substringAfterLast('/')
             saveOne.launchOr(SaveAsContract.Input(name, ANY_TYPE)) { context.sayNoPicker() }
         } else {

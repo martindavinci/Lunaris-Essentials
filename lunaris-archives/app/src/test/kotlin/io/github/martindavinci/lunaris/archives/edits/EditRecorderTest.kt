@@ -33,6 +33,11 @@ class EditRecorderTest {
         assertThat(r.size).isEqualTo(5); assertThat(r.sha256).isEqualTo(Fingerprint.sha256(copy)); assertThat(r.createdMillis).isEqualTo(42)
         assertThat(r.archiveKey).isEqualTo("0123456789abcdef")
     }
+    @Test fun secondOpen_doesNotProbeOrHashAgain() = runBlocking<Unit> {
+        recorder.record(archive(), entry(0, "docs/notes.md"), copy)
+        facts = null   // a probe now would fail the record
+        assertThat(recorder.record(archive(), entry(0, "docs/notes.md"), copy)).isTrue()
+    }
     @Test fun sevenZ_isRecorded_butNotUpdatable() = runBlocking<Unit> {
         assertThat(recorder.record(archive(ArchiveKind.SEVEN_Z), entry(0, "docs/notes.md"), copy)).isTrue()
         assertThat(store.all().single().updatable).isFalse()

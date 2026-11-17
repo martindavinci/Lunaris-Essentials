@@ -56,6 +56,14 @@ class EditWatcherTest {
         watcher.scan(now + MINUTE)
         assertThat(File(store.all().single().pending!!.path).readText()).isEqualTo("v3 after autosave")
     }
+    @Test fun savedAgainUnchanged_keepsTheSnapshotSize() = runBlocking<Unit> {
+        val copy = handedOut(); edit(copy, "v2 longer", now)
+        watcher.scan(now)
+        copy.setLastModified(now + MINUTE)   // saved again with the same bytes
+        watcher.scan(now + MINUTE)
+        val pending = store.all().single().pending!!
+        assertThat(pending.size).isEqualTo("v2 longer".length.toLong()); assertThat(pending.mtime).isEqualTo(now + MINUTE)
+    }
     @Test fun copyGone_withSnapshot_keepsTheEdit() = runBlocking<Unit> {
         val copy = handedOut(); edit(copy, "v2", now)
         watcher.scan(now)
