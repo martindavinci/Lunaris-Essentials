@@ -18,6 +18,7 @@ import io.github.martindavinci.lunaris.archives.session.OpenOutcome
 import io.github.martindavinci.lunaris.archives.session.PendingOpen
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -158,8 +159,10 @@ class BrowserViewModel @Inject constructor(
 
     private fun extractRows(files: Collection<Long>, folders: Collection<List<String>>) {
         val open = archive ?: return
-        extract(BrowserContent.indicesFor(open, files, folders))
         _state.update(BrowserContent::clearSelection)
+        viewModelScope.launch(start = CoroutineStart.UNDISPATCHED) {
+            extract(withContext(background) { BrowserContent.indicesFor(open, files, folders) })
+        }
     }
 
     /** Protected entries and no password yet: asked first (RAR4 has none to give: its own message comes later). */

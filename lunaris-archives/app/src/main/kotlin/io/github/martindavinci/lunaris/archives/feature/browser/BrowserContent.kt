@@ -55,9 +55,10 @@ internal object BrowserContent {
 
     /** Every entry of the rows: a file itself, a folder with everything under it. */
     fun indicesFor(archive: OpenArchive, files: Collection<Long>, folders: Collection<List<String>>): LongArray {
-        val under = archive.index.entries.filter { entry ->
+        val chosen = folders.toHashSet()
+        val under = if (chosen.isEmpty()) emptyList() else archive.index.entries.filter { entry ->
             val path = (entry.path as? SafePath.Result.Ok)?.components ?: return@filter false
-            folders.any { folder -> path.size >= folder.size && path.take(folder.size) == folder }
+            (0..path.size).any { depth -> path.subList(0, depth) in chosen }   // subList is a view: nothing is copied
         }.map { it.index }
         return (files + under).distinct().sorted().toLongArray()
     }
