@@ -38,7 +38,7 @@ class CreateRunner internal constructor(private val io: CreateIo, dispatcher: Co
             try {
                 val out = try {
                     io.openOutput(target)
-                } catch (_: IOException) {
+                } catch (_: Exception) {   // IOException, or the provider's own SecurityException / IllegalArgumentException
                     throw TargetGone()
                 }
                 ZipWriter(out, level, password).use { zip ->
@@ -48,6 +48,8 @@ class CreateRunner internal constructor(private val io: CreateIo, dispatcher: Co
                             io.openInput(file.uri)
                         } catch (e: IOException) {
                             throw SourceReadException(e)
+                        } catch (e: RuntimeException) {   // a share's permission that has ended, or the provider's own exception
+                            throw SourceReadException(IOException(e))
                         }
                         val before = written
                         zip.add(file.pathInZip, file.sizeBytes, file.modifiedMillis, input) { bytes ->
@@ -67,6 +69,8 @@ class CreateRunner internal constructor(private val io: CreateIo, dispatcher: Co
                 fail(target, CreateFailure.SOURCE_GONE)
             } catch (e: IOException) {
                 fail(target, if (FreeSpace.isNoSpace(e)) CreateFailure.NO_SPACE else CreateFailure.TARGET_GONE)
+            } catch (_: RuntimeException) {   // zip4j or a provider, somewhere nobody foresaw: a failed run, not a crash
+                fail(target, CreateFailure.TARGET_GONE)
             } finally {
                 password?.fill(WIPED)
             }

@@ -21,12 +21,14 @@ class CreateRunnerTest {
         var targetGone = false
         var noSpace = false
         var onRead: (() -> Unit)? = null
+        var outputFailure: RuntimeException? = null
         override fun openInput(uri: String): InputStream {
             onRead?.invoke()
             return sources[uri]?.inputStream() ?: throw IOException("gone")
         }
         override fun openOutput(uri: String): OutputStream {
             if (targetGone) throw IOException("target gone")
+            outputFailure?.let { throw it }
             return object : ByteArrayOutputStream() {
                 override fun write(b: ByteArray, off: Int, len: Int) {
                     if (noSpace) throw IOException("write failed: ENOSPC")
@@ -43,6 +45,16 @@ class CreateRunnerTest {
     private fun start(password: CharArray? = null, list: List<SourceFile> = files) =
         runner.start(list, "t:1", "Holiday.zip", CompressionLevel.NORMAL, password, skipped = listOf("Doc"))
 
+    @Test fun aSourceWhosePermissionEnded_isSourceGone_notACrash() = runTest(dispatcher) {
+        io.onRead = { throw SecurityException("Permission Denial: reading requires ACTION_OPEN_DOCUMENT") }
+        start(); advanceUntilIdle()
+        assertThat(runner.state.value).isEqualTo(CreateState.Failed(CreateFailure.SOURCE_GONE))
+    }
+    @Test fun aTargetThatRefusesTheMode_isTargetGone_notACrash() = runTest(dispatcher) {
+        io.outputFailure = IllegalArgumentException("Bad mode: wt")
+        start(); advanceUntilIdle()
+        assertThat(runner.state.value).isEqualTo(CreateState.Failed(CreateFailure.TARGET_GONE))
+    }
     @Test fun streamsEveryFile_andFinishesWithSizeAndLocation() = runTest(dispatcher) {
         start(); advanceUntilIdle()
         val done = runner.state.value as CreateState.Finished
