@@ -18,6 +18,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -53,7 +55,15 @@ class EditWatcher @Inject constructor(
     @Synchronized
     fun scanSoon() {
         if (soon?.isActive == true) return
-        soon = scope.launch { scan() }
+        soon = scope.launch {
+            try {
+                withContext(Dispatchers.IO) { scan() }
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (_: Exception) {   // a full disk: the copies are looked at again on the next return
+                Unit
+            }
+        }
     }
 
     /** One record looked at again; null when it is gone. */
@@ -65,7 +75,7 @@ class EditWatcher @Inject constructor(
 
     private fun look(record: EditRecord, now: Long): EditRecord? {
         val live = File(record.copyPath)
-        if (!live.isFile) return record.takeIf { it.pending != null }
+        if (!live.isFile) return record.takeIf { it.pending != null } ?: null.also { revoker.revoke(live) }
         val base = record.pending?.let { Triple(it.size, it.mtime, it.sha256) } ?: Triple(record.size, record.mtime, record.sha256)
         if (live.length() == base.first && live.lastModified() == base.second) {
             val stale = record.pending == null && now - record.createdMillis > Limits.TEMP_MAX_AGE_MILLIS

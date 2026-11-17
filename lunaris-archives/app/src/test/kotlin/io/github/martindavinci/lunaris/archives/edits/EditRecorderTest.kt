@@ -17,7 +17,7 @@ class EditRecorderTest {
     @get:Rule val temp = TemporaryFolder()
     private val store by lazy { EditStore(temp.newFolder("files")) }
     private var facts: ArchiveFacts? = ArchiveFacts(100, 5, "fp")
-    private val recorder by lazy { EditRecorder(store, { facts }) { 42 } }
+    private val recorder by lazy { EditRecorder(store, { facts }, { 42 }) }
     private val copy by lazy { temp.newFile("notes.md").apply { writeText("hello") } }
 
     private fun archive(kind: ArchiveKind = ArchiveKind.ZIP, parent: String? = null, fromCopy: Boolean = false, names: Encryption = Encryption.NONE) =
@@ -37,6 +37,11 @@ class EditRecorderTest {
         recorder.record(archive(), entry(0, "docs/notes.md"), copy)
         facts = null   // a probe now would fail the record
         assertThat(recorder.record(archive(), entry(0, "docs/notes.md"), copy)).isTrue()
+    }
+    @Test fun aCopyGoneBeforeItIsHashed_isNotWritable_andDoesNotThrow() = runBlocking<Unit> {
+        copy.delete()
+        assertThat(recorder.record(archive(), entry(0, "docs/notes.md"), copy)).isFalse()
+        assertThat(store.all()).isEmpty()
     }
     @Test fun sevenZ_isRecorded_butNotUpdatable() = runBlocking<Unit> {
         assertThat(recorder.record(archive(ArchiveKind.SEVEN_Z), entry(0, "docs/notes.md"), copy)).isTrue()

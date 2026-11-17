@@ -86,6 +86,20 @@ class EditActionsTest {
         assertThat(actions.update(uri, null)).isEqualTo(EditOutcome.Updated(uri))
         assertThat(content("a.md")).isEqualTo("newest"); assertThat(store.all()).isEmpty()
     }
+    @Test fun anUpdateFinishedBeforeTheAppDied_isSettledAtTheNextStart() = runBlocking<Unit> {
+        val a = handOut("a.md"); edit(a, "A2"); watcher.scan()
+        val id = store.all().single().id
+        ZipFile(zip).use { }   // the archive as the finished update left it
+        val facts = io.facts(uri)!!
+        actions.applyRecovery(RecoveryOutcome.Completed(uri, listOf(id), facts.size, facts.fingerprint))
+        assertThat(store.all()).isEmpty()
+    }
+    @Test fun anArchivePutBackAtStart_isUpdatableAgain() = runBlocking<Unit> {
+        val a = handOut("a.md"); edit(a, "A2"); watcher.scan()
+        zip.setLastModified(zip.lastModified() + 60_000)   // the restore wrote it again: same bytes, new date
+        actions.applyRecovery(RecoveryOutcome.Restored("a.zip", uri))
+        assertThat(actions.update(uri, null)).isEqualTo(EditOutcome.Updated(uri))
+    }
     @Test fun failedUpdate_refreshesTheRecords_soARetrySucceeds() = runBlocking<Unit> {
         val a = handOut("a.md"); edit(a, "A2"); watcher.scan()
         io.failAfterBytes = 50

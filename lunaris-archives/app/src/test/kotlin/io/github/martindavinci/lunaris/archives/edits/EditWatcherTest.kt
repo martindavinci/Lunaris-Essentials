@@ -72,9 +72,9 @@ class EditWatcherTest {
         assertThat(File(store.all().single().pending!!.path).readText()).isEqualTo("v2")
     }
     @Test fun copyGone_withoutChange_dropsTheRecord() = runBlocking<Unit> {
-        handedOut().delete()
+        val copy = handedOut().apply { delete() }
         watcher.scan(now)
-        assertThat(store.all()).isEmpty()
+        assertThat(store.all()).isEmpty(); assertThat(revoked).containsExactly(copy)
     }
     @Test fun oldUnchanged_isDropped_andRevoked() = runBlocking<Unit> {
         val copy = handedOut()

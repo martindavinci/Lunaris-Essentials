@@ -78,28 +78,36 @@ class ZipUpdater @Inject constructor(
         }
         currentCoroutineContext().ensureActive()
         val newPrint = Replace.fingerprint(zip)
+        // A right to write that would not survive a restart could not put the original back after one: refused.
+        val access = runCatching { io.keepAccess(uri) }.getOrDefault(Access.NONE)
+        if (access == Access.NONE) return UpdateResult.NotWritable.also { journal.done(id) }
+        val target = Target(id, uri, first.archiveName, records.map { it.id }, access)
         // From here on the original is touched: nothing may stop halfway, not even a cancel.
-        return withContext(NonCancellable) { replace(id, uri, first.archiveName, backup, backupPrint, zip, newPrint) }
+        return withContext(NonCancellable) { replace(target, backup, backupPrint, zip, newPrint) }
     }
 
-    private fun replace(id: String, uri: String, name: String, backup: File, backupPrint: String, zip: File, newPrint: String): UpdateResult {
-        val kept = runCatching { io.keepAccess(uri) }.getOrDefault(false)
-        try {
-            journal.begin(id, uri, name, backup, backup.length(), backupPrint, zip.length(), newPrint)
-            if (attempt { Replace.copy(zip, uri, io) }) {
-                journal.done(id)
-                return UpdateResult.Done(zip.length(), runCatching { io.facts(uri)?.mtime }.getOrNull(), newPrint)
-            }
-            if (attempt { Replace.copy(backup, uri, io) }) {
-                journal.done(id)
-                return UpdateResult.Failed
-            }
-            runCatching { journal.restoreFailed(id) }   // the journal stays "replacing" otherwise: recovery tries again
-            return UpdateResult.RestoreFailed(backup.path)
-        } finally {
-            if (kept) runCatching { io.releaseAccess(uri) }
+    private class Target(val id: String, val uri: String, val name: String, val recordIds: List<String>, val access: Access)
+
+    private fun replace(t: Target, backup: File, backupPrint: String, zip: File, newPrint: String): UpdateResult {
+        journal.begin(t.id, t.uri, t.name, backup, backup.length(), backupPrint, zip.length(), newPrint, t.recordIds, t.access)
+        val result = when {
+            attempt { Replace.copy(zip, t.uri, io) } -> UpdateResult.Done(zip.length(), runCatching { io.facts(t.uri)?.mtime }.getOrNull(), newPrint)
+            // The provider refused before writing anything: the original is still the backup, nothing to put back.
+            untouched(t.uri, backup, backupPrint) -> UpdateResult.Failed
+            attempt { Replace.copy(backup, t.uri, io) } -> UpdateResult.Failed
+            else -> null
         }
+        if (result == null) {
+            runCatching { journal.restoreFailed(t.id) }   // the right to write stays with the journal, for the user
+            return UpdateResult.RestoreFailed(backup.path)
+        }
+        journal.done(t.id)
+        runCatching { io.releaseAccess(t.uri, t.access) }
+        return result
     }
+
+    private fun untouched(uri: String, backup: File, backupPrint: String): Boolean =
+        runCatching { io.facts(uri) }.getOrNull()?.let { it.size == backup.length() && it.fingerprint == backupPrint } == true
 
     private inline fun attempt(action: () -> Boolean): Boolean = try {
         action()

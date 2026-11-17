@@ -90,6 +90,35 @@ class EditActions @Inject constructor(
     suspend fun ignore(archiveUri: String): EditOutcome =
         closing(archiveUri) {}.let { if (it == EditOutcome.Saved) EditOutcome.Ignored else it }
 
+    /**
+     * What the start-up recovery found, applied to the register: a finished update closes the edits it carried,
+     * an archive put back gets its new date. Holds the watcher's lock, like every decision.
+     */
+    suspend fun applyRecovery(outcome: RecoveryOutcome) = watcher.lock.withLock { withContext(Dispatchers.IO) { apply(outcome) } }
+
+    /**
+     * At start-up, before anything else touches the copies: archives left half written are put back, finished
+     * updates settled, then the copies looked at. One hold of the lock: no update can start in between.
+     */
+    suspend fun recoverAtStart(journal: UpdateJournal) = watcher.lock.withLock {
+        withContext(Dispatchers.IO) {
+            journal.recover(io).forEach(::apply)
+            watcher.scanLocked()
+        }
+    }
+
+    private fun apply(outcome: RecoveryOutcome) {
+        when (outcome) {
+            is RecoveryOutcome.Completed -> {
+                val written = store.all().filter { it.id in outcome.recordIds && it.pending != null }
+                val archiveUri = written.firstOrNull()?.archiveUri ?: outcome.archiveUri
+                settle(archiveUri, outcome.archiveUri, written, UpdateResult.Done(outcome.newSize, null, outcome.newFingerprint))
+            }
+            is RecoveryOutcome.Restored -> refresh(outcome.archiveUri)
+            is RecoveryOutcome.RestoreFailed -> Unit
+        }
+    }
+
     /** The picked document is this archive: same size and same fingerprint. */
     suspend fun matchesArchive(archiveUri: String, pickedUri: String): Boolean = withContext(Dispatchers.IO) {
         val record = store.all().firstOrNull { it.archiveUri == archiveUri } ?: return@withContext false
@@ -140,7 +169,8 @@ class EditActions @Inject constructor(
     private fun refresh(archiveUri: String) {
         val facts = io.facts(archiveUri) ?: return
         store.update { r ->
-            if (r.archiveUri == archiveUri && r.archiveSize == facts.size && r.archiveFingerprint == facts.fingerprint) r.copy(archiveMtime = facts.mtime) else r
+            val same = r.archiveUri == archiveUri && r.archiveSize == facts.size && r.archiveFingerprint == facts.fingerprint
+            if (same) r.copy(archiveMtime = facts.mtime) else r
         }
     }
 

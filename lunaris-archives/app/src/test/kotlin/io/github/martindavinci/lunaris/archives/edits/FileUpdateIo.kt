@@ -15,7 +15,8 @@ class FileUpdateIo : UpdateIo {
     var alwaysFail = false
     /** Called on the first write of a replace. */
     var onWrite: (() -> Unit)? = null
-    var kept = mutableListOf<String>()
+    var access = Access.TAKEN
+    val released = mutableListOf<String>()
 
     private fun file(uri: String) = File(uri.removePrefix("file:"))
 
@@ -28,9 +29,9 @@ class FileUpdateIo : UpdateIo {
 
     override fun canWrite(uri: String): Boolean = writable
 
-    override fun keepAccess(uri: String): Boolean = kept.add(uri)
+    override fun keepAccess(uri: String): Access = access
 
-    override fun releaseAccess(uri: String) { kept.remove(uri) }
+    override fun releaseAccess(uri: String, access: Access) { released += uri }
 
     override fun openForReplace(uri: String): ReplaceTarget {
         if (alwaysFail) throw IOException("provider gone")

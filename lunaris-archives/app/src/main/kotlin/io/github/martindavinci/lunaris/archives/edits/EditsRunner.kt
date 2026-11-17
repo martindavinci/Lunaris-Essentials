@@ -39,7 +39,7 @@ class EditsRunner @Inject constructor(private val actions: EditActions, @param:B
                 actions.decision()
             } catch (e: kotlinx.coroutines.CancellationException) {
                 throw e
-            } catch (_: RuntimeException) {
+            } catch (_: Exception) {   // a full disk or a provider: a failed decision, never a crash
                 EditOutcome.Failed
             }
             synchronized(this@EditsRunner) {
@@ -49,6 +49,22 @@ class EditsRunner @Inject constructor(private val actions: EditActions, @param:B
             }
         }
         return true
+    }
+
+    /**
+     * The start-up work (putting back an archive left half written, then the clean-ups) in this scope: a rotation
+     * of the first screen does not cut it short. Nothing it throws ends the app.
+     */
+    fun atStart(work: suspend () -> Unit) {
+        scope.launch {
+            try {
+                work()
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (_: Exception) {
+                Unit
+            }
+        }
     }
 
     fun resultShown() {

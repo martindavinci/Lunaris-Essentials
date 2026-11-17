@@ -28,14 +28,25 @@ class ContentUpdateIo @Inject constructor(private val resolver: ContentResolver)
         resolver.openFileDescriptor(Uri.parse(uri), READ_WRITE)?.use { true } ?: false
     }.getOrDefault(false)
 
-    override fun keepAccess(uri: String): Boolean {
+    override fun keepAccess(uri: String): Access {
         val parsed = Uri.parse(uri)
-        if (resolver.persistedUriPermissions.any { it.uri == parsed && it.isWritePermission }) return false
-        return runCatching { resolver.takePersistableUriPermission(parsed, FLAGS) }.isSuccess
+        val held = runCatching { resolver.persistedUriPermissions.filter { it.uri == parsed } }.getOrDefault(emptyList())
+        if (held.any { it.isWritePermission }) return Access.ALREADY
+        val taken = runCatching { resolver.takePersistableUriPermission(parsed, FLAGS) }.isSuccess
+        return when {
+            !taken -> Access.NONE
+            held.any { it.isReadPermission } -> Access.TAKEN_WRITE   // the recents keep their read: only the write goes back
+            else -> Access.TAKEN
+        }
     }
 
-    override fun releaseAccess(uri: String) {
-        runCatching { resolver.releasePersistableUriPermission(Uri.parse(uri), FLAGS) }
+    override fun releaseAccess(uri: String, access: Access) {
+        val flags = when (access) {
+            Access.TAKEN -> FLAGS
+            Access.TAKEN_WRITE -> Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            Access.ALREADY, Access.NONE -> return
+        }
+        runCatching { resolver.releasePersistableUriPermission(Uri.parse(uri), flags) }
     }
 
     override fun openForReplace(uri: String): ReplaceTarget {

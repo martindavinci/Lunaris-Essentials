@@ -38,9 +38,11 @@ sealed interface EditsMessage {
     data class RestoreFailed(val name: String) : EditsMessage
 
     companion object {
-        fun of(outcome: RecoveryOutcome): EditsMessage = when (outcome) {
+        /** Null for an update that had finished: nothing went wrong to tell. */
+        fun of(outcome: RecoveryOutcome): EditsMessage? = when (outcome) {
             is RecoveryOutcome.Restored -> Restored(outcome.name)
             is RecoveryOutcome.RestoreFailed -> RestoreFailed(outcome.name)
+            is RecoveryOutcome.Completed -> null
         }
 
         /** Null for outcomes that open a dialog instead (password, picking the archive) or need no words (ignore). */

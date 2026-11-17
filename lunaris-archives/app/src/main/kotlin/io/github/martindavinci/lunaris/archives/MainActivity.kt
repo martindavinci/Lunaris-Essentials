@@ -21,7 +21,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.martindavinci.lunaris.archives.edits.EditWatcher
-import io.github.martindavinci.lunaris.archives.edits.UpdateIo
+import io.github.martindavinci.lunaris.archives.edits.EditActions
+import io.github.martindavinci.lunaris.archives.edits.EditsRunner
 import io.github.martindavinci.lunaris.archives.edits.UpdateJournal
 import io.github.martindavinci.lunaris.archives.engine.EngineProcess
 import io.github.martindavinci.lunaris.archives.extract.ExtractStarter
@@ -38,13 +39,15 @@ import io.github.martindavinci.lunaris.archives.ui.theme.LunarisArchivesTheme
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @Inject lateinit var cacheJanitor: CacheJanitor
     @Inject lateinit var editWatcher: EditWatcher
     @Inject lateinit var updateJournal: UpdateJournal
-    @Inject lateinit var updateIo: UpdateIo
+    @Inject lateinit var editActions: EditActions
+    @Inject lateinit var editsRunner: EditsRunner
     @Inject lateinit var passwordMemory: PasswordMemory
     @Inject lateinit var session: ArchiveSession
     @Inject lateinit var extractMarker: PrefsExtractMarker
@@ -129,11 +132,15 @@ class MainActivity : ComponentActivity() {
     private fun sweepOncePerProcess() {
         if (swept || EngineProcess.isCurrent()) return
         swept = true
-        lifecycleScope.launch(Dispatchers.IO) {
-            updateJournal.recover(updateIo)   // an archive left half written by a closed app is put back first
-            editWatcher.scan()   // changes made while the app was away are seen before anything is swept
-            cacheJanitor.sweep(System.currentTimeMillis())
-            extractMarker.recover { token -> DocumentsContract.deleteDocument(contentResolver, Uri.parse(token)) }
+        val resolver = contentResolver
+        editsRunner.atStart {
+            // An archive left half written by a closed app is put back first; changes made while the app was away
+            // are seen before anything is swept.
+            editActions.recoverAtStart(updateJournal)
+            withContext(Dispatchers.IO) {
+                cacheJanitor.sweep(System.currentTimeMillis())
+                extractMarker.recover { token -> DocumentsContract.deleteDocument(resolver, Uri.parse(token)) }
+            }
         }
     }
 

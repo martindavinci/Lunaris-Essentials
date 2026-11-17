@@ -142,6 +142,18 @@ class ZipUpdaterTest {
         free = a.length() * 2 + 2 * 3 + Limits.CACHE_MARGIN_BYTES
         assertThat(update(a, record(a, "notes.md", "new"))).isEqualTo(UpdateResult.NoSpace)
     }
+    @Test fun aProviderThatRefusesTheReplace_leavesTheOriginal_andSaysNotUpdated() {
+        val a = zip(Item("notes.md", "old".toByteArray()))
+        val bytes = a.readBytes()
+        io.alwaysFail = true
+        assertThat(update(a, record(a, "notes.md", "new"))).isEqualTo(UpdateResult.Failed)
+        assertThat(a.readBytes()).isEqualTo(bytes); assertThat(File(files, "update").listFiles().orEmpty()).isEmpty()
+    }
+    @Test fun aWriteThatCannotLastARestart_isNotWritable() {
+        val a = zip(Item("notes.md", "old".toByteArray()))
+        io.access = Access.NONE
+        assertThat(update(a, record(a, "notes.md", "new"))).isEqualTo(UpdateResult.NotWritable)
+    }
     @Test fun notWritable_isReported() {
         val a = zip(Item("notes.md", "old".toByteArray()))
         io.writable = false

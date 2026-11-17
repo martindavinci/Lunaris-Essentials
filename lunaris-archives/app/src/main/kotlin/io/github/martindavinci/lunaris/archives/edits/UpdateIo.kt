@@ -14,14 +14,18 @@ interface UpdateIo {
     /** Opens for read and write without changing anything ("rw", never "w": some providers empty the file on "w"). */
     fun canWrite(uri: String): Boolean
 
-    /** Keeps the right to write across a restart, for the recovery; true when it was taken here (and is to be given back). */
-    fun keepAccess(uri: String): Boolean
+    /** Keeps the right to write across a restart, which the recovery after a closed app needs. */
+    fun keepAccess(uri: String): Access
 
-    fun releaseAccess(uri: String)
+    /** Gives back what [keepAccess] took, and only that. */
+    fun releaseAccess(uri: String, access: Access)
 
     /** The archive emptied and open for its new bytes. */
     fun openForReplace(uri: String): ReplaceTarget
 }
+
+/** What [UpdateIo.keepAccess] found or took. NONE: the right to write would not survive a restart. */
+enum class Access { ALREADY, TAKEN, TAKEN_WRITE, NONE }
 
 interface ReplaceTarget : Closeable {
     val stream: OutputStream

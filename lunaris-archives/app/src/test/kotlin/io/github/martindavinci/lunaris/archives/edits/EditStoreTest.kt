@@ -47,6 +47,12 @@ class EditStoreTest {
         store.remove(listOf("a"))
         assertThat(store.changes.value).isEmpty()
     }
+    @Test fun aDiskThatRefusesTheWrite_keepsTheRegisterInMemory_withoutThrowing() {
+        File(folder.root, "edits").writeText("a file where the folder should be")
+        store.put(record("a"))
+        store.update { it.copy(size = 7) }
+        assertThat(store.all().single().size).isEqualTo(7)
+    }
     @Test fun json_hasNoPasswordField() {
         store.put(record("a"))
         assertThat(File(folder.root, "edits/records.json").readText().lowercase()).doesNotContain("password")
