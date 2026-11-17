@@ -12,6 +12,8 @@ import io.github.martindavinci.lunaris.archives.engine.ListResult
 import io.github.martindavinci.lunaris.archives.safety.Limits
 import java.util.UUID
 import io.github.martindavinci.lunaris.archives.di.Background
+import java.io.FileNotFoundException
+import java.io.IOException
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -115,6 +117,10 @@ class ArchiveSession @Inject constructor(
             } catch (_: EngineAccessDeniedException) {
                 return OpenOutcome.NeedsCopy(pending.source.uri, pending.source.size)
             } catch (_: EngineStoppedException) {
+                return OpenOutcome.Problem(ArchiveProblem.READER_STOPPED)
+            } catch (_: FileNotFoundException) {
+                return OpenOutcome.Problem(ArchiveProblem.GONE)
+            } catch (_: IOException) {   // the pipe to the engine could not be made or read
                 return OpenOutcome.Problem(ArchiveProblem.READER_STOPPED)
             }
             when (result) {

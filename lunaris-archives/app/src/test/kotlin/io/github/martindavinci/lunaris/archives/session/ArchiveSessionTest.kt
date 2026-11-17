@@ -53,6 +53,14 @@ class ArchiveSessionTest {
         session.open(source())
         assertThat(engine.listCalls).hasSize(2)
     }
+    @Test fun anIoFailureOfTheEngine_isReaderStopped() = runTest {
+        engine.listFailures += java.io.IOException("pipe")
+        assertThat(session.open(source())).isEqualTo(OpenOutcome.Problem(ArchiveProblem.READER_STOPPED))
+    }
+    @Test fun anArchiveThatWentAwayWhileListing_isGone() = runTest {
+        engine.listFailures += java.io.FileNotFoundException("gone")
+        assertThat(session.open(source())).isEqualTo(OpenOutcome.Problem(ArchiveProblem.GONE))
+    }
     @Test fun plainZip_opensWithLibarchive() = runTest {
         answer(EngineRoute.LIBARCHIVE, listed)
         assertThat(opened(session.open(source())).route).isEqualTo(EngineRoute.LIBARCHIVE)

@@ -7,17 +7,21 @@ import io.github.martindavinci.lunaris.archives.session.NoSpaceException
 import io.github.martindavinci.lunaris.archives.session.OpenOutcome
 import io.github.martindavinci.lunaris.archives.session.OpenRequest
 import io.github.martindavinci.lunaris.archives.session.SourceResult
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /** Opens the archive of a browser route: the open one, or the request behind the id. */
 internal class BrowserLoader(
     private val session: ArchiveSession,
     private val sources: SourcesPort,
     private val state: MutableStateFlow<BrowserUiState>,
+    /** Where the head of a nested copy is read. */
+    private val background: CoroutineDispatcher,
 ) {
     private var request: OpenRequest? = null
     private var id: String? = null
@@ -35,7 +39,8 @@ internal class BrowserLoader(
         this.request = request
         return withReadingHint {
             request.nestedFile?.let { path ->
-                return@withReadingHint session.open(sources.fromFile(path, path.substringAfterLast('/'), request.uri), request.parentId, request.nestedEntry, id)
+                val nested = withContext(background) { sources.fromFile(path, path.substringAfterLast('/'), request.uri) }
+                return@withReadingHint session.open(nested, request.parentId, request.nestedEntry, id)
             }
             when (val result = sources.open(request.uri)) {
                 is SourceResult.Ready -> session.open(result.source, request.parentId, request.nestedEntry, id)

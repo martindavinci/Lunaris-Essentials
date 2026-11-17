@@ -43,7 +43,7 @@ class ArchiveSources @Inject constructor(
     suspend fun open(uri: Uri): SourceResult = withContext(Dispatchers.IO) {
         val (name, size, modified) = describe(uri)
         val fd = try {
-            resolver.openFileDescriptor(uri, READ) ?: return@withContext SourceResult.Gone
+            openRead(uri)
         } catch (_: SecurityException) {
             return@withContext SourceResult.Gone
         } catch (_: FileNotFoundException) {
@@ -52,9 +52,7 @@ class ArchiveSources @Inject constructor(
         val head = fd.use { if (seekable(it)) head(it) else null } ?: return@withContext SourceResult.NeedsCopy(uri, size)
         val key = ArchiveKeys.of(uri.toString(), size, modified)
         SourceResult.Ready(
-            ArchiveSource(uri.toString(), name, size, modified, key, ArchiveSignatures.detect(head, name)) {
-                resolver.openFileDescriptor(uri, READ) ?: throw FileNotFoundException(uri.toString())
-            },
+            ArchiveSource(uri.toString(), name, size, modified, key, ArchiveSignatures.detect(head, name)) { openRead(uri) },
         )
     }
 
@@ -71,15 +69,30 @@ class ArchiveSources @Inject constructor(
     }
 
     /** Copies a non-seekable archive into the cache, after checking there is room for it. */
-    suspend fun copyIn(uri: Uri, bytes: Long?, onProgress: (Long) -> Unit): ArchiveSource {
+    suspend fun copyIn(uri: Uri, bytes: Long?, onProgress: (Long) -> Unit): ArchiveSource = withContext(Dispatchers.IO) {
         val needed = (bytes ?: 0) + Limits.CACHE_MARGIN_BYTES
         val free = freeBytes.get()
         if (free < needed) throw NoSpaceException(needed, free)
-        val (name, size, modified) = describe(uri)
+        val (name, size, modified) = describe(uri)   // a slow provider: never on the main thread
         val key = ArchiveKeys.of(uri.toString(), size, modified)
-        val input = withContext(Dispatchers.IO) { resolver.openInputStream(uri) } ?: throw FileNotFoundException(uri.toString())
+        val input = try {
+            resolver.openInputStream(uri) ?: throw FileNotFoundException(uri.toString())
+        } catch (e: SecurityException) {
+            throw e
+        } catch (e: RuntimeException) {
+            throw FileNotFoundException("$uri: ${e.javaClass.simpleName}")
+        }
         val file = incoming.copy(input, incoming.target(key, name), onProgress)
-        return fromFile(file, name, uri.toString(), key, fromCopy = true)
+        fromFile(file, name, uri.toString(), key, fromCopy = true)
+    }
+
+    /** Any app can be behind a content: URI, and its provider may answer with an exception of its own: all mean "cannot be read". */
+    private fun openRead(uri: Uri): ParcelFileDescriptor = try {
+        resolver.openFileDescriptor(uri, READ) ?: throw FileNotFoundException(uri.toString())
+    } catch (e: SecurityException) {
+        throw e
+    } catch (e: RuntimeException) {
+        throw FileNotFoundException("$uri: ${e.javaClass.simpleName}")
     }
 
     private data class Description(val name: String, val size: Long?, val modified: Long?)

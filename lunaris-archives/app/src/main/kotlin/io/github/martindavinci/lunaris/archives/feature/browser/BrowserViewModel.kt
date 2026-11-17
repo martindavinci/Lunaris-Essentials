@@ -44,7 +44,7 @@ class BrowserViewModel @Inject constructor(
     private val _state = MutableStateFlow(BrowserUiState())
     val state: StateFlow<BrowserUiState> = _state.asStateFlow()
 
-    private val loader = BrowserLoader(session, sources, _state)
+    private val loader = BrowserLoader(session, sources, _state, background)
     private val opening = BrowserOpening(viewModelScope, session, opener, _state, ::relist)
     private val sharing = BrowserSharing(viewModelScope, session, opener, _state)
     private val folders = BrowserFolders(viewModelScope, background, _state) { path -> visitedPath.value = path }
