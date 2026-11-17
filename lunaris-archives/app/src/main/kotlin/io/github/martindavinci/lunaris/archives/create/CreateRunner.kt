@@ -41,7 +41,13 @@ class CreateRunner internal constructor(private val io: CreateIo, dispatcher: Co
                 } catch (_: Exception) {   // IOException, or the provider's own SecurityException / IllegalArgumentException
                     throw TargetGone()
                 }
-                ZipWriter(out, level, password).use { zip ->
+                val writer = try {
+                    ZipWriter(out, level, password)
+                } catch (e: Exception) {
+                    out.close()
+                    throw e
+                }
+                writer.use { zip ->
                     files.forEachIndexed { i, file ->
                         _state.value = CreateState.Running(i, files.size, file.pathInZip, written, total)
                         val input = try {

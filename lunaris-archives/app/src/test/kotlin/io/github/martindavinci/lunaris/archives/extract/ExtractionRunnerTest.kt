@@ -84,6 +84,24 @@ class ExtractionRunnerTest {
         runner.run(tree, list); advanceUntilIdle()
         assertThat(tree.folders).contains(listOf("empty"))
     }
+    @Test fun theSpaceProbe_isRemoved_evenWhenTheFreeSpaceCannotBeRead() = runTest(dispatcher) {
+        val tree = FakeTree()
+        val failing = object : SafTarget by tree {
+            override fun freeBytes(): Long? = throw IllegalStateException("statvfs")
+        }
+        script(file(0), file(1))
+        runner.start(ExtractJob(archive(), entries, null, failing)); advanceUntilIdle()
+        assertThat(tree.read(".lunaris-space-check")).isNull()
+    }
+    @Test fun aFileThatCannotBeOpened_isNotLeftEmpty() = runTest(dispatcher) {
+        val tree = FakeTree()
+        val failing = object : SafTarget by tree {
+            override fun open(created: Created): java.io.OutputStream = throw java.io.FileNotFoundException("refused")
+        }
+        script(file(0), file(1))
+        runner.start(ExtractJob(archive(), entries, null, failing)); advanceUntilIdle()
+        assertThat(tree.read("docs", "a.md")).isNull()
+    }
     @Test fun plainExtraction_writesEveryFileInFolders_andFinishes() = runTest(dispatcher) {
         val tree = FakeTree(); script(file(0), file(1))
         runner.run(tree); advanceUntilIdle()

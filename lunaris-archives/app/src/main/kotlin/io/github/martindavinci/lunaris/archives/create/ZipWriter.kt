@@ -24,10 +24,10 @@ class ZipWriter(out: OutputStream, private val level: CompressionLevel, password
 
     /** [onBytes] gets the bytes added so far for this file; it may throw to stop (cancellation). */
     fun add(path: String, sizeBytes: Long?, modifiedMillis: Long?, input: InputStream, onBytes: (Long) -> Unit) {
-        zip.putNextEntry(parameters(path, sizeBytes, modifiedMillis))
-        val buffer = ByteArray(Limits.WIRE_CHUNK_BYTES)
-        var total = 0L
         input.use { source ->
+            zip.putNextEntry(parameters(path, sizeBytes, modifiedMillis))   // inside use: a refused header still closes the input
+            val buffer = ByteArray(Limits.WIRE_CHUNK_BYTES)
+            var total = 0L
             while (true) {
                 val n = try {
                     source.read(buffer)

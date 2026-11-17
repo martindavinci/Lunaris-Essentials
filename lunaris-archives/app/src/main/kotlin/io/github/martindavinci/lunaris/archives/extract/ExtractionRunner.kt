@@ -159,8 +159,11 @@ class ExtractionRunner internal constructor(
     private fun enoughSpace(target: SafTarget, resolved: List<ResolvedFile>, declared: Long): Boolean {
         if (resolved.isEmpty()) return true
         val probe = target.createFile(target.ensureFolder(emptyList()), PROBE_NAME)
-        val free = target.freeBytes()
-        target.delete(probe)
+        val free = try {
+            target.freeBytes()
+        } finally {
+            target.delete(probe)   // never left in the user's folder
+        }
         if (free == null || free >= declared) return true
         _state.value = ExtractionState.Failed(ExtractFailure.NO_SPACE, neededBytes = declared, freeBytes = free)
         return false

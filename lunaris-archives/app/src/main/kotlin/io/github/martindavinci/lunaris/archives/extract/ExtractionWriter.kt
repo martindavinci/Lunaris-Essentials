@@ -75,7 +75,12 @@ internal class ExtractionWriter(
         val existing = if (file.replace) target.replace(folder, file.targetName) else null
         val created = target.createFile(folder, file.targetName)
         marker.set(created.token)
-        val stream = target.open(created)
+        val stream = try {
+            target.open(created)
+        } catch (e: Exception) {
+            target.delete(created)   // not left behind empty
+            throw e
+        }
         guard.onEntryStart()
         open = Open(file, created, existing, stream, limitFor(file.file.entry.size))
     }
