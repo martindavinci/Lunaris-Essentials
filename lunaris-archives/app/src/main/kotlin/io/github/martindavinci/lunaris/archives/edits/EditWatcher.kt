@@ -47,8 +47,16 @@ class EditWatcher @Inject constructor(
 
     /** For a caller that already holds [lock]. */
     fun scanLocked(now: Long = System.currentTimeMillis()) {
-        store.update { look(it, now) }
+        apply(store.all().associate { it.id to look(it, now) })
         dropOrphans()
+    }
+
+    /**
+     * The copies are read and hashed outside the register's own lock (a big file takes seconds); only the results
+     * are written, by id, so a record added meanwhile is kept.
+     */
+    private fun apply(looked: Map<String, EditRecord?>) {
+        store.update { r -> if (looked.containsKey(r.id)) looked[r.id] else r }
     }
 
     /** A scan in the background, at most one at a time (each return to the app asks for one). */
@@ -68,8 +76,9 @@ class EditWatcher @Inject constructor(
 
     /** One record looked at again; null when it is gone. */
     suspend fun check(record: EditRecord, now: Long = System.currentTimeMillis()): EditRecord? = lock.withLock {
-        var result: EditRecord? = null
-        store.update { if (it.id == record.id) look(it, now).also { looked -> result = looked } else it }
+        val current = store.all().firstOrNull { it.id == record.id } ?: return@withLock null
+        val result = look(current, now)
+        apply(mapOf(current.id to result))
         result
     }
 

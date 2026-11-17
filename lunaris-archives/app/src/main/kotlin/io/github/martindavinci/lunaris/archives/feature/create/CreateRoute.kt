@@ -48,7 +48,8 @@ fun CreateRoute(onClose: () -> Unit, onOpenArchive: (String) -> Unit, viewModel:
     LaunchedEffect(state.state) {
         val failed = state.state as? CreateState.Failed ?: return@LaunchedEffect
         viewModel.onAction(CreateAction.FailureShown)
-        snackbar.showSnackbar(context.getString(failureText(failed.reason)))
+        // Shown in the screen's scope: marking it shown changes this effect's key, which would cancel the snackbar.
+        scope.launch { snackbar.showSnackbar(context.getString(failureText(failed.reason))) }
     }
 
     CreateScreen(
@@ -75,6 +76,7 @@ private fun failureText(reason: CreateFailure): Int = when (reason) {
     CreateFailure.NO_SPACE -> R.string.create_failed_space
     CreateFailure.SOURCE_GONE -> R.string.create_failed_source
     CreateFailure.TARGET_GONE -> R.string.create_failed_target
+    CreateFailure.NO_MEMORY -> R.string.create_failed_memory
 }
 
 private fun Context.shareArchive(uri: String, mime: String) {

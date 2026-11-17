@@ -53,7 +53,8 @@ fun SettingsRoute(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMod
     LaunchedEffect(state.notice) {
         if (state.notice != SettingsNotice.Cleared) return@LaunchedEffect
         viewModel.onAction(SettingsAction.NoticeShown)
-        snackbar.showSnackbar(context.getString(R.string.settings_cleared))
+        // Shown in the screen's scope: marking it shown changes this effect's key, which would cancel the snackbar.
+        scope.launch { snackbar.showSnackbar(context.getString(R.string.settings_cleared)) }
     }
 
     Box(Modifier.fillMaxSize().systemBarsPadding()) {

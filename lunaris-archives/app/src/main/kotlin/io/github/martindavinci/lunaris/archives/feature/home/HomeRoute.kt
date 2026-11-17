@@ -55,13 +55,16 @@ fun HomeRoute(
     LaunchedEffect(state.notice) {
         val notice = state.notice ?: return@LaunchedEffect
         viewModel.onAction(HomeAction.NoticeShown)
-        if (notice is HomeNotice.Removed) {
-            val result = snackbar.showSnackbar(
-                context.getString(R.string.home_removed), context.getString(R.string.home_undo), duration = SnackbarDuration.Long,
-            )
-            if (result == SnackbarResult.ActionPerformed) viewModel.onAction(HomeAction.UndoRemove)
-        } else {
-            snackbar.showSnackbar(context.getString(noticeText(notice)))
+        // Shown in the screen's scope: marking it shown changes this effect's key, which would cancel the snackbar.
+        scope.launch {
+            if (notice is HomeNotice.Removed) {
+                val result = snackbar.showSnackbar(
+                    context.getString(R.string.home_removed), context.getString(R.string.home_undo), duration = SnackbarDuration.Long,
+                )
+                if (result == SnackbarResult.ActionPerformed) viewModel.onAction(HomeAction.UndoRemove)
+            } else {
+                snackbar.showSnackbar(context.getString(noticeText(notice)))
+            }
         }
     }
 

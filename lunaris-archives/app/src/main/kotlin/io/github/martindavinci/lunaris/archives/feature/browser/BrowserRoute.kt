@@ -5,6 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import kotlinx.coroutines.launch
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -24,6 +26,7 @@ fun BrowserRoute(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val snackbar = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
     val onAction = viewModel::onAction
 
     LaunchedEffect(state.exit) { if (state.exit) onExit() }
@@ -40,7 +43,8 @@ fun BrowserRoute(
         val notice = state.notice ?: return@LaunchedEffect
         val (text, argument) = notice.message()
         onAction(BrowserAction.NoticeShown)
-        snackbar.showSnackbar(if (argument == null) context.getString(text) else context.getString(text, argument))
+        // Shown in the screen's scope: marking it shown changes this effect's key, which would cancel the snackbar.
+        scope.launch { snackbar.showSnackbar(if (argument == null) context.getString(text) else context.getString(text, argument)) }
     }
 
     // No archive yet: no URI matches, so no card shows before the listing.

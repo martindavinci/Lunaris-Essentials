@@ -81,6 +81,15 @@ class EditWatcherTest {
         watcher.scan(now + Limits.TEMP_MAX_AGE_MILLIS + HOUR)
         assertThat(store.all()).isEmpty(); assertThat(revoked).containsExactly(copy)
     }
+    @Test fun aCopyHandedOutDuringAScan_isKept() = runBlocking<Unit> {
+        handedOut(id = "old")
+        var added = false
+        val watching = EditWatcher(store, files, {
+            if (!added) { added = true; handedOut(id = "new") }   // another tap records a copy while the scan runs
+        }, Dispatchers.Unconfined)
+        watching.scan(now + Limits.TEMP_MAX_AGE_MILLIS + HOUR)   // drops "old", and revokes it
+        assertThat(store.all().map { it.id }).containsExactly("new")
+    }
     @Test fun protectedFiles_areTheLiveCopies() = runBlocking<Unit> {
         val a = handedOut(id = "a"); val b = handedOut(id = "b")
         assertThat(watcher.files()).containsExactly(a, b)

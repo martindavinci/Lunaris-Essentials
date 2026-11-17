@@ -7,7 +7,7 @@ sealed interface CreateState {
     data class Failed(val reason: CreateFailure) : CreateState
 }
 
-enum class CreateFailure { NO_SPACE, SOURCE_GONE, TARGET_GONE }
+enum class CreateFailure { NO_SPACE, SOURCE_GONE, TARGET_GONE, NO_MEMORY }
 
 /** Reading and writing the documents of a creation (ContentResolver on the device). */
 interface CreateIo {

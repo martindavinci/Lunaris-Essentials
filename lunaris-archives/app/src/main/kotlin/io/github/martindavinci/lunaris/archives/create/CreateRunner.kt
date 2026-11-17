@@ -44,7 +44,7 @@ class CreateRunner internal constructor(private val io: CreateIo, private val wr
                 val writer = try {
                     writers.open(format, level, password.takeIf { format.takesPassword }, out, total) { copied, all ->
                         ensureActive()
-                        val done = if (all > 0) total * copied / all else total
+                        val done = finishing(total, copied, all)
                         _state.value = CreateState.Running(files.size, files.size, name, done, total)
                     }
                 } catch (e: Exception) {
@@ -71,6 +71,8 @@ class CreateRunner internal constructor(private val io: CreateIo, private val wr
                 fail(target, if (FreeSpace.isNoSpace(e)) CreateFailure.NO_SPACE else CreateFailure.TARGET_GONE)
             } catch (_: RuntimeException) {   // zip4j or a provider, somewhere nobody foresaw: a failed run, not a crash
                 fail(target, CreateFailure.TARGET_GONE)
+            } catch (_: OutOfMemoryError) {   // an LZMA2 dictionary on a small heap: the half-written file goes
+                fail(target, CreateFailure.NO_MEMORY)
             } finally {
                 password?.fill(WIPED)
             }
@@ -118,5 +120,11 @@ class CreateRunner internal constructor(private val io: CreateIo, private val wr
 
     private class TargetGone : IOException("target gone")
 
-    private companion object { val WIPED = Char(0) }
+    companion object {
+        private val WIPED = Char(0)
+
+        /** The bytes to show as done while a 7z is copied out: in doubles, a 5 GB archive overflows a Long product. */
+        internal fun finishing(total: Long, copied: Long, all: Long): Long =
+            if (all > 0) (total.toDouble() * copied / all).toLong() else total
+    }
 }

@@ -74,6 +74,16 @@ class CreateRunnerTest {
         start(format = ArchiveFormat.SEVEN_Z); advanceUntilIdle()
         assertThat(io.targets).isEmpty(); assertThat(temp.root.walk().filter { it.isFile }.toList()).isEmpty()
     }
+    @Test fun aWriterOutOfMemory_failsWithNoMemory_andDeletesTheTarget() = runTest(dispatcher) {
+        val starved = CreateRunner(io, { _, _, _, _, _, _ -> throw OutOfMemoryError("LZMA2 dictionary") }, dispatcher)
+        starved.start(files, "t:1", "Holiday.7z", ArchiveFormat.SEVEN_Z, CompressionLevel.MAXIMUM, null); advanceUntilIdle()
+        assertThat(starved.state.value).isEqualTo(CreateState.Failed(CreateFailure.NO_MEMORY)); assertThat(io.targets).isEmpty()
+    }
+    @Test fun finishingProgress_ofAHugeArchive_doesNotOverflow() {
+        val total = 5L * 1024 * 1024 * 1024
+        assertThat(CreateRunner.finishing(total, copied = total / 2, all = total)).isEqualTo(total / 2)
+        assertThat(CreateRunner.finishing(total, copied = 0, all = 0)).isEqualTo(total)
+    }
     @Test fun passwordIsIgnored_forTar() = runTest(dispatcher) {
         val password = "Secret-2026".toCharArray()
         start(password, format = ArchiveFormat.TAR); advanceUntilIdle()
