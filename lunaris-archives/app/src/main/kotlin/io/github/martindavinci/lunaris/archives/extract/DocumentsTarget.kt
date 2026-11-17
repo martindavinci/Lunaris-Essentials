@@ -100,6 +100,8 @@ class DocumentsTarget(private val resolver: ContentResolver, private val tree: U
             null
         } catch (_: FileNotFoundException) {
             null
+        } catch (_: RuntimeException) {
+            null   // "cannot be known" must not end the run
         }
     }
 

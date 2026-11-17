@@ -57,9 +57,11 @@ class ExtractionRunner internal constructor(
                 existing = folders.mapNotNull { folder -> job.target.children(folder)?.let { folder to it } }.toMap()
                 val conflicts = ConflictPlan.conflicts(planned, existing)
                 if (conflicts.isEmpty()) run(emptyMap()) else _state.value = ExtractionState.Conflicts(conflicts, current = 0)
-            } catch (_: FolderGoneException) {
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {   // FolderGoneException, or a provider's own exception while the folders are read
                 job.password?.fill(WIPED)
-                _state.value = ExtractionState.Failed(ExtractFailure.FOLDER_GONE)
+                _state.value = ExtractionState.Failed(if (FreeSpace.isNoSpace(e)) ExtractFailure.RAN_OUT_OF_SPACE else ExtractFailure.FOLDER_GONE)
             }
         }
     }
@@ -116,6 +118,11 @@ class ExtractionRunner internal constructor(
                 writer?.abandon()
                 _state.value = ExtractionState.Failed(ExtractFailure.READER_STOPPED)
             } catch (e: IOException) {
+                writer?.abandon()
+                _state.value = ExtractionState.Failed(if (FreeSpace.isNoSpace(e)) ExtractFailure.RAN_OUT_OF_SPACE else ExtractFailure.FOLDER_GONE)
+            } catch (e: RuntimeException) {
+                // DocumentsContract passes a provider's own exceptions on (IllegalStateException "Failed to touch …",
+                // UnsupportedOperationException, NullPointerException): a failed run, never a crash.
                 writer?.abandon()
                 _state.value = ExtractionState.Failed(if (FreeSpace.isNoSpace(e)) ExtractFailure.RAN_OUT_OF_SPACE else ExtractFailure.FOLDER_GONE)
             } finally {

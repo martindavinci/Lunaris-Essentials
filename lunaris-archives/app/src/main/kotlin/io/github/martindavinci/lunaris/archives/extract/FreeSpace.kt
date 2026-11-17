@@ -5,9 +5,10 @@ import android.system.OsConstants
 
 /** Tells a full disk from other write errors. */
 object FreeSpace {
-    private const val NO_SPACE_MARK = "ENOSPC"
+    // "ENOSPC" from Os and the streams; the plain text when a provider passes its IOException on as a message.
+    private val NO_SPACE_MARKS = listOf("ENOSPC", "No space left")
 
     fun isNoSpace(e: Throwable): Boolean = generateSequence(e) { it.cause }.any { cause ->
-        cause.message?.contains(NO_SPACE_MARK) == true || (cause is ErrnoException && cause.errno == OsConstants.ENOSPC)
+        NO_SPACE_MARKS.any { cause.message?.contains(it) == true } || (cause is ErrnoException && cause.errno == OsConstants.ENOSPC)
     }
 }

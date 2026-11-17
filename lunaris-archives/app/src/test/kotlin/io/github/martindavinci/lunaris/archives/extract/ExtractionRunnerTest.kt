@@ -49,6 +49,22 @@ class ExtractionRunnerTest {
         start(ExtractJob(archive(list), list, password?.toCharArray(), tree))
     private val finished get() = runner.state.value as ExtractionState.Finished
 
+    @Test fun aProviderRuntimeFailure_endsTheRun_withoutACrash() = runTest(dispatcher) {
+        val tree = object : SafTarget by FakeTree() {
+            override fun createFile(folderToken: String, name: String): Created =
+                throw IllegalStateException("Failed to touch /storage/emulated/0/x: java.io.IOException: No space left on device")
+        }
+        script(file(0), file(1))
+        runner.start(ExtractJob(archive(), entries, null, tree)); advanceUntilIdle()
+        assertThat((runner.state.value as ExtractionState.Failed).reason).isEqualTo(ExtractFailure.RAN_OUT_OF_SPACE)
+    }
+    @Test fun aProviderRuntimeFailureWhilePlanning_isFolderGone() = runTest(dispatcher) {
+        val tree = object : SafTarget by FakeTree() {
+            override fun children(folder: List<String>): ExistingNames? = throw UnsupportedOperationException("no listing")
+        }
+        runner.start(ExtractJob(archive(), entries, null, tree)); advanceUntilIdle()
+        assertThat(runner.state.value).isEqualTo(ExtractionState.Failed(ExtractFailure.FOLDER_GONE))
+    }
     @Test fun plainExtraction_writesEveryFileInFolders_andFinishes() = runTest(dispatcher) {
         val tree = FakeTree(); script(file(0), file(1))
         runner.run(tree); advanceUntilIdle()
