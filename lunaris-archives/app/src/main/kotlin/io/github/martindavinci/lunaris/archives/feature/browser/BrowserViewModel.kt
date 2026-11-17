@@ -103,6 +103,7 @@ class BrowserViewModel @Inject constructor(
             is BrowserAction.SetSort -> setSort(action.order)
             is BrowserAction.LaunchHandled -> opening.launchHandled(action.ok)
             BrowserAction.NoticeShown -> _state.update { it.copy(notice = null) }
+            BrowserAction.Reload -> relist(quiet = true)
             else -> Unit
         }
     }
@@ -125,7 +126,7 @@ class BrowserViewModel @Inject constructor(
         val header = withContext(background) { BrowserContent.header(opened, tree) }   // passes over 200 000 entries
         _state.update { state ->
             state.copy(
-                title = opened.source.name, badge = opened.index.formatLabel, header = header,
+                title = opened.source.name, badge = opened.index.formatLabel, header = header, archiveUri = opened.source.uri,
                 loading = LoadState.Ready, hiddenUnsafe = tree.hiddenUnsafe, capped = opened.index.cappedAtLimit,
                 partial = opened.index.partial, problem = null, password = null,
             )
@@ -151,10 +152,10 @@ class BrowserViewModel @Inject constructor(
     }
 
     /** The archive is not the one that was listed any more: list it again and say so. */
-    private fun relist() {
+    private fun relist(quiet: Boolean = false) {
         archive?.let { session.forgetIndex(it.source); session.close(it.id) }
         archive = null
-        _state.update { it.copy(notice = BrowserNotice.Changed, loading = LoadState.Reading) }
+        _state.update { it.copy(notice = if (quiet) it.notice else BrowserNotice.Changed, loading = LoadState.Reading) }
         viewModelScope.launch { apply(loader.load(archiveId)) }
     }
 

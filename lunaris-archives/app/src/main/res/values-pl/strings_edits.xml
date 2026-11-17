@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="edits_changed_one">Zmieniono %1$s</string>
+    <string name="edits_in_archive">w %1$s</string>
+    <string name="edits_cannot_update">Nie można zaktualizować %1$s.</string>
+    <string name="edits_update">Zaktualizuj w ZIP</string>
+    <string name="edits_save_copy">Zapisz kopię</string>
+    <string name="edits_ignore">Ignoruj</string>
+    <string name="edits_show">Pokaż</string>
+    <string name="edits_hide">Ukryj</string>
+    <string name="edits_ignore_title">Odrzucić zmiany?</string>
+    <string name="edits_discard">Odrzuć</string>
+    <string name="edits_working">Aktualizowanie %1$s…</string>
+    <string name="edits_updated">Zaktualizowano %1$s</string>
+    <string name="edits_not_updated">%1$s nie zostało zmienione. Twoja zmiana jest zachowana.</string>
+    <string name="edits_archive_changed">%1$s zmieniło się od otwarcia. Zamiast tego zapisz kopię.</string>
+    <string name="edits_no_space">Za mało miejsca, aby zaktualizować archiwum.</string>
+    <string name="edits_choose_title">Wybierz archiwum ponownie</string>
+    <string name="edits_choose_body">Wybierz %1$s, aby Lunaris mógł je zaktualizować.</string>
+    <string name="edits_choose">Wybierz</string>
+    <string name="edits_different_file">To inny plik. Nic nie zostało zmienione.</string>
+    <string name="edits_saved">Zapisano</string>
+    <string name="edits_save_failed">Nie udało się zapisać kopii.</string>
+    <string name="edits_restored">%1$s było aktualizowane, gdy aplikacja się zamknęła. Przywrócono je do poprzedniego stanu.</string>
+    <string name="edits_restore_failed">Nie udało się jeszcze przywrócić %1$s. Lunaris spróbuje ponownie przy następnym uruchomieniu.</string>
+    <plurals name="edits_changed_many">
+        <item quantity="one">Zmieniono %d plik</item>
+        <item quantity="few">Zmieniono %d pliki</item>
+        <item quantity="many">Zmieniono %d plików</item>
+        <item quantity="other">Zmieniono %d pliku</item>
+    </plurals>
+    <plurals name="edits_ignore_body">
+        <item quantity="one">Zmiany w %d pliku zostaną utracone.</item>
+        <item quantity="few">Zmiany w %d plikach zostaną utracone.</item>
+        <item quantity="many">Zmiany w %d plikach zostaną utracone.</item>
+        <item quantity="other">Zmiany w %d pliku zostaną utracone.</item>
+    </plurals>
+</resources>

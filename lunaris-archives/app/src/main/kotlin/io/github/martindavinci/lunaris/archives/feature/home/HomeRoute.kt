@@ -1,5 +1,6 @@
 package io.github.martindavinci.lunaris.archives.feature.home
 
+import io.github.martindavinci.lunaris.archives.feature.edits.EditsHost
 import io.github.martindavinci.lunaris.archives.ui.launchOr
 import android.content.Context
 import android.content.Intent
@@ -64,6 +65,7 @@ fun HomeRoute(
         }
     }
 
+    val edits = EditsHost(null, snackbar)
     HomeScreen(
         state = state,
         onAction = { action ->
@@ -76,6 +78,7 @@ fun HomeRoute(
         onCreate = onCreate,
         onSettings = onSettings,
         snackbar = snackbar,
+        cards = { edits.Cards() },
     )
 }
 

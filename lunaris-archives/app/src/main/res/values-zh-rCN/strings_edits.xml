@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="edits_changed_one">%1$s 已更改</string>
+    <string name="edits_in_archive">位于 %1$s</string>
+    <string name="edits_cannot_update">%1$s 无法更新。</string>
+    <string name="edits_update">更新到 ZIP</string>
+    <string name="edits_save_copy">保存副本</string>
+    <string name="edits_ignore">忽略</string>
+    <string name="edits_show">显示</string>
+    <string name="edits_hide">隐藏</string>
+    <string name="edits_ignore_title">要放弃更改吗？</string>
+    <string name="edits_discard">放弃</string>
+    <string name="edits_working">正在更新 %1$s…</string>
+    <string name="edits_updated">%1$s 已更新</string>
+    <string name="edits_not_updated">%1$s 未更改。你的编辑已保留。</string>
+    <string name="edits_archive_changed">%1$s 在打开后已发生变化。请改为保存副本。</string>
+    <string name="edits_no_space">空间不足，无法更新压缩包。</string>
+    <string name="edits_choose_title">再次选择压缩包</string>
+    <string name="edits_choose_body">选择 %1$s，以便 Lunaris 更新它。</string>
+    <string name="edits_choose">选择</string>
+    <string name="edits_different_file">这是另一个文件。没有任何更改。</string>
+    <string name="edits_saved">已保存</string>
+    <string name="edits_save_failed">无法保存副本。</string>
+    <string name="edits_restored">应用关闭时 %1$s 正在更新。已恢复原样。</string>
+    <string name="edits_restore_failed">暂时无法恢复 %1$s。Lunaris 将在下次启动时重试。</string>
+    <plurals name="edits_changed_many">
+        <item quantity="other">%d 个文件已更改</item>
+    </plurals>
+    <plurals name="edits_ignore_body">
+        <item quantity="other">%d 个文件的更改将丢失。</item>
+    </plurals>
+</resources>

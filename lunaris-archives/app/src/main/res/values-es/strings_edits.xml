@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="edits_changed_one">%1$s se ha modificado</string>
+    <string name="edits_in_archive">en %1$s</string>
+    <string name="edits_cannot_update">%1$s no se puede actualizar.</string>
+    <string name="edits_update">Actualizar en el ZIP</string>
+    <string name="edits_save_copy">Guardar una copia</string>
+    <string name="edits_ignore">Ignorar</string>
+    <string name="edits_show">Mostrar</string>
+    <string name="edits_hide">Ocultar</string>
+    <string name="edits_ignore_title">¿Descartar los cambios?</string>
+    <string name="edits_discard">Descartar</string>
+    <string name="edits_working">Actualizando %1$s…</string>
+    <string name="edits_updated">%1$s actualizado</string>
+    <string name="edits_not_updated">%1$s no se ha modificado. Tu cambio se conserva.</string>
+    <string name="edits_archive_changed">%1$s ha cambiado desde que lo abriste. Guarda una copia.</string>
+    <string name="edits_no_space">No hay espacio suficiente para actualizar el archivo comprimido.</string>
+    <string name="edits_choose_title">Elige de nuevo el archivo comprimido</string>
+    <string name="edits_choose_body">Elige %1$s para que Lunaris pueda actualizarlo.</string>
+    <string name="edits_choose">Elegir</string>
+    <string name="edits_different_file">Es otro archivo. No se ha cambiado nada.</string>
+    <string name="edits_saved">Guardado</string>
+    <string name="edits_save_failed">No se ha podido guardar la copia.</string>
+    <string name="edits_restored">%1$s se estaba actualizando cuando se cerró la app. Se ha dejado como estaba.</string>
+    <string name="edits_restore_failed">Aún no se ha podido restaurar %1$s. Lunaris lo intentará de nuevo al iniciarse.</string>
+    <plurals name="edits_changed_many">
+        <item quantity="one">Se ha modificado %d archivo</item>
+        <item quantity="other">Se han modificado %d archivos</item>
+    </plurals>
+    <plurals name="edits_ignore_body">
+        <item quantity="one">Se perderán los cambios en %d archivo.</item>
+        <item quantity="other">Se perderán los cambios en %d archivos.</item>
+    </plurals>
+</resources>

@@ -51,7 +51,12 @@ private val OpeningMargin = 12.dp
 
 /** Stateless browser (frames 03, 04, 06, 07, 08, 09 and the undrawn states). Sheets are shown by the route. */
 @Composable
-internal fun BrowserScreen(state: BrowserUiState, onAction: (BrowserAction) -> Unit, snackbar: SnackbarHostState = remember { SnackbarHostState() }) {
+internal fun BrowserScreen(
+    state: BrowserUiState,
+    onAction: (BrowserAction) -> Unit,
+    snackbar: SnackbarHostState = remember { SnackbarHostState() },
+    cards: @Composable () -> Unit = {},
+) {
     var fabExpanded by remember { mutableStateOf(true) }
     val inFolder = state.path.isNotEmpty() && state.problem == null
     BackHandler(enabled = state.selecting || state.query != null || inFolder) {
@@ -65,6 +70,7 @@ internal fun BrowserScreen(state: BrowserUiState, onAction: (BrowserAction) -> U
                 problem != null -> BrowserProblem(problem, state, onAction)
                 state.query != null -> SearchResults(state, onAction)
                 else -> {
+                    cards()
                     Breadcrumb(state.crumbs, onSegment = { onAction(BrowserAction.GoToCrumb(it)) })
                     Folder(state, onAction, onScrollingUp = { fabExpanded = it })
                 }

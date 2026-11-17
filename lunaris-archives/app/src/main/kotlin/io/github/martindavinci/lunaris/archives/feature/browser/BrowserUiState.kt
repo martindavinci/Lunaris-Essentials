@@ -17,6 +17,8 @@ data class BrowserUiState(
     val title: String = "",
     val badge: String = "",
     val header: ArchiveHeader? = null,
+    /** The URI of the archive shown: its changed files get a banner here. */
+    val archiveUri: String? = null,
     val loading: LoadState = LoadState.Reading,
     val path: List<String> = emptyList(),
     val crumbs: List<CrumbSegment> = emptyList(),
@@ -99,6 +101,8 @@ class ExtractArgs(val archiveId: String, val indices: LongArray) {
 sealed interface BrowserAction {
     data class OpenRow(val row: FolderRow) : BrowserAction
     data object Up : BrowserAction
+    /** The archive was updated here: list it again, without saying it changed. */
+    data object Reload : BrowserAction
     data class GoToCrumb(val index: Int) : BrowserAction
     data class LongPress(val row: FolderRow) : BrowserAction
     data class Toggle(val row: FolderRow) : BrowserAction

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="edits_changed_one">%1$s が変更されました</string>
+    <string name="edits_in_archive">%1$s 内</string>
+    <string name="edits_cannot_update">%1$s は更新できません。</string>
+    <string name="edits_update">ZIP を更新</string>
+    <string name="edits_save_copy">コピーを保存</string>
+    <string name="edits_ignore">無視</string>
+    <string name="edits_show">表示</string>
+    <string name="edits_hide">非表示</string>
+    <string name="edits_ignore_title">変更を破棄しますか？</string>
+    <string name="edits_discard">破棄</string>
+    <string name="edits_working">%1$s を更新しています…</string>
+    <string name="edits_updated">%1$s を更新しました</string>
+    <string name="edits_not_updated">%1$s は変更されていません。編集内容は残っています。</string>
+    <string name="edits_archive_changed">%1$s は開いた後に変更されています。代わりにコピーを保存してください。</string>
+    <string name="edits_no_space">アーカイブを更新する空き容量が足りません。</string>
+    <string name="edits_choose_title">アーカイブをもう一度選択</string>
+    <string name="edits_choose_body">Lunaris が更新できるように %1$s を選択してください。</string>
+    <string name="edits_choose">選択</string>
+    <string name="edits_different_file">別のファイルです。何も変更されていません。</string>
+    <string name="edits_saved">保存しました</string>
+    <string name="edits_save_failed">コピーを保存できませんでした。</string>
+    <string name="edits_restored">アプリが閉じたとき %1$s は更新中でした。元の状態に戻しました。</string>
+    <string name="edits_restore_failed">%1$s をまだ元に戻せません。次回の起動時に再試行します。</string>
+    <plurals name="edits_changed_many">
+        <item quantity="other">%d 個のファイルが変更されました</item>
+    </plurals>
+    <plurals name="edits_ignore_body">
+        <item quantity="other">%d 個のファイルの変更は失われます。</item>
+    </plurals>
+</resources>

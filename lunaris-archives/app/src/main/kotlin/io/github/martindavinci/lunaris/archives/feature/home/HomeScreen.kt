@@ -57,6 +57,7 @@ internal fun HomeScreen(
     onCreate: () -> Unit,
     onSettings: () -> Unit,
     snackbar: SnackbarHostState = remember { SnackbarHostState() },
+    cards: @Composable () -> Unit = {},
 ) {
     val colors = MaterialTheme.colorScheme
     val query = state.query
@@ -66,6 +67,7 @@ internal fun HomeScreen(
             HomeTopBar(state, onAction, onSettings)
             LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(bottom = ListBottomPadding)) {
                 if (query == null) {
+                    item(key = "edits") { cards() }
                     item(key = "continue") {
                         val last = state.continueItem
                         if (last != null) ContinueCard(last, onClick = { onAction(HomeAction.OpenRecent(last)) }) else ContinuePlaceholder(state.rememberRecents)

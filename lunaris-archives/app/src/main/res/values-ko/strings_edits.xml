@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="edits_changed_one">%1$s이(가) 변경되었습니다</string>
+    <string name="edits_in_archive">%1$s 안</string>
+    <string name="edits_cannot_update">%1$s은(는) 업데이트할 수 없습니다.</string>
+    <string name="edits_update">ZIP에 업데이트</string>
+    <string name="edits_save_copy">사본 저장</string>
+    <string name="edits_ignore">무시</string>
+    <string name="edits_show">보기</string>
+    <string name="edits_hide">숨기기</string>
+    <string name="edits_ignore_title">변경 사항을 삭제할까요?</string>
+    <string name="edits_discard">삭제</string>
+    <string name="edits_working">%1$s 업데이트 중…</string>
+    <string name="edits_updated">%1$s 업데이트됨</string>
+    <string name="edits_not_updated">%1$s은(는) 변경되지 않았습니다. 편집 내용은 유지됩니다.</string>
+    <string name="edits_archive_changed">%1$s이(가) 연 후에 변경되었습니다. 대신 사본을 저장하세요.</string>
+    <string name="edits_no_space">압축 파일을 업데이트할 공간이 부족합니다.</string>
+    <string name="edits_choose_title">압축 파일 다시 선택</string>
+    <string name="edits_choose_body">Lunaris가 업데이트할 수 있도록 %1$s을(를) 선택하세요.</string>
+    <string name="edits_choose">선택</string>
+    <string name="edits_different_file">다른 파일입니다. 아무것도 변경되지 않았습니다.</string>
+    <string name="edits_saved">저장됨</string>
+    <string name="edits_save_failed">사본을 저장하지 못했습니다.</string>
+    <string name="edits_restored">앱이 닫힐 때 %1$s을(를) 업데이트하는 중이었습니다. 원래대로 되돌렸습니다.</string>
+    <string name="edits_restore_failed">%1$s을(를) 아직 되돌리지 못했습니다. 다음에 시작할 때 다시 시도합니다.</string>
+    <plurals name="edits_changed_many">
+        <item quantity="other">파일 %d개가 변경되었습니다</item>
+    </plurals>
+    <plurals name="edits_ignore_body">
+        <item quantity="other">파일 %d개의 변경 사항이 사라집니다.</item>
+    </plurals>
+</resources>
