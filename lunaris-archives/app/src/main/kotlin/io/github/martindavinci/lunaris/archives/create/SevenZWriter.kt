@@ -65,6 +65,7 @@ class SevenZWriter(
         try {
             if (aborted) {
                 runCatching { seven.close() }
+                runCatching { out.close() }
                 return
             }
             seven.close()

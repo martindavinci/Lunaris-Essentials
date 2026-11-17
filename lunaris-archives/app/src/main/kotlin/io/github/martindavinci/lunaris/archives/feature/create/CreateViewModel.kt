@@ -3,6 +3,7 @@ package io.github.martindavinci.lunaris.archives.feature.create
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.martindavinci.lunaris.archives.create.ArchiveFormat
 import io.github.martindavinci.lunaris.archives.create.ArchiveNameRules
 import io.github.martindavinci.lunaris.archives.create.CreateItem
 import io.github.martindavinci.lunaris.archives.create.CreateRunner
@@ -133,7 +134,7 @@ class CreateViewModel @Inject constructor(
         viewModelScope.launch(start = CoroutineStart.UNDISPATCHED) {
             // Every path of every picked file is normalised: not on the main thread.
             val unique = withContext(background) { all.zip(ZipPaths.unique(all.map { it.pathInZip })) { file, path -> file.copy(pathInZip = path) } }
-            runner.start(unique, uri, ArchiveNameRules.fileName(s.name), s.level, password, sources.skipped)
+            runner.start(unique, uri, ArchiveNameRules.fileName(s.name), ArchiveFormat.ZIP, s.level, password, sources.skipped)
         }
     }
 

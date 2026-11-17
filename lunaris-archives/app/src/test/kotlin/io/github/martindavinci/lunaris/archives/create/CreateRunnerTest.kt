@@ -6,7 +6,11 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
@@ -40,10 +44,42 @@ class CreateRunnerTest {
         override fun size(uri: String): Long? = targets[uri]?.size()?.toLong()
         override fun location(uri: String): String? = "Download"
     }
-    private val runner = CreateRunner(io, dispatcher)
+    @get:Rule val temp = TemporaryFolder()
+    private var free = Long.MAX_VALUE
+    private val runner by lazy { CreateRunner(io, ArchiveWriters(temp.root) { free }, dispatcher) }
     private val files = listOf(SourceFile("s:a", "a.bin", 100, 0), SourceFile("s:b", "dir/b.bin", 200, 0))
-    private fun start(password: CharArray? = null, list: List<SourceFile> = files) =
-        runner.start(list, "t:1", "Holiday.zip", CompressionLevel.NORMAL, password, skipped = listOf("Doc"))
+    private fun start(password: CharArray? = null, list: List<SourceFile> = files, format: ArchiveFormat = ArchiveFormat.ZIP) =
+        runner.start(list, "t:1", "Holiday.zip", format, CompressionLevel.NORMAL, password, skipped = listOf("Doc"))
+
+    @Test fun sevenZ_withoutSpace_failsNoSpace_beforeWriting() = runTest(dispatcher) {
+        free = 0
+        start(format = ArchiveFormat.SEVEN_Z); advanceUntilIdle()
+        assertThat(runner.state.value).isEqualTo(CreateState.Failed(CreateFailure.NO_SPACE)); assertThat(io.targets).isEmpty()
+    }
+    @Test fun tarGz_finishes_andTargetHoldsATarGz() = runTest(dispatcher) {
+        start(format = ArchiveFormat.TAR_GZ); advanceUntilIdle()
+        assertThat(runner.state.value).isInstanceOf(CreateState.Finished::class.java)
+        val tar = TarArchiveInputStream(GzipCompressorInputStream(io.targets.getValue("t:1").toByteArray().inputStream()))
+        assertThat(generateSequence { tar.nextEntry }.map { it.name }.toList()).containsExactly("a.bin", "dir/b.bin").inOrder()
+    }
+    @Test fun sevenZ_finishes_andLeavesNoWorkFile() = runTest(dispatcher) {
+        start(format = ArchiveFormat.SEVEN_Z); advanceUntilIdle()
+        assertThat(runner.state.value).isInstanceOf(CreateState.Finished::class.java)
+        assertThat(io.targets.getValue("t:1").toByteArray().take(2)).containsExactly('7'.code.toByte(), 'z'.code.toByte()).inOrder()
+        assertThat(temp.root.walk().filter { it.isFile }.toList()).isEmpty()
+    }
+    @Test fun cancelled7z_leavesNoWorkFile_andNoTarget() = runTest(dispatcher) {
+        var reads = 0
+        io.onRead = { if (++reads == 2) runner.stop() }
+        start(format = ArchiveFormat.SEVEN_Z); advanceUntilIdle()
+        assertThat(io.targets).isEmpty(); assertThat(temp.root.walk().filter { it.isFile }.toList()).isEmpty()
+    }
+    @Test fun passwordIsIgnored_forTar() = runTest(dispatcher) {
+        val password = "Secret-2026".toCharArray()
+        start(password, format = ArchiveFormat.TAR); advanceUntilIdle()
+        assertThat(runner.state.value).isInstanceOf(CreateState.Finished::class.java)
+        assertThat(password.all { it == Char(0) }).isTrue()
+    }
 
     @Test fun aSourceWhosePermissionEnded_isSourceGone_notACrash() = runTest(dispatcher) {
         io.onRead = { throw SecurityException("Permission Denial: reading requires ACTION_OPEN_DOCUMENT") }

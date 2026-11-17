@@ -5,6 +5,7 @@ import io.github.martindavinci.lunaris.archives.create.ArchiveNameRules
 import io.github.martindavinci.lunaris.archives.create.Child
 import io.github.martindavinci.lunaris.archives.create.CompressionLevel
 import io.github.martindavinci.lunaris.archives.create.CreateIo
+import io.github.martindavinci.lunaris.archives.create.ArchiveWriters
 import io.github.martindavinci.lunaris.archives.create.CreateRunner
 import io.github.martindavinci.lunaris.archives.create.CreateState
 import io.github.martindavinci.lunaris.archives.create.Described
@@ -46,7 +47,7 @@ class CreateViewModelTest {
         override fun size(uri: String): Long? = 42
         override fun location(uri: String): String? = "Download"
     }
-    private val runner = CreateRunner(io, dispatcher)
+    private val runner by lazy { CreateRunner(io, ArchiveWriters(temp.newFolder()) { Long.MAX_VALUE }, dispatcher) }
     private val inbox = CreateInbox()
     private val session by lazy { ArchiveSession(FakeArchiveEngine(), IndexCache(temp.root), PasswordMemory(), IncomingCopy(temp.root)) }
     private val background = CountingDispatcher()

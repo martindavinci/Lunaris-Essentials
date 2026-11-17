@@ -16,10 +16,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-/** One new ZIP at a time, streamed straight into the file chosen with "Save as"; an unfinished one is deleted. */
+/** One new archive at a time, written into the file chosen with "Save as"; an unfinished one is deleted. */
 @Singleton
-class CreateRunner internal constructor(private val io: CreateIo, dispatcher: CoroutineDispatcher) {
-    @Inject constructor(io: CreateIo) : this(io, Dispatchers.IO)
+class CreateRunner internal constructor(private val io: CreateIo, private val writers: WriterFactory, dispatcher: CoroutineDispatcher) {
+    @Inject constructor(io: CreateIo, writers: ArchiveWriters) : this(io, writers, Dispatchers.IO)
 
     private val scope = CoroutineScope(SupervisorJob() + dispatcher)
     private val _state = MutableStateFlow<CreateState>(CreateState.Idle)
@@ -27,7 +27,7 @@ class CreateRunner internal constructor(private val io: CreateIo, dispatcher: Co
     private var job: Job? = null
 
     fun start(
-        files: List<SourceFile>, target: String, name: String, level: CompressionLevel, password: CharArray?,
+        files: List<SourceFile>, target: String, name: String, format: ArchiveFormat, level: CompressionLevel, password: CharArray?,
         skipped: List<String> = emptyList(),
     ) {
         if (_state.value is CreateState.Running) return
@@ -42,27 +42,21 @@ class CreateRunner internal constructor(private val io: CreateIo, dispatcher: Co
                     throw TargetGone()
                 }
                 val writer = try {
-                    ZipWriter(out, level, password)
+                    writers.open(format, level, password.takeIf { format.takesPassword }, out, total) { copied, all ->
+                        ensureActive()
+                        val done = if (all > 0) total * copied / all else total
+                        _state.value = CreateState.Running(files.size, files.size, name, done, total)
+                    }
                 } catch (e: Exception) {
                     out.close()
                     throw e
                 }
                 writer.use { zip ->
-                    files.forEachIndexed { i, file ->
-                        _state.value = CreateState.Running(i, files.size, file.pathInZip, written, total)
-                        val input = try {
-                            io.openInput(file.uri)
-                        } catch (e: IOException) {
-                            throw SourceReadException(e)
-                        } catch (e: RuntimeException) {   // a share's permission that has ended, or the provider's own exception
-                            throw SourceReadException(IOException(e))
-                        }
-                        val before = written
-                        zip.add(file.pathInZip, file.sizeBytes, file.modifiedMillis, input) { bytes ->
-                            ensureActive()
-                            written = before + bytes
-                            _state.value = CreateState.Running(i, files.size, file.pathInZip, written, total)
-                        }
+                    try {
+                        addAll(zip, files, total) { written = it }
+                    } catch (e: Throwable) {
+                        zip.abort()
+                        throw e
                     }
                 }
                 _state.value = CreateState.Finished(name, io.size(target) ?: written, io.location(target), target, skipped)
@@ -79,6 +73,27 @@ class CreateRunner internal constructor(private val io: CreateIo, dispatcher: Co
                 fail(target, CreateFailure.TARGET_GONE)
             } finally {
                 password?.fill(WIPED)
+            }
+        }
+    }
+
+    private fun CoroutineScope.addAll(writer: ArchiveWriter, files: List<SourceFile>, total: Long, onWritten: (Long) -> Unit) {
+        var written = 0L
+        files.forEachIndexed { i, file ->
+            _state.value = CreateState.Running(i, files.size, file.pathInZip, written, total)
+            val input = try {
+                io.openInput(file.uri)
+            } catch (e: IOException) {
+                throw SourceReadException(e)
+            } catch (e: RuntimeException) {   // a share's permission that has ended, or the provider's own exception
+                throw SourceReadException(IOException(e))
+            }
+            val before = written
+            writer.add(file.pathInZip, file.sizeBytes, file.modifiedMillis, input) { bytes ->
+                ensureActive()
+                written = before + bytes
+                onWritten(written)
+                _state.value = CreateState.Running(i, files.size, file.pathInZip, written, total)
             }
         }
     }
