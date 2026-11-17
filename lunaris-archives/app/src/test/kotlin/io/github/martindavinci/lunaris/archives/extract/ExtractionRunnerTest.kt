@@ -73,6 +73,17 @@ class ExtractionRunnerTest {
         assertThat(tree.read("b.txt")).isNull()
         assertThat(finished.stoppedEarly).isTrue(); assertThat(finished.written).isEqualTo(0)
     }
+    @Test fun anEngineCancelThatNobodyAskedFor_isReaderStopped() = runTest(dispatcher) {
+        script(file(0), status = EngineStatus.CANCELLED)   // the engine was taken away under this job
+        runner.run(FakeTree()); advanceUntilIdle()
+        assertThat(runner.state.value).isEqualTo(ExtractionState.Failed(ExtractFailure.READER_STOPPED))
+    }
+    @Test fun anEmptyFolder_isCreated() = runTest(dispatcher) {
+        val list = listOf(entry(0, "empty/"), entry(1, "b.txt"))
+        val tree = FakeTree(); script(file(1))
+        runner.run(tree, list); advanceUntilIdle()
+        assertThat(tree.folders).contains(listOf("empty"))
+    }
     @Test fun plainExtraction_writesEveryFileInFolders_andFinishes() = runTest(dispatcher) {
         val tree = FakeTree(); script(file(0), file(1))
         runner.run(tree); advanceUntilIdle()

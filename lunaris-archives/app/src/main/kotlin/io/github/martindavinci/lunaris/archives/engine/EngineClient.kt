@@ -55,6 +55,10 @@ class EngineClient @Inject constructor(private val connection: EngineConnection)
             deaths.merge(source.key, 1, Int::plus)
             throw e
         }
+        if (collected.status == EngineStatus.CANCELLED) {
+            currentCoroutineContext().ensureActive()   // our own cancel: let it through
+            throw EngineStoppedException()             // the engine was taken away under this job
+        }
         return ListMapping.toResult(collected.status, collected.index?.kind ?: source.kindHint, route, collected.index)
     }
 

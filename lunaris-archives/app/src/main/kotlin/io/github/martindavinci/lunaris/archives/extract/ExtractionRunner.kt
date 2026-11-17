@@ -17,6 +17,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -118,6 +119,7 @@ class ExtractionRunner internal constructor(
             if (!enoughSpace(job.target, resolved, plan.declaredBytes)) return
             val built = writer(job, resolved, plan).also { writer = it }
             val failure = passes(job, resolved, built)
+            if (failure == null) plan.folders.forEach { job.target.ensureFolder(it) }   // the empty ones have no file to make them
             if (failure == ExtractFailure.WRONG_PASSWORD) job.onWrongPassword()
             _state.value = failure?.let { ExtractionState.Failed(it) } ?: finished(job, plan, resolved, built, stopped = false)
         } catch (_: CancellationException) {
@@ -193,7 +195,10 @@ class ExtractionRunner internal constructor(
             }
             when (status) {
                 EngineStatus.PATH_MISMATCH, EngineStatus.ACCESS_DENIED -> return ExtractFailure.READER_STOPPED
-                EngineStatus.CANCELLED -> throw CancellationException("engine cancelled")
+                EngineStatus.CANCELLED -> {
+                    currentCoroutineContext().ensureActive()   // our own Stop goes on as a cancellation
+                    return ExtractFailure.READER_STOPPED       // the engine was taken away under this job
+                }
                 else -> Unit
             }
         }
