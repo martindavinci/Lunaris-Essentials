@@ -24,7 +24,6 @@ fun CreateRoute(onClose: () -> Unit, onOpenArchive: (String) -> Unit, viewModel:
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val snackbar = remember { SnackbarHostState() }
-    val waitingPassword = remember { arrayOfNulls<CharArray>(1) }
     val files = rememberLauncherForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { uris ->
         if (uris.isNotEmpty()) viewModel.onAction(CreateAction.AddFiles(uris.map(Uri::toString)))
     }
@@ -32,9 +31,7 @@ fun CreateRoute(onClose: () -> Unit, onOpenArchive: (String) -> Unit, viewModel:
         uri?.let { viewModel.onAction(CreateAction.AddFolder(it.toString())) }
     }
     val saveAs = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(ZIP_MIME)) { uri ->
-        val password = waitingPassword[0]
-        waitingPassword[0] = null
-        if (uri != null) viewModel.onAction(CreateAction.CreateAt(uri.toString(), password)) else password?.fill(WIPED)
+        viewModel.onAction(CreateAction.CreateAt(uri?.toString()))
     }
 
     LaunchedEffect(state.openRequest) {
@@ -58,8 +55,7 @@ fun CreateRoute(onClose: () -> Unit, onOpenArchive: (String) -> Unit, viewModel:
         onPickFiles = { files.launch(arrayOf(ANY_TYPE)) },
         onPickFolder = { folder.launch(null) },
         onCreate = { password ->
-            waitingPassword[0]?.fill(WIPED)
-            waitingPassword[0] = password
+            viewModel.onAction(CreateAction.HoldPassword(password))
             saveAs.launch(ArchiveNameRules.fileName(state.name))
         },
         onClose = onClose,
@@ -81,4 +77,3 @@ private fun Context.shareZip(uri: String) {
 
 private const val ZIP_MIME = "application/zip"
 private const val ANY_TYPE = "*/*"
-private val WIPED = Char(0)

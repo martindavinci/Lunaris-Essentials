@@ -38,10 +38,11 @@ class CreateViewModelTest {
             if (documentId == "root") listOf(Child("a", "a.jpg", false, 5, 0, false), Child("b", "b.jpg", false, 7, 0, false)) else emptyList()
         override fun uriOf(treeUri: String, documentId: String) = "doc:$documentId"
     }
+    private val deleted = mutableListOf<String>()
     private val io = object : CreateIo {
         override fun openInput(uri: String) = ByteArray(3).inputStream()
         override fun openOutput(uri: String) = ByteArrayOutputStream()
-        override fun delete(uri: String) = Unit
+        override fun delete(uri: String) { deleted += uri }
         override fun size(uri: String): Long? = 42
         override fun location(uri: String): String? = "Download"
     }
@@ -100,13 +101,36 @@ class CreateViewModelTest {
     @Test fun createAt_startsTheRunner_withTheChosenLevel() = runTest(dispatcher) {
         val vm = viewModel()
         vm.onAction(CreateAction.AddFiles(listOf("content://x/a.txt"))); vm.onAction(CreateAction.SetLevel(CompressionLevel.MAXIMUM))
-        vm.onAction(CreateAction.CreateAt("content://out/a.zip", null)); advanceUntilIdle()
+        vm.onAction(CreateAction.HoldPassword(null)); vm.onAction(CreateAction.CreateAt("content://out/a.zip")); advanceUntilIdle()
         assertThat(runner.state.value).isInstanceOf(CreateState.Finished::class.java)
         assertThat(vm.state.value.state).isInstanceOf(CreateState.Finished::class.java)
     }
+    @Test fun aProtectedArchive_isNeverWrittenWithoutItsPassword() = runTest(dispatcher) {
+        val vm = viewModel()
+        vm.onAction(CreateAction.AddFiles(listOf("content://x/a.txt"))); advanceUntilIdle()
+        vm.onAction(CreateAction.SetProtect(true)); vm.onAction(CreateAction.PasswordChanged(level = 3, matches = true))
+        vm.onAction(CreateAction.HoldPassword(null))             // all a rebuilt screen has left to give
+        vm.onAction(CreateAction.CreateAt("content://out/a.zip")); advanceUntilIdle()
+        assertThat(vm.state.value.state).isEqualTo(CreateState.Idle)
+        assertThat(deleted).containsExactly("content://out/a.zip")
+    }
+    @Test fun aPasswordHeldWhileTheScreenIsRebuilt_isUsed() = runTest(dispatcher) {
+        val vm = viewModel()
+        vm.onAction(CreateAction.AddFiles(listOf("content://x/a.txt"))); advanceUntilIdle()
+        vm.onAction(CreateAction.SetProtect(true)); vm.onAction(CreateAction.PasswordChanged(level = 3, matches = true))
+        vm.onAction(CreateAction.HoldPassword("Lunaris-2026".toCharArray()))
+        vm.onAction(CreateAction.CreateAt("content://out/a.zip")); advanceUntilIdle()
+        assertThat(vm.state.value.state).isInstanceOf(CreateState.Finished::class.java)
+    }
+    @Test fun anAnswerWithNothingAsked_writesNothing() = runTest(dispatcher) {
+        val vm = viewModel()                                     // a new view model after the process was killed
+        vm.onAction(CreateAction.CreateAt("content://out/a.zip")); advanceUntilIdle()
+        assertThat(vm.state.value.state).isEqualTo(CreateState.Idle)
+        assertThat(deleted).containsExactly("content://out/a.zip")
+    }
     @Test fun openCreated_navigatesToTheBrowserOfTheNewArchive() = runTest(dispatcher) {
         val vm = viewModel()
-        vm.onAction(CreateAction.AddFiles(listOf("content://x/a.txt"))); vm.onAction(CreateAction.CreateAt("content://out/a.zip", null)); advanceUntilIdle()
+        vm.onAction(CreateAction.AddFiles(listOf("content://x/a.txt"))); vm.onAction(CreateAction.HoldPassword(null)); vm.onAction(CreateAction.CreateAt("content://out/a.zip")); advanceUntilIdle()
         vm.onAction(CreateAction.OpenCreated)
         val id = vm.state.value.openRequest!!
         assertThat(session.request(id)!!.uri).isEqualTo("content://out/a.zip")

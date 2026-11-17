@@ -37,7 +37,7 @@ import io.github.martindavinci.lunaris.archives.ui.toCharArray
 
 /**
  * Frames 13, 14 and 15. [onCreate] is given the password (or null) when "Create ZIP" is pressed:
- * the route keeps it while the system's "save as" is open and puts it in [CreateAction.CreateAt].
+ * the view model holds it while the system's "save as" is open ([CreateAction.HoldPassword]).
  */
 @Composable
 internal fun CreateScreen(

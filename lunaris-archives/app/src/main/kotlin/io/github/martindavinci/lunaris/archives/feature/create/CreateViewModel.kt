@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-/** Frames 13–15: what goes in, how, and the run. The password only passes through, in CreateAt. */
+/** Frames 13–15: what goes in, how, and the run. The password waits here only while "Save as" is open. */
 @HiltViewModel
 class CreateViewModel @Inject constructor(
     tree: SourceTree,
@@ -40,6 +40,9 @@ class CreateViewModel @Inject constructor(
     private var nameEdited = false
     private var folderName: String? = null
     private var passwordOk = true
+    /** Outlives a rebuilt screen (rotation, theme change) while "Save as" is open. Never saved; wiped on use. */
+    private var heldPassword: CharArray? = null
+    private var held = false
     private val _state = MutableStateFlow(CreateUiState())
     val state: StateFlow<CreateUiState> = _state.asStateFlow()
 
@@ -61,7 +64,8 @@ class CreateViewModel @Inject constructor(
                 _state.update { it.copy(strength = action.level, mismatch = !action.matches) }
                 refresh()
             }
-            is CreateAction.CreateAt -> create(action.uri, action.password)
+            is CreateAction.HoldPassword -> { heldPassword?.fill(WIPED); heldPassword = action.password; held = true }
+            is CreateAction.CreateAt -> create(action.uri)
             CreateAction.RequestStop -> _state.update { it.copy(confirmStop = true) }
             CreateAction.KeepGoing -> _state.update { it.copy(confirmStop = false) }
             CreateAction.Stop -> { runner.stop(); _state.update { it.copy(confirmStop = false) } }
@@ -112,12 +116,27 @@ class CreateViewModel @Inject constructor(
         else -> ArchiveNameRules.suggested(items.map { it.name }, null)
     }
 
-    private fun create(uri: String, password: CharArray?) {
+    private fun create(uri: String?) {
+        val password = heldPassword
+        val asked = held
+        heldPassword = null
+        held = false
+        val s = _state.value
+        // After process death the answer reaches a new view model: no files, nothing held. And an archive
+        // the user asked to protect is never written without its password.
+        if (uri == null || !asked || files.isEmpty() || (s.protect && password == null)) {
+            password?.fill(WIPED)
+            uri?.let { viewModelScope.launch(background) { runner.discard(it) } }   // the empty document the picker created
+            return
+        }
         val all = files.values.flatten()
         val paths = ZipPaths.unique(all.map { it.pathInZip })
         val unique = all.zip(paths) { file, path -> file.copy(pathInZip = path) }
-        val s = _state.value
         runner.start(unique, uri, ArchiveNameRules.fileName(s.name), s.level, password, sources.skipped)
+    }
+
+    override fun onCleared() {
+        heldPassword?.fill(WIPED)
     }
 
     private fun openCreated() {
@@ -127,3 +146,5 @@ class CreateViewModel @Inject constructor(
         _state.update { it.copy(openRequest = id) }
     }
 }
+
+private val WIPED = Char(0)

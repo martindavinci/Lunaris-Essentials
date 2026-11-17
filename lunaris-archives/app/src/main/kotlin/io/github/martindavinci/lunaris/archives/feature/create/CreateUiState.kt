@@ -32,7 +32,10 @@ sealed interface CreateAction {
     data class SetProtect(val on: Boolean) : CreateAction
     /** The password itself never reaches the view model before "Create": only what the screen needs to show. */
     data class PasswordChanged(val level: Int, val matches: Boolean) : CreateAction
-    class CreateAt(val uri: String, val password: CharArray?) : CreateAction
+    /** "Create ZIP" was pressed: the password waits in the view model while the system asks where to save. */
+    class HoldPassword(val password: CharArray?) : CreateAction
+    /** The picker answered; null when it was dismissed. */
+    data class CreateAt(val uri: String?) : CreateAction
     data object RequestStop : CreateAction
     data object KeepGoing : CreateAction
     data object Stop : CreateAction

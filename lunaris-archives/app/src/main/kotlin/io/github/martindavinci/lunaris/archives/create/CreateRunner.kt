@@ -73,6 +73,11 @@ class CreateRunner internal constructor(private val io: CreateIo, dispatcher: Co
         }
     }
 
+    /** Removes a document that will not be written after all. */
+    fun discard(target: String) {
+        runCatching { io.delete(target) }
+    }
+
     fun stop() {
         job?.cancel()
     }
