@@ -134,6 +134,14 @@ class EntryCopierTest {
         val result = copier.copy(archive(), entry(0, "...", size = 5), null) {} as CopyResult.Ready
         assertThat(result.uri).endsWith("/0-0/file")
     }
+    @Test fun theDiskWorkRunsOffTheCallersThread() = runTest {
+        val caller = Thread.currentThread()
+        var askedOn: Thread? = null
+        val copier = EntryCopier(engine, TempCopies(temp.root), { askedOn = Thread.currentThread(); Long.MAX_VALUE }, { it.path }, { null })
+        script(EngineRoute.LIBARCHIVE, *ok(0, "hello".toByteArray()))
+        copier.copy(archive(), notes, null) {}
+        assertThat(askedOn).isNotSameInstanceAs(caller)
+    }
     @Test fun rar4EncryptedEntry_isRar4Password() = runTest {
         assertThat(copier.copy(archive(ArchiveKind.RAR4), secret, "x".toCharArray()) {}).isEqualTo(CopyResult.Rar4Password)
         assertThat(engine.extractCalls).isEmpty()

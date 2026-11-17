@@ -15,6 +15,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import java.io.File
+import java.io.IOException
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -50,7 +51,11 @@ object AppModule {
 
     @Provides
     fun provideFreeBytes(@ApplicationContext context: Context): FreeBytes = FreeBytes {
-        context.getSystemService(StorageManager::class.java).getAllocatableBytes(StorageManager.UUID_DEFAULT)
+        try {
+            context.getSystemService(StorageManager::class.java).getAllocatableBytes(StorageManager.UUID_DEFAULT)
+        } catch (_: IOException) {
+            context.cacheDir.usableSpace   // what the file system says, when the storage service cannot answer
+        }
     }
 
     @Provides
