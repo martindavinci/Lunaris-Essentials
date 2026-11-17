@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -38,6 +39,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.martindavinci.lunaris.archives.R
 import io.github.martindavinci.lunaris.archives.create.CompressionLevel
+import io.github.martindavinci.lunaris.archives.create.FormatChoice
+import io.github.martindavinci.lunaris.archives.create.Packing
+import io.github.martindavinci.lunaris.archives.create.archiveFormat
 import io.github.martindavinci.lunaris.archives.ui.PasswordField
 
 private val OptionsPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 16.dp)
@@ -69,25 +73,29 @@ internal fun CreateOptions(state: CreateUiState, password: TextFieldState, confi
             value = state.name,
             onValueChange = { onAction(CreateAction.SetName(it)) },
             label = { Text(stringResource(R.string.create_name)) },
-            suffix = { Text(stringResource(R.string.create_zip_suffix), color = colors.onSurface) },
+            suffix = { Text(state.format.suffix, color = colors.onSurface) },
             isError = state.nameError,
             supportingText = if (state.nameError) { { Text(stringResource(R.string.create_name_invalid)) } } else null,
             singleLine = true,
             shape = FieldShape,
             modifier = Modifier.fillMaxWidth(),
         )
-        Text(stringResource(R.string.create_compression), style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(top = SectionTop, bottom = SmallGap))
-        val levels = CompressionLevel.entries
-        SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
-            levels.forEachIndexed { i, level ->
-                SegmentedButton(
-                    selected = state.level == level,
-                    onClick = { onAction(CreateAction.SetLevel(level)) },
-                    shape = SegmentedButtonDefaults.itemShape(index = i, count = levels.size),
-                ) { Text(stringResource(level.label()), maxLines = 1) }
-            }
+        OptionLabel(stringResource(R.string.create_format))
+        ChoiceRow(FormatChoice.entries, state.formatChoice, { stringResource(it.label()) }) { onAction(CreateAction.SetFormat(it)) }
+        OptionLabel(stringResource(R.string.create_compression))
+        if (state.format.usesLevel) {
+            ChoiceRow(CompressionLevel.entries, state.level, { stringResource(it.label()) }) { onAction(CreateAction.SetLevel(it)) }
+        } else {
+            ChoiceRow(Packing.entries, state.packing, { archiveFormat(FormatChoice.TAR, it).suffix }) { onAction(CreateAction.SetPacking(it)) }
         }
-        Row(
+        if (!state.format.takesPassword) {
+            Text(
+                stringResource(R.string.create_password_zip_only),
+                style = MaterialTheme.typography.bodyMedium,
+                color = colors.onSurfaceVariant,
+                modifier = Modifier.fillMaxWidth().padding(top = MediumGap).heightIn(min = SwitchRowMinHeight).wrapContentHeight(Alignment.CenterVertically),
+            )
+        } else Row(
             Modifier.fillMaxWidth().padding(top = MediumGap).toggleable(state.protect, role = Role.Switch) { onAction(CreateAction.SetProtect(it)) }.heightIn(min = SwitchRowMinHeight),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -122,7 +130,7 @@ internal fun CreateOptions(state: CreateUiState, password: TextFieldState, confi
             modifier = Modifier.fillMaxWidth().padding(top = LargeGap).heightIn(min = CreateMinHeight),
         ) {
             Icon(Icons.Rounded.FolderZip, contentDescription = null, modifier = Modifier.size(CreateIconSize))
-            Text(stringResource(R.string.create_button), modifier = Modifier.padding(start = CreateIconGap))
+            Text(stringResource(state.formatChoice.buttonLabel()), modifier = Modifier.padding(start = CreateIconGap))
         }
         Text(
             text = stringResource(R.string.create_save_hint),
@@ -132,6 +140,37 @@ internal fun CreateOptions(state: CreateUiState, password: TextFieldState, confi
             modifier = Modifier.fillMaxWidth().padding(top = SmallGap),
         )
     }
+}
+
+@Composable
+private fun OptionLabel(text: String) {
+    Text(text, style = MaterialTheme.typography.labelLarge, modifier = Modifier.padding(top = SectionTop, bottom = SmallGap))
+}
+
+/** One row of segmented choices, like Compression. */
+@Composable
+private fun <T> ChoiceRow(choices: List<T>, selected: T, label: @Composable (T) -> String, onSelect: (T) -> Unit) {
+    SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
+        choices.forEachIndexed { i, choice ->
+            SegmentedButton(
+                selected = selected == choice,
+                onClick = { onSelect(choice) },
+                shape = SegmentedButtonDefaults.itemShape(index = i, count = choices.size),
+            ) { Text(label(choice), maxLines = 1) }
+        }
+    }
+}
+
+private fun FormatChoice.label(): Int = when (this) {
+    FormatChoice.ZIP -> R.string.create_format_zip
+    FormatChoice.SEVEN_Z -> R.string.create_format_7z
+    FormatChoice.TAR -> R.string.create_format_tar
+}
+
+private fun FormatChoice.buttonLabel(): Int = when (this) {
+    FormatChoice.ZIP -> R.string.create_button
+    FormatChoice.SEVEN_Z -> R.string.create_button_7z
+    FormatChoice.TAR -> R.string.create_button_tar
 }
 
 private fun CompressionLevel.label(): Int = when (this) {

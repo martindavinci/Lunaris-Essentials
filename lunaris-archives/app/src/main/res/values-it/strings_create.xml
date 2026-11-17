@@ -44,4 +44,8 @@
     <string name="create_failed_space">Spazio insufficiente per l\'archivio.</string>
     <string name="create_failed_target">Impossibile salvare l\'archivio.</string>
     <string name="home_new_archive">Nuovo archivio</string>
+    <string name="create_format">Formato</string>
+    <string name="create_password_zip_only">Password: solo ZIP.</string>
+    <string name="create_button_7z">Crea 7z</string>
+    <string name="create_button_tar">Crea TAR</string>
 </resources>

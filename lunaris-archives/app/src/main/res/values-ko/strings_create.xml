@@ -40,4 +40,8 @@
     <string name="create_failed_space">압축 파일을 저장할 공간이 부족합니다.</string>
     <string name="create_failed_target">압축 파일을 저장할 수 없습니다.</string>
     <string name="home_new_archive">새 압축 파일</string>
+    <string name="create_format">형식</string>
+    <string name="create_password_zip_only">비밀번호는 ZIP만 지원합니다.</string>
+    <string name="create_button_7z">7z 만들기</string>
+    <string name="create_button_tar">TAR 만들기</string>
 </resources>

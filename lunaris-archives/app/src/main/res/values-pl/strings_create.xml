@@ -46,4 +46,8 @@
     <string name="create_failed_space">Za mało miejsca na archiwum.</string>
     <string name="create_failed_target">Nie udało się zapisać archiwum.</string>
     <string name="home_new_archive">Nowe archiwum</string>
+    <string name="create_format">Format</string>
+    <string name="create_password_zip_only">Hasła: tylko ZIP.</string>
+    <string name="create_button_7z">Utwórz 7z</string>
+    <string name="create_button_tar">Utwórz TAR</string>
 </resources>

@@ -44,4 +44,8 @@
     <string name="create_failed_space">No hay espacio suficiente para el archivo comprimido.</string>
     <string name="create_failed_target">No se ha podido guardar el archivo comprimido.</string>
     <string name="home_new_archive">Nuevo archivo comprimido</string>
+    <string name="create_format">Formato</string>
+    <string name="create_password_zip_only">Contraseñas: solo ZIP.</string>
+    <string name="create_button_7z">Crear 7z</string>
+    <string name="create_button_tar">Crear TAR</string>
 </resources>

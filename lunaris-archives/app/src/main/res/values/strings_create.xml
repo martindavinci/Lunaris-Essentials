@@ -8,7 +8,6 @@
     <string name="create_add_more">Add more</string>
     <string name="create_remove">Remove %1$s</string>
     <string name="create_name">Name</string>
-    <string name="create_zip_suffix" translatable="false">.zip</string>
     <string name="create_name_invalid">Use a name without / \\ : * ? \" &lt; &gt; |</string>
     <string name="create_compression">Compression</string>
     <string name="create_store">Store</string>
@@ -43,4 +42,11 @@
     <string name="create_failed_space">Not enough space for the archive.</string>
     <string name="create_failed_target">The archive could not be saved.</string>
     <string name="home_new_archive">New archive</string>
+    <string name="create_format">Format</string>
+    <string name="create_password_zip_only">Passwords: ZIP only.</string>
+    <string name="create_button_7z">Create 7z</string>
+    <string name="create_button_tar">Create TAR</string>
+    <string name="create_format_zip" translatable="false">ZIP</string>
+    <string name="create_format_7z" translatable="false">7z</string>
+    <string name="create_format_tar" translatable="false">TAR</string>
 </resources>

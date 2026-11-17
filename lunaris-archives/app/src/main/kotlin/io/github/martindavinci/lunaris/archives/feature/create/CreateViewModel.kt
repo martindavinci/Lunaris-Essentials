@@ -3,7 +3,6 @@ package io.github.martindavinci.lunaris.archives.feature.create
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.github.martindavinci.lunaris.archives.create.ArchiveFormat
 import io.github.martindavinci.lunaris.archives.create.ArchiveNameRules
 import io.github.martindavinci.lunaris.archives.create.CreateItem
 import io.github.martindavinci.lunaris.archives.create.CreateRunner
@@ -59,7 +58,12 @@ class CreateViewModel @Inject constructor(
             is CreateAction.Remove -> { files.remove(action.item.id); refresh() }
             is CreateAction.SetName -> { nameEdited = true; _state.update { it.copy(name = action.name) }; refresh() }
             is CreateAction.SetLevel -> _state.update { it.copy(level = action.level) }
-            is CreateAction.SetProtect -> { passwordOk = !action.on; _state.update { it.copy(protect = action.on, strength = 0, mismatch = false) }; refresh() }
+            is CreateAction.SetProtect -> setProtect(action.on)
+            is CreateAction.SetFormat -> {
+                _state.update { it.copy(formatChoice = action.choice) }
+                if (!_state.value.format.takesPassword) setProtect(false) else refresh()
+            }
+            is CreateAction.SetPacking -> { _state.update { it.copy(packing = action.packing) }; refresh() }
             is CreateAction.PasswordChanged -> {
                 passwordOk = action.matches && action.level > 0
                 _state.update { it.copy(strength = action.level, mismatch = !action.matches) }
@@ -75,6 +79,12 @@ class CreateViewModel @Inject constructor(
             CreateAction.FailureShown -> runner.reset()
             CreateAction.Share -> Unit   // the route sends the new file; nothing changes here
         }
+    }
+
+    private fun setProtect(on: Boolean) {
+        passwordOk = !on
+        _state.update { it.copy(protect = on, strength = 0, mismatch = false) }
+        refresh()
     }
 
     private fun addFiles(uris: List<String>) {
@@ -103,7 +113,7 @@ class CreateViewModel @Inject constructor(
         }
         _state.update { s ->
             val name = if (nameEdited) s.name else suggestedName(items)
-            val nameOk = ArchiveNameRules.isValid(name)
+            val nameOk = ArchiveNameRules.isValid(name, s.format)
             s.copy(
                 items = items, totalBytes = items.sumOf { it.sizeBytes ?: 0 }, name = name,
                 nameError = nameEdited && !nameOk, canCreate = items.isNotEmpty() && nameOk && passwordOk,
@@ -125,7 +135,8 @@ class CreateViewModel @Inject constructor(
         val s = _state.value
         // After process death the answer reaches a new view model: no files, nothing held. And an archive
         // the user asked to protect is never written without its password.
-        if (uri == null || !asked || files.isEmpty() || (s.protect && password == null)) {
+        val format = s.format
+        if (uri == null || !asked || files.isEmpty() || (s.protect && format.takesPassword && password == null)) {
             password?.fill(WIPED)
             uri?.let { viewModelScope.launch(background) { runner.discard(it) } }   // the empty document the picker created
             return
@@ -134,7 +145,7 @@ class CreateViewModel @Inject constructor(
         viewModelScope.launch(start = CoroutineStart.UNDISPATCHED) {
             // Every path of every picked file is normalised: not on the main thread.
             val unique = withContext(background) { all.zip(ZipPaths.unique(all.map { it.pathInZip })) { file, path -> file.copy(pathInZip = path) } }
-            runner.start(unique, uri, ArchiveNameRules.fileName(s.name), ArchiveFormat.ZIP, s.level, password, sources.skipped)
+            runner.start(unique, uri, ArchiveNameRules.fileName(s.name, format), format, s.level, password, sources.skipped)
         }
     }
 

@@ -5,6 +5,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import io.github.martindavinci.lunaris.archives.create.CompressionLevel
 import io.github.martindavinci.lunaris.archives.create.CreateItem
 import io.github.martindavinci.lunaris.archives.create.CreateState
+import io.github.martindavinci.lunaris.archives.create.FormatChoice
+import io.github.martindavinci.lunaris.archives.create.Packing
 import io.github.martindavinci.lunaris.archives.settings.ThemeMode
 import io.github.martindavinci.lunaris.archives.ui.theme.LunarisArchivesTheme
 
@@ -38,6 +40,10 @@ private fun CreateEmptyLightPreview() = Show(CreateUiState(), ThemeMode.LIGHT)
 @Preview(heightDp = 1100)
 @Composable
 private fun CreatePickedPreview() = Show(Picked)
+
+@Preview(heightDp = 1100)
+@Composable
+private fun CreateTarPreview() = Show(Picked.copy(formatChoice = FormatChoice.TAR, packing = Packing.XZ))
 
 @Preview(heightDp = 1300)
 @Composable

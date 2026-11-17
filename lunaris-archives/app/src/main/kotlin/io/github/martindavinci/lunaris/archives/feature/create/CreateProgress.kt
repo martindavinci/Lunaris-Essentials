@@ -57,7 +57,7 @@ internal fun ColumnScope.CreatingCard(running: CreateState.Running, name: String
         running.total > 0 -> running.added.toFloat() / running.total
         else -> UNKNOWN
     }
-    ProgressCard(Icons.Rounded.FolderZip, AnnotatedString(stringResource(R.string.create_creating, ArchiveNameRules.fileName(name))), subtitle = null) {
+    ProgressCard(Icons.Rounded.FolderZip, AnnotatedString(stringResource(R.string.create_creating, name)), subtitle = null) {
         Spacer(Modifier.height(BarTop))
         ThickProgressBar(fraction, spoken = adding)
         Spacer(Modifier.height(CountTop))

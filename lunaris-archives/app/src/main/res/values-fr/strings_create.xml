@@ -44,4 +44,8 @@
     <string name="create_failed_space">Espace insuffisant pour l\'archive.</string>
     <string name="create_failed_target">L\'archive n\'a pas pu être enregistrée.</string>
     <string name="home_new_archive">Nouvelle archive</string>
+    <string name="create_format">Format</string>
+    <string name="create_password_zip_only">Mots de passe : ZIP uniquement.</string>
+    <string name="create_button_7z">Créer le 7z</string>
+    <string name="create_button_tar">Créer le TAR</string>
 </resources>

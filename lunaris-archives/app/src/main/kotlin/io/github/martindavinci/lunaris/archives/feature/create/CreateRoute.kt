@@ -35,7 +35,7 @@ fun CreateRoute(onClose: () -> Unit, onOpenArchive: (String) -> Unit, viewModel:
     val folder = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
         uri?.let { viewModel.onAction(CreateAction.AddFolder(it.toString())) }
     }
-    val saveAs = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(ZIP_MIME)) { uri ->
+    val saveAs = rememberLauncherForActivityResult(SaveAsContract()) { uri ->
         viewModel.onAction(CreateAction.CreateAt(uri?.toString()))
     }
 
@@ -54,14 +54,14 @@ fun CreateRoute(onClose: () -> Unit, onOpenArchive: (String) -> Unit, viewModel:
     CreateScreen(
         state = state,
         onAction = { action ->
-            if (action == CreateAction.Share) (state.state as? CreateState.Finished)?.let { context.shareZip(it.uri) }
+            if (action == CreateAction.Share) (state.state as? CreateState.Finished)?.let { context.shareArchive(it.uri, state.format.mime) }
             viewModel.onAction(action)
         },
         onPickFiles = { files.launchOr(arrayOf(ANY_TYPE), noPicker) },
         onPickFolder = { folder.launchOr(null, noPicker) },
         onCreate = { password ->
             viewModel.onAction(CreateAction.HoldPassword(password))
-            saveAs.launchOr(ArchiveNameRules.fileName(state.name)) {
+            saveAs.launchOr(SaveAsContract.Input(ArchiveNameRules.fileName(state.name, state.format), state.format.mime)) {
                 viewModel.onAction(CreateAction.CreateAt(null))   // wipes the held password
                 noPicker()
             }
@@ -77,11 +77,10 @@ private fun failureText(reason: CreateFailure): Int = when (reason) {
     CreateFailure.TARGET_GONE -> R.string.create_failed_target
 }
 
-private fun Context.shareZip(uri: String) {
-    val send = Intent(Intent.ACTION_SEND).setType(ZIP_MIME).putExtra(Intent.EXTRA_STREAM, Uri.parse(uri))
+private fun Context.shareArchive(uri: String, mime: String) {
+    val send = Intent(Intent.ACTION_SEND).setType(mime).putExtra(Intent.EXTRA_STREAM, Uri.parse(uri))
         .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     runCatching { startActivity(Intent.createChooser(send, null)) }
 }
 
-private const val ZIP_MIME = "application/zip"
 private const val ANY_TYPE = "*/*"

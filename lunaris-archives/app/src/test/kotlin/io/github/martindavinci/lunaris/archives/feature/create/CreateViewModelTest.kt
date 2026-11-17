@@ -5,7 +5,10 @@ import io.github.martindavinci.lunaris.archives.create.ArchiveNameRules
 import io.github.martindavinci.lunaris.archives.create.Child
 import io.github.martindavinci.lunaris.archives.create.CompressionLevel
 import io.github.martindavinci.lunaris.archives.create.CreateIo
+import io.github.martindavinci.lunaris.archives.create.ArchiveFormat
 import io.github.martindavinci.lunaris.archives.create.ArchiveWriters
+import io.github.martindavinci.lunaris.archives.create.FormatChoice
+import io.github.martindavinci.lunaris.archives.create.Packing
 import io.github.martindavinci.lunaris.archives.create.CreateRunner
 import io.github.martindavinci.lunaris.archives.create.CreateState
 import io.github.martindavinci.lunaris.archives.create.Described
@@ -114,6 +117,25 @@ class CreateViewModelTest {
         vm.onAction(CreateAction.CreateAt("content://out/a.zip")); advanceUntilIdle()
         assertThat(vm.state.value.state).isEqualTo(CreateState.Idle)
         assertThat(deleted).containsExactly("content://out/a.zip")
+    }
+    @Test fun switchingTo7z_dropsThePassword() = runTest(dispatcher) {
+        val vm = viewModel()
+        vm.onAction(CreateAction.AddFiles(listOf("content://x/a.txt"))); advanceUntilIdle()
+        vm.onAction(CreateAction.SetProtect(true)); vm.onAction(CreateAction.PasswordChanged(level = 1, matches = false))
+        vm.onAction(CreateAction.SetFormat(FormatChoice.SEVEN_Z))
+        assertThat(vm.state.value.protect).isFalse(); assertThat(vm.state.value.canCreate).isTrue()
+        val held = "Lunaris-2026".toCharArray()
+        vm.onAction(CreateAction.HoldPassword(held)); vm.onAction(CreateAction.CreateAt("content://out/a.7z")); advanceUntilIdle()
+        assertThat((vm.state.value.state as CreateState.Finished).name).isEqualTo("a.7z")
+        assertThat(held.all { it == Char(0) }).isTrue()
+    }
+    @Test fun tarGz_createsWithTheTarGzName() = runTest(dispatcher) {
+        val vm = viewModel()
+        vm.onAction(CreateAction.AddFiles(listOf("content://x/a.txt"))); advanceUntilIdle()
+        vm.onAction(CreateAction.SetFormat(FormatChoice.TAR)); vm.onAction(CreateAction.SetPacking(Packing.GZ))
+        assertThat(vm.state.value.format).isEqualTo(ArchiveFormat.TAR_GZ)
+        vm.onAction(CreateAction.HoldPassword(null)); vm.onAction(CreateAction.CreateAt("content://out/a.tar.gz")); advanceUntilIdle()
+        assertThat((vm.state.value.state as CreateState.Finished).name).isEqualTo("a.tar.gz")
     }
     @Test fun aPasswordHeldWhileTheScreenIsRebuilt_isUsed() = runTest(dispatcher) {
         val vm = viewModel()

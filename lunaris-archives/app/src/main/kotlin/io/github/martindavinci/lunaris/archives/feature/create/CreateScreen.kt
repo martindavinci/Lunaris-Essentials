@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import io.github.martindavinci.lunaris.archives.R
+import io.github.martindavinci.lunaris.archives.create.ArchiveNameRules
 import io.github.martindavinci.lunaris.archives.create.CompressionLevel
 import io.github.martindavinci.lunaris.archives.create.CreateItem
 import io.github.martindavinci.lunaris.archives.create.CreateState
@@ -81,7 +82,7 @@ internal fun CreateScreen(
             )
             Column(Modifier.fillMaxSize().background(colors.background).verticalScroll(scroll), horizontalAlignment = Alignment.CenterHorizontally) {
                 when (phase) {
-                    is CreateState.Running -> CreatingCard(phase, state.name, onAction)
+                    is CreateState.Running -> CreatingCard(phase, ArchiveNameRules.fileName(state.name, state.format), onAction)
                     is CreateState.Finished -> CreatedCard(phase, onAction)
                     else -> {
                         CreateContent(state, onAction, onPickFiles, onPickFolder)

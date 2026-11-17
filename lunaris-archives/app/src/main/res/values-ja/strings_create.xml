@@ -40,4 +40,8 @@
     <string name="create_failed_space">アーカイブを保存する空き容量が足りません。</string>
     <string name="create_failed_target">アーカイブを保存できませんでした。</string>
     <string name="home_new_archive">新しいアーカイブ</string>
+    <string name="create_format">形式</string>
+    <string name="create_password_zip_only">パスワードは ZIP のみ。</string>
+    <string name="create_button_7z">7z を作成</string>
+    <string name="create_button_tar">TAR を作成</string>
 </resources>

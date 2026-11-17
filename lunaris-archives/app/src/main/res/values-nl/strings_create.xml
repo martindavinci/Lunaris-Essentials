@@ -42,4 +42,8 @@
     <string name="create_failed_space">Niet genoeg ruimte voor het archief.</string>
     <string name="create_failed_target">Het archief kon niet worden opgeslagen.</string>
     <string name="home_new_archive">Nieuw archief</string>
+    <string name="create_format">Formaat</string>
+    <string name="create_password_zip_only">Wachtwoorden: alleen ZIP.</string>
+    <string name="create_button_7z">7z maken</string>
+    <string name="create_button_tar">TAR maken</string>
 </resources>
