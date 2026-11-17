@@ -2,7 +2,6 @@ package io.github.martindavinci.lunaris.archives.create
 
 import io.github.martindavinci.lunaris.archives.safety.Limits
 import java.io.BufferedOutputStream
-import java.io.Closeable
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -18,12 +17,12 @@ import net.lingala.zip4j.model.enums.CompressionLevel as Zip4jLevel
 class SourceReadException(cause: IOException) : IOException(cause)
 
 /** Streams files into a ZIP: Store / Normal / Maximum, optional AES-256 (names stay readable: a limit of the format). */
-class ZipWriter(out: OutputStream, private val level: CompressionLevel, password: CharArray?) : Closeable {
+class ZipWriter(out: OutputStream, private val level: CompressionLevel, password: CharArray?) : ArchiveWriter {
     private val secret = password?.copyOf()
     private val zip = ZipOutputStream(BufferedOutputStream(out, Limits.WIRE_CHUNK_BYTES), secret)
 
     /** [onBytes] gets the bytes added so far for this file; it may throw to stop (cancellation). */
-    fun add(path: String, sizeBytes: Long?, modifiedMillis: Long?, input: InputStream, onBytes: (Long) -> Unit) {
+    override fun add(path: String, sizeBytes: Long?, modifiedMillis: Long?, input: InputStream, onBytes: (Long) -> Unit) {
         input.use { source ->
             zip.putNextEntry(parameters(path, sizeBytes, modifiedMillis))   // inside use: a refused header still closes the input
             val buffer = ByteArray(Limits.WIRE_CHUNK_BYTES)

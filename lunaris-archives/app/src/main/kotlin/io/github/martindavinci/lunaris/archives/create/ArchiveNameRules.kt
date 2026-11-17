@@ -8,14 +8,14 @@ object ArchiveNameRules {
     /** Sentinel for "several shared files": the ViewModel shows the translated text instead. */
     const val SHARED_FILES_FALLBACK = "Shared files"
     private const val FORBIDDEN = "/\\:*?\"<>|"
-    private const val ZIP_EXTENSION = ".zip"
+    private const val TAR_SUFFIX = ".tar"
     private const val LAST_CONTROL = 0x1F
     private const val DELETE = 0x7F
 
-    fun isValid(name: String): Boolean {
+    fun isValid(name: String, format: ArchiveFormat = ArchiveFormat.ZIP): Boolean {
         if (name.isBlank()) return false
         if (name.any { it in FORBIDDEN || it.code <= LAST_CONTROL || it.code == DELETE }) return false
-        return fileName(name).toByteArray(Charsets.UTF_8).size <= Limits.MAX_COMPONENT_BYTES
+        return fileName(name, format).toByteArray(Charsets.UTF_8).size <= Limits.MAX_COMPONENT_BYTES
     }
 
     fun suggested(names: List<String>, folder: String?): String = when {
@@ -27,6 +27,13 @@ object ArchiveNameRules {
         else -> SHARED_FILES_FALLBACK
     }
 
-    fun fileName(base: String): String =
-        if (base.lowercase(Locale.ROOT).endsWith(ZIP_EXTENSION)) base else base + ZIP_EXTENSION
+    /** [base] with the suffix of [format], unless it is typed already; a bare ".tar" is completed for a packed TAR. */
+    fun fileName(base: String, format: ArchiveFormat = ArchiveFormat.ZIP): String {
+        val lower = base.lowercase(Locale.ROOT)
+        return when {
+            lower.endsWith(format.suffix) -> base
+            format.isTar && format != ArchiveFormat.TAR && lower.endsWith(TAR_SUFFIX) -> base + format.suffix.removePrefix(TAR_SUFFIX)
+            else -> base + format.suffix
+        }
+    }
 }
