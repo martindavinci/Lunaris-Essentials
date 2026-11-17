@@ -33,6 +33,10 @@ object Limits {
     const val ENGINE_MAX_DEATHS = 2
     const val ENGINE_CANCEL_GRACE_MILLIS = 2_000L
     const val WIRE_CHUNK_BYTES = 64 * 1024
+    /** Copies handed out for editing that are remembered; the oldest without a change go first. */
+    const val MAX_EDIT_RECORDS = 200
+    /** An archive is recognised by its size and the hash of this much of its start and of its end. */
+    const val FINGERPRINT_EDGE_BYTES = 64 * 1024
     /** LZMA2 presets of a new 7z: 3 (4 MiB dictionary) and 6 (8 MiB); 7 to 9 need 186 to 674 MiB to compress. */
     const val SEVEN_Z_NORMAL_PRESET = 3
     const val SEVEN_Z_MAXIMUM_PRESET = 6
