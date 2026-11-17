@@ -54,7 +54,12 @@ class EditActionsTest {
         ))
         return copy
     }
-    private fun edit(copy: File, text: String) { copy.writeText(text); copy.setLastModified(copy.lastModified() + 5_000) }
+    /**
+     * Each edit gets a date of its own, later than any before: two writes of the same size in one millisecond (a
+     * fast CI runner) would otherwise look unchanged, as size and date are what the watcher looks at first.
+     */
+    private var clock = System.currentTimeMillis()
+    private fun edit(copy: File, text: String) { copy.writeText(text); clock += EDIT_STEP; copy.setLastModified(clock) }
     private fun content(name: String) = ZipFile(zip).use { z -> String(z.getInputStream(z.getEntry(name)).readBytes()) }
 
     @Test fun update_scansFirst_soTheLatestBytesGoIn() = runBlocking<Unit> {
@@ -166,4 +171,6 @@ class EditActionsTest {
         assertThat(actions.saveAll(uri, "content://tree")).isEqualTo(EditOutcome.Saved)
         assertThat(saved).containsExactly("content://tree/a.md", "A2", "content://tree/b.md", "B2")
     }
+
+    private companion object { const val EDIT_STEP = 5_000L }
 }
