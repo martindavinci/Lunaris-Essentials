@@ -2,11 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- No OS backup: DataStore holds unsaved tab text in plain form. Settings have their own
-         export/import in Settings. -->
+    <!-- No OS backup and no device transfer: DataStore holds unsaved tab text in plain form, and
+         from Android 12 allowBackup covers only the cloud. Settings have their own export/import
+         in Settings. -->
     <application
         android:name=".LunarisEditorApp"
         android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="false"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
