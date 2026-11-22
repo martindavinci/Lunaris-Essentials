@@ -19,4 +19,6 @@
     <string name="settings_language_system">システムのデフォルト</string>
     <string name="settings_cleared">一時ファイルを消去しました</string>
     <string name="settings_no_browser">この端末にはリンクを開けるブラウザがありません</string>
+    <string name="settings_about_tagline">毎日使う Android ユーティリティを、広告なしで。</string>
+    <string name="settings_about_permissions">システム権限は必要ありません。</string>
 </resources>

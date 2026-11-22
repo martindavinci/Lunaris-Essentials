@@ -19,4 +19,6 @@
     <string name="settings_language_system">시스템 기본값</string>
     <string name="settings_cleared">임시 파일을 지웠습니다</string>
     <string name="settings_no_browser">이 휴대전화에는 링크를 열 수 있는 브라우저가 없습니다</string>
+    <string name="settings_about_tagline">광고 없는 일상의 Android 유틸리티.</string>
+    <string name="settings_about_permissions">시스템 권한이 필요하지 않습니다.</string>
 </resources>

@@ -108,6 +108,10 @@ internal fun SettingsContent(
                     )
                 }
             }
+            Column(Modifier.padding(start = BlockPadding, end = BlockPadding, bottom = BlockPadding)) {
+                Text(stringResource(R.string.settings_about_tagline), style = MaterialTheme.typography.bodyMedium)
+                Text(stringResource(R.string.settings_about_permissions), style = MaterialTheme.typography.bodyMedium, color = colors.onSurfaceVariant)
+            }
             AboutRow(stringResource(R.string.settings_licences), Icons.Rounded.ChevronRight, onLicences)
             AboutRow(stringResource(R.string.settings_source), Icons.AutoMirrored.Rounded.OpenInNew, onSource)
         }

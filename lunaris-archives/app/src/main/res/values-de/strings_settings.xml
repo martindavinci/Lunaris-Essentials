@@ -19,4 +19,6 @@
     <string name="settings_language_system">Systemstandard</string>
     <string name="settings_cleared">Temporäre Dateien gelöscht</string>
     <string name="settings_no_browser">Kein Browser auf diesem Telefon kann den Link öffnen</string>
+    <string name="settings_about_tagline">Die alltäglichen Android-Apps, ohne Werbung.</string>
+    <string name="settings_about_permissions">Benötigt keine Systemberechtigungen.</string>
 </resources>

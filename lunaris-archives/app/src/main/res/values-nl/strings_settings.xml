@@ -19,4 +19,6 @@
     <string name="settings_language_system">Systeemstandaard</string>
     <string name="settings_cleared">Tijdelijke bestanden gewist</string>
     <string name="settings_no_browser">Geen browser op deze telefoon kan de link openen</string>
+    <string name="settings_about_tagline">De alledaagse Android-hulpmiddelen, zonder advertenties.</string>
+    <string name="settings_about_permissions">Heeft geen systeemmachtigingen nodig.</string>
 </resources>

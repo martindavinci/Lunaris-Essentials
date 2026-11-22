@@ -19,4 +19,6 @@
     <string name="settings_language_system">Domyślny systemowy</string>
     <string name="settings_cleared">Wyczyszczono pliki tymczasowe</string>
     <string name="settings_no_browser">Żadna przeglądarka na tym telefonie nie może otworzyć linku</string>
+    <string name="settings_about_tagline">Codzienne narzędzia na Androida, bez reklam.</string>
+    <string name="settings_about_permissions">Nie wymaga uprawnień systemowych.</string>
 </resources>

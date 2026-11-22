@@ -19,4 +19,6 @@
     <string name="settings_language_system">Predefinição do sistema</string>
     <string name="settings_cleared">Ficheiros temporários limpos</string>
     <string name="settings_no_browser">Nenhum navegador neste telemóvel consegue abrir a ligação</string>
+    <string name="settings_about_tagline">As utilidades Android de todos os dias, sem anúncios.</string>
+    <string name="settings_about_permissions">Não precisa de permissões do sistema.</string>
 </resources>

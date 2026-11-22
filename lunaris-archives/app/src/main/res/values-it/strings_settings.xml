@@ -19,4 +19,6 @@
     <string name="settings_language_system">Predefinita di sistema</string>
     <string name="settings_cleared">File temporanei cancellati</string>
     <string name="settings_no_browser">Nessun browser su questo telefono può aprire il link</string>
+    <string name="settings_about_tagline">Le utility Android di ogni giorno, senza pubblicità.</string>
+    <string name="settings_about_permissions">Non richiede autorizzazioni di sistema.</string>
 </resources>
