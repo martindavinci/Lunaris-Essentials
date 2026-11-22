@@ -20,4 +20,6 @@
     <string name="settings_about_tagline">Le utility Android di ogni giorno, senza pubblicità.</string>
     <string name="settings_about_permissions">Richiede solo l\'autorizzazione per la fotocamera.</string>
     <string name="settings_licenses">Licenze</string>
+    <string name="settings_source">Codice sorgente</string>
+    <string name="settings_no_browser">Nessun browser su questo telefono può aprire il link</string>
 </resources>

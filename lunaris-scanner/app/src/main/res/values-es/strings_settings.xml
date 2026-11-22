@@ -21,4 +21,6 @@
     <string name="settings_about_tagline">Las utilidades de Android de cada día, sin anuncios.</string>
     <string name="settings_about_permissions">Solo necesita el permiso de la cámara.</string>
     <string name="settings_licenses">Licencias</string>
+    <string name="settings_source">Código fuente</string>
+    <string name="settings_no_browser">Ningún navegador de este teléfono puede abrir el enlace</string>
 </resources>

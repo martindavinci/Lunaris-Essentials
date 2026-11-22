@@ -21,4 +21,6 @@
     <string name="settings_about_tagline">日常必备的 Android 工具，没有广告。</string>
     <string name="settings_about_permissions">仅需要相机权限。</string>
     <string name="settings_licenses">许可</string>
+    <string name="settings_source">源代码</string>
+    <string name="settings_no_browser">此手机上没有可以打开链接的浏览器</string>
 </resources>

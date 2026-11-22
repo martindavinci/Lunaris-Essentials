@@ -20,4 +20,7 @@
     <string name="settings_about_tagline">The everyday Android utilities, without the ads.</string>
     <string name="settings_about_permissions">Needs only the camera permission.</string>
     <string name="settings_licenses">Licenses</string>
+    <string name="settings_source">Source code</string>
+    <string name="settings_no_browser">No browser on this phone can open the link</string>
+    <string name="source_url" translatable="false">https://github.com/martindavinci/Lunaris-Essentials/tree/main/lunaris-scanner</string>
 </resources>

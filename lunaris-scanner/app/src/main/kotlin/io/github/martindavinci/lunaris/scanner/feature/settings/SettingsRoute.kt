@@ -79,6 +79,8 @@ internal fun SettingsContent(
             SettingsSectionHeader(stringResource(R.string.settings_section_about))
             AboutSummary()
             SettingsNavRow(stringResource(R.string.settings_licenses), onOpenLicenses)
+            val context = LocalContext.current
+            SettingsNavRow(stringResource(R.string.settings_source)) { openSourceCode(context) }
         }
     }
 

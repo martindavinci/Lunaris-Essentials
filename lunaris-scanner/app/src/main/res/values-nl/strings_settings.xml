@@ -21,4 +21,6 @@
     <string name="settings_about_tagline">De alledaagse Android-hulpmiddelen, zonder advertenties.</string>
     <string name="settings_about_permissions">Heeft alleen de cameramachtiging nodig.</string>
     <string name="settings_licenses">Licenties</string>
+    <string name="settings_source">Broncode</string>
+    <string name="settings_no_browser">Geen browser op deze telefoon kan de link openen</string>
 </resources>

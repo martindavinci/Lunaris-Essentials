@@ -20,4 +20,6 @@
     <string name="settings_about_tagline">Die alltäglichen Android-Apps, ohne Werbung.</string>
     <string name="settings_about_permissions">Benötigt nur die Kameraberechtigung.</string>
     <string name="settings_licenses">Lizenzen</string>
+    <string name="settings_source">Quellcode</string>
+    <string name="settings_no_browser">Kein Browser auf diesem Telefon kann den Link öffnen</string>
 </resources>

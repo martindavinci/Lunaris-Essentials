@@ -21,4 +21,6 @@
     <string name="settings_about_tagline">Les utilitaires Android du quotidien, sans publicité.</string>
     <string name="settings_about_permissions">Nécessite uniquement l\'autorisation de l\'appareil photo.</string>
     <string name="settings_licenses">Licences</string>
+    <string name="settings_source">Code source</string>
+    <string name="settings_no_browser">Aucun navigateur de ce téléphone ne peut ouvrir le lien</string>
 </resources>
