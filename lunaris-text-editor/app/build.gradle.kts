@@ -32,8 +32,8 @@ android {
         applicationId = "io.github.martindavinci.lunaris.texteditor"
         minSdk = 26
         targetSdk = 36
-        versionCode = 22
-        versionName = "0.10.3"
+        versionCode = 23
+        versionName = "0.10.4"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
