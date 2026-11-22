@@ -147,7 +147,7 @@
     <string name="set_developer_value">Martin DaVinci</string>
     <string name="set_privacy">개인정보</string>
     <string name="set_privacy_value">어떤 데이터도 수집하지 않습니다.</string>
-    <string name="set_licenses">오픈소스 라이선스</string>
+    <string name="set_licenses">라이선스</string>
     <string name="set_backup">백업</string>
     <string name="set_restore">복원</string>
     <string name="font_normal">일반</string>
@@ -160,7 +160,7 @@
     <string name="suggestions_off">끄기</string>
     <string name="suggestions_off_aggressive">끄기(강제)</string>
     <string name="menu_settings">설정</string>
-    <string name="licenses_title">오픈소스 라이선스</string>
+    <string name="licenses_title">라이선스</string>
     <string name="backup_default_name">lunaris-text-editor.json</string>
     <string name="linebreak_auto">자동</string>
     <string name="indent_tab">탭</string>
@@ -207,4 +207,7 @@
     <string name="reload_confirm_title">저장하지 않은 변경 사항을 버릴까요?</string>
     <string name="reload_confirm_message">다시 불러오면 편집한 내용이 디스크에 저장된 파일로 바뀝니다.</string>
     <string name="reload_confirm_discard">버리고 다시 불러오기</string>
+    <string name="set_source">소스 코드</string>
+    <string name="set_no_browser">이 휴대전화에는 링크를 열 수 있는 브라우저가 없습니다</string>
+    <string name="set_permissions_value">시스템 권한이 필요하지 않습니다.</string>
 </resources>

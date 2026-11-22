@@ -1,6 +1,12 @@
+<p align="center">
+  <img src="app/src/main/ic_launcher-playstore.png" width="96" alt="Lunaris Text Editor icon">
+</p>
+
 <h1 align="center">Lunaris Text Editor</h1>
 
 <p align="center"><b>A text and code editor for Android that works offline, shows no ads and needs no permissions.</b></p>
+
+<p align="center">by <a href="https://github.com/martindavinci">Martin DaVinci</a></p>
 
 <p align="center">
   <a href="https://github.com/martindavinci/lunaris-essentials/releases?q=lunaris-text-editor&expanded=true"><img src="https://img.shields.io/github/v/release/martindavinci/lunaris-essentials?filter=lunaris-text-editor-*&label=release" alt="Latest release"></a>

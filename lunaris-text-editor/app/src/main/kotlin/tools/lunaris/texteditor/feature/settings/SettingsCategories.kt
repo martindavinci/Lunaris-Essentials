@@ -1,6 +1,7 @@
 package tools.lunaris.texteditor.feature.settings
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import tools.lunaris.texteditor.BuildConfig
 import tools.lunaris.texteditor.R
@@ -84,8 +85,10 @@ internal fun InfoCategory(
 ) {
     SettingsChoiceRow(stringResource(R.string.set_version), BuildConfig.VERSION_NAME) {}
     SettingsChoiceRow(stringResource(R.string.set_developer), stringResource(R.string.set_developer_value)) {}
-    SettingsChoiceRow(stringResource(R.string.set_privacy), stringResource(R.string.set_privacy_value)) {}
+    SettingsChoiceRow(stringResource(R.string.set_privacy), stringResource(R.string.set_privacy_value) + " " + stringResource(R.string.set_permissions_value)) {}
     SettingsNavRow(stringResource(R.string.set_licenses), onOpenLicenses)
+    val context = LocalContext.current
+    SettingsNavRow(stringResource(R.string.set_source)) { openSourceCode(context) }
     SettingsNavRow(stringResource(R.string.set_backup), onBackup)
     SettingsNavRow(stringResource(R.string.set_restore), onRestore)
 }

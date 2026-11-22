@@ -134,7 +134,7 @@
     <string name="set_developer_value">Martin DaVinci</string>
     <string name="set_privacy">Prywatność</string>
     <string name="set_privacy_value">Żadne dane nie są zbierane.</string>
-    <string name="set_licenses">Licencje open source</string>
+    <string name="set_licenses">Licencje</string>
     <string name="set_backup">Kopia zapasowa</string>
     <string name="set_restore">Przywróć</string>
     <string name="font_normal">Normalna</string>
@@ -147,7 +147,7 @@
     <string name="suggestions_off">Wyłączone</string>
     <string name="suggestions_off_aggressive">Wyłączone (agresywnie)</string>
     <string name="menu_settings">Ustawienia</string>
-    <string name="licenses_title">Licencje open source</string>
+    <string name="licenses_title">Licencje</string>
     <string name="backup_default_name">lunaris-text-editor.json</string>
     <string name="linebreak_auto">Automatycznie</string>
     <string name="indent_tab">Tabulator</string>
@@ -206,4 +206,7 @@
     <string name="reload_confirm_title">Odrzucić niezapisane zmiany?</string>
     <string name="reload_confirm_message">Ponowne wczytanie zastąpi zmiany plikiem zapisanym na dysku.</string>
     <string name="reload_confirm_discard">Odrzuć i wczytaj ponownie</string>
+    <string name="set_source">Kod źródłowy</string>
+    <string name="set_no_browser">Żadna przeglądarka na tym telefonie nie może otworzyć linku</string>
+    <string name="set_permissions_value">Nie wymaga uprawnień systemowych.</string>
 </resources>

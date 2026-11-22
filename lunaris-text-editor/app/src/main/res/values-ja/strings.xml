@@ -134,7 +134,7 @@
     <string name="set_developer_value">Martin DaVinci</string>
     <string name="set_privacy">プライバシー</string>
     <string name="set_privacy_value">データは収集されません。</string>
-    <string name="set_licenses">オープンソースライセンス</string>
+    <string name="set_licenses">ライセンス</string>
     <string name="set_backup">バックアップ</string>
     <string name="set_restore">復元</string>
     <string name="font_normal">標準</string>
@@ -147,7 +147,7 @@
     <string name="suggestions_off">オフ</string>
     <string name="suggestions_off_aggressive">オフ（強制）</string>
     <string name="menu_settings">設定</string>
-    <string name="licenses_title">オープンソースライセンス</string>
+    <string name="licenses_title">ライセンス</string>
     <string name="backup_default_name">lunaris-text-editor.json</string>
     <string name="linebreak_auto">自動</string>
     <string name="indent_tab">タブ</string>
@@ -206,4 +206,7 @@
     <string name="reload_confirm_title">保存されていない変更を破棄しますか?</string>
     <string name="reload_confirm_message">再読み込みすると、編集内容はディスク上の保存済みファイルに置き換えられます。</string>
     <string name="reload_confirm_discard">破棄して再読み込み</string>
+    <string name="set_source">ソースコード</string>
+    <string name="set_no_browser">この端末にはリンクを開けるブラウザがありません</string>
+    <string name="set_permissions_value">システム権限は必要ありません。</string>
 </resources>

@@ -147,7 +147,7 @@
     <string name="set_developer_value">Martin DaVinci</string>
     <string name="set_privacy">隐私</string>
     <string name="set_privacy_value">不收集任何数据。</string>
-    <string name="set_licenses">开源许可</string>
+    <string name="set_licenses">许可</string>
     <string name="set_backup">备份</string>
     <string name="set_restore">恢复</string>
     <string name="font_normal">常规</string>
@@ -160,7 +160,7 @@
     <string name="suggestions_off">关闭</string>
     <string name="suggestions_off_aggressive">关闭（强制）</string>
     <string name="menu_settings">设置</string>
-    <string name="licenses_title">开源许可</string>
+    <string name="licenses_title">许可</string>
     <string name="backup_default_name">lunaris-text-editor.json</string>
     <string name="linebreak_auto">自动</string>
     <string name="indent_tab">制表符</string>
@@ -207,4 +207,7 @@
     <string name="reload_confirm_title">放弃未保存的更改？</string>
     <string name="reload_confirm_message">重新加载会用磁盘上保存的文件替换你的编辑。</string>
     <string name="reload_confirm_discard">放弃并重新加载</string>
+    <string name="set_source">源代码</string>
+    <string name="set_no_browser">此手机上没有可以打开链接的浏览器</string>
+    <string name="set_permissions_value">无需系统权限。</string>
 </resources>

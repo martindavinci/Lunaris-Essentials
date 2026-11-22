@@ -134,7 +134,7 @@
     <string name="set_developer_value">Martin DaVinci</string>
     <string name="set_privacy">Privacy</string>
     <string name="set_privacy_value">Er worden geen gegevens verzameld.</string>
-    <string name="set_licenses">Open-source licenties</string>
+    <string name="set_licenses">Licenties</string>
     <string name="set_backup">Back-up</string>
     <string name="set_restore">Herstellen</string>
     <string name="font_normal">Normaal</string>
@@ -147,7 +147,7 @@
     <string name="suggestions_off">Uit</string>
     <string name="suggestions_off_aggressive">Uit (agressief)</string>
     <string name="menu_settings">Instellingen</string>
-    <string name="licenses_title">Open-source licenties</string>
+    <string name="licenses_title">Licenties</string>
     <string name="backup_default_name">lunaris-text-editor.json</string>
     <string name="linebreak_auto">Automatisch</string>
     <string name="indent_tab">Tab</string>
@@ -206,4 +206,7 @@
     <string name="reload_confirm_title">Niet-opgeslagen wijzigingen verwerpen?</string>
     <string name="reload_confirm_message">Herladen vervangt je wijzigingen door het opgeslagen bestand op schijf.</string>
     <string name="reload_confirm_discard">Verwerpen en herladen</string>
+    <string name="set_source">Broncode</string>
+    <string name="set_no_browser">Geen browser op deze telefoon kan de link openen</string>
+    <string name="set_permissions_value">Heeft geen systeemmachtigingen nodig.</string>
 </resources>
