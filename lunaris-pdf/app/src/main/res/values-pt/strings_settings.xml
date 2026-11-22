@@ -18,4 +18,6 @@
     <string name="settings_clear_recents">Limpar a lista de recentes</string>
     <string name="settings_clear_recents_summary">Os seus ficheiros não são alterados</string>
     <string name="settings_recents_cleared">Lista limpa. Os seus ficheiros não são alterados.</string>
+    <string name="settings_source">Código-fonte</string>
+    <string name="settings_no_browser">Nenhum navegador neste telemóvel consegue abrir a ligação</string>
 </resources>

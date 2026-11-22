@@ -18,4 +18,6 @@
     <string name="settings_clear_recents">Vider la liste des récents</string>
     <string name="settings_clear_recents_summary">Vos fichiers ne sont pas touchés</string>
     <string name="settings_recents_cleared">Liste vidée. Vos fichiers ne sont pas touchés.</string>
+    <string name="settings_source">Code source</string>
+    <string name="settings_no_browser">Aucun navigateur de ce téléphone ne peut ouvrir le lien</string>
 </resources>

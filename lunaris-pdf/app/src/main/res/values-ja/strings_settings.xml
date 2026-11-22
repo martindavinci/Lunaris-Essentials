@@ -18,4 +18,6 @@
     <string name="settings_clear_recents">最近のリストを消去</string>
     <string name="settings_clear_recents_summary">ファイル自体は変更されません</string>
     <string name="settings_recents_cleared">リストを消去しました。ファイル自体は変更されません。</string>
+    <string name="settings_source">ソースコード</string>
+    <string name="settings_no_browser">この端末にはリンクを開けるブラウザがありません</string>
 </resources>

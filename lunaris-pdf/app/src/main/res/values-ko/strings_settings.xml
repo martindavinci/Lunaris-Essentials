@@ -18,4 +18,6 @@
     <string name="settings_clear_recents">최근 목록 지우기</string>
     <string name="settings_clear_recents_summary">파일 자체는 변경되지 않습니다</string>
     <string name="settings_recents_cleared">목록을 지웠습니다. 파일 자체는 변경되지 않습니다.</string>
+    <string name="settings_source">소스 코드</string>
+    <string name="settings_no_browser">이 휴대전화에는 링크를 열 수 있는 브라우저가 없습니다</string>
 </resources>

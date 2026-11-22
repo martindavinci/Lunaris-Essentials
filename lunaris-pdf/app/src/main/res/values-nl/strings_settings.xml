@@ -18,4 +18,6 @@
     <string name="settings_clear_recents">Lijst met recente bestanden wissen</string>
     <string name="settings_clear_recents_summary">Je bestanden blijven ongemoeid</string>
     <string name="settings_recents_cleared">Lijst gewist. Je bestanden blijven ongemoeid.</string>
+    <string name="settings_source">Broncode</string>
+    <string name="settings_no_browser">Geen browser op deze telefoon kan de link openen</string>
 </resources>

@@ -18,4 +18,6 @@
     <string name="settings_clear_recents">Wyczyść listę ostatnich</string>
     <string name="settings_clear_recents_summary">Twoje pliki pozostają nietknięte</string>
     <string name="settings_recents_cleared">Lista wyczyszczona. Twoje pliki pozostają nietknięte.</string>
+    <string name="settings_source">Kod źródłowy</string>
+    <string name="settings_no_browser">Żadna przeglądarka na tym telefonie nie może otworzyć linku</string>
 </resources>

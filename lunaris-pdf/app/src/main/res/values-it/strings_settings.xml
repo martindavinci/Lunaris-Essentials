@@ -18,4 +18,6 @@
     <string name="settings_clear_recents">Svuota la lista dei recenti</string>
     <string name="settings_clear_recents_summary">I tuoi file non vengono toccati</string>
     <string name="settings_recents_cleared">Lista svuotata. I tuoi file non vengono toccati.</string>
+    <string name="settings_source">Codice sorgente</string>
+    <string name="settings_no_browser">Nessun browser su questo telefono può aprire il link</string>
 </resources>

@@ -18,4 +18,6 @@
     <string name="settings_clear_recents">清空最近列表</string>
     <string name="settings_clear_recents_summary">不会改动你的文件</string>
     <string name="settings_recents_cleared">列表已清空，不会改动你的文件。</string>
+    <string name="settings_source">源代码</string>
+    <string name="settings_no_browser">此手机上没有可以打开链接的浏览器</string>
 </resources>

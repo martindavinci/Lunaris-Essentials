@@ -18,4 +18,6 @@
     <string name="settings_clear_recents">Liste leeren</string>
     <string name="settings_clear_recents_summary">Deine Dateien bleiben unberührt</string>
     <string name="settings_recents_cleared">Liste geleert. Deine Dateien bleiben unberührt.</string>
+    <string name="settings_source">Quellcode</string>
+    <string name="settings_no_browser">Kein Browser auf diesem Telefon kann den Link öffnen</string>
 </resources>

@@ -18,4 +18,7 @@
     <string name="settings_clear_recents">Clear recent list</string>
     <string name="settings_clear_recents_summary">Your files are not touched</string>
     <string name="settings_recents_cleared">Recent list cleared. Your files are not touched.</string>
+    <string name="settings_source">Source code</string>
+    <string name="settings_no_browser">No browser on this phone can open the link</string>
+    <string name="source_url" translatable="false">https://github.com/martindavinci/Lunaris-Essentials/tree/main/lunaris-pdf</string>
 </resources>

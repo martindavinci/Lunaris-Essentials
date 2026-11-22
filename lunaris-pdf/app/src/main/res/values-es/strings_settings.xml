@@ -18,4 +18,6 @@
     <string name="settings_clear_recents">Vaciar la lista de recientes</string>
     <string name="settings_clear_recents_summary">Tus archivos no se tocan</string>
     <string name="settings_recents_cleared">Lista vaciada. Tus archivos no se tocan.</string>
+    <string name="settings_source">Código fuente</string>
+    <string name="settings_no_browser">Ningún navegador de este teléfono puede abrir el enlace</string>
 </resources>
